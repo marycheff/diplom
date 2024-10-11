@@ -1,3 +1,4 @@
+import ChatController from "../controllers/chat-controller"
 import { Router } from "express"
 import { body } from "express-validator"
 import UserController from "../controllers/user-controller"
@@ -16,5 +17,6 @@ router.post("/logout", UserController.logout)
 router.get("/activate/:link", UserController.activate)
 router.get("/refresh", UserController.refresh)
 router.get("/users", authMiddleware, UserController.getUsers)
+//router.post("/generate-answers", ChatController.generateAnswers)
 
 export default router

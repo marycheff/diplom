@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite"
 import { useContext, useEffect, useState } from "react"
 import { Context } from "."
 import LoginForm from "./components/LoginForm"
+import TestForm from "./components/TestForm"
 import { IUser } from "./models/IUser"
 import UserService from "./services/UserService"
 
@@ -39,6 +40,7 @@ function App() {
             {users.map(user => (
                 <div key={user.email}>{user.email}</div>
             ))}
+            <TestForm />
         </div>
     )
 }
