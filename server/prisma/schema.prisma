@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Не забыть про миграцию при созданни модели
+model User {
+  id             String  @id @default(cuid())
+  email          String  @unique @db.VarChar(255)
+  password       String  @db.VarChar(255)
+  activated      Boolean @default(false)
+  activationLink String? // Поле может быть NULL
+  token Token?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Token {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  refreshToken String   @unique @db.VarChar(500)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
