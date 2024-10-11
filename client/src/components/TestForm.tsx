@@ -1,6 +1,9 @@
 import { useState } from "react"
-import { useForm } from "react-hook-form" // Импортируем react-hook-form
-import api from "../http" // Импортируем настроенный экземпляр axios
+import { useForm } from "react-hook-form"
+import api from "../http"
+import MyButton from "./UI/button/MyButton"
+import MyInput from "./UI/input/MyInput"
+import MySelect from "./UI/select/MySelect"
 
 type FormData = {
     question: string
@@ -18,7 +21,6 @@ const TestForm = () => {
         register,
         handleSubmit,
         formState: { errors },
-        reset,
     } = useForm<FormData>()
 
     const askQuestion = async (data: FormData) => {
@@ -31,11 +33,16 @@ const TestForm = () => {
                 answer: data.answer,
                 numOfAnswers: data.numOfAnswers,
             })
-            setResponse(res.data.generatedAnswers) // Предполагаем, что это массив
+
+            setResponse(res.data.generatedAnswers)
             setEditableInputs(new Array(res.data.generatedAnswers.length).fill(false))
-           // reset() // Сбрасываем форму после успешной отправки
-        } catch (e) {
-            console.error(e)
+        } catch (error: any) {
+            if (error.response && error.response.status === 400) {
+                setResponse([])
+                console.error(error.response.data.message)
+            } else {
+                console.error("Ошибка на стороне сервера", error)
+            }
         } finally {
             setIsLoading(false)
         }
@@ -43,67 +50,70 @@ const TestForm = () => {
 
     const toggleEditable = (index: number) => {
         const updatedEditableInputs = [...editableInputs]
-        updatedEditableInputs[index] = !updatedEditableInputs[index] // Переключаем состояние на противоположное
+        updatedEditableInputs[index] = !updatedEditableInputs[index]
         setEditableInputs(updatedEditableInputs)
     }
 
     const handleInputChange = (index: number, value: string) => {
         const updatedResponse = [...response]
         updatedResponse[index] = value
-        setResponse(updatedResponse) // Обновляем значение инпута
+        setResponse(updatedResponse)
     }
 
     return (
         <div>
             <h2>Задать вопрос нейросети</h2>
 
-            {/* Форма с валидацией */}
             <form onSubmit={handleSubmit(askQuestion)}>
-                <div>
-                    <input
-                        type='text'
-                        placeholder='Вопрос'
-                        {...register("question", {
-                            required: "Вопрос обязателен",
-                            validate: value => {
-                                const wordCount = value.trim().split(/\s+/).length
-                                return (wordCount >= 2 && wordCount <= 10) || "Вопрос должен содержать от 2 до 10 слов"
-                            },
-                        })}
-                    />
-                    {errors.question && <p>{errors.question.message}</p>}
-                </div>
+                {/* Вопрос */}
+                <MyInput
+                    placeholder='Вопрос'
+                    name='question'
+                    register={register}
+                    validationRules={{
+                        required: "Вопрос обязателен",
+                        validate: (value: string) => {
+                            const wordCount = value.trim().split(/\s+/).length
+                            const isText = /^[^\d]*[a-zA-Zа-яА-Я]+[^\d]*$/.test(value) // Проверка, что есть буквы, а не только числа
+                            if (!isText) {
+                                return "Вопрос должен содержать текст, а не только числа"
+                            }
+                            if (value.length > 100) {
+                                return "Вопрос не должен превышать 100 символов"
+                            }
+                            return (wordCount >= 2 && wordCount <= 10) || "Вопрос должен содержать от 2 до 10 слов"
+                        },
+                    }}
+                    errors={errors}
+                />
 
-                <div>
-                    <input
-                        type='text'
-                        placeholder='Правильный ответ'
-                        {...register("answer", {
-                            required: "Ответ обязателен",
-                            validate: value => {
-                                const wordCount = value.trim().split(/\s+/).length
-                                return (wordCount >= 1 && wordCount <= 5) || "Ответ должен содержать от 1 до 5 слов"
-                            },
-                        })}
-                    />
-                    {errors.answer && <p>{errors.answer.message}</p>}
-                </div>
+                <MyInput
+                    placeholder='Правильный ответ'
+                    name='answer'
+                    register={register}
+                    validationRules={{
+                        required: "Ответ обязателен",
+                        validate: (value: string) => {
+                            const wordCount = value.trim().split(/\s+/).length
+                            const isText = /[a-zA-Zа-яА-Я]/.test(value)
+                            if (!isText) {
+                                return "Ответ должен содержать текст, а не только числа"
+                            }
+                            if (value.length > 100) {
+                                return "Ответ не должен превышать 100 символов"
+                            }
+                            return (wordCount >= 1 && wordCount <= 5) || "Ответ должен содержать от 1 до 5 слов"
+                        },
+                    }}
+                    errors={errors}
+                />
 
-                {/* Выбор количества ответов */}
-                <div>
-                    <label>Количество ответов:</label>
-                    <select {...register("numOfAnswers", { required: true })}>
-                        <option value={1}>1</option>
-                        <option value={2}>2</option>
-                        <option selected value={3}>3</option>
-                        <option value={4}>4</option>
-                    </select>
-                </div>
+                {/* Количество ответов */}
+                <MySelect name='numOfAnswers' register={register} />
 
-                <button>Отправить</button>
+                {/* Кнопка отправки */}
+                <MyButton isLoading={isLoading}>Отправить</MyButton>
             </form>
-
-            {isLoading && <p>Загрузка...</p>}
 
             {!isLoading && isSubmitted && response.length === 0 && (
                 <p>Данный вопрос некорректен, задайте другой вопрос</p>
