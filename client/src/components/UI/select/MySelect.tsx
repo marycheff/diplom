@@ -9,7 +9,7 @@ interface MySelectProps {
 const MySelect: React.FC<MySelectProps> = ({ name, register }) => {
     return (
         <div>
-            <label>Количество ответов:</label>
+            <label>Количество ответов для генерации:</label>
             <select defaultValue={3} {...register(name, { required: true })}>
                 <option value={1}>1</option>
                 <option value={2}>2</option>
