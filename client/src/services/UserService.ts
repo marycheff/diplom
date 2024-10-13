@@ -1,11 +1,11 @@
-import { AxiosResponse } from "axios"
-import api from "../http"
-import { IUser } from "../models/IUser"
+import $api from "../http";
+import {AxiosResponse} from 'axios';
+import {AuthResponse} from "../models/response/AuthResponse";
+import {IUser} from "../models/IUser";
 
-class UserService {
+export default class UserService {
     static fetchUsers(): Promise<AxiosResponse<IUser[]>> {
-        return api.get<IUser[]>("/users")
+        return $api.get<IUser[]>('/users')
     }
 }
 
-export default UserService

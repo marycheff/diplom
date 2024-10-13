@@ -80,7 +80,7 @@ class UserController {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
                 httpOnly: true,
             })
-            res.status(201).json(userData)
+            res.json(userData)
         } catch (e) {
             next(e)
         }

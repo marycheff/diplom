@@ -1,6 +1,5 @@
-import React, { createContext } from "react"
-import ReactDOM from "react-dom/client"
-
+import { createContext } from "react"
+import { createRoot } from "react-dom/client" // Импортируйте createRoot
 import App from "./App"
 import Store from "./store/store"
 
@@ -8,17 +7,13 @@ interface State {
     store: Store
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
+export const store = new Store()
 
-const store = new Store()
 export const Context = createContext<State>({
     store,
 })
 
-root.render(
-    <Context.Provider value={{ store }}>
-        <React.StrictMode>
-            <App />
-        </React.StrictMode>
-    </Context.Provider>
-)
+const container = document.getElementById("root")
+const root = createRoot(container!) // Создайте корень
+
+root.render(<App />)
