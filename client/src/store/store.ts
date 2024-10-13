@@ -6,9 +6,14 @@ import { AuthResponse } from "../models/response/AuthResponse"
 import AuthService from "../services/AuthService"
 
 class Store {
+    static logout(): void {
+        throw new Error("Method not implemented.")
+    }
     user = {} as IUser
     isAuth = false
     isLoading = false
+    static isAuth: any
+    static user: any
     constructor() {
         makeAutoObservable(this)
     }
@@ -22,6 +27,7 @@ class Store {
     setLoading(bool: boolean) {
         this.isLoading = bool
     }
+    
     async login(email: string, password: string) {
         try {
             const response = await AuthService.login(email, password)

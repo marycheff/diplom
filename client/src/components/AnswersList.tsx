@@ -33,11 +33,11 @@ const AnswersList: React.FC<AnswersListProps> = ({
                         placeholder={`Ответ ${index + 1}`}
                     />
                     <input type='checkbox' checked={answer.isCorrect} onChange={() => handleCorrectChange(index)} />
-                    {!answer.isCorrect && (
-                        <button type='button' onClick={() => removeAnswer(index)}>
-                            Удалить
+                    
+                        <button type='button' disabled={answer.isCorrect} onClick={() => removeAnswer(index)}>
+                            X
                         </button>
-                    )}
+                    
                 </div>
             ))}
             <button type='button' onClick={addAnswer}>
