@@ -2,7 +2,7 @@ import React, {FC, useContext, useState} from 'react';
 import {Context} from "../index";
 import {observer} from "mobx-react-lite";
 
-const LoginForm: FC = () => {
+const RegistrationForm: FC = () => {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const {store} = useContext(Context);
@@ -21,11 +21,12 @@ const LoginForm: FC = () => {
                 type="password"
                 placeholder='Пароль'
             />
-            <button onClick={() => store.login(email, password)}>
-                Вход
+
+            <button onClick={() => store.registration(email, password)}>
+                Регистрация
             </button>
         </div>
     );
 };
 
-export default observer(LoginForm);
+export default observer(RegistrationForm)

@@ -1,12 +1,29 @@
-import React from 'react';
+import React, { useState } from "react"
+import { Tabs, Tab, Box } from "@mui/material"
 import LoginForm from "../components/LoginForm"
+import RegistrationForm from "../components/RegistrationForm"
 
-const LoginPage = () => {
+const LoginPage: React.FC = () => {
+    const [activeTab, setActiveTab] = useState(0)
+
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setActiveTab(newValue)
+    }
+
     return (
         <div>
-            <LoginForm />
+            <Tabs value={activeTab} onChange={handleTabChange}>
+                <Tab label={activeTab === 0 ? "Вход" : "Вход"} />
+                <Tab label={activeTab === 1 ? "Регистрация" : "Регистрация"} />
+            </Tabs>
+
+<br /><br />
+            <Box>
+                {activeTab === 0 && <LoginForm />}
+                {activeTab === 1 && <RegistrationForm />}
+            </Box>
         </div>
     )
-};
+}
 
-export default LoginPage;
+export default LoginPage
