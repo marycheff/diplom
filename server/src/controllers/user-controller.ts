@@ -94,6 +94,15 @@ class UserController {
             next(e)
         }
     }
+    async updatePassword(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { email, oldPassword, newPassword } = req.body
+            await userService.updatePassword(email, oldPassword, newPassword)
+            res.json({ message: "Пароль успешно обновлен" })
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 export default new UserController()
