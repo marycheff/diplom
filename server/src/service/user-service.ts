@@ -149,6 +149,10 @@ class UserService {
             throw ApiError.BadRequest("Неверный старый пароль")
         }
 
+        if (oldPassword === newPassword) {
+            throw ApiError.BadRequest("Новый пароль не может совпадать со старым")
+        }
+
         const hashedNewPassword = await bcrypt.hash(newPassword, 10)
 
         const updatedUser = await prisma.user.update({
@@ -158,6 +162,34 @@ class UserService {
 
         return updatedUser
     }
+
+    // private resetCodes = new Map<string, { code: string; expires: number }>()
+
+    // async sendResetCode(email: string) {
+    //     const user = await prisma.user.findUnique({ where: { email } })
+    //     if (!user) {
+    //         throw ApiError.BadRequest("Пользователь не найден")
+    //     }
+
+    //     const code = Math.floor(100000 + Math.random() * 900000).toString()
+    //     const expires = Date.now() + 5 * 60 * 1000 // 5 минут
+
+    //     this.resetCodes.set(email, { code, expires })
+    //     await mailService.sendResetPasswordMail(email, user.email, code)
+    // }
+
+    // async verifyResetCode(email: string, code: string) {
+    //     const entry = this.resetCodes.get(email)
+    //     if (!entry || entry.code !== code || entry.expires < Date.now()) {
+    //         throw ApiError.BadRequest("Неверный код или срок действия истек")
+    //     }
+    // }
+
+    // async resetPassword(email: string, newPassword: string) {
+    //     const hashedPassword = await bcrypt.hash(newPassword, 10)
+    //     await prisma.user.update({ where: { email }, data: { password: hashedPassword } })
+    //     this.resetCodes.delete(email)
+    // }
 }
 
 export default new UserService()

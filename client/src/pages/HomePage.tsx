@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Context } from ".."
 import UserService from "../services/UserService"
 import { IUser } from "../models/IUser"
+import UpdatePasswordForm from "../components/UpdatePasswordForm"
 
 const HomePage = () => {
     const handleClick = () => {
@@ -31,6 +32,7 @@ const HomePage = () => {
                 <div key={user.email}>{user.email}</div>
             ))}
             <button onClick={handleClick}>TEST</button>
+            <UpdatePasswordForm />
         </div>
     )
 };
