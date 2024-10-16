@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
-import { getChatContent } from "../service/gigaChat/chat-service"
-import { getAccessToken } from "../service/gigaChat/token-service"
+import { getChatContent } from "../services/chat-service"
+import { getAccessToken } from "../services/token-service"
+
 
 // Функция для парсинга ответов
 function parseAnswers(response: string): string[] {

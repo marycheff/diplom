@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express"
 import ApiError from "../exceptions/api-error"
-import tokenService from "../service/token-service"
+import tokenService from "../modules/auth/services/token-service"
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
@@ -11,12 +11,12 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
         const accessToken = authorizationHeader.split(" ")[1]
         if (!accessToken) {
             return next(ApiError.UnauthorizedError())
-        } 
+        }
         const userData = tokenService.validateAccessToken(accessToken)
         if (!userData) {
             return next(ApiError.UnauthorizedError())
         }
-        (req as any).user = userData
+        ;(req as any).user = userData
         next()
     } catch (error) {
         return next(ApiError.UnauthorizedError())

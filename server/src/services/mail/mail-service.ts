@@ -30,6 +30,20 @@ class MailService {
             `,
         })
     }
+    async sendResetPasswordMail(to: string, email: string, code: string,) {
+        await this.transporter.sendMail({
+            from: process.env.SMTP_USER,
+            to,
+            subject: "Сброс пароля на " + process.env.API_URL,
+            text: "",
+            html: `
+                <div>
+                    <h1>Ваш код для сброса пароля</h1>
+                    ${code}
+                </div>
+            `,
+        })
+    }
 }
 
 export default new MailService()

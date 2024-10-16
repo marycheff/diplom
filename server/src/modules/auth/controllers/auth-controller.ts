@@ -1,16 +1,16 @@
-import { NextFunction, Request, Response } from "express"
-import { validationResult } from "express-validator"
-import ApiError from "../exceptions/api-error"
-import userService from "../service/user-service"
+import ApiError from "../../../exceptions/api-error"
+import {NextFunction, Request, Response} from "express"
+import {validationResult} from "express-validator"
+import authService from "../services/auth-service"
 
-class UserController {
+class AuthController {
     async registration(req: Request, res: Response, next: NextFunction) {
         try {
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest("Ошибка при валидации", errors.array()))
             }
-            const userData = await userService.registration(req.body)
+            const userData = await authService.registration(req.body)
             res.cookie("refreshToken", userData.refreshToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
                 httpOnly: true,
@@ -26,7 +26,7 @@ class UserController {
     async activate(req: Request, res: Response, next: NextFunction) {
         try {
             const activationLink = req.params.link
-            await userService.activate(activationLink)
+            await authService.activate(activationLink)
 
             if (!process.env.CLIENT_URL) {
                 throw new Error("CLIENT_URL environment variable is not set")
@@ -44,7 +44,7 @@ class UserController {
                 return next(ApiError.BadRequest("Ошибка при валидации", errors.array()))
             }
             const { email, password } = req.body
-            const userData = await userService.login(email, password)
+            const userData = await authService.login(email, password)
             res.cookie("refreshToken", userData.refreshToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
                 httpOnly: true,
@@ -61,7 +61,7 @@ class UserController {
     async logout(req: Request, res: Response, next: NextFunction) {
         try {
             const { refreshToken } = req.cookies
-            const token = await userService.logout(refreshToken)
+            const token = await authService.logout(refreshToken)
             res.clearCookie("refreshToken")
             res.status(200).json({
                 message: "Успешный выход",
@@ -75,7 +75,7 @@ class UserController {
     async refresh(req: Request, res: Response, next: NextFunction) {
         try {
             const { refreshToken } = req.cookies
-            const userData = await userService.refresh(refreshToken)
+            const userData = await authService.refresh(refreshToken)
             res.cookie("refreshToken", userData.refreshToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
                 httpOnly: true,
@@ -85,24 +85,6 @@ class UserController {
             next(e)
         }
     }
-
-    async getUsers(req: Request, res: Response, next: NextFunction) {
-        try {
-            const users = await userService.getAllUsers()
-            res.json(users)
-        } catch (e) {
-            next(e)
-        }
-    }
-    async updatePassword(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { email, oldPassword, newPassword } = req.body
-            await userService.updatePassword(email, oldPassword, newPassword)
-            res.json({ message: "Пароль успешно обновлен" })
-        } catch (e) {
-            next(e)
-        }
-    }
 }
 
-export default new UserController()
+export default new AuthController()

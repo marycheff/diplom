@@ -14,10 +14,12 @@ model User {
   password       String  @db.VarChar(255)
   activated      Boolean @default(false)
   activationLink String? // Поле может быть NULL
-  token Token?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  resetCode      String? // Поле для хранения кода сброса пароля (может быть NULL)
+  token          Token?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
+
 
 model Token {
   id           String   @id @default(cuid())

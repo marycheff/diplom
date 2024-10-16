@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { Tabs, Tab, Box } from "@mui/material"
 import LoginForm from "../components/LoginForm"
 import RegistrationForm from "../components/RegistrationForm"
+//import ResetPasswordForm from "../components/ResetPasswordForm"
 
 const LoginPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState(0)
@@ -22,6 +23,8 @@ const LoginPage: React.FC = () => {
                 {activeTab === 0 && <LoginForm />}
                 {activeTab === 1 && <RegistrationForm />}
             </Box>
+
+            {/* <ResetPasswordForm /> */}
         </div>
     )
 }
