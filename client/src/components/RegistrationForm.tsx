@@ -25,6 +25,10 @@ const RegistrationForm: FC = () => {
             <button onClick={() => store.registration(email, password)}>
                 Регистрация
             </button>
+
+
+
+            
         </div>
     );
 };
