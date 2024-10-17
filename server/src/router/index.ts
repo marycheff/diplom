@@ -38,6 +38,12 @@ router.post(
     validateRequest,
     passwordResetController.resetPassword
 )
+router.post(
+    "/verify-reset-code",
+    [body("code").notEmpty().withMessage("Код сброса не может быть пустым")],
+    validateRequest,
+    passwordResetController.verifyResetCode
+)
 
 router.post(
     "/update-password",
