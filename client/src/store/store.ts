@@ -89,7 +89,7 @@ export default class Store {
     async requestResetCode(email: string) {
         try {
             const response = await axios.post(`${API_URL}/reset-password-request`, { email })
-            this.resetCodeTimestamp = Date.now() // Сохраняем время запроса кода сброса
+            this.resetCodeTimestamp = Date.now() 
             return response.data
         } catch (error: any) {
             console.error(error.response?.data?.message || "Ошибка при отправке кода сброса пароля")
@@ -103,11 +103,10 @@ export default class Store {
             return false
         }
         const currentTime = Date.now()
-        
 
         return (
             currentTime - this.resetCodeTimestamp <
-            Number(process.env.REACT_APP_RESET_PASSWORD_TIMEOUT_MINUTES || 5) * 60 * 1000
+            Number((import.meta as any).env.VITE_RESET_PASSWORD_TIMEOUT_MINUTES || 5) * 60 * 1000
         )
     }
 
@@ -115,7 +114,6 @@ export default class Store {
     async verifyResetCode(email: string, code: string) {
         if (!this.isResetCodeValid()) {
             throw new Error("Срок действия кода сброса истек. Пожалуйста, запросите новый код.")
-            
         }
         try {
             const response = await axios.post(`${API_URL}/verify-reset-code`, { email, code })

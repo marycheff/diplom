@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
-import React, { useContext, useState, useEffect } from "react"
-import { Context } from ".."
+import React, { useContext, useEffect, useState } from "react"
+import { Context } from "../main"
 
 const ResetPasswordForm: React.FC = () => {
     const [email, setEmail] = useState("")
@@ -12,7 +12,6 @@ const ResetPasswordForm: React.FC = () => {
     const [hasError, setHasError] = useState(false) // Состояние ошибки
     const [secondsLeft, setSecondsLeft] = useState(0) // Таймер для блокировки кнопки повторной отправки
     const { store } = useContext(Context)
-
 
     // Таймер
     useEffect(() => {
@@ -29,7 +28,7 @@ const ResetPasswordForm: React.FC = () => {
             await store.requestResetCode(email)
             setIsCodeSent(true)
             setHasError(false)
-            setSecondsLeft(60) // Запуск таймера на 1 минуту 
+            setSecondsLeft(60) // Запуск таймера на 1 минуту
             console.log("Код отправлен на ваш email")
         } catch (error) {
             console.log("Ошибка при отправке кода")
@@ -48,9 +47,9 @@ const ResetPasswordForm: React.FC = () => {
             console.log("Код подтвержден, введите новый пароль")
         } catch (error: any) {
             console.log(error.response?.data?.message || "Ошибка при подтверждении кода сброса пароля")
-            setIsCodeSent(false) // Вернёмся к отправке email
+           // setHasError(true) // Устанавливаем флаг ошибки
+           //setIsCodeSent(false)
             setIsCodeVerified(false)
-            setHasError(true)
         } finally {
             setIsLoading(false)
         }

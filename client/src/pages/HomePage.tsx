@@ -1,9 +1,9 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { Context } from ".."
-import UserService from "../services/UserService"
-import { IUser } from "../models/IUser"
 import UpdatePasswordForm from "../components/UpdatePasswordForm"
+import { Context } from "../main"
+import { IUser } from "../models/IUser"
+import UserService from "../services/UserService"
 
 const HomePage = () => {
     const handleClick = () => {
@@ -35,6 +35,6 @@ const HomePage = () => {
             <UpdatePasswordForm />
         </div>
     )
-};
+}
 
-export default HomePage;
+export default HomePage

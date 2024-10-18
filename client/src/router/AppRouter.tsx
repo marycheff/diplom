@@ -1,10 +1,10 @@
+import { observer } from "mobx-react-lite"
 import React, { useContext, useEffect, useState } from "react"
-import { Routes, Route, Navigate } from "react-router-dom"
-import { Context } from "../index"
+import { Navigate, Route, Routes } from "react-router-dom"
+import { Context } from "../main"
 import HomePage from "../pages/HomePage"
 import LoginPage from "../pages/LoginPage"
 import TestPage from "../pages/TestPage"
-import { observer } from "mobx-react-lite"
 
 const AppRouter: React.FC = () => {
     const { store } = useContext(Context)
