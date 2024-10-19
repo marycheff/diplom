@@ -17,9 +17,9 @@ class UserService {
         return isPassEquals
     }
 
-    async getAllUsers(): Promise<User[]> {
+    async getUsers(): Promise<UserDto[]> {
         const users = await prisma.user.findMany()
-        return users
+        return users.map(user => new UserDto(user))
     }
 
     async updatePassword(email: string, oldPassword: string, newPassword: string): Promise<User> {

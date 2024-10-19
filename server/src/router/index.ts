@@ -3,7 +3,7 @@ import passwordResetController from "@modules/user/controllers/password-reset-co
 import userController from "@modules/user/controllers/user-controller"
 import { Router } from "express"
 import { body } from "express-validator"
-import { authMiddleware } from "../middleware/auth-middleware"
+import { adminMiddleware, authMiddleware } from "../middleware/auth-middleware"
 import validateRequest from "../middleware/validate-request"
 import authController from "../modules/auth/controllers/auth-controller"
 
@@ -68,7 +68,7 @@ router.post(
 router.post("/logout", authController.logout)
 router.get("/activate/:link", authController.activate)
 router.get("/refresh", authController.refresh)
-router.get("/users", authMiddleware, userController.getUsers)
+router.get("/users", authMiddleware, adminMiddleware, userController.getUsers)
 router.post("/generate-answers", chatController.generateAnswers)
 
 export default router

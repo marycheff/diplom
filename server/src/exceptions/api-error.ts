@@ -13,5 +13,8 @@ class ApiError extends Error {
     static BadRequest(message: string, errors: any[] = []) {
         return new ApiError(400, message, errors)
     }
+    static Forbidden() {
+        return new ApiError(403, "Недостаточно прав")
+    }
 }
 export default ApiError

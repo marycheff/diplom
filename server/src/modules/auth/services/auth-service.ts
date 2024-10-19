@@ -24,11 +24,13 @@ class AuthService {
         const hashedPassword = await bcrypt.hash(user.password, 10)
         const activationLink = uuid_v4() // Используем правильно импортированную функцию
 
+        const defaultRole = "USER"
         const newUser = await prisma.user.create({
             data: {
                 ...user, // Распаковываем остальные поля из user
                 password: hashedPassword, // Используем захешированный пароль
                 activationLink: activationLink,
+                role: defaultRole,
             },
         })
         await mailService.sendActivationMail(user.email, `${process.env.API_URL}/api/activate/${activationLink}`)

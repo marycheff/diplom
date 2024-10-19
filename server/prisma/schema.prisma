@@ -9,15 +9,21 @@ datasource db {
 
 // Не забыть про миграцию при созданни модели
 model User {
-  id             String  @id @default(cuid())
-  email          String  @unique @db.VarChar(255)
-  password       String  @db.VarChar(255)
-  activated      Boolean @default(false)
-  activationLink String? // Поле может быть NULL
-  resetCode      String? // Поле для хранения кода сброса пароля (может быть NULL)
+  id             String   @id @default(cuid())
+  email          String   @unique @db.VarChar(255)
+  password       String   @db.VarChar(255)
+  activated      Boolean  @default(false)
+  activationLink String?  // Поле может быть NULL
+  resetCode      String?  // Поле для хранения кода сброса пароля (может быть NULL)
   token          Token?
+  role           Role     @default(USER) // Основная роль (User или Admin)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 

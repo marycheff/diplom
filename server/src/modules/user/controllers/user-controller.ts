@@ -4,7 +4,7 @@ import userService from "../services/user-service"
 class UserController {
     async getUsers(req: Request, res: Response, next: NextFunction) {
         try {
-            const users = await userService.getAllUsers()
+            const users = await userService.getUsers()
             res.json(users)
         } catch (e) {
             next(e)
