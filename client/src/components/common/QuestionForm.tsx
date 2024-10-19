@@ -1,8 +1,8 @@
 // QuestionForm.tsx
 import React from "react"
-import MyInput from "./UI/input/MyInput"
-import MySelect from "./UI/select/MySelect"
-import MyButton from "./UI/button/MyButton"
+import MyButton from "../UI/button/MyButton"
+import MyInput from "../UI/input/MyInput"
+import MySelect from "../UI/select/MySelect"
 
 type QuestionFormProps = {
     register: any

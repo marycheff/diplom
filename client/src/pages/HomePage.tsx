@@ -1,6 +1,6 @@
 import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import UpdatePasswordForm from "../components/UpdatePasswordForm"
+import UpdatePasswordForm from "../containers/UpdatePasswordForm"
 import { Context } from "../main"
 import { IUser } from "../models/IUser"
 import UserService from "../services/UserService"

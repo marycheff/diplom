@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 import { Context } from "../main"
 import HomePage from "../pages/HomePage"
-import LoginPage from "../pages/LoginPage"
+import LoginAndRegisterPage from "../pages/LoginAndRegisterPage"
 import TestPage from "../pages/TestPage"
 
 const AppRouter: React.FC = () => {
@@ -35,7 +35,7 @@ const AppRouter: React.FC = () => {
                 </>
             ) : (
                 <>
-                    <Route path='/login' element={<LoginPage />} />
+                    <Route path='/login' element={<LoginAndRegisterPage />} />
                     <Route path='*' element={<Navigate to='/login' />} />
                 </>
             )}

@@ -1,10 +1,10 @@
 import { Box, Tab, Tabs } from "@mui/material"
 import React, { useState } from "react"
-import LoginForm from "../components/LoginForm"
-import RegistrationForm from "../components/RegistrationForm"
-import ResetPasswordForm from "../components/ResetPasswordForm"
+import LoginForm from "../containers/LoginForm"
+import RegistrationForm from "../containers/RegistrationForm"
+import ResetPasswordForm from "../containers/ResetPasswordForm"
 
-const LoginPage: React.FC = () => {
+const LoginAndRegisterPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState(0)
     const [isResetPasswordVisible, setIsResetPasswordVisible] = useState(false)
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -47,4 +47,4 @@ const LoginPage: React.FC = () => {
     )
 }
 
-export default LoginPage
+export default LoginAndRegisterPage

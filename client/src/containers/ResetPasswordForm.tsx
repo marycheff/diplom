@@ -47,8 +47,8 @@ const ResetPasswordForm: React.FC = () => {
             console.log("Код подтвержден, введите новый пароль")
         } catch (error: any) {
             console.log(error.response?.data?.message || "Ошибка при подтверждении кода сброса пароля")
-           // setHasError(true) // Устанавливаем флаг ошибки
-           //setIsCodeSent(false)
+            // setHasError(true) // Устанавливаем флаг ошибки
+            //setIsCodeSent(false)
             setIsCodeVerified(false)
         } finally {
             setIsLoading(false)
