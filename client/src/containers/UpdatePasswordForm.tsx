@@ -1,5 +1,6 @@
 import { FC, useContext, useState } from "react"
 import { Context } from "../main"
+import { observer } from "mobx-react-lite"
 
 const UpdatePasswordForm: FC = () => {
     const [oldPassword, setOldPassword] = useState<string>("")
@@ -28,4 +29,4 @@ const UpdatePasswordForm: FC = () => {
     )
 }
 
-export default UpdatePasswordForm
+export default observer(UpdatePasswordForm)

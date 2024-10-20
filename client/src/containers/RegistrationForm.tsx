@@ -9,7 +9,6 @@ const RegistrationForm: FC = () => {
 
     return (
         <div>
-            {(import.meta as any).env.VITE_RESET_PASSWORD_TIMEOUT_MINUTES || 5}
             <input onChange={e => setEmail(e.target.value)} value={email} type='text' placeholder='Email' />
             <input onChange={e => setPassword(e.target.value)} value={password} type='password' placeholder='Пароль' />
 

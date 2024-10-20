@@ -10,6 +10,7 @@ export default class Store {
     user = {} as IUser
     isAuth = false
     isLoading = false
+    isAdmin = false
 
     private resetCodeTimestamp: number | null = null
 
@@ -27,6 +28,9 @@ export default class Store {
 
     setLoading(bool: boolean) {
         this.isLoading = bool
+    }
+    setIsAdmin(bool: boolean) {
+        this.isAdmin = bool
     }
 
     async login(email: string, password: string) {
@@ -71,6 +75,7 @@ export default class Store {
             this.setAuth(true)
             localStorage.setItem("token", response.data.accessToken)
             this.setUser(response.data.user)
+            this.setIsAdmin(response.data.user.role === "ADMIN")
         } catch (e: any) {
             console.log(e.response?.data?.message)
         } finally {
@@ -89,7 +94,7 @@ export default class Store {
     async requestResetCode(email: string) {
         try {
             const response = await axios.post(`${API_URL}/reset-password-request`, { email })
-            this.resetCodeTimestamp = Date.now() 
+            this.resetCodeTimestamp = Date.now()
             return response.data
         } catch (error: any) {
             console.error(error.response?.data?.message || "Ошибка при отправке кода сброса пароля")
@@ -136,6 +141,14 @@ export default class Store {
         } catch (error: any) {
             console.error(error.response?.data?.message || "Ошибка при сбросе пароля")
             throw error
+        }
+    }
+    async getUsers() {
+        try {
+            const response = await UserService.getUsers()
+            return response.data
+        } catch (e: any) {
+            console.log(e.response?.data?.message)
         }
     }
 }
