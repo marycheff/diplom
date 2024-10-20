@@ -5,6 +5,7 @@ import { Context } from "../main"
 import HomePage from "../pages/HomePage"
 import LoginAndRegisterPage from "../pages/LoginAndRegisterPage"
 import TestPage from "../pages/TestPage"
+import AdminPage from "../pages/AdminPage"
 
 const AppRouter: React.FC = () => {
     const { store } = useContext(Context)
@@ -32,6 +33,7 @@ const AppRouter: React.FC = () => {
                     <Route path='/home' element={<HomePage />} />
                     <Route path='/test' element={<TestPage />} />
                     <Route path='*' element={<Navigate to='/home' />} />
+                    {store.isAdmin && <Route path='/admin' element={<AdminPage />} />}
                 </>
             ) : (
                 <>
