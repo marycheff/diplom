@@ -69,6 +69,7 @@ router.post("/logout", authController.logout)
 router.get("/activate/:link", authController.activate)
 router.get("/refresh", authController.refresh)
 router.get("/users", authMiddleware, adminMiddleware, userController.getUsers)
+router.get("/user/:id", authMiddleware, userController.getUserById)
 router.post("/generate-answers", chatController.generateAnswers)
 
 export default router

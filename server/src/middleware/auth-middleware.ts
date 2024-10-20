@@ -29,8 +29,6 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
 export function adminMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
         const user = (req as any).user
-        console.log(user);
-        
         if (user.role !== "ADMIN") {
             return next(ApiError.Forbidden())
         }

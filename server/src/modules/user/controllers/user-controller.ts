@@ -1,3 +1,4 @@
+import ApiError from "@exceptions/api-error"
 import { NextFunction, Request, Response } from "express"
 import userService from "../services/user-service"
 
@@ -29,6 +30,22 @@ class UserController {
         }
     }
 
+    async getUserById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params
+            const userIdFromToken = (req as any).user.id // Получаем ID текущего пользователя из токена
+
+            // Если пользователь не администратор и не запрашивает свою собственную информацию
+            if (id !== userIdFromToken && (req as any).user.role !== "ADMIN") {
+                return next(ApiError.Forbidden()) 
+            }
+
+            const user = await userService.getUserById(id)
+            res.json(user)
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 export default new UserController()

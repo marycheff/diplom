@@ -49,6 +49,14 @@ class UserService {
         const userDto = new UserDto(user)
         return userDto
     }
+    async getUserById(id: string): Promise<UserDto> {
+        const user = await prisma.user.findUnique({ where: { id } })
+        if (!user) {
+            throw ApiError.BadRequest(`Пользователь с id ${id} не найден`)
+        }
+        const userDto = new UserDto(user)
+        return userDto
+    }
 }
 
 export default new UserService()
