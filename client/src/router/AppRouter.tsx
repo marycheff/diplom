@@ -2,10 +2,11 @@ import { observer } from "mobx-react-lite"
 import React, { useContext, useEffect, useState } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 import { Context } from "../main"
+import AdminPage from "../pages/AdminPage"
 import HomePage from "../pages/HomePage"
 import LoginAndRegisterPage from "../pages/LoginAndRegisterPage"
 import TestPage from "../pages/TestPage"
-import AdminPage from "../pages/AdminPage"
+import UserProfilePage from "../pages/UserProfilePage"
 
 const AppRouter: React.FC = () => {
     const { store } = useContext(Context)
@@ -16,6 +17,7 @@ const AppRouter: React.FC = () => {
             if (localStorage.getItem("token")) {
                 await store.checkAuth() // Ждем завершения checkAuth
             }
+    
             setAuthChecked(true) // Помечаем, что проверка завершена
         }
         checkAuth()
@@ -32,6 +34,7 @@ const AppRouter: React.FC = () => {
                 <>
                     <Route path='/home' element={<HomePage />} />
                     <Route path='/test' element={<TestPage />} />
+                    <Route path='/profile' element={<UserProfilePage />} />
                     <Route path='*' element={<Navigate to='/home' />} />
                     {store.isAdmin && <Route path='/admin' element={<AdminPage />} />}
                 </>

@@ -14,5 +14,9 @@ export default class UserService {
     ): Promise<AxiosResponse<AuthResponse>> {
         return $api.post<AuthResponse>("/update-password", { email, oldPassword, newPassword })
     }
+
+    static getUserById(id: string): Promise<AxiosResponse<IUser>> {
+        return $api.get<IUser>(`/user/${id}`)
+    }
 }
 

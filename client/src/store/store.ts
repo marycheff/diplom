@@ -36,7 +36,6 @@ export default class Store {
     async login(email: string, password: string) {
         try {
             const response = await AuthService.login(email, password)
-            console.log(response)
             localStorage.setItem("token", response.data.accessToken)
             this.setAuth(true)
             this.setUser(response.data.user)
@@ -48,7 +47,6 @@ export default class Store {
     async registration(email: string, password: string) {
         try {
             const response = await AuthService.registration(email, password)
-            console.log(response)
             localStorage.setItem("token", response.data.accessToken)
             this.setAuth(true)
             this.setUser(response.data.user)
@@ -77,11 +75,24 @@ export default class Store {
             this.setUser(response.data.user)
             this.setIsAdmin(response.data.user.role === "ADMIN")
         } catch (e: any) {
-            console.log(e.response?.data?.message)
+            console.log(e.response?.data?.message || e.message)
         } finally {
             this.setLoading(false)
         }
     }
+    async noLoadingCheckAuth() {
+        try {
+            const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
+            this.setAuth(true)
+            localStorage.setItem("token", response.data.accessToken)
+            this.setUser(response.data.user)
+            this.setIsAdmin(response.data.user.role === "ADMIN")
+        } catch (e: any) {
+            console.log(e.response?.data?.message || e.message)
+        } finally {
+        }
+    }
+
     async updatePassword(email: string, oldPassword: string, newPassword: string) {
         try {
             await UserService.updatePassword(email, oldPassword, newPassword)
@@ -145,7 +156,18 @@ export default class Store {
     }
     async getUsers() {
         try {
+            // await this.checkAuth()
+            await this.noLoadingCheckAuth()
             const response = await UserService.getUsers()
+            return response.data
+        } catch (e: any) {
+            console.log(e.response?.data?.message)
+        }
+    }
+    async getUserById(id: string) {
+        try {
+            await this.noLoadingCheckAuth()
+            const response = await UserService.getUserById(id)
             return response.data
         } catch (e: any) {
             console.log(e.response?.data?.message)

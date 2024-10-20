@@ -5,21 +5,18 @@ import UpdatePasswordForm from "../containers/UpdatePasswordForm"
 import { Context } from "../main"
 
 const HomePage = () => {
-    const handleClick = () => {
-        navigate("/test")
-    }
     const navigate = useNavigate()
     const { store } = useContext(Context)
 
     return (
         <div>
-            <h1>{store.isAuth ? `Пользователь ${store.user.email} авторизован` : "Авторизуйтесь"}</h1>
             <h1>{store.user.activated ? "Аккаунт активирован" : "Аккаунт Не активирован!!!"}</h1>
             <button onClick={() => store.logout()}>Выйти</button>
 
             {store.isAdmin && <button onClick={() => navigate("/admin")}>Админ панель</button>}
 
-            <button onClick={handleClick}>TEST</button>
+            <button onClick={() => navigate("/profile")}>Профиль</button>
+            <button onClick={() => navigate("/test")}>TEST</button>
             <UpdatePasswordForm />
         </div>
     )
