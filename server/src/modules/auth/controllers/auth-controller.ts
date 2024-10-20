@@ -1,6 +1,6 @@
+import { NextFunction, Request, Response } from "express"
+import { validationResult } from "express-validator"
 import ApiError from "../../../exceptions/api-error"
-import {NextFunction, Request, Response} from "express"
-import {validationResult} from "express-validator"
 import authService from "../services/auth-service"
 
 class AuthController {
@@ -14,6 +14,8 @@ class AuthController {
             res.cookie("refreshToken", userData.refreshToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
                 httpOnly: true,
+                sameSite: "none",
+                secure: true,
             })
             res.status(201).json({
                 message: "Пользователь успешно зарегистрирован",
@@ -48,6 +50,8 @@ class AuthController {
             res.cookie("refreshToken", userData.refreshToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
                 httpOnly: true,
+                sameSite: "none",
+                secure: true,
             })
             res.status(201).json({
                 message: "Успешный вход",
@@ -79,6 +83,8 @@ class AuthController {
             res.cookie("refreshToken", userData.refreshToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
                 httpOnly: true,
+                sameSite: "none",
+                secure: true,
             })
             res.json(userData)
         } catch (e) {
