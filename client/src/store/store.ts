@@ -164,13 +164,14 @@ export default class Store {
             console.log(e.response?.data?.message)
         }
     }
-    async getUserById(id: string) {
+    async getUserById(id: string): Promise<IUser> {
         try {
             await this.noLoadingCheckAuth()
             const response = await UserService.getUserById(id)
             return response.data
         } catch (e: any) {
             console.log(e.response?.data?.message)
+            throw new Error("Failed to get user by ID")
         }
     }
 }
