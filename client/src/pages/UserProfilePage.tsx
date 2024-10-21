@@ -21,7 +21,7 @@ const UserProfilePage = () => {
             setUser(userData)
             setEmail(userData.email)
             setFirstName(userData.firstName || "")
-            setLastName(userData.surname || "")
+            setLastName(userData.secondName || "")
             setMiddleName(userData.patronymic || "")
         } catch (e: any) {
             console.log(e.response?.data?.message)

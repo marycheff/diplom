@@ -11,10 +11,13 @@ datasource db {
 model User {
   id             String   @id @default(cuid())
   email          String   @unique @db.VarChar(255)
+  firstName      String?
+  secondName     String?
+  patronymic     String?
   password       String   @db.VarChar(255)
   activated      Boolean  @default(false)
-  activationLink String?  // Поле может быть NULL
-  resetCode      String?  // Поле для хранения кода сброса пароля (может быть NULL)
+  activationLink String? // Поле может быть NULL
+  resetCode      String? // Поле для хранения кода сброса пароля (может быть NULL)
   token          Token?
   role           Role     @default(USER) // Основная роль (User или Admin)
   createdAt      DateTime @default(now())
@@ -25,7 +28,6 @@ enum Role {
   USER
   ADMIN
 }
-
 
 model Token {
   id           String   @id @default(cuid())
