@@ -1,4 +1,4 @@
-import UserDto from "@dtos/user-dto"
+import { mapUserToDto, UserDto } from "@dtos/user-dto"
 import ApiError from "@exceptions/api-error"
 import { PrismaClient, Token } from "@prisma/client"
 import mailService from "@services/mail/mail-service"
@@ -36,7 +36,7 @@ class AuthService {
 
         await mailService.sendActivationMail(user.email, `${process.env.API_URL}/api/activate/${activationLink}`)
 
-        const userDto = new UserDto(newUser)
+        const userDto = mapUserToDto(newUser)
 
         // Генерация и сохранение токенов
         const tokens = tokenService.generateTokens({
@@ -110,7 +110,7 @@ class AuthService {
         if (!isPassEquals) {
             throw ApiError.BadRequest("Неверный пароль")
         }
-        const userDto = new UserDto(user)
+        const userDto = mapUserToDto(user)
 
         const tokens = tokenService.generateTokens({
             ...userDto,
@@ -148,7 +148,7 @@ class AuthService {
             throw ApiError.UnauthorizedError()
         }
 
-        const userDto = new UserDto(user)
+        const userDto = mapUserToDto(user)
 
         // Генерация и сохранение токенов
         const tokens = tokenService.generateTokens({

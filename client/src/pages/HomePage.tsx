@@ -16,10 +16,11 @@ const HomePage = () => {
             {store.isAdmin && <button onClick={() => navigate("/admin")}>Админ панель</button>}
 
             <button onClick={() => navigate("/profile")}>Профиль</button>
-            <button onClick={() => navigate("/test")}>TEST</button>
+            <button onClick={() => navigate("/test")}>Тест</button>
             
         </div>
     )
 }
 
 export default observer(HomePage)
+

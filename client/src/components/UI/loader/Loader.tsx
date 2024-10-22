@@ -1,10 +1,14 @@
 import React from "react"
 import "./Loader.css" // Импортируем CSS файл
 
-const Loader: React.FC = () => {
+interface LoaderProps {
+    text?: string // Необязательный пропс
+}
+
+const Loader: React.FC<LoaderProps> = ({ text = "Загрузка..." }) => {
     return (
         <div className='loader-overlay'>
-            <div className='loader'>Загрузка...</div>
+            <div className='loader'>{text}</div>
         </div>
     )
 }

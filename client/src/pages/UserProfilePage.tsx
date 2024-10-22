@@ -2,10 +2,10 @@ import { observer } from "mobx-react-lite"
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import EditableField from "../components/UI/input/EditableField"
+import Loader from "../components/UI/loader/Loader"
 import UpdatePasswordForm from "../containers/UpdatePasswordForm"
 import { Context } from "../main"
 import { IUser } from "../models/IUser"
-
 const UserProfilePage = () => {
     const { store } = useContext(Context)
     const navigate = useNavigate()
@@ -16,7 +16,6 @@ const UserProfilePage = () => {
     const [middleName, setMiddleName] = useState("")
     const [showModal, setShowModal] = useState(false) // состояние для модального окна
     const [isSending, setIsSending] = useState(false)
-
     async function getUserInfo() {
         try {
             const userData = await store.getUserById(store.user.id)
@@ -40,6 +39,7 @@ const UserProfilePage = () => {
             setIsSending(false)
         }
     }
+
     const handleSaveClick = () => {
         setShowModal(true) // Показать модальное окно
         console.log("Данные будут обновлены")
@@ -49,64 +49,54 @@ const UserProfilePage = () => {
     }, [])
 
     return (
-        <div>
-            {store.isLoading || isSending ? (
-                <p>Загрузка...</p>
+        <div style={{ position: "relative" }}>
+            {store.isLoading ||
+                (isSending && (
+                    <Loader text='Отправляем письмо на почту' /> // Используем компонент Loader вместо текста
+                ))}
+            <button onClick={() => navigate(-1)}>Назад</button>
+            {user ? (
+                <div>
+                    <label>Электронная почта: {email}</label>
+                    <p>Почта активирована: {user.activated ? "Да" : "Нет"}</p>
+                    {!user.activated && (
+                        <button onClick={handleSendActivationLink}>
+                            {isSending ? "Отправка..." : "Отправить ссылку еще раз"}
+                        </button>
+                    )}
+                    <EditableField label='Имя' value={firstName} onChange={setFirstName} />
+                    <EditableField label='Фамилия' value={lastName} onChange={setLastName} />
+                    <EditableField label='Отчество' value={middleName} onChange={setMiddleName} />
+                    <button onClick={handleSaveClick}>Сохранить изменения</button>
+                    <UpdatePasswordForm />
+                </div>
             ) : (
-                <>
-                    <button onClick={() => navigate(-1)}>Назад</button>
-
-                    {user ? (
-                        <div>
-                            <EditableField label='Email' value={email} onChange={setEmail} />
-                            <span>Активирован: {user.activated ? "Да" : "Нет"}</span>
-                            {!user.activated && (
-                                <button onClick={handleSendActivationLink}>
-                                    {isSending ? "Отправка..." : "Отправить ссылку еще раз"}
-                                </button>
-                            )}
-                            <EditableField label='Имя' value={firstName} onChange={setFirstName} />
-                            <EditableField label='Фамилия' value={lastName} onChange={setLastName} />
-                            <EditableField label='Отчество' value={middleName} onChange={setMiddleName} />
-
-                            <button onClick={handleSaveClick}>Сохранить изменения</button>
-
-                            <UpdatePasswordForm />
-                        </div>
-                    ) : (
-                        <p>Загрузка...</p>
-                    )}
-
-                    {/* Модальное окно */}
-                    {showModal && (
-                        <div
-                            style={{
-                                position: "fixed",
-                                top: 0,
-                                left: 0,
-                                width: "100%",
-                                height: "100%",
-                                backgroundColor: "rgba(0, 0, 0, 0.5)",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}>
-                            <div
-                                style={{
-                                    backgroundColor: "#fff",
-                                }}>
-                                <h2>Письмо отправлено!</h2>
-                                <p>
-                                    Мы отправили письмо для активации на ваш email. Пожалуйста, проверьте почту. Эту
-                                    вкладку можно закрыть.
-                                </p>
-                            </div>
-                        </div>
-                    )}
-                </>
+                <Loader/>
+            )}
+            {/* Модальное окно */}
+            {showModal && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}>
+                    <div style={{ backgroundColor: "#fff" }}>
+                        <h2>Письмо отправлено!</h2>
+                        <p>
+                            Мы отправили письмо для активации на ваш email. Пожалуйста, проверьте почту. Эту вкладку
+                            можно закрыть.
+                        </p>
+                    </div>
+                </div>
             )}
         </div>
     )
 }
-
 export default observer(UserProfilePage)
