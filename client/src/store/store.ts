@@ -169,9 +169,22 @@ export default class Store {
             await this.noLoadingCheckAuth()
             const response = await UserService.getUserById(id)
             return response.data
-        } catch (e: any) {
-            console.log(e.response?.data?.message)
-            throw new Error("Failed to get user by ID")
+        } catch (error: any) {
+            console.log(error.response?.data?.message)
+            throw error
+        }
+    }
+
+    async updateActivationLink(email: string) {
+        try {
+            // this.setLoading(true)
+            const response = await AuthService.updateActivationLink(email)
+            return response.data
+        } catch (error: any) {
+            console.error(error.response?.data?.message || "Ошибка при отправке ссылки активации")
+            throw error
+        } finally {
+            // this.setLoading(false)
         }
     }
 }

@@ -17,7 +17,7 @@ const HomePage = () => {
 
             <button onClick={() => navigate("/profile")}>Профиль</button>
             <button onClick={() => navigate("/test")}>TEST</button>
-            <UpdatePasswordForm />
+            
         </div>
     )
 }

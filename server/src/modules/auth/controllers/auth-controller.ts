@@ -47,8 +47,12 @@ class AuthController {
             if (!process.env.CLIENT_URL) {
                 throw new Error("CLIENT_URL environment variable is not set")
             }
-            return res.redirect(process.env.CLIENT_URL)
+
+            return res.redirect(`${process.env.CLIENT_URL}/activation-success`)
         } catch (e: any) {
+            if (e.message === "Некорректная ссылка активации") {
+                return res.redirect(`${process.env.CLIENT_URL}/activation-error`)
+            }
             next(e)
         }
     }

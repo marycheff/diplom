@@ -23,19 +23,16 @@ router.post(
     userController.updatePassword
 )
 router.post(
-    "/update-activation-link",
+    "/send-update-activation-link",
+    authMiddleware,
     [body("email").isEmail().withMessage("Некорректный email")],
     validateRequest,
-    authMiddleware,
     authController.updateActivationLink
 )
 router.post("/generate-answers", authMiddleware, chatController.generateAnswers)
 router.post("/logout", authMiddleware, authController.logout)
 
-
-
-
-// остальные 
+// остальные
 router.post(
     "/login",
     [

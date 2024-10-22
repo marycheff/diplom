@@ -2,13 +2,11 @@ import { Request, Response } from "express"
 import { getChatContent } from "../services/chat-service"
 import { getAccessToken } from "../services/token-service"
 
-
 // Функция для парсинга ответов
 function parseAnswers(response: string): string[] {
-    const regex = /\d+\.\s*([^0-9.]+)/g
+    const regex = /^\d+\.\s*(.+)$/gm // Изменено регулярное выражение для захвата текста
     const answers: string[] = []
     let match
-
     while ((match = regex.exec(response)) !== null) {
         answers.push(match[1].trim())
     }
