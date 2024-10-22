@@ -14,24 +14,25 @@ const EditableField: React.FC<EditableFieldProps> = ({ label, value, onChange, p
         setIsEditing(true)
     }
 
+    const handleSaveClick = () => {
+        setIsEditing(false) // Делаем поле disabled после сохранения
+    }
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onChange(e.target.value)
     }
 
     return (
-        <div style={{ marginBottom: "1rem" }}>
+        <div>
             <label>{label}</label>
             <input
                 type='text'
                 value={value}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                placeholder={placeholder || "<Пусто>"} 
-                style={{ marginLeft: "1rem", padding: "0.5rem" }}
+                placeholder={placeholder || "<Пусто>"}
             />
-            <button onClick={handleEditClick} style={{ marginLeft: "1rem", padding: "0.5rem" }}>
-                Редактировать
-            </button>
+            {!isEditing ? <button onClick={handleEditClick}>✎</button> : <button onClick={handleSaveClick}>✔</button>}
         </div>
     )
 }

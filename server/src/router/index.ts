@@ -9,7 +9,48 @@ import authController from "../modules/auth/controllers/auth-controller"
 
 const router = Router()
 
-// Регистрация с валидацией
+// adminMiddleware
+router.get("/users", authMiddleware, adminMiddleware, userController.getUsers)
+
+// authMiddleware
+router.get("/user/:id", authMiddleware, userController.getUserById)
+router.post(
+    "/update-password",
+    authMiddleware,
+    body("email").isEmail().withMessage("Некорректный email"),
+    [body("newPassword").isLength({ min: 3 }).withMessage("Новый пароль должен содержать не менее 3 символов")],
+    validateRequest,
+    userController.updatePassword
+)
+router.post(
+    "/update-activation-link",
+    [body("email").isEmail().withMessage("Некорректный email")],
+    validateRequest,
+    authMiddleware,
+    authController.updateActivationLink
+)
+router.post("/generate-answers", authMiddleware, chatController.generateAnswers)
+router.post("/logout", authMiddleware, authController.logout)
+
+
+
+
+// остальные 
+router.post(
+    "/login",
+    [
+        /* 
+    пока убрал из-за email 1 pass 1
+    body("email").isEmail().withMessage("Некорректный email"),
+    */
+    ],
+    validateRequest,
+    authController.login
+)
+
+router.get("/activate/:link", authController.activate)
+router.get("/refresh", authController.refresh)
+
 router.post(
     "/registration",
     [
@@ -20,7 +61,6 @@ router.post(
     authController.registration
 )
 
-// Сброс пароля - запрос кода
 router.post(
     "/reset-password-request",
     [body("email").isEmail().withMessage("Некорректный email")],
@@ -28,7 +68,6 @@ router.post(
     passwordResetController.requestReset
 )
 
-// Сброс пароля - обновление пароля
 router.post(
     "/reset-password",
     [
@@ -44,32 +83,5 @@ router.post(
     validateRequest,
     passwordResetController.verifyResetCode
 )
-
-router.post(
-    "/update-password",
-    authMiddleware,
-    body("email").isEmail().withMessage("Некорректный email"),
-    [body("newPassword").isLength({ min: 3 }).withMessage("Новый пароль должен содержать не менее 3 символов")],
-    validateRequest,
-    userController.updatePassword
-)
-
-router.post(
-    "/login",
-    [
-        /* 
-    пока убрал из-за email 1 pass 1
-    body("email").isEmail().withMessage("Некорректный email"),
-    */
-    ],
-    validateRequest,
-    authController.login
-)
-router.post("/logout", authController.logout)
-router.get("/activate/:link", authController.activate)
-router.get("/refresh", authController.refresh)
-router.get("/users", authMiddleware, adminMiddleware, userController.getUsers)
-router.get("/user/:id", authMiddleware, userController.getUserById)
-router.post("/generate-answers", chatController.generateAnswers)
 
 export default router

@@ -1,11 +1,11 @@
-import { PrismaClient, Token } from "@prisma/client"
 import UserDto from "@dtos/user-dto"
 import ApiError from "@exceptions/api-error"
+import { PrismaClient, Token } from "@prisma/client"
 import mailService from "@services/mail/mail-service"
-import { ICreateUser } from "types/user.types"
-import tokenService from "./token-service"
 import bcrypt from "bcrypt"
-import { v4 as uuid_v4 } from "uuid" 
+import { ICreateUser } from "types/user.types"
+import { v4 as uuid_v4 } from "uuid"
+import tokenService from "./token-service"
 
 const prisma = new PrismaClient()
 
@@ -33,6 +33,7 @@ class AuthService {
                 role: defaultRole,
             },
         })
+
         await mailService.sendActivationMail(user.email, `${process.env.API_URL}/api/activate/${activationLink}`)
 
         const userDto = new UserDto(newUser)
@@ -47,6 +48,33 @@ class AuthService {
 
         return { ...tokens, user: userDto }
     }
+
+    async updateActivationLink(email: string): Promise<void> {
+        const activationLink = uuid_v4()
+        const user = await prisma.user.findUnique({
+            where: {
+                email: email,
+            },
+        })
+
+        if (!user) {
+            throw ApiError.BadRequest(`Пользователь c email ${email} не найден`)
+        }
+        if (user.activated) {
+            throw ApiError.BadRequest(`Аккаунт пользователя c email ${email} уже активирован`)
+        }
+
+        await prisma.user.update({
+            where: {
+                email,
+            },
+            data: {
+                activationLink,
+            },
+        })
+        await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`)
+    }
+
     async activate(activationLink: string): Promise<void> {
         const user = await prisma.user.findFirst({
             where: {

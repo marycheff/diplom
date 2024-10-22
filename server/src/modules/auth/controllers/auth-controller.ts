@@ -25,6 +25,20 @@ class AuthController {
             next(e)
         }
     }
+    async updateActivationLink(req: Request, res: Response, next: NextFunction) {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest("Ошибка при валидации", errors.array()))
+            }
+            const { email } = req.body
+            await authService.updateActivationLink(email)
+            res.json({ message: "Ссылка активации отправлена на почту" })
+        } catch (e: any) {
+            next(e)
+        }
+    }
+
     async activate(req: Request, res: Response, next: NextFunction) {
         try {
             const activationLink = req.params.link
