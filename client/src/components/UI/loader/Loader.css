@@ -1,0 +1,18 @@
+.loader-overlay {
+    position: fixed; /* Заставляет перекрывать весь экран */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.267); /* Прозрачный черный фон */
+    display: flex;
+    justify-content: center; /* Центрирует по горизонтали */
+    align-items: center; /* Центрирует по вертикали */
+    z-index: 9999; /* Убедитесь, что это выше других элементов */
+}
+
+.loader {
+    color: white; /* Цвет текста загрузки */
+    font-size: 24px; /* Размер шрифта */
+    /* Добавьте любые другие стили по желанию */
+}
