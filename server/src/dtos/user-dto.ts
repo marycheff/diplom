@@ -1,6 +1,6 @@
 import { User } from "@prisma/client"
 
-class UserDto {
+export interface UserDto {
     email: string
     id: string
     activated: boolean
@@ -8,14 +8,16 @@ class UserDto {
     firstName?: string | null
     secondName?: string | null
     patronymic?: string | null
-    constructor(user: User) {
-        this.email = user.email
-        this.id = user.id
-        this.activated = user.activated
-        this.role = user.role
-        this.firstName = user.firstName
-        this.secondName = user.secondName
-        this.patronymic = user.patronymic
+}
+
+export const mapUserToDto = (user: User): UserDto => {
+    return {
+        email: user.email,
+        id: user.id,
+        activated: user.activated,
+        role: user.role,
+        firstName: user.firstName,
+        secondName: user.secondName,
+        patronymic: user.patronymic,
     }
 }
-export default UserDto
