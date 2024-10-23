@@ -11,6 +11,10 @@ const router = Router()
 
 // adminMiddleware
 router.get("/users", authMiddleware, adminMiddleware, userController.getUsers)
+router.put("/users/:id", 
+    authMiddleware, 
+    adminMiddleware,
+     userController.updateUser)
 
 // authMiddleware
 router.get("/users/:id", authMiddleware, userController.getUserById)
@@ -80,6 +84,7 @@ router.post(
     validateRequest,
     passwordResetController.verifyResetCode
 )
-router.put("/users/:id", userController.updateUser)
+
+router.delete("/users/:id", userController.deleteUser)
 
 export default router

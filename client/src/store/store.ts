@@ -30,18 +30,23 @@ export default class Store {
     setLoading(bool: boolean) {
         this.isLoading = bool
     }
+
     setIsAdmin(bool: boolean) {
         this.isAdmin = bool
     }
 
     async login(email: string, password: string) {
         try {
+            this.setLoading(true)
             const response = await AuthService.login(email, password)
             localStorage.setItem("token", response.data.accessToken)
-            this.setAuth(true)
             this.setUser(response.data.user)
+            this.setIsAdmin(response.data.user.role === "ADMIN")
+            this.setAuth(true)
         } catch (e: any) {
             console.log(e.response?.data?.message)
+        } finally {
+            this.setLoading(false)
         }
     }
 
@@ -50,8 +55,8 @@ export default class Store {
             this.setLoading(true)
             const response = await AuthService.registration(email, password)
             localStorage.setItem("token", response.data.accessToken)
-            this.setAuth(true)
             this.setUser(response.data.user)
+            this.setAuth(true)
         } catch (e: any) {
             console.log(e.response?.data?.message)
         } finally {
@@ -63,8 +68,8 @@ export default class Store {
         try {
             await AuthService.logout()
             localStorage.removeItem("token")
-            this.setAuth(false)
             this.setUser({} as IUser)
+            this.setAuth(false)
         } catch (e: any) {
             console.log(e.response?.data?.message)
         }
@@ -74,10 +79,10 @@ export default class Store {
         this.setLoading(true)
         try {
             const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
-            this.setAuth(true)
-            localStorage.setItem("token", response.data.accessToken)
             this.setUser(response.data.user)
             this.setIsAdmin(response.data.user.role === "ADMIN")
+            localStorage.setItem("token", response.data.accessToken)
+            this.setAuth(true)
         } catch (e: any) {
             console.log(e.response?.data?.message || e.message)
         } finally {
@@ -87,10 +92,10 @@ export default class Store {
     async noLoadingCheckAuth() {
         try {
             const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
-            this.setAuth(true)
             localStorage.setItem("token", response.data.accessToken)
             this.setUser(response.data.user)
             this.setIsAdmin(response.data.user.role === "ADMIN")
+            this.setAuth(true)
         } catch (e: any) {
             console.log(e.response?.data?.message || e.message)
         } finally {
@@ -204,6 +209,16 @@ export default class Store {
             throw error
         } finally {
             this.setLoading(false)
+        }
+    }
+
+    async deleteUser(id: string) {
+        try {
+            await UserService.deleteUser(id)
+            console.log("Пользователь удален")
+        } catch (error: any) {
+            console.error(error.response?.data?.message || "Ошибка при удалении пользователя")
+            throw error
         }
     }
 }

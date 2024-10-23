@@ -7,7 +7,7 @@ import { createServer } from "http" // Импортируем http для соз
 import "module-alias/register"
 import { WebSocketServer } from "ws" // Импортируем WebSocketServer
 import { errorMiddleware } from "./middleware/error-middleware"
-import router from "./router/index"
+import router from "./router/router"
 
 dotenv.config()
 

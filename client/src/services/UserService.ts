@@ -1,8 +1,8 @@
-import $api from "../http";
-import {AxiosResponse} from 'axios';
-import {AuthResponse} from "../models/response/AuthResponse";
-import {IUser} from "../models/IUser";
+import { AxiosResponse } from "axios"
+import $api from "../http"
 import { IUpdateUser } from "../models/IUpdateUser"
+import { IUser } from "../models/IUser"
+import { AuthResponse } from "../models/response/AuthResponse"
 
 export default class UserService {
     static getUsers(): Promise<AxiosResponse<IUser[]>> {
@@ -22,5 +22,7 @@ export default class UserService {
     static updateUser(id: string, updateData: IUpdateUser): Promise<AxiosResponse<IUser>> {
         return $api.put<IUser>(`/users/${id}`, updateData) // Отправляем PUT запрос
     }
+    static deleteUser(id: string): Promise<AxiosResponse<IUser>> {
+        return $api.delete<IUser>(`/users/${id}`) // Отправляем DELETE запрос
+    }
 }
-

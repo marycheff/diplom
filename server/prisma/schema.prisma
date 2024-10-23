@@ -16,10 +16,11 @@ model User {
   patronymic     String?
   password       String   @db.VarChar(255)
   activated      Boolean  @default(false)
+  role           Role     @default(USER) // Основная роль (User или Admin)
   activationLink String? // Поле может быть NULL
   resetCode      String? // Поле для хранения кода сброса пароля (может быть NULL)
   token          Token?
-  role           Role     @default(USER) // Основная роль (User или Admin)
+  isBlocked      Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }

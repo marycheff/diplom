@@ -7,6 +7,25 @@ import ApiError from "../../../exceptions/api-error"
 const prisma = new PrismaClient()
 
 class UserService {
+    async getUserByEmail(email: string): Promise<UserDto> {
+        const user = await prisma.user.findUnique({ where: { email } })
+        if (!user) {
+            throw ApiError.BadRequest(`Пользователь c email ${email} не найден`)
+        }
+        return mapUserToDto(user)
+    }
+    async getUserById(id: string): Promise<UserDto> {
+        const user = await prisma.user.findUnique({ where: { id } })
+        if (!user) {
+            throw ApiError.BadRequest(`Пользователь с id ${id} не найден`)
+        }
+        return mapUserToDto(user)
+    }
+    async getUsers(): Promise<UserDto[]> {
+        const users = await prisma.user.findMany()
+        return users.map(mapUserToDto)
+    }
+
     private async checkPassword(email: string, password: string): Promise<boolean> {
         const user = await prisma.user.findUnique({
             where: { email },
@@ -18,10 +37,6 @@ class UserService {
         return isPassEquals
     }
 
-    async getUsers(): Promise<UserDto[]> {
-        const users = await prisma.user.findMany()
-        return users.map(mapUserToDto)
-    }
     async updatePassword(email: string, oldPassword: string, newPassword: string): Promise<User> {
         const isOldPasswordValid = await this.checkPassword(email, oldPassword)
         if (!isOldPasswordValid) {
@@ -41,33 +56,9 @@ class UserService {
 
         return updatedUser
     }
-    async getUserByEmail(email: string): Promise<UserDto> {
-        const user = await prisma.user.findUnique({ where: { email } })
-        if (!user) {
-            throw ApiError.BadRequest(`Пользователь c email ${email} не найден`)
-        }
-        return mapUserToDto(user)
-    }
-    async getUserById(id: string): Promise<UserDto> {
-        const user = await prisma.user.findUnique({ where: { id } })
-        if (!user) {
-            throw ApiError.BadRequest(`Пользователь с id ${id} не найден`)
-        }
-        return mapUserToDto(user)
-    }
 
     async updateUser(id: string, updateData: UpdateUserDto): Promise<void> {
         try {
-            const user = await prisma.user.findUnique({
-                where: {
-                    id: id,
-                },
-            })
-
-            if (!user) {
-                throw ApiError.BadRequest("Пользователь не найден")
-            }
-
             // Проверяем, что хотя бы одно поле передано для обновления
             if (!updateData.firstName && !updateData.secondName && !updateData.patronymic) {
                 throw ApiError.BadRequest("Нет данных для обновления")
@@ -83,6 +74,18 @@ class UserService {
             })
         } catch (error) {
             throw ApiError.BadRequest("Ошибка при обновлении данных пользователя")
+        }
+    }
+
+    async deleteUser(id: string) {
+        try {
+            await prisma.user.delete({
+                where: {
+                    id: id,
+                },
+            })
+        } catch (error: any) {
+            throw ApiError.BadRequest("Ошибка при удалении пользователя")
         }
     }
 }

@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite"
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import EditableField from "../components/UI/input/EditableField"
@@ -6,7 +7,7 @@ import UpdatePasswordForm from "../containers/UpdatePasswordForm"
 import { Context } from "../main"
 
 type UserFields = {
-    [key: string]: string | boolean | undefined 
+    [key: string]: string | boolean | undefined
 }
 const fieldLabels: { [key: string]: string } = {
     firstName: "Имя",
@@ -59,7 +60,6 @@ const UserProfilePage = () => {
             [field]: isEditing,
         }))
     }
-
 
     // Сохранение изменений
     const handleSaveClick = async () => {
@@ -161,4 +161,4 @@ const UserProfilePage = () => {
     )
 }
 
-export default UserProfilePage
+export default observer(UserProfilePage)

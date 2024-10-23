@@ -48,16 +48,25 @@ class UserController {
     }
     async updateUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params // Получаем id пользователя из параметров запроса
-            const updateData = req.body // Данные для обновления передаются в теле запроса
+            const { id } = req.params
+            const updateData = req.body
+            await userService.getUserById(id) //Проверяем, что пользователь существует
 
-            // Вызываем метод userService для обновления данных пользователя
             await userService.updateUser(id, updateData)
-
-            // Отправляем успешный ответ
             res.json({ message: "Данные пользователя успешно обновлены" })
         } catch (e) {
-            next(e) // Передаем ошибку в middleware для обработки
+            next(e)
+        }
+    }
+    async deleteUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params
+            await userService.getUserById(id) //Проверяем, что пользователь существует
+
+            await userService.deleteUser(id)
+            res.json({ message: "Пользователь успешно удален" })
+        } catch (e) {
+            next(e)
         }
     }
 }
