@@ -15,7 +15,6 @@ const RegistrationForm: FC = () => {
             <button onClick={() => store.registration(email, password)} disabled={store.isLoading}>
                 Регистрация
             </button>
-             {/* Отображаем Loader, если isLoading true */}
         </div>
     )
 }

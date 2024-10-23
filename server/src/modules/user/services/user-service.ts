@@ -73,7 +73,6 @@ class UserService {
                 throw ApiError.BadRequest("Нет данных для обновления")
             }
 
-            // Обновляем только те поля, которые были переданы
             await prisma.user.update({
                 where: {
                     id: id,

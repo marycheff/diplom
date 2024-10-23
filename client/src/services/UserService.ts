@@ -2,6 +2,7 @@ import $api from "../http";
 import {AxiosResponse} from 'axios';
 import {AuthResponse} from "../models/response/AuthResponse";
 import {IUser} from "../models/IUser";
+import { IUpdateUser } from "../models/IUpdateUser"
 
 export default class UserService {
     static getUsers(): Promise<AxiosResponse<IUser[]>> {
@@ -16,7 +17,10 @@ export default class UserService {
     }
 
     static getUserById(id: string): Promise<AxiosResponse<IUser>> {
-        return $api.get<IUser>(`/user/${id}`)
+        return $api.get<IUser>(`/users/${id}`)
+    }
+    static updateUser(id: string, updateData: IUpdateUser): Promise<AxiosResponse<IUser>> {
+        return $api.put<IUser>(`/users/${id}`, updateData) // Отправляем PUT запрос
     }
 }
 

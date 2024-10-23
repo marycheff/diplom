@@ -3,6 +3,7 @@ import React from "react"
 import MyButton from "../UI/button/MyButton"
 import MyInput from "../UI/input/MyInput"
 import MySelect from "../UI/select/MySelect"
+import Loader from "../UI/loader/Loader"
 
 type QuestionFormProps = {
     register: any
@@ -14,7 +15,9 @@ type QuestionFormProps = {
 
 const QuestionForm: React.FC<QuestionFormProps> = ({ register, errors, isButtonDisabled, isLoading, onSubmit }) => {
     return (
+        
         <form onSubmit={onSubmit}>
+            {isLoading && <Loader />}
             <MyInput
                 placeholder='Вопрос'
                 name='question'

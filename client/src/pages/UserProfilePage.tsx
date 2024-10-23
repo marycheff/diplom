@@ -1,33 +1,77 @@
-import { observer } from "mobx-react-lite"
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import EditableField from "../components/UI/input/EditableField"
 import Loader from "../components/UI/loader/Loader"
 import UpdatePasswordForm from "../containers/UpdatePasswordForm"
 import { Context } from "../main"
-import { IUser } from "../models/IUser"
+
+type UserFields = {
+    [key: string]: string | boolean | undefined 
+}
+const fieldLabels: { [key: string]: string } = {
+    firstName: "Имя",
+    secondName: "Фамилия",
+    patronymic: "Отчество",
+    email: "Электронная почта",
+}
+
 const UserProfilePage = () => {
     const { store } = useContext(Context)
     const navigate = useNavigate()
-    const [user, setUser] = useState<IUser | undefined>(undefined)
-    const [email, setEmail] = useState("")
-    const [firstName, setFirstName] = useState("")
-    const [lastName, setLastName] = useState("")
-    const [middleName, setMiddleName] = useState("")
-    const [showModal, setShowModal] = useState(false) // состояние для модального окна
+    const [userFields, setUserFields] = useState<UserFields>({})
+    const [initialUserFields, setInitialUserFields] = useState<UserFields>({})
+    const [isEditingFields, setIsEditingFields] = useState<{ [key: string]: boolean }>({})
+    const [isFormChanged, setIsFormChanged] = useState(false)
     const [isSending, setIsSending] = useState(false)
+    const [showModal, setShowModal] = useState(false)
+
+    // Получение данных пользователя
     async function getUserInfo() {
         try {
             const userData = await store.getUserById(store.user.id)
-            setUser(userData)
-            setEmail(userData.email)
-            setFirstName(userData.firstName || "")
-            setLastName(userData.secondName || "")
-            setMiddleName(userData.patronymic || "")
+            const { id, role, ...fields } = userData // Исключаем поля id и role
+            setUserFields(fields) // Сохраняем данные пользователя без id и role
+            setInitialUserFields(fields) // Сохраняем начальные данные для проверки изменений
+
+            // Инициализируем состояния редактирования для каждого поля
+            const editingState = Object.keys(fields).reduce((acc, field) => {
+                acc[field] = false // Все поля не редактируются по умолчанию
+                return acc
+            }, {} as { [key: string]: boolean })
+            setIsEditingFields(editingState)
         } catch (e: any) {
             console.log(e.response?.data?.message)
         }
     }
+
+    // Обработчик изменений поля
+    const handleFieldChange = (field: string, value: string) => {
+        setUserFields(prevFields => ({
+            ...prevFields,
+            [field]: value,
+        }))
+    }
+
+    // Обработчик изменения состояния редактирования поля
+    const handleEditingChange = (field: string, isEditing: boolean) => {
+        setIsEditingFields(prevFields => ({
+            ...prevFields,
+            [field]: isEditing,
+        }))
+    }
+
+
+    // Сохранение изменений
+    const handleSaveClick = async () => {
+        try {
+            await store.updateUser(store.user.id, userFields)
+            getUserInfo() // Обновление информации
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    // Отправка активационной ссылки
     const handleSendActivationLink = async () => {
         try {
             setIsSending(true)
@@ -40,39 +84,56 @@ const UserProfilePage = () => {
         }
     }
 
-    const handleSaveClick = () => {
-        setShowModal(true) // Показать модальное окно
-        console.log("Данные будут обновлены")
-    }
     useEffect(() => {
         getUserInfo()
     }, [])
 
+    useEffect(() => {
+        const hasChanges = Object.keys(userFields).some(key => userFields[key] !== initialUserFields[key])
+        setIsFormChanged(hasChanges)
+    }, [userFields, initialUserFields])
+
     return (
         <div style={{ position: "relative" }}>
-            {store.isLoading ||
-                (isSending && (
-                    <Loader text='Отправляем письмо на почту' /> // Используем компонент Loader вместо текста
-                ))}
+            {store.isLoading || (isSending && <Loader text='Отправляем письмо на почту' />)}
             <button onClick={() => navigate(-1)}>Назад</button>
-            {user ? (
+            {userFields ? (
                 <div>
-                    <label>Электронная почта: {email}</label>
-                    <p>Почта активирована: {user.activated ? "Да" : "Нет"}</p>
-                    {!user.activated && (
+                    <label>Электронная почта: {userFields.email}</label>
+                    <p>Почта активирована: {userFields.activated ? "Да" : "Нет"}</p>
+                    {!userFields.activated && (
                         <button onClick={handleSendActivationLink}>
                             {isSending ? "Отправка..." : "Отправить ссылку еще раз"}
                         </button>
                     )}
-                    <EditableField label='Имя' value={firstName} onChange={setFirstName} />
-                    <EditableField label='Фамилия' value={lastName} onChange={setLastName} />
-                    <EditableField label='Отчество' value={middleName} onChange={setMiddleName} />
-                    <button onClick={handleSaveClick}>Сохранить изменения</button>
+
+                    {/* Генерация полей для редактирования */}
+                    {Object.keys(userFields).map(
+                        field =>
+                            field !== "email" &&
+                            field !== "activated" && (
+                                <EditableField
+                                    key={field}
+                                    label={fieldLabels[field] || field}
+                                    value={userFields[field] as string} // Приведение типа к строке
+                                    onChange={value => handleFieldChange(field, value)}
+                                    onEditingChange={isEditing => handleEditingChange(field, isEditing)}
+                                />
+                            )
+                    )}
+
+                    <button
+                        onClick={handleSaveClick}
+                        disabled={!isFormChanged || Object.values(isEditingFields).includes(true)}>
+                        Сохранить изменения
+                    </button>
+
                     <UpdatePasswordForm />
                 </div>
             ) : (
-                <Loader/>
+                <Loader />
             )}
+
             {/* Модальное окно */}
             {showModal && (
                 <div
@@ -99,4 +160,5 @@ const UserProfilePage = () => {
         </div>
     )
 }
-export default observer(UserProfilePage)
+
+export default UserProfilePage

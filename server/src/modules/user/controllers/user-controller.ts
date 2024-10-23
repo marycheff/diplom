@@ -37,13 +37,27 @@ class UserController {
 
             // Если пользователь не администратор и не запрашивает свою собственную информацию
             if (id !== userIdFromToken && (req as any).user.role !== "ADMIN") {
-                return next(ApiError.Forbidden()) 
+                return next(ApiError.Forbidden())
             }
 
             const user = await userService.getUserById(id)
             res.json(user)
         } catch (e) {
             next(e)
+        }
+    }
+    async updateUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params // Получаем id пользователя из параметров запроса
+            const updateData = req.body // Данные для обновления передаются в теле запроса
+
+            // Вызываем метод userService для обновления данных пользователя
+            await userService.updateUser(id, updateData)
+
+            // Отправляем успешный ответ
+            res.json({ message: "Данные пользователя успешно обновлены" })
+        } catch (e) {
+            next(e) // Передаем ошибку в middleware для обработки
         }
     }
 }

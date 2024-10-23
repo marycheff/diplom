@@ -1,6 +1,7 @@
 import axios from "axios"
 import { makeAutoObservable } from "mobx"
 import { API_URL } from "../http"
+import { IUpdateUser } from "../models/IUpdateUser"
 import { IUser } from "../models/IUser"
 import { AuthResponse } from "../models/response/AuthResponse"
 import AuthService from "../services/AuthService"
@@ -53,8 +54,7 @@ export default class Store {
             this.setUser(response.data.user)
         } catch (e: any) {
             console.log(e.response?.data?.message)
-        }
-        finally {
+        } finally {
             this.setLoading(false)
         }
     }
@@ -189,6 +189,21 @@ export default class Store {
             throw error
         } finally {
             // this.setLoading(false)
+        }
+    }
+
+    async updateUser(id: string, updateData: IUpdateUser) {
+        try {
+            this.setLoading(true)
+            const response = await UserService.updateUser(id, updateData)
+            console.log("Данные пользователя обновлены")
+
+            return response.data
+        } catch (error: any) {
+            console.error(error.response?.data?.message || "Ошибка при обновлении данных пользователя")
+            throw error
+        } finally {
+            this.setLoading(false)
         }
     }
 }

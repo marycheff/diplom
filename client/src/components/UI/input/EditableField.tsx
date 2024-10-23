@@ -3,19 +3,22 @@ import React, { useState } from "react"
 interface EditableFieldProps {
     label: string
     value: string
-    onChange: (newValue: string) => void
-    placeholder?: string // Опциональный пропс для placeholder
+    onChange: (value: string) => void
+    placeholder?: string
+    onEditingChange?: (isEditing: boolean) => void // Новый пропс
 }
 
-const EditableField: React.FC<EditableFieldProps> = ({ label, value, onChange, placeholder }) => {
+const EditableField: React.FC<EditableFieldProps> = ({ label, value, onChange, placeholder, onEditingChange }) => {
     const [isEditing, setIsEditing] = useState(false)
 
     const handleEditClick = () => {
         setIsEditing(true)
+        onEditingChange?.(true) // Сообщаем родителю, что поле редактируется
     }
 
     const handleSaveClick = () => {
-        setIsEditing(false) // Делаем поле disabled после сохранения
+        setIsEditing(false)
+        onEditingChange?.(false) // Сообщаем родителю, что редактирование завершено
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

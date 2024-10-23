@@ -13,7 +13,7 @@ const router = Router()
 router.get("/users", authMiddleware, adminMiddleware, userController.getUsers)
 
 // authMiddleware
-router.get("/user/:id", authMiddleware, userController.getUserById)
+router.get("/users/:id", authMiddleware, userController.getUserById)
 router.post(
     "/update-password",
     authMiddleware,
@@ -80,5 +80,6 @@ router.post(
     validateRequest,
     passwordResetController.verifyResetCode
 )
+router.put("/users/:id", userController.updateUser)
 
 export default router
