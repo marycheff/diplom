@@ -88,6 +88,35 @@ class UserService {
             throw ApiError.BadRequest("Ошибка при удалении пользователя")
         }
     }
+
+    async blockUser(id: string) {
+        try {
+            await prisma.user.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    isBlocked: true,
+                },
+            })
+        } catch (error: any) {
+            throw ApiError.BadRequest("Ошибка при блокировке пользователя")
+        }
+    }
+    async unblockUser(id: string) {
+        try {
+            await prisma.user.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    isBlocked: false,
+                },
+            })
+        } catch (error: any) {
+            throw ApiError.BadRequest("Ошибка при разблокировке пользователя")
+        }
+    }
 }
 
 export default new UserService()

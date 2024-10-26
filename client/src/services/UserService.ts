@@ -25,4 +25,10 @@ export default class UserService {
     static deleteUser(id: string): Promise<AxiosResponse<IUser>> {
         return $api.delete<IUser>(`/users/${id}`) // Отправляем DELETE запрос
     }
+    static blockUser(id: string): Promise<AxiosResponse<IUser>> {
+        return $api.post<IUser>(`/block-user/${id}`)
+    }
+    static unblockUser(id: string): Promise<AxiosResponse<IUser>> {
+        return $api.post<IUser>(`/unblock-user/${id}`)
+    }
 }

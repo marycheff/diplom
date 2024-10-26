@@ -215,9 +215,26 @@ export default class Store {
     async deleteUser(id: string) {
         try {
             await UserService.deleteUser(id)
-            console.log("Пользователь удален")
         } catch (error: any) {
             console.error(error.response?.data?.message || "Ошибка при удалении пользователя")
+            throw error
+        }
+    }
+
+    async blockUser(id: string) {
+        try {
+            await UserService.blockUser(id)
+        } catch (error: any) {
+            console.error(error.response?.data?.message || "Ошибка при блокировке пользователя")
+            throw error
+        }
+    }
+
+    async unblockUser(id: string) {
+        try {
+            await UserService.unblockUser(id)
+        } catch (error: any) {
+            console.error(error.response?.data?.message || "Ошибка при разблокировке пользователя")
             throw error
         }
     }

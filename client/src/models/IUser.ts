@@ -6,4 +6,5 @@ export interface IUser {
     firstName?: string
     secondName?: string
     patronymic?: string
+    isBlocked?: boolean
 }

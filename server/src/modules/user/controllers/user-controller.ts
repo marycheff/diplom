@@ -69,6 +69,25 @@ class UserController {
             next(e)
         }
     }
+
+    async blockUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params
+            await userService.blockUser(id)
+            res.json({ message: "Пользователь успешно заблокирован" })
+        } catch (e) {
+            next(e)
+        }
+    }
+    async unblockUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params
+            await userService.unblockUser(id)
+            res.json({ message: "Пользователь успешно разблокирован" })
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 export default new UserController()

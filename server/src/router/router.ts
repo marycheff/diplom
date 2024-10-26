@@ -11,10 +11,7 @@ const router = Router()
 
 // adminMiddleware
 router.get("/users", authMiddleware, adminMiddleware, userController.getUsers)
-router.put("/users/:id", 
-    authMiddleware, 
-    adminMiddleware,
-     userController.updateUser)
+router.put("/users/:id", authMiddleware, adminMiddleware, userController.updateUser)
 
 // authMiddleware
 router.get("/users/:id", authMiddleware, userController.getUserById)
@@ -86,5 +83,8 @@ router.post(
 )
 
 router.delete("/users/:id", userController.deleteUser)
+
+router.post("/block-user/:id", authMiddleware, adminMiddleware, userController.blockUser)
+router.post("/unblock-user/:id", authMiddleware, adminMiddleware, userController.unblockUser)
 
 export default router
