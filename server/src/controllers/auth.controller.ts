@@ -12,6 +12,9 @@ class AuthController {
                 return next(ApiError.BadRequest("Ошибка при валидации", errors.array()))
             }
             const userData = await authService.registration(req.body)
+            if (!userData.refreshToken) {
+                throw ApiError.InternalError("Ошибка при генерации refreshToken")
+            }
             res.cookie("refreshToken", userData.refreshToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
                 httpOnly: true,
@@ -65,8 +68,11 @@ class AuthController {
             }
             const { email, password } = req.body
             const userData = await authService.login(email, password)
+            if (!userData.refreshToken) {
+                throw ApiError.InternalError("Ошибка при генерации refreshToken")
+            }
             res.cookie("refreshToken", userData.refreshToken, {
-                maxAge: 30 * 24 * 60 * 60 * 1000, // 30 д
+                maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
                 httpOnly: true,
                 sameSite: "none",
                 secure: true,
@@ -83,6 +89,9 @@ class AuthController {
     async logout(req: Request, res: Response, next: NextFunction) {
         try {
             const { refreshToken } = req.cookies
+            if (!refreshToken) {
+                throw ApiError.UnauthorizedError()
+            }
             const token = await authService.logout(refreshToken)
             res.clearCookie("refreshToken")
             res.status(200).json({

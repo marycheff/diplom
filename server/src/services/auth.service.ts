@@ -123,6 +123,9 @@ class AuthService {
 
     async logout(refreshToken: string): Promise<Token> {
         const token = await tokenService.removeToken(refreshToken)
+        if (!refreshToken){
+            throw ApiError.BadRequest("Токен не предоставлен")
+        }
         return token
     }
 

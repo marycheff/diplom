@@ -1,11 +1,11 @@
+import { API_URL } from "@/http/axios"
+import { IUpdateUser } from "@/models/IUpdateUser"
+import { IUser } from "@/models/IUser"
+import { AuthResponse } from "@/models/response/AuthResponse"
+import AuthService from "@/services/AuthService"
+import UserService from "@/services/UserService"
 import axios from "axios"
 import { makeAutoObservable } from "mobx"
-import { API_URL } from "../http"
-import { IUpdateUser } from "../models/IUpdateUser"
-import { IUser } from "../models/IUser"
-import { AuthResponse } from "../models/response/AuthResponse"
-import AuthService from "../services/AuthService"
-import UserService from "../services/UserService"
 
 export default class Store {
     user = {} as IUser

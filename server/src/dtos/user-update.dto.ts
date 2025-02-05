@@ -1,5 +1,12 @@
 export interface UpdateUserDto {
-    firstName?: string
-    secondName?: string
+    name?: string
+    surname?: string
     patronymic?: string
+    // email: string
+    // activated: boolean
+    // id: string
+    // role: string
+    // name?: string
+    // surname?: string
+    // patronymic?: string
 }

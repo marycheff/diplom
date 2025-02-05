@@ -16,7 +16,10 @@ class ApiError extends Error {
     static Forbidden() {
         return new ApiError(403, "Недостаточно прав")
     }
-    static InternalError() {
+    static InternalError(message?: string) {
+        if (message) {
+            return new ApiError(500, `"Ошибка сервера ${message}`)
+        }
         return new ApiError(500, "Ошибка сервера")
     }
 }

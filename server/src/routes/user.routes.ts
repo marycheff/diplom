@@ -11,7 +11,7 @@ router.get("/", authMiddleware, adminMiddleware, userController.getUsers)
 router.get("/:id", authMiddleware, userController.getUserById)
 
 // Обновление данных пользователя по ID
-router.put("update-profile/:id", authMiddleware, userController.updateUser)
+router.put("/update-profile/:id", authMiddleware, userController.updateUser)
 
 // Удаление пользователя по ID (админ)
 router.delete("/:id", authMiddleware, adminMiddleware, userController.deleteUser)

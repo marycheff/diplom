@@ -53,15 +53,11 @@ class UserController {
     async updateUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
-
             if (!(await userService.getUserById(id))) {
-                //Проверяем, что пользователь существует
                 ApiError.BadRequest("Нет такого пользователя")
                 return
             }
-
             const updateData = req.body
-
             await userService.updateUser(id, updateData)
             res.status(200).json({ message: "Данные пользователя успешно обновлены" })
         } catch (e) {

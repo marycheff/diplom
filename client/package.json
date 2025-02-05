@@ -1,6 +1,7 @@
 {
     "name": "my-app",
     "version": "0.1.0",
+    "type": "module",
     "private": true,
     "scripts": {
         "dev": "vite",
@@ -35,8 +36,10 @@
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-hook-form": "^7.54.2",
+        "react-hot-toast": "^2.5.1",
         "react-router-dom": "^7.1.5",
-        "react-toastify": "^11.0.3"
+        "react-toastify": "^11.0.3",
+        "zustand": "^5.0.3"
     },
     "devDependencies": {
         "@types/axios": "^0.14.4",

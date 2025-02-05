@@ -8,7 +8,6 @@ export interface UserDto {
     name?: string | null
     surname?: string | null
     patronymic?: string | null
-    isBlocked?: boolean
 }
 
 export const mapUserToDto = (user: User): UserDto => {
@@ -20,6 +19,5 @@ export const mapUserToDto = (user: User): UserDto => {
         name: user.name,
         surname: user.surname,
         patronymic: user.patronymic,
-        isBlocked: user.isBlocked,
     }
 }

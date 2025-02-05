@@ -1,7 +1,7 @@
 // TestForm.tsx
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import api from "../../http"
+import api from "../../http/axios"
 import MyButton from "../UI/button/MyButton"
 import AnswersList from "./AnswersList"
 import QuestionForm from "./QuestionForm"

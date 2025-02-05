@@ -61,7 +61,7 @@ class UserService {
     async updateUser(id: string, updateData: UpdateUserDto): Promise<void> {
         try {
             // Проверяем, что хотя бы одно поле передано для обновления
-            if (!updateData.firstName && !updateData.secondName && !updateData.patronymic) {
+            if (!updateData.name && !updateData.surname && !updateData.patronymic) {
                 throw ApiError.BadRequest("Нет данных для обновления")
             }
 
@@ -70,7 +70,7 @@ class UserService {
                     id: id,
                 },
                 data: {
-                    ...updateData, // Передаем объект с полями, которые могут быть необязательными
+                    ...updateData, 
                 },
             })
         } catch (error) {
