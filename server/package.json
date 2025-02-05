@@ -38,16 +38,5 @@
         "ts-node": "^10.9.2",
         "ts-node-dev": "^2.0.0",
         "typescript": "^5.7.3"
-    },
-    "_moduleAliases": {
-        "@": "./dist/src",
-        "@routes": "./dist/src/routes",
-        "@controllers": "./dist/src/controllers",
-        "@services": "./dist/src/services",
-        "@middleware": "./dist/src/middleware",
-        "@utils": "./dist/src/utils",
-        "@types": "./dist/src/types",
-        "@dtos": "./dist/src/dtos",
-        "@exceptions": "./dist/src/exceptions"
     }
 }
