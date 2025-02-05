@@ -16,5 +16,8 @@ class ApiError extends Error {
     static Forbidden() {
         return new ApiError(403, "Недостаточно прав")
     }
+    static InternalError() {
+        return new ApiError(500, "Ошибка сервера")
+    }
 }
 export default ApiError

@@ -91,7 +91,7 @@ export default class Store {
     }
     async noLoadingCheckAuth() {
         try {
-            const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
+            const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
             localStorage.setItem("token", response.data.accessToken)
             this.setUser(response.data.user)
             this.setIsAdmin(response.data.user.role === "ADMIN")
@@ -113,7 +113,7 @@ export default class Store {
 
     async requestResetCode(email: string) {
         try {
-            const response = await axios.post(`${API_URL}/reset-password-request`, { email })
+            const response = await axios.post(`${API_URL}/auth/reset-password-request`, { email })
             this.resetCodeTimestamp = Date.now()
             return response.data
         } catch (error: any) {
@@ -131,7 +131,7 @@ export default class Store {
 
         return (
             currentTime - this.resetCodeTimestamp <
-            Number((import.meta as any).env.VITE_RESET_PASSWORD_TIMEOUT_MINUTES || 5) * 60 * 1000
+            Number(import.meta.env.VITE_RESET_PASSWORD_TIMEOUT_MINUTES || 5) * 60 * 1000
         )
     }
 
@@ -141,7 +141,7 @@ export default class Store {
             throw new Error("Срок действия кода сброса истек. Пожалуйста, запросите новый код.")
         }
         try {
-            const response = await axios.post(`${API_URL}/verify-reset-code`, { email, code })
+            const response = await axios.post(`${API_URL}/auth/verify-reset-code`, { email, code })
             return response.data
         } catch (error: any) {
             console.error(error.response?.data?.message || "Ошибка при подтверждении кода сброса пароля")
@@ -155,7 +155,7 @@ export default class Store {
             throw new Error("Срок действия кода сброса истек. Пожалуйста, запросите новый код.")
         }
         try {
-            const response = await axios.post(`${API_URL}/reset-password`, { email, code, newPassword })
+            const response = await axios.post(`${API_URL}/auth/reset-password`, { email, code, newPassword })
             this.resetCodeTimestamp = null // Обнуляем время, так как код уже использован
             return response.data
         } catch (error: any) {

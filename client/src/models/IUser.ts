@@ -3,8 +3,8 @@ export interface IUser {
     activated: boolean
     id: string
     role: string
-    firstName?: string
-    secondName?: string
+    name?: string
+    surname?: string
     patronymic?: string
     isBlocked?: boolean
 }

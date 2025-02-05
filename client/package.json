@@ -2,37 +2,11 @@
     "name": "my-app",
     "version": "0.1.0",
     "private": true,
-    "dependencies": {
-        "@emotion/react": "^11.13.3",
-        "@emotion/styled": "^11.13.0",
-        "@mui/material": "^6.1.3",
-        "@testing-library/jest-dom": "^5.17.0",
-        "@testing-library/react": "^13.4.0",
-        "@testing-library/user-event": "^13.5.0",
-        "@types/axios": "^0.14.0",
-        "@types/jest": "^27.5.2",
-        "@types/node": "^22.7.6",
-        "@types/react": "^18.3.11",
-        "@types/react-dom": "^18.3.0",
-        "axios": "^1.7.7",
-        "mobx": "^6.13.3",
-        "mobx-react-lite": "^4.0.7",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1",
-        "react-hook-form": "^7.53.0",
-        "react-query": "^3.39.3",
-        "react-router-dom": "^6.27.0",
-        "react-toastify": "^10.0.6",
-        "react-transition-group": "^4.4.5",
-        "react-use-websocket": "^4.9.0",
-        "typescript": "^4.9.5",
-        "vite": "^5.4.9",
-        "web-vitals": "^2.1.4"
-    },
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "preview": "vite preview"
+        "preview": "vite preview --port $PORT --host 0.0.0.0",
+        "start": "vite preview --port $PORT --host 0.0.0.0"
     },
     "eslintConfig": {
         "extends": [
@@ -52,9 +26,27 @@
             "last 1 safari version"
         ]
     },
+    "dependencies": {
+        "@mui/material": "^6.4.3",
+        "axios": "^1.7.9",
+        "jsonwebtoken": "^9.0.2",
+        "mobx": "^6.13.6",
+        "mobx-react-lite": "^4.1.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-hook-form": "^7.54.2",
+        "react-router-dom": "^7.1.5",
+        "react-toastify": "^11.0.3"
+    },
     "devDependencies": {
-        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-        "@vitejs/plugin-react": "^4.3.2",
-        "vite-tsconfig-paths": "^5.0.1"
+        "@types/axios": "^0.14.4",
+        "@types/jsonwebtoken": "^9.0.8",
+        "@types/node": "^22.13.1",
+        "@types/react": "^19.0.8",
+        "@types/react-dom": "^19.0.3",
+        "@vitejs/plugin-react": "^4.3.4",
+        "typescript": "^5.7.3",
+        "vite": "^6.0.11",
+        "vite-tsconfig-paths": "^5.1.4"
     }
 }

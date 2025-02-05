@@ -1,5 +1,5 @@
 export interface IUpdateUser {
-    firstName?: string
-    secondName?: string
+    name?: string
+    surname?: string
     patronymic?: string
 }
