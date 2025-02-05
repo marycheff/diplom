@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import mailService from "@/services/mail.service"
-import MathUtils from "@/utils/math"
+import { generateCode } from "@/utils/math"
 import { NextFunction, Request, Response } from "express"
 import passwordResetService from "../services/password-reset.service"
 import userService from "../services/user.service"
@@ -10,9 +10,10 @@ class PasswordResetController {
         const { email } = req.body
         try {
             const user = await userService.getUserByEmail(email)
-            const resetCode = MathUtils.generateCode()
+            const resetCode = generateCode()
             await passwordResetService.saveResetCode(email, resetCode)
             await mailService.sendResetPasswordMail(user.email, user.email, resetCode)
+
             res.json({ message: "Код для сброса пароля отправлен на вашу почту." })
         } catch (e) {
             next(e)
@@ -24,10 +25,10 @@ class PasswordResetController {
         try {
             const isValid = await passwordResetService.verifyResetCode(email, code)
             if (!isValid) {
-                res.status(400).json({ message: "Неверный код сброса" })
+                ApiError.BadRequest("Неверный код сброса")
                 return
             }
-            res.json({ message: "Код сброса подтвержден." })
+            res.status(200).json({ message: "Код сброса подтвержден." })
         } catch (e) {
             next(e)
         }
@@ -37,12 +38,11 @@ class PasswordResetController {
         const { email, code, newPassword } = req.body
         try {
             const isValid = await passwordResetService.verifyResetCode(email, code)
-
             if (!isValid) {
                 return next(ApiError.BadRequest("Неверный код сброса"))
             }
             await passwordResetService.resetPassword(email, newPassword)
-            res.json({ message: "Пароль успешно изменен." })
+            res.status(200).json({ message: "Пароль успешно изменен." })
         } catch (e) {
             next(e)
         }

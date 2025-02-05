@@ -1,3 +1,4 @@
+import envConfig from "@/envConfig"
 import { PrismaClient, Token } from "@prisma/client"
 import jwt from "jsonwebtoken"
 
@@ -5,16 +6,12 @@ const prisma = new PrismaClient()
 
 class TokenService {
     generateTokens(payload: object): { accessToken: string; refreshToken: string } {
-        if (!process.env.JWT_ACCESS_SECRET) {
-            throw new Error("JWT_ACCESS_SECRET environment variable is not set")
-        }
-        if (!process.env.JWT_REFRESH_SECRET) {
-            throw new Error("JWT_REFRESH_SECRET environment variable is not set")
-        }
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
+        
+       
+        const accessToken = jwt.sign(payload, envConfig.JWT_ACCESS_SECRET as string, {
             expiresIn: "15m",
         })
-        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
+        const refreshToken = jwt.sign(payload, envConfig.JWT_REFRESH_SECRET as string, {
             expiresIn: "30d",
         })
 
@@ -102,20 +99,14 @@ class TokenService {
 
     validateAccessToken(token: string) {
         try {
-            if (!process.env.JWT_ACCESS_SECRET) {
-                throw new Error("JWT_ACCESS_SECRET environment variable is not set")
-            }
-            return jwt.verify(token, process.env.JWT_ACCESS_SECRET)
+            return jwt.verify(token, envConfig.JWT_ACCESS_SECRET as string)
         } catch (e) {
             return null
         }
     }
     validateRefreshToken(token: string) {
         try {
-            if (!process.env.JWT_REFRESH_SECRET) {
-                throw new Error("JWT_REFRESH_SECRET environment variable is not set")
-            }
-            return jwt.verify(token, process.env.JWT_REFRESH_SECRET)
+            return jwt.verify(token, envConfig.JWT_REFRESH_SECRET as string)
         } catch (e) {
             return null
         }

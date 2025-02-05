@@ -21,10 +21,8 @@ model User {
   isBlocked      Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-
   tokens         Token[]  @relation("UserTokens")
-
-  @@map("users")  // Указание, что коллекция будет называться "users"
+  @@map("users")  // коллекция будет называться "users"
 }
 
 enum Role {
@@ -38,8 +36,7 @@ model Token {
   refreshToken String   @unique
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
   user         User     @relation("UserTokens", fields: [userId], references: [id])
   
-  @@map("tokens")  // Указание, что коллекция будет называться "tokens"
+  @@map("tokens")  // коллекция будет называться "tokens"
 }

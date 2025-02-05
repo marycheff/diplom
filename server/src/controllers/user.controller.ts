@@ -12,20 +12,22 @@ class UserController {
             next(e)
         }
     }
+
     async updatePassword(req: Request, res: Response, next: NextFunction) {
         try {
             const { email, oldPassword, newPassword } = req.body
             await userService.updatePassword(email, oldPassword, newPassword)
-            res.json({ message: "Пароль успешно обновлен" })
+            res.status(200).json({ message: "Пароль успешно обновлен" })
         } catch (e) {
             next(e)
         }
     }
+
     async getUserByEmail(req: Request, res: Response, next: NextFunction) {
         try {
             const { email } = req.params
             const user = await userService.getUserByEmail(email)
-            res.json(user)
+            res.status(200).json(user)
         } catch (e) {
             next(e)
         }
@@ -47,25 +49,36 @@ class UserController {
             next(e)
         }
     }
+
     async updateUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
+
+            if (!(await userService.getUserById(id))) {
+                //Проверяем, что пользователь существует
+                ApiError.BadRequest("Нет такого пользователя")
+                return
+            }
+
             const updateData = req.body
-            await userService.getUserById(id) //Проверяем, что пользователь существует
 
             await userService.updateUser(id, updateData)
-            res.json({ message: "Данные пользователя успешно обновлены" })
+            res.status(200).json({ message: "Данные пользователя успешно обновлены" })
         } catch (e) {
             next(e)
         }
     }
+
     async deleteUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
-            await userService.getUserById(id) //Проверяем, что пользователь существует
-
+            if (!(await userService.getUserById(id))) {
+                //Проверяем, что пользователь существует
+                ApiError.BadRequest("Нет такого пользователя")
+                return
+            }
             await userService.deleteUser(id)
-            res.json({ message: "Пользователь успешно удален" })
+            res.status(200).json({ message: "Пользователь успешно удален" })
         } catch (e) {
             next(e)
         }
@@ -75,16 +88,17 @@ class UserController {
         try {
             const { id } = req.params
             await userService.blockUser(id)
-            res.json({ message: "Пользователь успешно заблокирован" })
+            res.status(200).json({ message: "Пользователь успешно заблокирован" })
         } catch (e) {
             next(e)
         }
     }
+    
     async unblockUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
             await userService.unblockUser(id)
-            res.json({ message: "Пользователь успешно разблокирован" })
+            res.status(200).json({ message: "Пользователь успешно разблокирован" })
         } catch (e) {
             next(e)
         }

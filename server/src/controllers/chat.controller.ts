@@ -1,7 +1,8 @@
-import { getChatContent } from "@/services/gigachat.service"
-import { getAccessToken } from "@/services/gigachat-token.service"
-import { Request, Response } from "express"
 import envConfig from "@/envConfig"
+import ApiError from "@/exceptions/api-error"
+import { getAccessToken } from "@/services/gigachat-token.service"
+import { getChatContent } from "@/services/gigachat.service"
+import { Request, Response } from "express"
 
 // Функция для парсинга ответов
 function parseAnswers(response: string): string[] {
@@ -21,15 +22,14 @@ class ChatController {
 
             // Проверка на наличие обязательных полей
             if (!question || !answer || !numOfAnswers) {
-                res.status(400).json({ message: "Missing required fields" })
+                ApiError.BadRequest("Не все данные заполнены")
                 return
             }
-
             // Получаем токен для работы с нейросетью
             const token = await getAccessToken(envConfig.AUTH_DATA as string)
 
             // Запрашиваем ответы у нейросети
-            const generatedAnswers = await getChatContent(token, numOfAnswers, question, answer)
+            const generatedAnswers = await getChatContent({ token, numOfAnswers, question, answer })
 
             // Парсим ответы
             const parsedAnswers = parseAnswers(generatedAnswers)
@@ -39,15 +39,14 @@ class ChatController {
 
             // Если все ответы пустые, возвращаем сообщение об ошибке
             if (!hasValidAnswers) {
-                res.status(400).json({ message: "Некорректный вопрос, попробуйте задать другой." })
+                ApiError.BadRequest("Некорректный вопрос, попробуйте задать другой.")
                 return
             }
-
             // Если есть валидные ответы, возвращаем их
             res.status(200).json({ generatedAnswers: parsedAnswers })
-        } catch (error: any) {
-            console.error(error)
-            res.status(500).json({ message: "Internal server error", error: error.message })
+        } catch (e) {
+            ApiError.InternalError()
+            return
         }
     }
 }

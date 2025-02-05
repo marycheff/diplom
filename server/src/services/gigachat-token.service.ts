@@ -3,11 +3,11 @@ import * as qs from "querystring"
 
 const httpsAgent = new (require("follow-redirects").https.Agent)({ rejectUnauthorized: false })
 
-function generateUUID(): string {
-    function getRandomInt(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min + 1)) + min
-    }
+const getRandomInt = (min: number, max: number): number => {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+}
 
+const generateUUID = (): string => {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
         const r = getRandomInt(0, 15)
         const v = c === "x" ? r : (r & 0x3) | 0x8
@@ -15,7 +15,7 @@ function generateUUID(): string {
     })
 }
 
-export async function getAccessToken(authData: string): Promise<string> {
+export const getAccessToken = async (authData: string): Promise<string> => {
     const postData = qs.stringify({ scope: "GIGACHAT_API_PERS" })
     const options = {
         method: "POST",

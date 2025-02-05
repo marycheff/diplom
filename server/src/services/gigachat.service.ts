@@ -7,13 +7,20 @@ interface ChatContentResponse {
     usage: { total_tokens: number }
 }
 
-// Функция для отправки запроса к API нейросети и получения ответов
-export async function getChatContent(
-    token: string,
-    numOfAnswers: number,
-    question: string,
+interface GetChatContentParams {
+    token: string
+    numOfAnswers: number
+    question: string
     answer: string
-): Promise<string> {
+}
+
+// Функция для отправки запроса к API нейросети и получения ответов
+export const getChatContent = async ({
+    token,
+    numOfAnswers,
+    question,
+    answer,
+}: GetChatContentParams): Promise<string> => {
     const postData = {
         model: "GigaChat",
         messages: [

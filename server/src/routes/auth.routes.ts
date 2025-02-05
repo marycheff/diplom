@@ -2,7 +2,7 @@ import authController from "@/controllers/auth.controller"
 import passwordResetController from "@/controllers/password-reset.controller"
 import userController from "@/controllers/user.controller"
 import { authMiddleware } from "@/middleware/auth.middleware"
-import validateRequest from "@/middleware/validate-request"
+import validateRequest from "@/middleware/validate-request.middleware"
 
 import express from "express"
 import { body } from "express-validator"
@@ -24,7 +24,12 @@ router.post(
 router.get("/activate/:link", authController.activate)
 
 // Вход в систему
-router.post("/login", validateRequest, authController.login)
+router.post(
+    "/login",
+    [body("email").isEmail().withMessage("Некорректный email")],
+    validateRequest,
+    authController.login
+)
 
 // Выход из системы
 router.post("/logout", authMiddleware, authController.logout)

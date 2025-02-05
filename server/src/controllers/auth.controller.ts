@@ -22,7 +22,7 @@ class AuthController {
                 message: "Пользователь успешно зарегистрирован",
                 ...userData,
             })
-        } catch (e: any) {
+        } catch (e) {
             next(e)
         }
     }
@@ -34,9 +34,11 @@ class AuthController {
                 return next(ApiError.BadRequest("Ошибка при валидации", errors.array()))
             }
             const { email } = req.body
+
             await authService.updateActivationLink(email)
-            res.json({ message: "Ссылка активации отправлена на почту" })
-        } catch (e: any) {
+
+            res.status(200).json({ message: "Ссылка активации отправлена на почту" })
+        } catch (e) {
             next(e)
         }
     }
@@ -47,8 +49,8 @@ class AuthController {
             await authService.activate(activationLink)
 
             return res.redirect(`${envConfig.CLIENT_URL}/activation-success`)
-        } catch (e: any) {
-            if (e.message === "Некорректная ссылка активации") {
+        } catch (e) {
+            if (e instanceof ApiError.BadRequest) {
                 return res.redirect(`${envConfig.CLIENT_URL}/activation-error`)
             }
             next(e)
@@ -64,7 +66,7 @@ class AuthController {
             const { email, password } = req.body
             const userData = await authService.login(email, password)
             res.cookie("refreshToken", userData.refreshToken, {
-                maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
+                maxAge: 30 * 24 * 60 * 60 * 1000, // 30 д
                 httpOnly: true,
                 sameSite: "none",
                 secure: true,
@@ -97,12 +99,12 @@ class AuthController {
             const { refreshToken } = req.cookies
             const userData = await authService.refresh(refreshToken)
             res.cookie("refreshToken", userData.refreshToken, {
-                maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
+                maxAge: 30 * 24 * 60 * 60 * 1000, // 30 д
                 httpOnly: true,
                 sameSite: "none",
                 secure: true,
             })
-            res.json(userData)
+            res.status(200).json(userData)
         } catch (e) {
             next(e)
         }

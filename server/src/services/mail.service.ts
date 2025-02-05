@@ -23,7 +23,7 @@ class MailService {
             await this.transporter.sendMail({
                 from: envConfig.SMTP_USER,
                 to,
-                subject: "Активация аккаунта на " + process.env.API_URL,
+                subject: "Активация аккаунта на " + envConfig.API_URL,
                 text: "",
                 html: `
                 <div>
@@ -33,6 +33,7 @@ class MailService {
             `,
             })
         } catch (error: any) {
+            console.log(error)
             if (error.responseCode === 550) {
                 throw ApiError.BadRequest(`Ошибка отправки письма: почтовый ящик ${to} не найден`)
             }
@@ -42,9 +43,9 @@ class MailService {
     async sendResetPasswordMail(to: string, email: string, code: string) {
         try {
             await this.transporter.sendMail({
-                from: process.env.SMTP_USER,
+                from: envConfig.SMTP_USER,
                 to,
-                subject: "Сброс пароля на " + process.env.API_URL,
+                subject: "Сброс пароля на " + envConfig.API_URL,
                 text: "",
                 html: `
                 <div>
@@ -54,6 +55,7 @@ class MailService {
             `,
             })
         } catch (error: any) {
+            console.log(error)
             if (error.responseCode === 550) {
                 throw ApiError.BadRequest(`Ошибка отправки письма: почтовый ящик ${to} не найден`)
             }
