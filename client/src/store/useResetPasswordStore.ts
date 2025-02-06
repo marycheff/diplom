@@ -6,8 +6,10 @@ import { create } from "zustand"
 
 export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
     resetCodeTimestamp: null,
+    isLoading: false,  
 
     requestResetCode: async email => {
+        set({ isLoading: true })
         try {
             const response = await axios.post(`${API_URL}/auth/reset-password-request`, { email })
             set({ resetCodeTimestamp: Date.now() })
@@ -18,11 +20,15 @@ export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+        } finally {
+            set({ isLoading: false })
         }
     },
 
     verifyResetCode: async (email, code) => {
+        set({ isLoading: true })
         if (!get().isResetCodeValid()) {
+            set({ isLoading: false })
             throw new Error("Срок действия кода сброса истек. Пожалуйста, запросите новый код.")
         }
         try {
@@ -34,11 +40,15 @@ export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+        } finally {
+            set({ isLoading: false })
         }
     },
 
     resetPassword: async (email, code, newPassword) => {
+        set({ isLoading: true })
         if (!get().isResetCodeValid()) {
+            set({ isLoading: false })
             throw new Error("Срок действия кода сброса истек. Пожалуйста, запросите новый код.")
         }
         try {
@@ -51,6 +61,8 @@ export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+        } finally {
+            set({ isLoading: false })
         }
     },
 

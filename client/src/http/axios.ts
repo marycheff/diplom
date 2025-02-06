@@ -42,8 +42,6 @@ axiosInstance.interceptors.response.use(
                 return axiosInstance(originalRequest)
             } catch (e) {
                 console.log("Пользователь не авторизован")
-                // Здесь можно добавить логику для перенаправления на страницу входа
-                // Например, через React Router или другой механизм
             }
         }
 

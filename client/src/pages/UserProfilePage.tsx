@@ -1,23 +1,25 @@
-import { observer } from "mobx-react-lite"
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 import EditableField from "../components/UI/input/EditableField"
 import Loader from "../components/UI/loader/Loader"
 import UpdatePasswordForm from "../containers/UpdatePasswordForm"
-import { Context } from "../main"
+import { useAuthStore } from "../store/useAuthStore"
+import { useUserStore } from "../store/useUserStore"
 
 type UserFields = {
     [key: string]: string | boolean | undefined
 }
 const fieldLabels: { [key: string]: string } = {
-    firstName: "Имя",
-    secondName: "Фамилия",
+    name: "Имя",
+    surname: "Фамилия",
     patronymic: "Отчество",
     email: "Электронная почта",
 }
 
 const UserProfilePage = () => {
-    const { store } = useContext(Context)
+    const { user, isLoading, updateActivationLink } = useAuthStore()
+    const { getUserById, updateUser, isLoading: isUserLoading } = useUserStore()
     const navigate = useNavigate()
     const [userFields, setUserFields] = useState<UserFields>({})
     const [initialUserFields, setInitialUserFields] = useState<UserFields>({})
@@ -28,20 +30,16 @@ const UserProfilePage = () => {
 
     // Получение данных пользователя
     async function getUserInfo() {
-        try {
-            const userData = await store.getUserById(store.user.id)
-            const { id, role, ...fields } = userData // Исключаем поля id и role
-            setUserFields(fields) // Сохраняем данные пользователя без id и role
-            setInitialUserFields(fields) // Сохраняем начальные данные для проверки изменений
-
-            // Инициализируем состояния редактирования для каждого поля
+        const userData = await getUserById(user.id)
+        if (userData) {
+            const { id, role, ...fields } = userData
+            setUserFields(fields)
+            setInitialUserFields(fields)
             const editingState = Object.keys(fields).reduce((acc, field) => {
-                acc[field] = false // Все поля не редактируются по умолчанию
+                acc[field] = false
                 return acc
             }, {} as { [key: string]: boolean })
             setIsEditingFields(editingState)
-        } catch (e: any) {
-            console.log(e.response?.data?.message)
         }
     }
 
@@ -63,22 +61,20 @@ const UserProfilePage = () => {
 
     // Сохранение изменений
     const handleSaveClick = async () => {
-        try {
-            await store.updateUser(store.user.id, userFields)
-            getUserInfo() // Обновление информации
-        } catch (e) {
-            console.error(e)
-        }
+        await updateUser(user.id, userFields)
+        getUserInfo() // Обновление информации
+        toast.success("Данные успешно обновлены")
     }
 
     // Отправка активационной ссылки
     const handleSendActivationLink = async () => {
         try {
             setIsSending(true)
-            await store.updateActivationLink(store.user.email)
+            await updateActivationLink(user.email)
             setShowModal(true)
-        } catch (e) {
-            console.error("Ошибка отправки ссылки активации:", e)
+            toast.success("Ссылка активации отправлена на вашу почту")
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || "Ошибка отправки ссылки активации")
         } finally {
             setIsSending(false)
         }
@@ -95,7 +91,7 @@ const UserProfilePage = () => {
 
     return (
         <div style={{ position: "relative" }}>
-            {store.isLoading || (isSending && <Loader text='Отправляем письмо на почту' />)}
+            {(isLoading || isSending || isUserLoading) && <Loader text="Загрузка..." />}
             <button onClick={() => navigate(-1)}>Назад</button>
             {userFields ? (
                 <div>
@@ -115,7 +111,7 @@ const UserProfilePage = () => {
                                 <EditableField
                                     key={field}
                                     label={fieldLabels[field] || field}
-                                    value={userFields[field] as string} // Приведение типа к строке
+                                    value={userFields[field] as string}
                                     onChange={value => handleFieldChange(field, value)}
                                     onEditingChange={isEditing => handleEditingChange(field, isEditing)}
                                 />
@@ -148,12 +144,13 @@ const UserProfilePage = () => {
                         justifyContent: "center",
                         alignItems: "center",
                     }}>
-                    <div style={{ backgroundColor: "#fff" }}>
+                    <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "5px" }}>
                         <h2>Письмо отправлено!</h2>
                         <p>
                             Мы отправили письмо для активации на ваш email. Пожалуйста, проверьте почту. Эту вкладку
                             можно закрыть.
                         </p>
+                        <button onClick={() => setShowModal(false)}>Закрыть</button>
                     </div>
                 </div>
             )}
@@ -161,4 +158,4 @@ const UserProfilePage = () => {
     )
 }
 
-export default observer(UserProfilePage)
+export default UserProfilePage

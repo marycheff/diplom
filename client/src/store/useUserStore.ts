@@ -7,7 +7,9 @@ import { create } from "zustand"
 
 export const useUserStore = create<UserState>(set => ({
     isLoading: false,
+    isAuthChecking: false,
     updatePassword: async (email, oldPassword, newPassword) => {
+        set({ isLoading: true })
         try {
             await UserService.updatePassword(email, oldPassword, newPassword)
             console.log("Пароль успешно обновлен")
@@ -18,9 +20,11 @@ export const useUserStore = create<UserState>(set => ({
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
         }
+        set({ isLoading: false })
     },
 
     getUsers: async () => {
+        set({ isLoading: true })
         try {
             await useAuthStore.getState().noLoadingCheckAuth()
             const response = await UserService.getUsers()
@@ -31,10 +35,13 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+        } finally {
+            set({ isLoading: false })
         }
     },
 
     getUserById: async id => {
+        set({ isLoading: true })
         try {
             await useAuthStore.getState().noLoadingCheckAuth()
             const response = await UserService.getUserById(id)
@@ -45,6 +52,8 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+        } finally {
+            set({ isLoading: false })
         }
     },
 
@@ -60,13 +69,13 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
-            
         } finally {
             set({ isLoading: false })
         }
     },
 
     deleteUser: async id => {
+        set({ isLoading: true })
         try {
             await UserService.deleteUser(id)
         } catch (error) {
@@ -75,10 +84,13 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+        } finally {
+            set({ isLoading: false })
         }
     },
 
     blockUser: async id => {
+        set({ isLoading: true })
         try {
             await UserService.blockUser(id)
         } catch (error) {
@@ -87,10 +99,13 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+        } finally {
+            set({ isLoading: false })
         }
     },
 
     unblockUser: async id => {
+        set({ isLoading: true })
         try {
             await UserService.unblockUser(id)
         } catch (error) {
@@ -99,6 +114,8 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+        } finally {
+            set({ isLoading: false })
         }
     },
 }))

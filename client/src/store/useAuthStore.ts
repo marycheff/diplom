@@ -2,7 +2,8 @@ import { API_URL } from "@/http/axios"
 import { AuthResponse } from "@/models/response/AuthResponse"
 import AuthService from "@/services/AuthService"
 import { AuthState } from "@/types/auth.types"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
+import toast from "react-hot-toast"
 import { create } from "zustand"
 
 export const useAuthStore = create<AuthState>(set => ({
@@ -10,6 +11,7 @@ export const useAuthStore = create<AuthState>(set => ({
     isAuth: false,
     isLoading: false,
     isAdmin: false,
+    isAuthChecking: false,
 
     login: async (email, password) => {
         set({ isLoading: true })
@@ -21,8 +23,13 @@ export const useAuthStore = create<AuthState>(set => ({
                 isAuth: true,
                 isAdmin: response.data.user.role === "ADMIN",
             })
-        } catch (e: any) {
-            console.log(e.response?.data?.message)
+            toast.success("Успешный вход")
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data?.message || "Неизвестная ошибка")
+            } else {
+                toast.error("Неизвестная ошибка, перезагрузите страницу")
+            }
         } finally {
             set({ isLoading: false })
         }
@@ -37,8 +44,13 @@ export const useAuthStore = create<AuthState>(set => ({
                 user: response.data.user,
                 isAuth: true,
             })
-        } catch (e: any) {
-            console.log(e.response?.data?.message)
+            toast.success("Успешная регистрация")
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data?.message || "Неизвестная ошибка")
+            } else {
+                toast.error("Неизвестная ошибка, перезагрузите страницу")
+            }
         } finally {
             set({ isLoading: false })
         }
@@ -52,13 +64,17 @@ export const useAuthStore = create<AuthState>(set => ({
                 user: {},
                 isAuth: false,
             })
-        } catch (e: any) {
-            console.log(e.response?.data?.message)
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data?.message || "Неизвестная ошибка")
+            } else {
+                toast.error("Неизвестная ошибка, перезагрузите страницу")
+            }
         }
     },
 
     checkAuth: async () => {
-        set({ isLoading: true })
+        set({ isAuthChecking: true })
         try {
             const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
             localStorage.setItem("token", response.data.accessToken)
@@ -66,11 +82,16 @@ export const useAuthStore = create<AuthState>(set => ({
                 user: response.data.user,
                 isAuth: true,
                 isAdmin: response.data.user.role === "ADMIN",
+                isAuthChecking: false,
             })
-        } catch (e: any) {
-            console.log(e.response?.data?.message || e.message)
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data?.message || "Неизвестная ошибка")
+            } else {
+                toast.error("Неизвестная ошибка, перезагрузите страницу")
+            }
         } finally {
-            set({ isLoading: false })
+            set({ isAuthChecking: false })
         }
     },
 
@@ -83,8 +104,25 @@ export const useAuthStore = create<AuthState>(set => ({
                 isAuth: true,
                 isAdmin: response.data.user.role === "ADMIN",
             })
-        } catch (e: any) {
-            console.log(e.response?.data?.message || e.message)
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data?.message || "Неизвестная ошибка")
+            } else {
+                toast.error("Неизвестная ошибка, перезагрузите страницу")
+            }
+        }
+    },
+
+    updateActivationLink: async (email: string) => {
+        set({ isLoading: true })
+        try {
+            const response = await AuthService.updateActivationLink(email)
+            return response.data
+        } catch (error: any) {
+            console.error(error.response?.data?.message || "Ошибка при отправке ссылки активации")
+            throw error
+        } finally {
+            set({ isLoading: true })
         }
     },
 }))
