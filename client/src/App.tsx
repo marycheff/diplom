@@ -1,7 +1,6 @@
-import { observer } from "mobx-react-lite"
 import React from "react"
 import { BrowserRouter } from "react-router-dom"
-// import "react-toastify/dist/ReactToastify.css"
+
 import { Toaster } from "react-hot-toast"
 import AppRouter from "./router/AppRouter"
 const App: React.FC = () => {
@@ -23,4 +22,4 @@ const App: React.FC = () => {
     )
 }
 
-export default observer(App)
+export default App

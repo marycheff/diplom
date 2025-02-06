@@ -74,7 +74,8 @@ export const useAuthStore = create<AuthState>(set => ({
     },
 
     checkAuth: async () => {
-        set({ isAuthChecking: true })
+        // set({ isAuthChecking: true })
+        set({ isLoading: true })
         try {
             const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
             localStorage.setItem("token", response.data.accessToken)
@@ -82,16 +83,16 @@ export const useAuthStore = create<AuthState>(set => ({
                 user: response.data.user,
                 isAuth: true,
                 isAdmin: response.data.user.role === "ADMIN",
-                isAuthChecking: false,
             })
         } catch (error) {
             if (error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Неизвестная ошибка")
+                if (error.response?.status != 401) toast.error(error.response?.data?.message || "Неизвестная ошибка")
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
         } finally {
-            set({ isAuthChecking: false })
+            // set({ isAuthChecking: false })
+            set({ isLoading: false })
         }
     },
 

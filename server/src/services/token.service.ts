@@ -8,10 +8,12 @@ const prisma = new PrismaClient()
 class TokenService {
     generateTokens(payload: object): { accessToken: string; refreshToken: string } {
         const accessToken = jwt.sign(payload, envConfig.JWT_ACCESS_SECRET as string, {
-            expiresIn: "15m",
+            expiresIn: "10s",
+            // expiresIn: "15s",
         })
         const refreshToken = jwt.sign(payload, envConfig.JWT_REFRESH_SECRET as string, {
-            expiresIn: "30d",
+            // expiresIn: "30s",
+            expiresIn: "60d",
         })
 
         return { accessToken, refreshToken }
@@ -19,32 +21,22 @@ class TokenService {
 
     async saveToken(userId: string, refreshToken: string): Promise<Token> {
         try {
-            // Удаляем старые токены, если их количество превышает лимит
-            const tokenCount = await prisma.token.count({
+            const existingToken = await prisma.token.findUnique({
                 where: { userId },
             })
-            if (tokenCount >= 5) {
-                const oldestTokens = await prisma.token.findMany({
+            if (existingToken) {
+                return await prisma.token.update({
                     where: { userId },
-                    orderBy: { createdAt: "asc" },
-                    take: tokenCount - 4,
-                })
-                await prisma.token.deleteMany({
-                    where: {
-                        id: { in: oldestTokens.map(token => token.id) },
-                    },
+                    data: { refreshToken },
                 })
             }
-
-            const newToken = await prisma.token.create({
+            return await prisma.token.create({
                 data: { userId, refreshToken },
             })
-            return newToken
         } catch (error) {
             throw ApiError.InternalError()
         }
     }
-
     async removeToken(refreshToken: string): Promise<Token> {
         const tokenData = await prisma.token.findUnique({
             where: { refreshToken },

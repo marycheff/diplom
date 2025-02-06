@@ -32,7 +32,6 @@ axiosInstance.interceptors.response.use(
         // Проверяем, что ошибка связана с истекшим токеном
         if (error.response?.status === 401 && !originalRequest._isRetry) {
             originalRequest._isRetry = true
-
             try {
                 // Запрос на обновление токена
                 const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })

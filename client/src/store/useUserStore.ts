@@ -1,5 +1,4 @@
 import UserService from "@/services/UserService"
-import { useAuthStore } from "@/store/useAuthStore"
 import { UserState } from "@/types/user.types"
 import { AxiosError } from "axios"
 import toast from "react-hot-toast"
@@ -26,7 +25,7 @@ export const useUserStore = create<UserState>(set => ({
     getUsers: async () => {
         set({ isLoading: true })
         try {
-            await useAuthStore.getState().noLoadingCheckAuth()
+            //await useAuthStore.getState().noLoadingCheckAuth()
             const response = await UserService.getUsers()
             return response.data
         } catch (error) {
@@ -43,7 +42,7 @@ export const useUserStore = create<UserState>(set => ({
     getUserById: async id => {
         set({ isLoading: true })
         try {
-            await useAuthStore.getState().noLoadingCheckAuth()
+            //await useAuthStore.getState().noLoadingCheckAuth()
             const response = await UserService.getUserById(id)
             return response.data
         } catch (error) {

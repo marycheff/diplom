@@ -12,20 +12,17 @@ import { useEffect } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 
 const AppRouter: React.FC = () => {
-    const { user, isAuth, isAdmin, checkAuth, isAuthChecking } = useAuthStore()
+    const { user, isAuth, isAdmin, checkAuth, isLoading} = useAuthStore()
 
     useEffect(() => {
-        const checkAuthStatus = async () => {
-            if (localStorage.getItem("token")) {
-                await checkAuth()
-            }
+        if (localStorage.getItem("token")) {
+            checkAuth()
         }
-        checkAuthStatus()
-    }, [checkAuth])
-    if (isAuthChecking) {
+    }, [])
+    if (isLoading) {
         return <Loader />
     }
-    // Маршруты для заблокированных пользователей
+    
     const blockedUserRoutes = [<Route key="blocked" path="*" element={<BlockedUserPage />} />]
 
     // Маршруты для авторизованных пользователей
@@ -53,7 +50,7 @@ const AppRouter: React.FC = () => {
 
     return (
         <div>
-            {isAuthChecking && <Loader />}
+            {/* {isAuthChecking && <Loader />} */}
             <Routes>
                 {generalRoutes}
                 {user?.isBlocked

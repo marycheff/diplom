@@ -1,4 +1,3 @@
-// AnswersList.tsx
 import React from "react"
 
 type Answer = {

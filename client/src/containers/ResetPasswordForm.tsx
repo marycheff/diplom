@@ -1,6 +1,7 @@
-import { observer } from "mobx-react-lite"
-import React, { useContext, useEffect, useState } from "react"
-import { Context } from "../main"
+import { useAuthStore } from "@/store/useAuthStore"
+import { useResetPasswordStore } from "@/store/useResetPasswordStore"
+import React, { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 const ResetPasswordForm: React.FC = () => {
     const [email, setEmail] = useState("")
@@ -8,12 +9,12 @@ const ResetPasswordForm: React.FC = () => {
     const [newPassword, setNewPassword] = useState("")
     const [isCodeSent, setIsCodeSent] = useState(false)
     const [isCodeVerified, setIsCodeVerified] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-    const [hasError, setHasError] = useState(false) // Состояние ошибки
-    const [secondsLeft, setSecondsLeft] = useState(0) // Таймер для блокировки кнопки повторной отправки
-    const { store } = useContext(Context)
+    const [secondsLeft, setSecondsLeft] = useState(0)
 
-    // Таймер
+    const { isLoading, requestResetCode, verifyResetCode, resetPassword } = useResetPasswordStore()
+    const { login } = useAuthStore()
+
+    // Таймер для блокировки кнопки повторной отправки
     useEffect(() => {
         let timer: NodeJS.Timeout
         if (secondsLeft > 0) {
@@ -24,62 +25,43 @@ const ResetPasswordForm: React.FC = () => {
 
     const handleSendCode = async () => {
         try {
-            setIsLoading(true)
-            await store.requestResetCode(email)
+            await requestResetCode(email)
             setIsCodeSent(true)
-            setHasError(false)
             setSecondsLeft(60) // Запуск таймера на 1 минуту
-            console.log("Код отправлен на ваш email")
+            toast.success("Код отправлен на ваш email")
         } catch (error) {
-            console.log("Ошибка при отправке кода")
-            setHasError(true)
-        } finally {
-            setIsLoading(false)
+            toast.error("Ошибка при отправке кода")
         }
     }
 
     const handleVerifyCode = async () => {
         try {
-            setIsLoading(true)
-            await store.verifyResetCode(email, code)
+            await verifyResetCode(email, code)
             setIsCodeVerified(true)
-            setHasError(false)
-            console.log("Код подтвержден, введите новый пароль")
-        } catch (error: any) {
-            console.log(error.response?.data?.message || "Ошибка при подтверждении кода сброса пароля")
-            // setHasError(true) // Устанавливаем флаг ошибки
-            //setIsCodeSent(false)
-            setIsCodeVerified(false)
-        } finally {
-            setIsLoading(false)
+            toast.success("Код подтвержден, введите новый пароль")
+        } catch (error) {
+            toast.error("Неверный код")
         }
     }
 
     const handleResetPassword = async () => {
         try {
-            setIsLoading(true)
-            await store.resetPassword(email, code, newPassword)
-            setHasError(false)
-            alert("Пароль успешно изменен")
-            store.login(email, newPassword)
-        } catch (error: any) {
-            console.log(error.response?.data?.message || "Ошибка при сбросе пароля")
-            setIsCodeSent(false)
-            setIsCodeVerified(false)
-            setHasError(true)
-        } finally {
-            setIsLoading(false)
+            await resetPassword(email, code, newPassword)
+            toast.success("Пароль успешно изменен")
+            await login(email, newPassword) // Автоматический вход после сброса пароля
+        } catch (error) {
+            toast.error("Ошибка при сбросе пароля")
         }
     }
 
     return (
         <div>
             <h2>Сброс пароля</h2>
-            {!isCodeSent || hasError ? (
+            {!isCodeSent ? (
                 <div>
                     <input
-                        type='email'
-                        placeholder='Введите email'
+                        type="email"
+                        placeholder="Введите email"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                     />
@@ -89,7 +71,7 @@ const ResetPasswordForm: React.FC = () => {
                 </div>
             ) : !isCodeVerified ? (
                 <div>
-                    <input type='text' placeholder='Введите код' value={code} onChange={e => setCode(e.target.value)} />
+                    <input type="text" placeholder="Введите код" value={code} onChange={e => setCode(e.target.value)} />
                     <button onClick={handleSendCode} disabled={secondsLeft > 0}>
                         {secondsLeft > 0 ? `Запросить новый (${secondsLeft})` : "Запросить новый"}
                     </button>
@@ -100,8 +82,8 @@ const ResetPasswordForm: React.FC = () => {
             ) : (
                 <div>
                     <input
-                        type='password'
-                        placeholder='Введите новый пароль'
+                        type="password"
+                        placeholder="Введите новый пароль"
                         value={newPassword}
                         onChange={e => setNewPassword(e.target.value)}
                     />
@@ -114,4 +96,4 @@ const ResetPasswordForm: React.FC = () => {
     )
 }
 
-export default observer(ResetPasswordForm)
+export default ResetPasswordForm

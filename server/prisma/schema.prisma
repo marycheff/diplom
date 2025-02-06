@@ -8,38 +8,39 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  email          String   @unique
-  name           String?  @map("name")
-  surname        String?  @map("surname")
-  patronymic     String?  @map("patronymic")
-  password       String   @map("password")
-  activated      Boolean  @default(false) @map("activated")
-  role           Role     @default(USER) @map("role")
-  activationLink String?  @map("activation_link")
-  resetCode      String?  @map("reset_code")
-  isBlocked      Boolean  @default(false) @map("is_blocked")
-  tokens         Token[]  @relation("UserTokens")
-  
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  @@map("users")  
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  email          String  @unique
+  name           String? @map("name")
+  surname        String? @map("surname")
+  patronymic     String? @map("patronymic")
+  password       String  @map("password")
+  activated      Boolean @default(false) @map("activated")
+  role           Role    @default(USER) @map("role")
+  activationLink String? @map("activation_link")
+  resetCode      String? @map("reset_code")
+  isBlocked      Boolean @default(false) @map("is_blocked")
+
+  refreshToken Token? @relation("UserToken")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
 }
 
 model Token {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String   @db.ObjectId @map("user_id")
-  user         User     @relation("UserTokens", fields: [userId], references: [id])
-  refreshToken String   @unique @map("refresh_token")
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String @unique @map("user_id") @db.ObjectId
+  user         User   @relation("UserToken", fields: [userId], references: [id])
+  refreshToken String @unique @map("refresh_token")
 
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  
-  @@map("tokens")  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tokens")
 }
 
 enum Role {
   USER
   ADMIN
 }
-

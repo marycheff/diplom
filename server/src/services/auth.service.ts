@@ -24,13 +24,13 @@ class AuthService {
         }
 
         const hashedPassword = await bcrypt.hash(user.password, 10)
-        const activationLink = uuid_v4() // Используем правильно импортированную функцию
+        const activationLink = uuid_v4() 
 
         const defaultRole = "USER"
         const newUser = await prisma.user.create({
             data: {
                 ...user, // Распаковываем остальные поля из user
-                password: hashedPassword, // Используем захешированный пароль
+                password: hashedPassword, 
                 activationLink: activationLink,
                 role: defaultRole,
             },
@@ -123,7 +123,7 @@ class AuthService {
 
     async logout(refreshToken: string): Promise<Token> {
         const token = await tokenService.removeToken(refreshToken)
-        if (!refreshToken){
+        if (!refreshToken) {
             throw ApiError.BadRequest("Токен не предоставлен")
         }
         return token
@@ -133,8 +133,8 @@ class AuthService {
         if (!refreshToken) {
             throw ApiError.UnauthorizedError()
         }
-        const userData = tokenService.validateRefreshToken(refreshToken)
 
+        const userData = tokenService.validateRefreshToken(refreshToken)
         if (!userData || typeof userData !== "object" || userData === null) {
             throw ApiError.UnauthorizedError()
         }
@@ -145,9 +145,7 @@ class AuthService {
         }
 
         const user = await prisma.user.findUnique({
-            where: {
-                id: userData.id,
-            },
+            where: { id: userData.id },
         })
         if (!user) {
             throw ApiError.UnauthorizedError()
@@ -155,11 +153,13 @@ class AuthService {
 
         const userDto = mapUserToDto(user)
 
-        // Генерация и сохранение токенов
-        const tokens = tokenService.generateTokens({
-            ...userDto,
-        })
+
+        // Генерируем новые токены
+        const tokens = tokenService.generateTokens({ ...userDto })
+
+        // Сохраняем новый refreshToken
         await tokenService.saveToken(user.id, tokens.refreshToken)
+
         return { ...tokens, user: userDto }
     }
 }

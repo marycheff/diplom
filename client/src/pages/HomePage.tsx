@@ -1,23 +1,21 @@
-import { observer } from "mobx-react-lite"
-import { useContext } from "react"
+import { useUserStore } from "@/store/useUserStore"
 import { useNavigate } from "react-router-dom"
-import { Context } from "../main"
 
 const HomePage = () => {
     const navigate = useNavigate()
-    const { store } = useContext(Context)
+    const { isLoading } = useUserStore()
 
     return (
         <>
-            {store.isLoading ? (
+            {isLoading ? (
                 <h1>Загрузка...</h1>
             ) : (
                 <div>
-                    <h1>{store.user.activated ? "Аккаунт активирован" : "Аккаунт Не активирован!!!"}</h1>
-                    <button onClick={() => store.logout()}>Выйти</button>
+                    {/* <h1>{store.user.activated ? "Аккаунт активирован" : "Аккаунт Не активирован!!!"}</h1>
+                    <button onClick={() => store.logout()}>Выйти</button> */}
 
-                    {store.isAdmin && <button onClick={() => navigate("/admin")}>Админ панель</button>}
-                    {!store.isAdmin && <h1>Не админ</h1>}
+                    {/* {store.isAdmin && <button onClick={() => navigate("/admin")}>Админ панель</button>}
+                    {!store.isAdmin && <h1>Не админ</h1>} */}
 
                     <button onClick={() => navigate("/profile")}>Профиль</button>
                     <button onClick={() => navigate("/test")}>Тест</button>
@@ -27,4 +25,4 @@ const HomePage = () => {
     )
 }
 
-export default observer(HomePage)
+export default HomePage

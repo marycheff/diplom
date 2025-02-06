@@ -19,8 +19,8 @@ const LoginAndRegisterPage: React.FC = () => {
     return (
         <div>
             <Tabs value={activeTab} onChange={handleTabChange}>
-                <Tab label='Вход' />
-                <Tab label='Регистрация' />
+                <Tab label="Вход" />
+                <Tab label="Регистрация" />
             </Tabs>
 
             <br />

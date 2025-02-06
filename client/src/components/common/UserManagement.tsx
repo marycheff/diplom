@@ -1,18 +1,15 @@
-// UserManagement.tsx
-import { observer } from "mobx-react-lite"
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
-import { Context } from "../../main"
+
 import { IUser } from "../../models/IUser"
 
 const UserManagement = () => {
-    const { store } = useContext(Context)
     const [users, setUsers] = useState<IUser[]>([])
     const [isUsersVisible, setIsUsersVisible] = useState(false) // Состояние для видимости списка
 
     async function getUsers() {
         try {
-            const users = await store.getUsers()
+            // const users = await store.getUsers()
             if (users !== undefined) {
                 setUsers(users)
                 setIsUsersVisible(true) // Скрываем/показываем список пользователей
@@ -24,7 +21,7 @@ const UserManagement = () => {
 
     const deleteUser = async (id: string) => {
         try {
-            await store.deleteUser(id)
+            // await store.deleteUser(id)
             setUsers(users.filter(user => user.id !== id))
             toast.success("Пользователь удален")
         } catch (e: any) {
@@ -34,7 +31,7 @@ const UserManagement = () => {
 
     const blockUser = async (id: string) => {
         try {
-            await store.blockUser(id)
+            //await store.blockUser(id)
             setUsers(users.map(user => (user.id === id ? { ...user, isBlocked: true } : user)))
             toast.success("Пользователь заблокирован")
         } catch (e: any) {
@@ -44,7 +41,7 @@ const UserManagement = () => {
 
     const unblockUser = async (id: string) => {
         try {
-            await store.unblockUser(id)
+            // await store.unblockUser(id)
             setUsers(users.map(user => (user.id === id ? { ...user, isBlocked: false } : user)))
             toast.success("Пользователь разблокирован")
         } catch (e: any) {
@@ -53,7 +50,7 @@ const UserManagement = () => {
     }
 
     const toggleUsersVisibility = () => {
-        setIsUsersVisible(prev => !prev) 
+        setIsUsersVisible(prev => !prev)
     }
 
     useEffect(() => {
@@ -68,7 +65,7 @@ const UserManagement = () => {
                 {isUsersVisible ? "Скрыть список пользователей" : "Показать список пользователей"}
             </button>
 
-            {isUsersVisible &&
+            {/* {isUsersVisible &&
                 users.map(user => (
                     <div key={user.id} style={{ display: "flex", alignItems: "center" }}>
                         {user.id === store.user.id ? (
@@ -85,9 +82,9 @@ const UserManagement = () => {
                             </>
                         )}
                     </div>
-                ))}
+                ))} */}
         </div>
     )
 }
 
-export default observer(UserManagement)
+export default UserManagement

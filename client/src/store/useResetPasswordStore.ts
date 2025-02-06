@@ -7,7 +7,7 @@ import { create } from "zustand"
 export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
     resetCodeTimestamp: null,
     isLoading: false,  
-
+    
     requestResetCode: async email => {
         set({ isLoading: true })
         try {
