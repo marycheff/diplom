@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 import EditableField from "../components/UI/input/EditableField"
 import Loader from "../components/UI/loader/Loader"
@@ -18,19 +17,18 @@ const fieldLabels: { [key: string]: string } = {
 }
 
 const UserProfilePage = () => {
-    const { user, isLoading, updateActivationLink } = useAuthStore()
+    const { user, isLoading, updateActivationLink, isEmailSending } = useAuthStore()
     const { getUserById, updateUser, isLoading: isUserLoading } = useUserStore()
     const navigate = useNavigate()
     const [userFields, setUserFields] = useState<UserFields>({})
     const [initialUserFields, setInitialUserFields] = useState<UserFields>({})
     const [isEditingFields, setIsEditingFields] = useState<{ [key: string]: boolean }>({})
     const [isFormChanged, setIsFormChanged] = useState(false)
-    const [isSending, setIsSending] = useState(false)
     const [showModal, setShowModal] = useState(false)
 
     // Получение данных пользователя
     async function getUserInfo() {
-        const userData = await getUserById(user.id)
+        const userData = await getUserById(user?.id!)
         if (userData) {
             const { id, role, ...fields } = userData
             setUserFields(fields)
@@ -61,23 +59,14 @@ const UserProfilePage = () => {
 
     // Сохранение изменений
     const handleSaveClick = async () => {
-        await updateUser(user.id, userFields)
-        getUserInfo() // Обновление информации
-        toast.success("Данные успешно обновлены")
+        await updateUser(user?.id!, userFields)
+        getUserInfo()
     }
 
     // Отправка активационной ссылки
     const handleSendActivationLink = async () => {
-        try {
-            setIsSending(true)
-            await updateActivationLink(user.email)
-            setShowModal(true)
-            toast.success("Ссылка активации отправлена на вашу почту")
-        } catch (e: any) {
-            toast.error(e.response?.data?.message || "Ошибка отправки ссылки активации")
-        } finally {
-            setIsSending(false)
-        }
+        await updateActivationLink(user?.email!)
+        // setShowModal(true)
     }
 
     useEffect(() => {
@@ -91,15 +80,15 @@ const UserProfilePage = () => {
 
     return (
         <div style={{ position: "relative" }}>
-            {(isLoading || isSending || isUserLoading) && <Loader text="Загрузка..." />}
+            {(isLoading || isUserLoading) && <Loader text="Загрузка..." />}
             <button onClick={() => navigate(-1)}>Назад</button>
             {userFields ? (
                 <div>
                     <label>Электронная почта: {userFields.email}</label>
                     <p>Почта активирована: {userFields.activated ? "Да" : "Нет"}</p>
                     {!userFields.activated && (
-                        <button onClick={handleSendActivationLink}>
-                            {isSending ? "Отправка..." : "Отправить ссылку еще раз"}
+                        <button onClick={handleSendActivationLink} disabled={isEmailSending}>
+                            {isEmailSending ? "Отправка..." : "Отправить ссылку еще раз"}
                         </button>
                     )}
 

@@ -1,3 +1,4 @@
+import ApiError from "@/exceptions/api-error"
 import axios from "axios"
 
 const httpsAgent = new (require("follow-redirects").https.Agent)({ rejectUnauthorized: false })
@@ -20,7 +21,7 @@ export const getChatContent = async ({
     numOfAnswers,
     question,
     answer,
-}: GetChatContentParams): Promise<string> => {
+}: GetChatContentParams): Promise<string | undefined> => {
     const postData = {
         model: "GigaChat",
         messages: [
@@ -51,9 +52,11 @@ export const getChatContent = async ({
             console.log(`Токенов: ${response.data.usage.total_tokens}`)
             return response.data.choices[0].message.content
         } else {
-            throw new Error("Ответ не найден в ответе от API")
+            ApiError.InternalError("Ответ не найден в ответе от API")
+            return
         }
-    } catch (error: any) {
-        throw new Error(`Ошибка при получении контента: ${error.message}`)
+    } catch {
+        ApiError.InternalError(`Ошибка при получении контента`)
+        return
     }
 }

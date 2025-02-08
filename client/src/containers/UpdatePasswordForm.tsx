@@ -1,8 +1,12 @@
-import { useContext, useState } from "react"
+import { useAuthStore } from "@/store/useAuthStore"
+import { useUserStore } from "@/store/useUserStore"
+import { useState } from "react"
 
 const UpdatePasswordForm = () => {
     const [oldPassword, setOldPassword] = useState<string>("")
     const [newPassword, setNewPassword] = useState<string>("")
+    const { user } = useAuthStore()
+    const { updatePassword, isLoading } = useUserStore()
     return (
         <div>
             <h1>Обновить пароль</h1>
@@ -19,9 +23,9 @@ const UpdatePasswordForm = () => {
                 placeholder="Новый пароль"
             />
 
-            {/* <button onClick={() => store.updatePassword(store.user.email, oldPassword, newPassword)}>
+            <button onClick={() => updatePassword(user?.email!, oldPassword, newPassword)} disabled={isLoading}>
                 Обновить пароль
-            </button> */}
+            </button>
         </div>
     )
 }

@@ -8,21 +8,25 @@ import LoginAndRegisterPage from "@/pages/LoginAndRegisterPage"
 import TestPage from "@/pages/TestPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import { useAuthStore } from "@/store/useAuthStore"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 
 const AppRouter: React.FC = () => {
-    const { user, isAuth, isAdmin, checkAuth, isLoading} = useAuthStore()
+    const { user, isAuth, isAdmin, checkAuth, isLoading, isAuthChecking } = useAuthStore()
+    const [authChecked, setAuthChecked] = useState(false)
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
-            checkAuth()
+            checkAuth().finally(() => setAuthChecked(true))
+        } else {
+            setAuthChecked(true)
         }
-    }, [])
-    if (isLoading) {
+    }, [checkAuth])
+
+    if (isAuthChecking || !authChecked) {
         return <Loader />
     }
-    
+
     const blockedUserRoutes = [<Route key="blocked" path="*" element={<BlockedUserPage />} />]
 
     // Маршруты для авторизованных пользователей
@@ -50,7 +54,6 @@ const AppRouter: React.FC = () => {
 
     return (
         <div>
-            {/* {isAuthChecking && <Loader />} */}
             <Routes>
                 {generalRoutes}
                 {user?.isBlocked

@@ -5,11 +5,11 @@ import { getChatContent } from "@/services/gigachat.service"
 import { Request, Response } from "express"
 
 // Функция для парсинга ответов
-function parseAnswers(response: string): string[] {
+function parseAnswers(response: string | undefined): string[] {
     const regex = /^\d+\.\s*(.+)$/gm // Изменено регулярное выражение для захвата текста
     const answers: string[] = []
     let match
-    while ((match = regex.exec(response)) !== null) {
+    while ((match = regex.exec(response!)) !== null) {
         answers.push(match[1].trim())
     }
     return answers

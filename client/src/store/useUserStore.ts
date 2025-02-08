@@ -60,7 +60,7 @@ export const useUserStore = create<UserState>(set => ({
         set({ isLoading: true })
         try {
             const response = await UserService.updateUser(id, updateData)
-            console.log("Данные пользователя обновлены")
+            toast.success("Данные пользователя успешно изменены")
             return response.data
         } catch (error) {
             if (error instanceof AxiosError) {

@@ -26,7 +26,7 @@ router.get("/activate/:link", authController.activate)
 // Вход в систему
 router.post(
     "/login",
-    [body("email").isEmail().withMessage("Некорректный email")],
+    //[body("email").isEmail().withMessage("Некорректный email")],
     validateRequest,
     authController.login
 )
@@ -78,7 +78,7 @@ router.post(
     "/update-password",
     authMiddleware,
     [
-        body("email").isEmail().withMessage("Некорректный email"),
+        // body("email").isEmail().withMessage("Некорректный email"),
         body("newPassword").isLength({ min: 3 }).withMessage("Новый пароль должен содержать не менее 3 символов"),
     ],
     validateRequest,

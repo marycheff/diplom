@@ -7,11 +7,12 @@ import toast from "react-hot-toast"
 import { create } from "zustand"
 
 export const useAuthStore = create<AuthState>(set => ({
-    user: {},
+    user: null,
     isAuth: false,
     isLoading: false,
     isAdmin: false,
     isAuthChecking: false,
+    isEmailSending: false,
 
     login: async (email, password) => {
         set({ isLoading: true })
@@ -61,7 +62,7 @@ export const useAuthStore = create<AuthState>(set => ({
             await AuthService.logout()
             localStorage.removeItem("token")
             set({
-                user: {},
+                user: null,
                 isAuth: false,
             })
         } catch (error) {
@@ -74,8 +75,7 @@ export const useAuthStore = create<AuthState>(set => ({
     },
 
     checkAuth: async () => {
-        // set({ isAuthChecking: true })
-        set({ isLoading: true })
+        set({ isAuthChecking: false })
         try {
             const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
             localStorage.setItem("token", response.data.accessToken)
@@ -91,8 +91,7 @@ export const useAuthStore = create<AuthState>(set => ({
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
         } finally {
-            // set({ isAuthChecking: false })
-            set({ isLoading: false })
+            set({ isAuthChecking: false })
         }
     },
 
@@ -115,15 +114,19 @@ export const useAuthStore = create<AuthState>(set => ({
     },
 
     updateActivationLink: async (email: string) => {
-        set({ isLoading: true })
+        set({ isEmailSending: true })
         try {
             const response = await AuthService.updateActivationLink(email)
+            toast.success("Ссылка для активации отправлена на вашу электронную почту")
             return response.data
-        } catch (error: any) {
-            console.error(error.response?.data?.message || "Ошибка при отправке ссылки активации")
-            throw error
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data?.message || "Неизвестная ошибка")
+            } else {
+                toast.error("Неизвестная ошибка, перезагрузите страницу")
+            }
         } finally {
-            set({ isLoading: true })
+            set({ isEmailSending: false })
         }
     },
 }))
