@@ -13,8 +13,8 @@ const router = express.Router()
 router.post(
     "/registration",
     [
-        body("email").isEmail().withMessage("Некорректный email"),
-        body("password").isLength({ min: 3, max: 20 }).withMessage("Пароль должен быть от 3 до 20 символов"),
+        // body("email").isEmail().withMessage("Некорректный email"),
+        // body("password").isLength({ min: 3, max: 20 }).withMessage("Пароль должен быть от 3 до 20 символов"),
     ],
     validateRequest,
     authController.registration

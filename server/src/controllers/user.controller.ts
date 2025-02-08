@@ -36,10 +36,10 @@ class UserController {
     async getUserById(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
-            const userIdFromToken = (req as any).user.id // Получаем ID текущего пользователя из токена
+            const userIdFromToken = req.user?.id // Получаем ID текущего пользователя из токена
 
             // Если пользователь не администратор и не запрашивает свою собственную информацию
-            if (id !== userIdFromToken && (req as any).user.role !== "ADMIN") {
+            if (id !== userIdFromToken && req.user?.role !== "ADMIN") {
                 return next(ApiError.Forbidden())
             }
 
@@ -89,7 +89,7 @@ class UserController {
             next(e)
         }
     }
-    
+
     async unblockUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params

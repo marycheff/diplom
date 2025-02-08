@@ -1,5 +1,4 @@
-import { UpdateUserDto } from "@/dtos/user-update.dto"
-import { UserDto, mapUserToDto } from "@/dtos/user.dto"
+import { UpdateUserDto, UserDto, mapUserToDto } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
 import { PrismaClient, User } from "@prisma/client"
 
@@ -70,7 +69,7 @@ class UserService {
                     id: id,
                 },
                 data: {
-                    ...updateData, 
+                    ...updateData,
                 },
             })
         } catch (error) {

@@ -33,7 +33,6 @@ class MailService {
             `,
             })
         } catch (error: any) {
-            console.log(error)
             if (error.responseCode === 550) {
                 throw ApiError.BadRequest(`Ошибка отправки письма: почтовый ящик ${to} не найден`)
             }
@@ -55,7 +54,6 @@ class MailService {
             `,
             })
         } catch (error: any) {
-            console.log(error)
             if (error.responseCode === 550) {
                 throw ApiError.BadRequest(`Ошибка отправки письма: почтовый ящик ${to} не найден`)
             }

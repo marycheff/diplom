@@ -24,13 +24,13 @@ class AuthService {
         }
 
         const hashedPassword = await bcrypt.hash(user.password, 10)
-        const activationLink = uuid_v4() 
+        const activationLink = uuid_v4()
 
         const defaultRole = "USER"
         const newUser = await prisma.user.create({
             data: {
                 ...user, // Распаковываем остальные поля из user
-                password: hashedPassword, 
+                password: hashedPassword,
                 activationLink: activationLink,
                 role: defaultRole,
             },
@@ -84,6 +84,7 @@ class AuthService {
             },
         })
         if (!user) {
+            console.log(5)
             throw ApiError.BadRequest("Некорректная ссылка активации")
         }
         await prisma.user.update({
@@ -92,6 +93,7 @@ class AuthService {
             },
             data: {
                 activated: true,
+                activationLink: null,
             },
         })
     }
@@ -131,28 +133,27 @@ class AuthService {
 
     async refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string; user: UserDto }> {
         if (!refreshToken) {
-            throw ApiError.UnauthorizedError()
+            throw ApiError.Unauthorized()
         }
 
         const userData = tokenService.validateRefreshToken(refreshToken)
         if (!userData || typeof userData !== "object" || userData === null) {
-            throw ApiError.UnauthorizedError()
+            throw ApiError.Unauthorized()
         }
 
         const tokenFromDb = await tokenService.findToken(refreshToken)
         if (!tokenFromDb) {
-            throw ApiError.UnauthorizedError()
+            throw ApiError.Unauthorized()
         }
 
         const user = await prisma.user.findUnique({
             where: { id: userData.id },
         })
         if (!user) {
-            throw ApiError.UnauthorizedError()
+            throw ApiError.Unauthorized()
         }
 
         const userDto = mapUserToDto(user)
-
 
         // Генерируем новые токены
         const tokens = tokenService.generateTokens({ ...userDto })

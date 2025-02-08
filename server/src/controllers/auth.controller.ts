@@ -52,11 +52,13 @@ class AuthController {
             await authService.activate(activationLink)
 
             return res.redirect(`${envConfig.CLIENT_URL}/activation-success`)
-        } catch (e) {
-            if (e instanceof ApiError.BadRequest) {
-                return res.redirect(`${envConfig.CLIENT_URL}/activation-error`)
+        } catch (error) {
+            if (error instanceof ApiError) {
+                if (error.status === 400) {
+                    return res.redirect(`${envConfig.CLIENT_URL}/activation-error`)
+                }
             }
-            next(e)
+            next(error)
         }
     }
 
@@ -90,7 +92,7 @@ class AuthController {
         try {
             const { refreshToken } = req.cookies
             if (!refreshToken) {
-                throw ApiError.UnauthorizedError()
+                throw ApiError.Unauthorized()
             }
             const token = await authService.logout(refreshToken)
             res.clearCookie("refreshToken")

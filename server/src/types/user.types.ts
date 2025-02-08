@@ -16,3 +16,19 @@ export interface IUpdateUser {
     password?: string
     activated?: boolean
 }
+
+// server/src/types/user.types.ts
+export interface IUser {
+    id: string; 
+    email: string;
+    password: string; 
+    activated: boolean;
+    role: string; 
+    activation_link?: string; 
+    is_blocked: boolean;
+    created_at: Date;
+    updated_at: Date;
+    name?: string; 
+    surname?: string; 
+    patronymic?: string;
+}
