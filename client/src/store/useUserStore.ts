@@ -7,6 +7,7 @@ import { create } from "zustand"
 export const useUserStore = create<UserState>(set => ({
     isLoading: false,
     isAuthChecking: false,
+    isUsersFetching: false,
     updatePassword: async (email, oldPassword, newPassword) => {
         set({ isLoading: true })
         try {
@@ -23,7 +24,7 @@ export const useUserStore = create<UserState>(set => ({
     },
 
     getUsers: async () => {
-        set({ isLoading: true })
+        set({ isUsersFetching: true })
         try {
             //await useAuthStore.getState().noLoadingCheckAuth()
             const response = await UserService.getUsers()
@@ -35,7 +36,7 @@ export const useUserStore = create<UserState>(set => ({
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
         } finally {
-            set({ isLoading: false })
+            set({ isUsersFetching: false })
         }
     },
 

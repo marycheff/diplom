@@ -19,7 +19,7 @@ const AppRouter: React.FC = () => {
         if (localStorage.getItem("token")) {
             checkAuth().finally(() => setAuthChecked(true))
         } else {
-            setAuthChecked(true)
+            setAuthChecked(false)
         }
     }, [checkAuth])
 

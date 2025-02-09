@@ -1,26 +1,24 @@
+import { useAuthStore } from "@/store/useAuthStore"
 import { useUserStore } from "@/store/useUserStore"
 import { useNavigate } from "react-router-dom"
 
 const HomePage = () => {
     const navigate = useNavigate()
     const { isLoading } = useUserStore()
+    const { user, logout, isAdmin } = useAuthStore()
 
     return (
         <>
-            {isLoading ? (
-                <h1>Загрузка...</h1>
-            ) : (
-                <div>
-                    {/* <h1>{store.user.activated ? "Аккаунт активирован" : "Аккаунт Не активирован!!!"}</h1>
-                    <button onClick={() => store.logout()}>Выйти</button> */}
+            <div>
+                <h1>{user?.isActivated ? "Аккаунт активирован" : "Аккаунт Не активирован!!!"}</h1>
+                <button onClick={() => logout()}>Выйти</button>
 
-                    {/* {store.isAdmin && <button onClick={() => navigate("/admin")}>Админ панель</button>}
-                    {!store.isAdmin && <h1>Не админ</h1>} */}
+                {isAdmin && <button onClick={() => navigate("/admin")}>Админ панель</button>}
+                {!isAdmin && <h1>Не админ</h1>}
 
-                    <button onClick={() => navigate("/profile")}>Профиль</button>
-                    <button onClick={() => navigate("/test")}>Тест</button>
-                </div>
-            )}
+                <button onClick={() => navigate("/profile")}>Профиль</button>
+                <button onClick={() => navigate("/test")}>Тест</button>
+            </div>
         </>
     )
 }

@@ -85,8 +85,8 @@ const UserProfilePage = () => {
             {userFields ? (
                 <div>
                     <label>Электронная почта: {userFields.email}</label>
-                    <p>Почта активирована: {userFields.activated ? "Да" : "Нет"}</p>
-                    {!userFields.activated && (
+                    <p>Почта активирована: {userFields.isActivated ? "Да" : "Нет"}</p>
+                    {!userFields.isActivated && (
                         <button onClick={handleSendActivationLink} disabled={isEmailSending}>
                             {isEmailSending ? "Отправка..." : "Отправить ссылку еще раз"}
                         </button>
@@ -96,7 +96,7 @@ const UserProfilePage = () => {
                     {Object.keys(userFields).map(
                         field =>
                             field !== "email" &&
-                            field !== "activated" && (
+                            field !== "isActivated" && (
                                 <EditableField
                                     key={field}
                                     label={fieldLabels[field] || field}
