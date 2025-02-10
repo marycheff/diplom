@@ -1,7 +1,7 @@
 import testController from "@/controllers/test.controller"
 import { adminMiddleware, authMiddleware } from "@/middleware/auth.middleware"
 import validateRequest from "@/middleware/validate-request.middleware"
-import { CreateAnswer } from "@/types/test.types"
+import { IAnswer } from "@/types/test.types"
 import { Router } from "express"
 import { body } from "express-validator"
 
@@ -26,29 +26,48 @@ router.put(
         body("questions.*.answers")
             .isArray({ min: 1 })
             .withMessage("Должен быть хотя бы один ответ")
-            .custom((answers: CreateAnswer[]) => answers.some(a => a.isCorrect === true))
+            .custom((answers: IAnswer[]) => answers.some(a => a.isCorrect === true))
             .withMessage("Хотя бы один ответ должен быть правильным"),
     ],
     validateRequest,
     testController.updateTest
 )
 
-// удаление теста
+// Удаление теста
 router.delete("/:testId", authMiddleware, validateRequest, testController.deleteTest)
 
-// удаление вопроса из теста
+// Удаление вопроса из теста
 router.delete("/questions/:questionId", authMiddleware, validateRequest, testController.deleteQuestion)
 
-// удаление всех вопросов из теста
+// Удаление всех вопросов из теста
 router.delete("/:testId/questions", authMiddleware, validateRequest, testController.deleteAllQuestions)
 
-// удаление ответа из вопроса
+// Удаление ответа из вопроса
 router.delete("/answers/:answerId", authMiddleware, validateRequest, testController.deleteAnswer)
 
-// получение всех тестов пользователя (только свои)
+// Получение всех тестов пользователя (только свои)
 router.get("/user-tests", authMiddleware, testController.getUserTests)
 
-// получение всех тестов (админ)
+// Получение всех тестов (админ)
 router.get("/all-tests", authMiddleware, adminMiddleware, testController.getUserTests)
+
+// Обновление вопроса
+router.put(
+    "/questions/:questionId",
+    authMiddleware,
+    [
+        body("text").notEmpty().withMessage("Текст вопроса обязателен"),
+        body("answers").isArray({ min: 1 }).withMessage("Должен быть хотя бы один ответ"),
+        body("answers.*.text").notEmpty().withMessage("Текст ответа обязателен"),
+        body("answers.*.isCorrect").isBoolean().withMessage("Поле isCorrect должно быть булевым"),
+        body("answers")
+            .isArray({ min: 1 })
+            .withMessage("Должен быть хотя бы один ответ")
+            .custom((answers: IAnswer[]) => answers.some(a => a.isCorrect === true))
+            .withMessage("Хотя бы один ответ должен быть правильным"),
+    ],
+    validateRequest,
+    testController.updateQuestion
+)
 
 export default router

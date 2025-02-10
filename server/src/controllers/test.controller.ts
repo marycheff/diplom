@@ -1,6 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import testService from "@/services/test.service"
-import { CreateQuestion, CreateTest, UpdateTest } from "@/types/test.types" // Обновлено
+import { IQuestion, ITest, IUpdateTest } from "@/types/test.types"
+
 import { NextFunction, Request, Response } from "express"
 
 class TestController {
@@ -8,7 +9,7 @@ class TestController {
     async createTest(req: Request, res: Response, next: NextFunction) {
         try {
             const authorId = req.user?.id
-            const testData: CreateTest = req.body
+            const testData: ITest = req.body
 
             if (!authorId) {
                 throw ApiError.Unauthorized()
@@ -26,8 +27,8 @@ class TestController {
         try {
             const { testId } = req.params
             const userId = req.user?.id
-            const updateTestData: UpdateTest = {
-                questions: req.body.questions.map((question: CreateQuestion, index: number) => ({
+            const updateTestData: IUpdateTest = {
+                questions: req.body.questions.map((question: IQuestion, index: number) => ({
                     ...question,
                     order: index + 1,
                 })),
@@ -113,6 +114,19 @@ class TestController {
             if (!user) throw ApiError.Unauthorized()
             await testService.deleteAllAnswers(questionId, user)
             res.status(200).json({ message: "Все ответы успешно удалены" })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async updateQuestion(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { questionId } = req.params
+            const user = req.user
+            const updateQuestionData: IQuestion = req.body
+            if (!user || !updateQuestionData) throw ApiError.Unauthorized()
+            await testService.updateQuestion(questionId, user, updateQuestionData)
+            res.status(200).json({ message: "Ответ успешно обновлен", data: updateQuestionData })
         } catch (error) {
             next(error)
         }

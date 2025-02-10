@@ -1,36 +1,45 @@
-export interface CreateAnswer {
+export interface IAnswer {
+    id: string
     text: string
     isCorrect: boolean
 }
-export interface CreateQuestion {
+
+export interface IQuestion {
+    id: string
     text: string
-    answers: CreateAnswer[]
-    order?: number 
+    order?: number
+    answers: IAnswer[]
 }
 
-export interface CreateTest {
+export interface ITest {
     title: string
     description?: string
-    questions: CreateQuestion[]
+    questions: IQuestion[]
 }
-export interface TestResponse {
+
+// Интерфейсы для ответов API
+export interface ITestResponse {
     id: string
     authorId: string
     title: string
     description?: string
-    questions?: QuestionResponse[]
+    questions?: IQuestionResponse[]
 }
-export interface QuestionResponse {
+
+export interface IQuestionResponse {
     id: string
     text: string
     order: number
-    answers: AnswerResponse[]
+    answers: IAnswerResponse[]
 }
-export interface AnswerResponse {
+
+export interface IAnswerResponse {
     id: string
     text: string
-    isCorrect: boolean 
+    isCorrect: boolean
 }
-export interface UpdateTest {
-    questions: CreateQuestion[]
+
+// Интерфейс для обновления теста
+export interface IUpdateTest {
+    questions: IQuestion[]
 }

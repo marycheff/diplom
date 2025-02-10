@@ -1,18 +1,19 @@
 import { UserDto } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
-import { CreateTest, TestResponse, UpdateTest } from "@/types/test.types" // Обновлено
+import { IQuestion, ITest, ITestResponse, IUpdateTest } from "@/types/test.types"
 import { Answer, PrismaClient, Question, Test } from "@prisma/client"
 import { ObjectId } from "mongodb"
+
 const prisma = new PrismaClient()
 
 class TestService {
-    private mapToResponse(test: Test, questions?: (Question & { answers: Answer[] })[]): TestResponse {
+    private mapToResponse(test: Test & { questions?: (Question & { answers: Answer[] })[] }): ITestResponse {
         return {
             id: test.id,
             authorId: test.authorId,
             title: test.title,
             description: test.description || "",
-            questions: questions?.map(question => ({
+            questions: test.questions?.map(question => ({
                 id: question.id,
                 text: question.text,
                 order: question.order,
@@ -26,7 +27,7 @@ class TestService {
     }
 
     // Создание теста без вопросов
-    async createTest(authorId: string, testData: CreateTest): Promise<TestResponse> {
+    async createTest(authorId: string, testData: ITest): Promise<ITestResponse> {
         try {
             const createdTest = await prisma.test.create({
                 data: {
@@ -43,17 +44,21 @@ class TestService {
     }
 
     // Добавление вопросов к существующему тесту
-    async addQuestions(testId: string, userId: string, updateTestData: UpdateTest): Promise<TestResponse> {
+    async addQuestions(testId: string, userId: string, updateTestData: IUpdateTest): Promise<ITestResponse> {
         return prisma.$transaction(async transaction => {
             if (!ObjectId.isValid(testId)) {
                 throw ApiError.BadRequest("Тест не найден")
             }
-            const existingTest = await transaction.test.findUnique({ where: { id: testId } })
+
+            const existingTest = await transaction.test.findUnique({
+                where: { id: testId },
+            })
 
             if (!existingTest) throw ApiError.BadRequest("Тест не найден")
             if (existingTest.authorId !== userId) {
                 throw ApiError.Forbidden()
             }
+
             // Создание новых вопросов с ответами
             const createdQuestions = await Promise.all(
                 updateTestData.questions.map(async (questionData, index) => {
@@ -68,9 +73,9 @@ class TestService {
                     await transaction.answer.createMany({
                         data: questionData.answers.map(answerData => ({
                             text: answerData.text,
-                            isCorrect: answerData.isCorrect,
+                            is_correct: answerData.isCorrect,
                             questionId: createdQuestion.id,
-                            isGenerated: false,
+                            is_generated: false,
                         })),
                     })
 
@@ -86,11 +91,15 @@ class TestService {
                 (question): question is Question & { answers: Answer[] } => question !== null
             )
 
-            return this.mapToResponse(existingTest, validQuestions)
+            return this.mapToResponse({
+                ...existingTest,
+                questions: validQuestions,
+            })
         })
     }
 
-    async getUserTests(userId: string): Promise<TestResponse[]> {
+    // Получение всех тестов пользователя
+    async getUserTests(userId: string): Promise<ITestResponse[]> {
         const tests = await prisma.test.findMany({
             where: { authorId: userId },
             include: {
@@ -102,9 +111,11 @@ class TestService {
             },
         })
 
-        return tests.map(test => this.mapToResponse(test, test.questions))
+        return tests.map(test => this.mapToResponse(test))
     }
-    async getAllTests(): Promise<TestResponse[]> {
+
+    // Получение всех тестов
+    async getAllTests(): Promise<ITestResponse[]> {
         const tests = await prisma.test.findMany({
             include: {
                 questions: {
@@ -114,20 +125,23 @@ class TestService {
                 },
             },
         })
-        return tests.map(test => this.mapToResponse(test, test.questions))
+        return tests.map(test => this.mapToResponse(test))
     }
-
+    // Удаление теста
     async deleteTest(testId: string, user: UserDto): Promise<void> {
         if (!ObjectId.isValid(testId)) {
             throw ApiError.BadRequest("Тест не найден")
         }
+
         const test = await prisma.test.findUnique({ where: { id: testId } })
         if (!test) {
             throw ApiError.BadRequest("Тест не найден")
         }
+
         if (test.authorId !== user.id && user.role !== "ADMIN") {
             throw ApiError.Forbidden()
         }
+
         await prisma.$transaction(async transaction => {
             await transaction.answer.deleteMany({
                 where: {
@@ -136,17 +150,20 @@ class TestService {
                     },
                 },
             })
+
             await transaction.question.deleteMany({
                 where: {
                     testId: testId,
                 },
             })
+
             await transaction.test.delete({
                 where: { id: testId },
             })
         })
     }
 
+    // Удаление вопроса
     async deleteQuestion(questionId: string, user: UserDto): Promise<void> {
         if (!ObjectId.isValid(questionId)) {
             throw ApiError.BadRequest("Вопрос не найден")
@@ -170,15 +187,17 @@ class TestService {
             })
         })
     }
+
+    // Удаление всех вопросов из теста
     async deleteAllQuestions(testId: string, user: UserDto): Promise<void> {
         if (!ObjectId.isValid(testId)) {
             throw ApiError.BadRequest("Тест не найден")
         }
-        const test = await prisma.test.findUnique({ where: { id: testId } })
-        if (!test) {
+        const existingTest = await prisma.test.findUnique({ where: { id: testId } })
+        if (!existingTest) {
             throw ApiError.BadRequest("Тест не найден")
         }
-        if (test.authorId !== user.id && user.role !== "ADMIN") {
+        if (existingTest.authorId !== user.id && user.role !== "ADMIN") {
             throw ApiError.Forbidden()
         }
         await prisma.$transaction(async transaction => {
@@ -197,6 +216,7 @@ class TestService {
         })
     }
 
+    // Удаление ответа
     async deleteAnswer(answerId: string, user: UserDto): Promise<void> {
         if (!ObjectId.isValid(answerId)) {
             throw ApiError.BadRequest("Ответ не найден")
@@ -236,6 +256,7 @@ class TestService {
         })
     }
 
+    // Удаление всех ответов к вопросу
     async deleteAllAnswers(questionId: string, user: UserDto): Promise<void> {
         if (!ObjectId.isValid(questionId)) {
             throw ApiError.BadRequest("Вопрос не найден")
@@ -252,6 +273,51 @@ class TestService {
             where: {
                 questionId: questionId,
             },
+        })
+    }
+
+    // Изменение вопроса
+    async updateQuestion(questionId: string, user: UserDto, updateData: IQuestion): Promise<void> {
+        if (!ObjectId.isValid(questionId)) {
+            throw ApiError.BadRequest("Вопрос не найден")
+        }
+
+        const question = await prisma.question.findUnique({
+            where: { id: questionId },
+        })
+        if (!question) {
+            throw ApiError.BadRequest("Вопрос не найден")
+        }
+
+        const test = await prisma.test.findUnique({
+            where: { id: question.testId },
+        })
+        if (test?.authorId !== user.id && user.role !== "ADMIN") {
+            throw ApiError.Forbidden()
+        }
+
+        await prisma.$transaction(async transaction => {
+            await transaction.question.update({
+                where: { id: questionId },
+                data: {
+                    text: updateData.text,
+                    order: updateData.order,
+                },
+            })
+
+            // Удаление существующих ответов
+            await transaction.answer.deleteMany({
+                where: { questionId: questionId },
+            })
+
+            await transaction.answer.createMany({
+                data: updateData.answers.map(answer => ({
+                    text: answer.text,
+                    isCorrect: answer.isCorrect,
+                    questionId: questionId,
+                    isGenerated: false,
+                })),
+            })
         })
     }
 }
