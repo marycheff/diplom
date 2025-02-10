@@ -49,14 +49,28 @@ class AuthController {
     async activate(req: Request, res: Response, next: NextFunction) {
         try {
             const activationLink = req.params.link
-            await authService.activate(activationLink)
+            const { accessToken, refreshToken, user } = await authService.activate(activationLink)
 
-            return res.redirect(`${envConfig.CLIENT_URL}/activation-success`)
+            // Устанавливаем куки
+            res.cookie("refreshToken", refreshToken, {
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+                httpOnly: true,
+                sameSite: "none",
+                secure: true,
+            })
+
+            // Редирект с токеном в URL
+            res.redirect(
+                `${envConfig.CLIENT_URL}/activation-success?` +
+                    `accessToken=${accessToken}&` +
+                    `userId=${user.id}&` +
+                    `email=${user.email}`
+            )
         } catch (error) {
             if (error instanceof ApiError) {
-                if (error.status === 400) {
-                    return res.redirect(`${envConfig.CLIENT_URL}/activation-error`)
-                }
+                return res.redirect(
+                    `${envConfig.CLIENT_URL}/activation-error?` + `error=${encodeURIComponent(error.message)}`
+                )
             }
             next(error)
         }

@@ -3,7 +3,7 @@ import envConfig from "@/envConfig"
 import ApiError from "@/exceptions/api-error"
 import mailService from "@/services/mail.service"
 import tokenService from "@/services/token.service"
-import { ICreateUser } from "@/types/user.types"
+import { CreateUser } from "@/types/user.types"
 import { PrismaClient, Token } from "@prisma/client"
 
 import bcrypt from "bcrypt"
@@ -12,7 +12,7 @@ import { v4 as uuid_v4 } from "uuid"
 const prisma = new PrismaClient()
 
 class AuthService {
-    async registration(user: ICreateUser): Promise<{ accessToken: string; refreshToken: string; user: UserDto }> {
+    async registration(user: CreateUser): Promise<{ accessToken: string; refreshToken: string; user: UserDto }> {
         const candidate = await prisma.user.findUnique({
             where: {
                 email: user.email,
@@ -62,7 +62,7 @@ class AuthService {
         if (!user) {
             throw ApiError.BadRequest(`Пользователь c email ${email} не найден`)
         }
-        if (user.activated) {
+        if (user.isActivated) {
             throw ApiError.BadRequest(`Аккаунт пользователя c email ${email} уже активирован`)
         }
 
@@ -77,25 +77,32 @@ class AuthService {
         await mailService.sendActivationMail(email, `${envConfig.API_URL}/api/auth/activate/${activationLink}`)
     }
 
-    async activate(activationLink: string): Promise<void> {
+    async activate(activationLink: string): Promise<{
+        accessToken: string
+        refreshToken: string
+        user: UserDto
+    }> {
         const user = await prisma.user.findFirst({
-            where: {
-                activationLink,
-            },
+            where: { activationLink },
         })
-        if (!user) {
-            console.log(5)
-            throw ApiError.BadRequest("Некорректная ссылка активации")
-        }
+
+        if (!user) throw ApiError.BadRequest("Некорректная ссылка активации")
+        if (user.isActivated) throw ApiError.BadRequest("Аккаунт уже активирован")
+
         await prisma.user.update({
-            where: {
-                id: user.id,
-            },
+            where: { id: user.id },
             data: {
-                activated: true,
+                isActivated: true,
                 activationLink: null,
             },
         })
+
+        const userDto = mapUserToDto(user)
+        const tokens = tokenService.generateTokens(userDto)
+
+        await tokenService.saveToken(user.id, tokens.refreshToken)
+
+        return { ...tokens, user: userDto }
     }
 
     async login(

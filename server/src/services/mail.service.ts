@@ -10,12 +10,12 @@ class MailService {
         this.transporter = nodemailer.createTransport({
             host: envConfig.SMTP_HOST,
             port: Number(envConfig.SMTP_PORT),
-            secure: true, // Если вам нужен SSL (для порта 465), поставьте true
+            secure: true,
             auth: {
                 user: envConfig.SMTP_USER,
                 pass: envConfig.SMTP_PASSWORD,
             },
-        } as SMTPTransport.Options) // Указываем тип явно
+        } as SMTPTransport.Options) 
     }
 
     async sendActivationMail(to: string, link: string) {

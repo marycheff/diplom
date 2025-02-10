@@ -5,7 +5,7 @@ import { getChatContent } from "@/services/gigachat.service"
 import { Request, Response } from "express"
 
 // Функция для парсинга ответов
-function parseAnswers(response: string | undefined): string[] {
+const parseAnswers = (response: string | undefined): string[] => {
     const regex = /^\d+\.\s*(.+)$/gm // Изменено регулярное выражение для захвата текста
     const answers: string[] = []
     let match

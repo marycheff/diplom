@@ -3,7 +3,7 @@ import ApiError from "@/exceptions/api-error"
 import tokenService from "@/services/token.service"
 import { NextFunction, Request, Response } from "express"
 
-export function authMiddleware(req: Request, res: Response, next: NextFunction) {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
         const authorizationHeader = req.headers.authorization
         if (!authorizationHeader) {
@@ -27,7 +27,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
 }
 
 // Новое middleware для проверки роли ADMIN
-export function adminMiddleware(req: Request, res: Response, next: NextFunction) {
+export const adminMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user
         if (user?.role !== "ADMIN") {

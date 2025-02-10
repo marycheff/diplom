@@ -1,19 +1,8 @@
 import ApiError from "@/exceptions/api-error"
+import { ChatContentResponse, GetChatContentParams } from "@/types/gigachat.types"
 import axios from "axios"
 
 const httpsAgent = new (require("follow-redirects").https.Agent)({ rejectUnauthorized: false })
-
-interface ChatContentResponse {
-    choices: { message: { content: string } }[]
-    usage: { total_tokens: number }
-}
-
-interface GetChatContentParams {
-    token: string
-    numOfAnswers: number
-    question: string
-    answer: string
-}
 
 // Функция для отправки запроса к API нейросети и получения ответов
 export const getChatContent = async ({

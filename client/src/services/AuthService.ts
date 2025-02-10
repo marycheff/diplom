@@ -11,7 +11,7 @@ export default class AuthService {
         return axiosInstance.post<AuthResponse>("/auth/registration", { email, password })
     }
     static async logout(): Promise<void> {
-        return axiosInstance.post("/logout")
+        return axiosInstance.post("/auth/logout")
     }
     static async updateActivationLink(email: string): Promise<AxiosResponse<AuthResponse>> {
         return axiosInstance.post<AuthResponse>("/auth/send-update-activation-link", { email })

@@ -61,6 +61,62 @@ class TestController {
             next(error)
         }
     }
+
+    async deleteTest(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const user = req.user
+            if (!user) throw ApiError.Unauthorized()
+            await testService.deleteTest(testId, user)
+            res.status(200).json({ message: "Тест успешно удален" })
+        } catch (error) {
+            next(error)
+        }
+    }
+    async deleteQuestion(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { questionId } = req.params
+            const user = req.user
+            if (!user) throw ApiError.Unauthorized()
+            await testService.deleteQuestion(questionId, user)
+            res.status(200).json({ message: "Вопрос успешно удален" })
+        } catch (error) {
+            next(error)
+        }
+    }
+    async deleteAllQuestions(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const user = req.user
+            if (!user) throw ApiError.Unauthorized()
+            await testService.deleteAllQuestions(testId, user)
+            res.status(200).json({ message: "Все вопросы успешно удалены" })
+        } catch (error) {
+            next(error)
+        }
+    }
+    async deleteAnswer(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { answerId } = req.params
+            const user = req.user
+            if (!user) throw ApiError.Unauthorized()
+            await testService.deleteAnswer(answerId, user)
+            res.status(200).json({ message: "Ответ успешно удален" })
+        } catch (error) {
+            next(error)
+        }
+    }
+    async deleteAllAnswers(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { questionId } = req.params
+            const user = req.user
+            if (!user) throw ApiError.Unauthorized()
+            await testService.deleteAllAnswers(questionId, user)
+            res.status(200).json({ message: "Все ответы успешно удалены" })
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 export default new TestController()

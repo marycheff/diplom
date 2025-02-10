@@ -8,12 +8,12 @@ const prisma = new PrismaClient()
 class TokenService {
     generateTokens(payload: object): { accessToken: string; refreshToken: string } {
         const accessToken = jwt.sign(payload, envConfig.JWT_ACCESS_SECRET as string, {
-            expiresIn: "30m",
+            expiresIn: "29d",
             // expiresIn: "15s",
         })
         const refreshToken = jwt.sign(payload, envConfig.JWT_REFRESH_SECRET as string, {
             // expiresIn: "30s",
-            expiresIn: "60d",
+            expiresIn: "30d",
         })
 
         return { accessToken, refreshToken }

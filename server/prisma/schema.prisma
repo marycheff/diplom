@@ -8,19 +8,19 @@ datasource db {
 }
 
 model User {
-  id             String  @id @default(auto()) @map("_id") @db.ObjectId
-  email          String  @unique
-  name           String? @map("name")
-  surname        String? @map("surname")
-  patronymic     String? @map("patronymic")
-  password       String  @map("password")
-  activated      Boolean @default(false) @map("activated")
-  role           Role    @default(USER) @map("role")
-  activationLink String? @map("activation_link")
-  resetCode      String? @map("reset_code")
-  isBlocked      Boolean @default(false) @map("is_blocked")
-  refreshToken   Token?  @relation("UserToken")
-  testsCreated   Test[]  @relation("TestAuthor")
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  email          String   @unique
+  name           String?  @map("name")
+  surname        String?  @map("surname")
+  patronymic     String?  @map("patronymic")
+  password       String   @map("password")
+  isActivated    Boolean  @default(false) @map("is_activated")
+  role           Role     @default(USER) @map("role")
+  activationLink String?  @map("activation_link")
+  resetCode      String?  @map("reset_code")
+  isBlocked      Boolean  @default(false) @map("is_blocked")
+  refreshToken   Token?   @relation("UserToken")
+  testsCreated   Test[]   @relation("TestAuthor")
   // testsModerated TestModeration[]  @relation("TestModerator")
   // testAttempts   TestAttempt[]     @relation("TestAttemptUser")
   createdAt      DateTime @default(now()) @map("created_at")
@@ -58,14 +58,14 @@ model Test {
 }
 
 model Question {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  testId     String   @map("test_id") @db.ObjectId
-  test       Test     @relation(fields: [testId], references: [id])
-  text       String
-  order      Int
-  answers    Answer[]
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  testId    String   @map("test_id") @db.ObjectId
+  test      Test     @relation(fields: [testId], references: [id])
+  text      String
+  order     Int
+  answers   Answer[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("questions")
 }
@@ -84,14 +84,14 @@ model Answer {
 }
 
 model TestSettings {
-  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
-  testId               String   @unique @map("test_id") @db.ObjectId
-  test                 Test     @relation(fields: [testId], references: [id])
-  requireRegistration  Boolean  @default(false)
-  inputFields          Json?
-  showDetailedResults  Boolean  @default(false)
-  createdAt            DateTime @default(now()) @map("created_at")
-  updatedAt            DateTime @updatedAt @map("updated_at")
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  testId              String   @unique @map("test_id") @db.ObjectId
+  test                Test     @relation(fields: [testId], references: [id])
+  requireRegistration Boolean  @default(false)
+  inputFields         Json?
+  showDetailedResults Boolean  @default(false)
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 
   @@map("test_settings")
 }

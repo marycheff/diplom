@@ -1,3 +1,4 @@
+import ApiError from "@/exceptions/api-error"
 import axios from "axios"
 import * as qs from "querystring"
 
@@ -35,9 +36,9 @@ export const getAccessToken = async (authData: string): Promise<string> => {
         if (response.data.access_token) {
             return response.data.access_token
         } else {
-            throw new Error("Access token not found in response")
+            throw ApiError.InternalError("Ошибка нейросети")
         }
     } catch (error: any) {
-        throw new Error(`Error fetching access token: ${error.message}`)
+        throw ApiError.InternalError("Ошибка получения токена доступа")
     }
 }
