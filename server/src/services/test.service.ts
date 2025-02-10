@@ -1,6 +1,6 @@
 import { UserDto } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
-import { IQuestion, ITest, ITestResponse, IUpdateTest } from "@/types/test.types"
+import { IAnswerResponse, IQuestion, IQuestionResponse, ITest, ITestResponse, IUpdateTest } from "@/types/test.types"
 import { Answer, PrismaClient, Question, Test } from "@prisma/client"
 import { ObjectId } from "mongodb"
 
@@ -319,6 +319,57 @@ class TestService {
                 })),
             })
         })
+    }
+
+    async getTestById(testId: string): Promise<ITestResponse> {
+        const test = await prisma.test.findUnique({
+            where: { id: testId },
+            include: {
+                questions: {
+                    include: {
+                        answers: true,
+                    },
+                    orderBy: { order: "asc" },
+                },
+            },
+        })
+
+        if (!test) throw ApiError.BadRequest("Тест не найден")
+        return this.mapToResponse(test)
+    }
+
+    async getTestQuestions(testId: string): Promise<IQuestionResponse[]> {
+        const questions = await prisma.question.findMany({
+            where: { testId },
+            include: { answers: true },
+            orderBy: { order: "asc" },
+        })
+
+        return questions.map(q => ({
+            id: q.id,
+            text: q.text,
+            order: q.order,
+            answers: q.answers.map(a => ({
+                id: a.id,
+                text: a.text,
+                isCorrect: a.isCorrect,
+            })),
+        }))
+    }
+
+    async getQuestionAnswers(questionId: string): Promise<IAnswerResponse[]> {
+        const question = await prisma.question.findUnique({
+            where: { id: questionId },
+            include: { answers: true },
+        })
+
+        if (!question) throw ApiError.BadRequest("Вопрос не найден")
+
+        return question.answers.map(a => ({
+            id: a.id,
+            text: a.text,
+            isCorrect: a.isCorrect,
+        }))
     }
 }
 

@@ -131,6 +131,34 @@ class TestController {
             next(error)
         }
     }
+
+    async getTestById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const test = await testService.getTestById(testId)
+            res.status(200).json(test)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async getTestQuestions(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const questions = await testService.getTestQuestions(testId)
+            res.json(questions)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async getQuestionAnswers(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { questionId } = req.params
+            const answers = await testService.getQuestionAnswers(questionId)
+            res.json(answers)
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 export default new TestController()
