@@ -73,9 +73,9 @@ class TestService {
                     await transaction.answer.createMany({
                         data: questionData.answers.map(answerData => ({
                             text: answerData.text,
-                            is_correct: answerData.isCorrect,
+                            isCorrect: answerData.isCorrect,
                             questionId: createdQuestion.id,
-                            is_generated: false,
+                            isGenerated: false,
                         })),
                     })
 

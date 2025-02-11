@@ -1,14 +1,24 @@
 import ApiError from "@/exceptions/api-error"
 import { NextFunction, Request, Response } from "express"
-import { validationResult } from "express-validator"
+import { AnyZodObject, ZodError } from "zod"
 
-const validateRequest = (req: Request, res: Response, next: NextFunction) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        const combinedMessage = `Ошибка валидации. ${errors.array()[0].msg}`
-        return next(ApiError.BadRequest(combinedMessage, errors.array()))
+export const validateRequest = (schema: AnyZodObject) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            await schema.parseAsync({
+                body: req.body,
+                query: req.query,
+                params: req.params,
+            })
+            next()
+        } catch (error) {
+            if (error instanceof ZodError) {
+                const firstIssue = error.issues[0]
+                const message = `Ошибка валидации. ${firstIssue.message}`
+                next(ApiError.BadRequest(message, error.issues))
+            } else {
+                next(error)
+            }
+        }
     }
-    next()
 }
-
-export default validateRequest
