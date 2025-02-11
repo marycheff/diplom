@@ -2,15 +2,10 @@ import envConfig from "@/envConfig"
 import ApiError from "@/exceptions/api-error"
 import authService from "@/services/auth.service"
 import { NextFunction, Request, Response } from "express"
-import { validationResult } from "express-validator"
 
 class AuthController {
     async registration(req: Request, res: Response, next: NextFunction) {
         try {
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return next(ApiError.BadRequest("Ошибка при валидации", errors.array()))
-            }
             const userData = await authService.registration(req.body)
             if (!userData.refreshToken) {
                 throw ApiError.InternalError("Ошибка при генерации refreshToken")
@@ -32,14 +27,8 @@ class AuthController {
 
     async updateActivationLink(req: Request, res: Response, next: NextFunction) {
         try {
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return next(ApiError.BadRequest("Ошибка при валидации", errors.array()))
-            }
             const { email } = req.body
-
             await authService.updateActivationLink(email)
-
             res.status(200).json({ message: "Ссылка активации отправлена на почту" })
         } catch (e) {
             next(e)
@@ -78,10 +67,6 @@ class AuthController {
 
     async login(req: Request, res: Response, next: NextFunction) {
         try {
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return next(ApiError.BadRequest("Ошибка при валидации", errors.array()))
-            }
             const { email, password } = req.body
             const userData = await authService.login(email, password)
             if (!userData.refreshToken) {
