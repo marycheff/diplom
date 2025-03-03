@@ -1,7 +1,5 @@
 import "module-alias/register"
-
 import { PrismaClient } from "@prisma/client"
-
 import { errorMiddleware } from "@/middleware/error.middleware"
 import authRoutes from "@/routes/auth.routes"
 import chatRoutes from "@/routes/chat.routes"

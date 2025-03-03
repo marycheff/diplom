@@ -6,7 +6,7 @@ import tokenService from "@/services/token.service"
 import { CreateUser } from "@/types/user.types"
 import { PrismaClient, Token } from "@prisma/client"
 
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import { v4 as uuid_v4 } from "uuid"
 
 const prisma = new PrismaClient()
