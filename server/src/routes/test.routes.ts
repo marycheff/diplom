@@ -1,15 +1,15 @@
-import express from "express"
 import testController from "@/controllers/test.controller"
 import { adminMiddleware, authMiddleware } from "@/middleware/auth.middleware"
 import { validateRequest } from "@/middleware/validate-request.middleware"
 import {
-    createTestSchema,
-    updateTestSchema,
-    updateQuestionSchema,
-    startTestAttemptSchema,
-    saveAnswerSchema,
     completeTestAttemptSchema,
+    createTestSchema,
+    saveAnswerSchema,
+    startTestAttemptSchema,
+    updateQuestionSchema,
+    updateTestSchema,
 } from "@/schemas/test.schema"
+import express from "express"
 
 const router = express.Router()
 
@@ -20,7 +20,6 @@ const router = express.Router()
 // Создание теста
 router.post("/create", authMiddleware, validateRequest(createTestSchema), testController.createTest)
 // Получение теста по ID
-router.get("/:testId", authMiddleware, testController.getTestById)
 // Получение всех тестов пользователя (только свои)
 router.get("/user-tests", authMiddleware, testController.getUserTests)
 // Получение всех тестов (админ)
@@ -28,6 +27,8 @@ router.get("/all-tests", authMiddleware, adminMiddleware, testController.getAllT
 // Удаление теста
 router.delete("/:testId", authMiddleware, testController.deleteTest)
 
+router.put("/:testId/settings", authMiddleware, testController.updateTestSettings)
+router.get("/:testId", authMiddleware, testController.getTestById)
 
 /* =================================
     Управление вопросами теста
@@ -51,7 +52,6 @@ router.delete("/questions/:questionId", authMiddleware, testController.deleteQue
 
 // Удаление всех вопросов из теста
 router.delete("/:testId/questions", authMiddleware, testController.deleteAllQuestions)
-
 
 /* =================================
     Управление ответами на вопросы
@@ -88,12 +88,6 @@ router.post(
     testController.completeTestAttempt
 )
 
-
-router.get(
-    "/attempts/:attemptId/",
-    authMiddleware,
-    adminMiddleware,
-    testController.getAttempt
-)
+router.get("/attempts/:attemptId/", authMiddleware, adminMiddleware, testController.getAttempt)
 
 export default router

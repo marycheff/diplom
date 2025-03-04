@@ -1,6 +1,5 @@
 import { errorMiddleware } from "@/middleware/error.middleware"
 import authRoutes from "@/routes/auth.routes"
-import badWordsRoutes from "@/routes/bad-words.routes"
 import chatRoutes from "@/routes/chat.routes"
 import testRoutes from "@/routes/test.routes"
 import userRoutes from "@/routes/user.routes"
@@ -30,7 +29,6 @@ app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/chat", chatRoutes)
 app.use("/api/test", testRoutes)
-app.use("/api/bad-words", badWordsRoutes)
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     errorMiddleware(err, req, res, next)

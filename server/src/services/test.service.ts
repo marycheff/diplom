@@ -1,13 +1,24 @@
 import { UserDto } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
-import { IAnswerResponse, IQuestion, IQuestionResponse, ITest, ITestResponse, IUpdateTest } from "@/types/test.types"
-import { Answer, PrismaClient, Question, Test } from "@prisma/client"
+import { testSettingsSchema } from "@/schemas/test.schema"
+import {
+    IAnswerResponse,
+    InputFieldKey,
+    InputFieldLabels,
+    IQuestion,
+    IQuestionResponse,
+    ITest,
+    ITestResponse,
+    ITestSettings,
+    IUpdateTest,
+} from "@/types/test.types"
+import { Answer, PrismaClient, Question, Test, TestSettings } from "@prisma/client"
 import { ObjectId } from "mongodb"
 
 const prisma = new PrismaClient()
 
 class TestService {
-    private mapToResponse(test: Test & { questions?: (Question & { answers: Answer[] })[] }): ITestResponse {
+    private mapToResponseFullTest(test: Test & { questions?: (Question & { answers: Answer[] })[] }): ITestResponse {
         return {
             id: test.id,
             authorId: test.authorId,
@@ -25,11 +36,51 @@ class TestService {
             })),
         }
     }
+    private mapToResponseSimple(test: Test & { settings?: TestSettings }): ITestResponse {
+        return {
+            id: test.id,
+            authorId: test.authorId,
+            title: test.title,
+            description: test.description || "",
+            settings: test.settings
+                ? {
+                      requireRegistration: test.settings.requireRegistration,
+                      inputFields: test.settings.inputFields,
+                      showDetailedResults: test.settings.showDetailedResults,
+                  }
+                : undefined,
+        }
+    }
 
+    async updateTestSettings(user: UserDto, testId: string, testSettings: ITestSettings) {
+        if (!ObjectId.isValid(testId)) {
+            throw ApiError.BadRequest("Вопрос не найден")
+        }
+        const test = await prisma.test.findUnique({
+            where: { id: testId },
+        })
+        if (!test) throw ApiError.BadRequest("Тест не найден")
+
+        if (test?.authorId !== user.id && user.role !== "ADMIN") {
+            throw ApiError.Forbidden()
+        }
+        await prisma.testSettings.update({
+            where: { testId },
+            data: testSettings,
+        })
+    }
     // Создание теста без вопросов
     async createTest(authorId: string, testData: ITest): Promise<ITestResponse> {
-        try {
-            const createdTest = await prisma.test.create({
+        if (testData.settings) {
+            const validation = testSettingsSchema.safeParse(testData.settings)
+            if (!validation.success) {
+                throw ApiError.BadRequest(validation.error.errors[0].message)
+            }
+        }
+
+        return prisma.$transaction(async tx => {
+            // 1. Создаем тест
+            const createdTest = await tx.test.create({
                 data: {
                     title: testData.title,
                     description: testData.description,
@@ -37,10 +88,24 @@ class TestService {
                     status: "PENDING",
                 },
             })
-            return this.mapToResponse(createdTest)
-        } catch (error) {
-            throw ApiError.BadRequest("Ошибка при создании теста")
-        }
+
+            // 2. Создаем настройки по умолчанию
+            const settings = await tx.testSettings.create({
+                data: {
+                    testId: createdTest.id,
+                    requireRegistration: testData.settings?.requireRegistration ?? false,
+                    inputFields: testData.settings?.inputFields ?? [],
+                    requiredFields: testData.settings?.requiredFields ?? [],
+                    showDetailedResults: testData.settings?.showDetailedResults ?? false,
+                },
+            })
+
+            // 3. Возвращаем объединенный результат
+            return this.mapToResponseSimple({
+                ...createdTest,
+                settings,
+            })
+        })
     }
 
     // Добавление вопросов к существующему тесту
@@ -91,7 +156,7 @@ class TestService {
                 (question): question is Question & { answers: Answer[] } => question !== null
             )
 
-            return this.mapToResponse({
+            return this.mapToResponseFullTest({
                 ...existingTest,
                 questions: validQuestions,
             })
@@ -111,7 +176,7 @@ class TestService {
             },
         })
 
-        return tests.map(test => this.mapToResponse(test))
+        return tests.map(test => this.mapToResponseFullTest(test))
     }
 
     // Получение всех тестов
@@ -124,8 +189,9 @@ class TestService {
                     },
                 },
             },
+            orderBy: { createdAt: "desc" },
         })
-        return tests.map(test => this.mapToResponse(test))
+        return tests.map(test => this.mapToResponseFullTest(test))
     }
     // Удаление теста
     async deleteTest(testId: string, user: UserDto): Promise<void> {
@@ -338,7 +404,7 @@ class TestService {
         })
 
         if (!test) throw ApiError.BadRequest("Тест не найден")
-        return this.mapToResponse(test)
+        return this.mapToResponseFullTest(test)
     }
 
     async getTestQuestions(testId: string): Promise<IQuestionResponse[]> {
@@ -377,7 +443,7 @@ class TestService {
 
     async startTestAttempt(
         testId: string,
-        userData?: { name?: string; email?: string },
+        userData?: Record<string, any>,
         userId?: string
     ): Promise<{ attemptId: string }> {
         const test = await prisma.test.findUnique({
@@ -387,9 +453,22 @@ class TestService {
 
         if (!test) throw ApiError.BadRequest("Тест не найден")
 
-        // Проверка на обязательность регистрации
-        if (test.settings?.requireRegistration && !userId) {
+        const settings = test.settings
+        if (settings?.requireRegistration && !userId) {
             throw ApiError.Forbidden()
+        }
+
+        if (settings?.requiredFields) {
+            const requiredFields = settings.requiredFields as InputFieldKey[]
+            if (!userData || requiredFields.some(field => userData[field] == null)) {
+                const missingLabels = requiredFields.filter(field => userData?.[field] == null)
+                const missingLabelsRu = requiredFields
+                    .filter(field => userData?.[field] == null)
+                    .map(f => InputFieldLabels[f])
+                throw ApiError.BadRequest(
+                    `Не все обязательные поля заполнены: ${missingLabelsRu.join(", ")} (${missingLabels.join(", ")})`
+                )
+            }
         }
 
         const attempt = await prisma.testAttempt.create({
@@ -402,7 +481,6 @@ class TestService {
 
         return { attemptId: attempt.id }
     }
-
     // Сохранение ответа
     async saveAnswer(attemptId: string, questionId: string, answerId: string): Promise<void> {
         const attempt = await prisma.testAttempt.findUnique({
@@ -619,73 +697,72 @@ class TestService {
         }
     }
 
-    async getUserAttempts(userId: string): Promise<any[]>{
+    async getUserAttempts(userId: string): Promise<any[]> {
         if (!ObjectId.isValid(userId)) {
             throw ApiError.BadRequest("Некорректный ID пользователя")
         }
-         const attempts = await prisma.testAttempt.findMany({
-            where: {userId: userId},
-             include: {
-                 test: {
-                     include: {
-                         author: true,
-                         questions: {
-                             include: {
-                                 answers: true,
-                             },
-                             orderBy: { order: "asc" },
-                         },
-                     },
-                 },
-                 user: true,
-                 answers: {
-                     include: {
-                         question: true,
-                         answer: true,
-                     },
-                 },
-             },
-             orderBy: { startedAt: "desc" },
-         })
+        const attempts = await prisma.testAttempt.findMany({
+            where: { userId: userId },
+            include: {
+                test: {
+                    include: {
+                        author: true,
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                            orderBy: { order: "asc" },
+                        },
+                    },
+                },
+                user: true,
+                answers: {
+                    include: {
+                        question: true,
+                        answer: true,
+                    },
+                },
+            },
+            orderBy: { startedAt: "desc" },
+        })
 
-         return attempts.map(attempt => ({
-             id: attempt.id,
-             startedAt: attempt.startedAt,
-             completedAt: attempt.completedAt,
-             score: attempt.score,
-             user: attempt.user ? { id: attempt.user.id, email: attempt.user.email } : attempt.userData,
+        return attempts.map(attempt => ({
+            id: attempt.id,
+            startedAt: attempt.startedAt,
+            completedAt: attempt.completedAt,
+            score: attempt.score,
+            user: attempt.user ? { id: attempt.user.id, email: attempt.user.email } : attempt.userData,
 
-             test: {
-                 id: attempt.test.id,
-                 title: attempt.test.title,
-                 author: {
-                     id: attempt.test.author.id,
-                     email: attempt.test.author.email,
-                 },
-             },
-             questions: attempt.test.questions.map(q => {
-                 const userAnswer = attempt.answers.find(a => a.questionId === q.id)?.answer
-                 return {
-                     question: {
-                         id: q.id,
-                         text: q.text,
-                     },
-                     answers: q.answers.map(a => ({
-                         id: a.id,
-                         text: a.text,
-                         isCorrect: a.isCorrect,
-                     })),
-                     userAnswer: userAnswer
-                         ? {
-                               id: userAnswer.id,
-                               text: userAnswer.text,
-                               isCorrect: userAnswer.isCorrect,
-                           }
-                         : null,
-                 }
-             }),
-         }))
-        
+            test: {
+                id: attempt.test.id,
+                title: attempt.test.title,
+                author: {
+                    id: attempt.test.author.id,
+                    email: attempt.test.author.email,
+                },
+            },
+            questions: attempt.test.questions.map(q => {
+                const userAnswer = attempt.answers.find(a => a.questionId === q.id)?.answer
+                return {
+                    question: {
+                        id: q.id,
+                        text: q.text,
+                    },
+                    answers: q.answers.map(a => ({
+                        id: a.id,
+                        text: a.text,
+                        isCorrect: a.isCorrect,
+                    })),
+                    userAnswer: userAnswer
+                        ? {
+                              id: userAnswer.id,
+                              text: userAnswer.text,
+                              isCorrect: userAnswer.isCorrect,
+                          }
+                        : null,
+                }
+            }),
+        }))
     }
 }
 

@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import testService from "@/services/test.service"
-import { IQuestion, ITest, IUpdateTest } from "@/types/test.types"
+import { IQuestion, ITest, ITestSettings, IUpdateTest } from "@/types/test.types"
 
 import { NextFunction, Request, Response } from "express"
 
@@ -33,11 +33,23 @@ class TestController {
                     order: index + 1,
                 })),
             }
-
             if (!userId) throw ApiError.Unauthorized()
-
             const updatedTest = await testService.addQuestions(testId, userId, updateTestData)
             res.json(updatedTest)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async updateTestSettings(req: Request, res: Response, next: NextFunction) {
+        
+        try {
+            const { testId } = req.params
+            const user = req.user
+            const settings: ITestSettings = req.body
+            if (!user) throw ApiError.Unauthorized()
+
+            await testService.updateTestSettings(user, testId, settings)
+            res.status(200).json({ message: "Настройки теста успешно изменены" })
         } catch (error) {
             next(error)
         }
@@ -221,13 +233,13 @@ class TestController {
         }
     }
 
-    // 
+    //
     async getUserAttempts(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.user?.id
             // const { attemptId } = req.body
             // TODO: АДМИН или не АДМИН
-            
+
             if (!userId) throw ApiError.Unauthorized()
             const attempts = await testService.getUserAttempts(userId)
             res.json(attempts)
@@ -235,9 +247,6 @@ class TestController {
             next(error)
         }
     }
-
-
-
 }
 
 export default new TestController()

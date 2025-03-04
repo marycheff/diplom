@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "ESNext",
         "target": "ES2020",
         "strict": true,
         "esModuleInterop": true,
@@ -9,6 +9,7 @@
         "declaration": true,
         "noImplicitAny": true,
         "resolveJsonModule": true,
+        "moduleResolution": "node",
         "outDir": "dist",
         "baseUrl": ".",
         "paths": {

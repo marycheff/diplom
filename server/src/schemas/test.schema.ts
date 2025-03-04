@@ -1,3 +1,4 @@
+import { InputFieldKey } from "@/types/test.types"
 import { z } from "zod"
 
 export const createTestSchema = z.object({
@@ -69,3 +70,24 @@ export const completeTestAttemptSchema = z.object({
     attemptId: z.string().min(1, "ID попытки обязательно")
   })
 });
+
+
+export const testSettingsSchema = z
+    .object({
+        requireRegistration: z.boolean().optional(),
+        inputFields: z.array(z.nativeEnum(InputFieldKey)).optional(),
+        requiredFields: z
+            .array(z.nativeEnum(InputFieldKey))
+            .optional()
+            .refine(fields => {
+                if (!fields) return true
+                return fields.every(f => Object.values(InputFieldKey).includes(f))
+            }, "Недопустимое поле в requiredFields"),
+        showDetailedResults: z.boolean().optional(),
+    })
+    .refine(data => {
+        if (data.requiredFields && data.inputFields) {
+            return data.requiredFields.every(f => data.inputFields!.includes(f))
+        }
+        return true
+    }, "Обязательные поля должны быть включены в inputFields")
