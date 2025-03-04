@@ -159,6 +159,85 @@ class TestController {
             next(error)
         }
     }
+
+    // Начать попытку прохождения теста
+    async startTestAttempt(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const userId = req.user?.id
+            const userData = req.body.userData
+
+            const result = await testService.startTestAttempt(testId, userData, userId)
+
+            res.status(201).json(result)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    // Сохранить ответ
+    async saveAnswer(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { attemptId } = req.params
+            const { questionId, answerId } = req.body
+
+            await testService.saveAnswer(attemptId, questionId, answerId)
+            res.status(204).send()
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    // Завершить попытку
+    async completeTestAttempt(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { attemptId } = req.params
+            const result = await testService.completeTestAttempt(attemptId)
+            res.json(result)
+        } catch (e) {
+            next(e)
+        }
+    }
+    // Получить все попытки
+    async getAllAttempts(req: Request, res: Response, next: NextFunction) {
+        try {
+            // const userId = req.user?.id
+            // if (!userId) throw ApiError.Unauthorized()
+            const attempts = await testService.getAllAttempts()
+            res.json(attempts)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    //Получить конкретную попытку
+    async getAttempt(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { attemptId } = req.params
+            const attempt = await testService.getAttempt(attemptId)
+            res.json(attempt)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    // 
+    async getUserAttempts(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.id
+            // const { attemptId } = req.body
+            // TODO: АДМИН или не АДМИН
+            
+            if (!userId) throw ApiError.Unauthorized()
+            const attempts = await testService.getUserAttempts(userId)
+            res.json(attempts)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+
+
 }
 
 export default new TestController()

@@ -37,3 +37,35 @@ export const updateQuestionSchema = z.object({
             }),
     }),
 })
+
+
+// Начало попытки
+export const startTestAttemptSchema = z.object({
+  params: z.object({
+    testId: z.string().min(1, "ID теста обязательно")
+  }),
+  body: z.object({
+    userData: z.object({
+      name: z.string().optional(),
+      email: z.string().email().optional()
+    }).optional()
+  })
+});
+
+// Сохранение ответа
+export const saveAnswerSchema = z.object({
+  params: z.object({
+    attemptId: z.string().min(1, "ID попытки обязательно")
+  }),
+  body: z.object({
+    questionId: z.string().min(1, "ID вопроса обязательно"),
+    answerId: z.string().min(1, "ID ответа обязательно")
+  })
+});
+
+// Завершение попытки
+export const completeTestAttemptSchema = z.object({
+  params: z.object({
+    attemptId: z.string().min(1, "ID попытки обязательно")
+  })
+});

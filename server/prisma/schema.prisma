@@ -8,23 +8,24 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  email          String   @unique
-  name           String?  @map("name")
-  surname        String?  @map("surname")
-  patronymic     String?  @map("patronymic")
-  password       String   @map("password")
-  isActivated    Boolean  @default(false) @map("is_activated")
-  role           Role     @default(USER) @map("role")
-  activationLink String?  @map("activation_link")
-  resetCode      String?  @map("reset_code")
-  isBlocked      Boolean  @default(false) @map("is_blocked")
-  refreshToken   Token?   @relation("UserToken")
-  testsCreated   Test[]   @relation("TestAuthor")
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  email          String        @unique
+  name           String?       @map("name")
+  surname        String?       @map("surname")
+  patronymic     String?       @map("patronymic")
+  password       String        @map("password")
+  isActivated    Boolean       @default(false) @map("is_activated")
+  role           Role          @default(USER) @map("role")
+  activationLink String?       @map("activation_link")
+  resetCode      String?       @map("reset_code")
+  isBlocked      Boolean       @default(false) @map("is_blocked")
+  refreshToken   Token?        @relation("UserToken")
+  testsCreated   Test[]        @relation("TestAuthor")
   // testsModerated TestModeration[]  @relation("TestModerator")
   // testAttempts   TestAttempt[]     @relation("TestAttemptUser")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  TestAttempt    TestAttempt[]
 
   @@map("users")
 }
@@ -40,49 +41,6 @@ model Token {
   @@map("tokens")
 }
 
-model Test {
-  id          String           @id @default(auto()) @map("_id") @db.ObjectId
-  authorId    String           @map("author_id") @db.ObjectId
-  author      User             @relation("TestAuthor", fields: [authorId], references: [id])
-  title       String
-  description String?
-  status      ModerationStatus @default(PENDING)
-  questions   Question[]
-  settings    TestSettings?
-  // attempts    TestAttempt[]
-  // moderations TestModeration[]
-  createdAt   DateTime         @default(now()) @map("created_at")
-  updatedAt   DateTime         @updatedAt @map("updated_at")
-
-  @@map("tests")
-}
-
-model Question {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  testId    String   @map("test_id") @db.ObjectId
-  test      Test     @relation(fields: [testId], references: [id])
-  text      String
-  order     Int
-  answers   Answer[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("questions")
-}
-
-model Answer {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  questionId  String   @map("question_id") @db.ObjectId
-  question    Question @relation(fields: [questionId], references: [id])
-  text        String
-  isCorrect   Boolean  @default(false) @map("is_correct")
-  isGenerated Boolean  @default(false) @map("is_generated")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  @@map("answers")
-}
-
 model TestSettings {
   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
   testId              String   @unique @map("test_id") @db.ObjectId
@@ -96,34 +54,79 @@ model TestSettings {
   @@map("test_settings")
 }
 
-// model TestAttempt {
-//   id           String       @id @default(auto()) @map("_id") @db.ObjectId
-//   testId       String       @map("test_id") @db.ObjectId
-//   test         Test         @relation(fields: [testId], references: [id])
-//   userId       String?      @map("user_id") @db.ObjectId
-//   user         User?        @relation("TestAttemptUser", fields: [userId], references: [id])
-//   userData     Json?
-//   score        Float?
-//   startedAt    DateTime     @default(now())
-//   completedAt  DateTime?
-//   userAnswers  UserAnswer[]
-//   createdAt    DateTime     @default(now()) @map("created_at")
-//   updatedAt    DateTime     @updatedAt @map("updated_at")
+model Test {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  authorId    String           @map("author_id") @db.ObjectId
+  author      User             @relation("TestAuthor", fields: [authorId], references: [id])
+  title       String
+  description String?
+  status      ModerationStatus @default(PENDING)
+  questions   Question[]
+  settings    TestSettings?
+  // attempts    TestAttempt[]
+  // moderations TestModeration[]
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  TestAttempt TestAttempt[]
 
-//   @@map("test_attempts")
-// }
+  @@map("tests")
+}
 
-// model UserAnswer {
-//   id           String       @id @default(auto()) @map("_id") @db.ObjectId
-//   attemptId    String       @map("attempt_id") @db.ObjectId
-//   attempt      TestAttempt  @relation(fields: [attemptId], references: [id])
-//   questionId   String       @map("question_id") @db.ObjectId
-//   question     Question     @relation(fields: [questionId], references: [id])
-//   selected     Answer[]     @relation("UserAnswerSelected")
-//   createdAt    DateTime     @default(now()) @map("created_at")
+model Question {
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  testId     String       @map("test_id") @db.ObjectId
+  test       Test         @relation(fields: [testId], references: [id])
+  text       String
+  order      Int
+  answers    Answer[]
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  UserAnswer UserAnswer[]
 
-//   @@map("user_answers")
-// }
+  @@map("questions")
+}
+
+model Answer {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  questionId  String       @map("question_id") @db.ObjectId
+  question    Question     @relation(fields: [questionId], references: [id])
+  text        String
+  isCorrect   Boolean      @default(false) @map("is_correct")
+  isGenerated Boolean      @default(false) @map("is_generated")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  UserAnswer  UserAnswer[]
+
+  @@map("answers")
+}
+
+model TestAttempt {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  testId      String       @db.ObjectId
+  userId      String?      @db.ObjectId
+  userData    Json?
+  score       Float?
+  startedAt   DateTime     @default(now())
+  completedAt DateTime?
+  test        Test         @relation(fields: [testId], references: [id])
+  user        User?        @relation(fields: [userId], references: [id])
+  answers     UserAnswer[]
+
+  @@map("test_attempts")
+}
+
+model UserAnswer {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  attemptId  String      @db.ObjectId
+  questionId String      @db.ObjectId
+  answerId   String      @db.ObjectId
+  createdAt  DateTime    @default(now())
+  attempt    TestAttempt @relation(fields: [attemptId], references: [id])
+  question   Question    @relation(fields: [questionId], references: [id])
+  answer     Answer      @relation(fields: [answerId], references: [id])
+
+  @@map("user_answers")
+}
 
 // model UserAnswerSelected {
 //   userAnswerId String     @map("user_answer_id") @db.ObjectId
