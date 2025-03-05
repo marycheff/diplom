@@ -18,12 +18,21 @@ import { ObjectId } from "mongodb"
 const prisma = new PrismaClient()
 
 class TestService {
-    private mapToResponseFullTest(test: Test & { questions?: (Question & { answers: Answer[] })[] }): ITestResponse {
+    private mapToResponseFullTest(
+        test: Test & { settings?: TestSettings | null } & { questions?: (Question & { answers: Answer[] })[] }
+    ): ITestResponse {
         return {
             id: test.id,
             authorId: test.authorId,
             title: test.title,
             description: test.description || "",
+            settings: test.settings
+                ? {
+                      requireRegistration: test.settings.requireRegistration,
+                      inputFields: test.settings.inputFields,
+                      showDetailedResults: test.settings.showDetailedResults,
+                  }
+                : {},
             questions: test.questions?.map(question => ({
                 id: question.id,
                 text: question.text,
@@ -51,19 +60,22 @@ class TestService {
                 : undefined,
         }
     }
-
-    async updateTestSettings(user: UserDto, testId: string, testSettings: ITestSettings) {
-        if (!ObjectId.isValid(testId)) {
-            throw ApiError.BadRequest("Вопрос не найден")
+    private mapToResponseQuestion(question: Question & { answers?: Answer[] }): IQuestion {
+        return {
+            id: question.id,
+            text: question.text,
+            order: question.order,
+            answers:
+                question.answers?.map(answer => ({
+                    id: answer.id,
+                    text: answer.text,
+                    isCorrect: answer.isCorrect,
+                })) || [],
         }
-        const test = await prisma.test.findUnique({
-            where: { id: testId },
-        })
-        if (!test) throw ApiError.BadRequest("Тест не найден")
+    }
 
-        if (test?.authorId !== user.id && user.role !== "ADMIN") {
-            throw ApiError.Forbidden()
-        }
+    // ТЕСТ
+    async updateTestSettings(testId: string, testSettings: ITestSettings) {
         await prisma.testSettings.update({
             where: { testId },
             data: testSettings,
@@ -112,14 +124,14 @@ class TestService {
     async addQuestions(testId: string, userId: string, updateTestData: IUpdateTest): Promise<ITestResponse> {
         return prisma.$transaction(async transaction => {
             if (!ObjectId.isValid(testId)) {
-                throw ApiError.BadRequest("Тест не найден")
+                throw ApiError.NotFound("Тест не найден")
             }
 
             const existingTest = await transaction.test.findUnique({
                 where: { id: testId },
             })
 
-            if (!existingTest) throw ApiError.BadRequest("Тест не найден")
+            if (!existingTest) throw ApiError.NotFound("Тест не найден")
             if (existingTest.authorId !== userId) {
                 throw ApiError.Forbidden()
             }
@@ -173,6 +185,7 @@ class TestService {
                         answers: true,
                     },
                 },
+                settings: true,
             },
         })
 
@@ -188,26 +201,14 @@ class TestService {
                         answers: true,
                     },
                 },
+                settings: true,
             },
             orderBy: { createdAt: "desc" },
         })
         return tests.map(test => this.mapToResponseFullTest(test))
     }
     // Удаление теста
-    async deleteTest(testId: string, user: UserDto): Promise<void> {
-        if (!ObjectId.isValid(testId)) {
-            throw ApiError.BadRequest("Тест не найден")
-        }
-
-        const test = await prisma.test.findUnique({ where: { id: testId } })
-        if (!test) {
-            throw ApiError.BadRequest("Тест не найден")
-        }
-
-        if (test.authorId !== user.id && user.role !== "ADMIN") {
-            throw ApiError.Forbidden()
-        }
-
+    async deleteTest(testId: string): Promise<void> {
         await prisma.$transaction(async transaction => {
             await transaction.answer.deleteMany({
                 where: {
@@ -222,6 +223,11 @@ class TestService {
                     testId: testId,
                 },
             })
+            await transaction.testSettings.deleteMany({
+                where: {
+                    testId: testId,
+                },
+            })
 
             await transaction.test.delete({
                 where: { id: testId },
@@ -229,19 +235,109 @@ class TestService {
         })
     }
 
-    // Удаление вопроса
-    async deleteQuestion(questionId: string, user: UserDto): Promise<void> {
-        if (!ObjectId.isValid(questionId)) {
-            throw ApiError.BadRequest("Вопрос не найден")
+    // async getTestByQuestionId(questionId: string): Promise<ITestResponse> {
+    //     const question = await prisma.question.findUnique({
+    //         where: { id: questionId },
+    //         select: { testId: true },
+    //     })
+
+    //     if (!question) {
+    //         throw ApiError.NotFound("Вопрос не найден")
+    //     }
+    //     const test = await prisma.test.findUnique({
+    //         where: { id: question.testId },
+    //         include: {
+    //             questions: {
+    //                 include: {
+    //                     answers: true,
+    //                 },
+    //                 orderBy: { order: "asc" },
+    //             },
+    //         },
+    //     })
+
+    //     if (!test) {
+    //         throw ApiError.NotFound("Тест не найден")
+    //     }
+    //     return this.mapToResponseFullTest(test)
+    // }
+    async isQuestionBelongsToTest(questionId: string, testId: string): Promise<boolean> {
+        const question = await prisma.question.findUnique({
+            where: { id: questionId },
+            select: { testId: true },
+        })
+        if (!question) {
+            throw ApiError.NotFound("Вопрос не найден")
         }
+        return question.testId === testId
+    }
+    // async isQuestionBelongsToAnyTest(
+    //     questionId: string
+    // ): Promise<{ question: IQuestion | null; belongsToTest: boolean }> {
+    //     const question = await prisma.question.findUnique({
+    //         where: { id: questionId },
+    //         include: { answers: true },
+    //     })
+    //     if (!question) {
+    //         return { question: null, belongsToTest: false }
+    //     }
+    //     const mappedQuestion = this.mapToResponseQuestion(question)
+    //     return { question: mappedQuestion, belongsToTest: !!question.testId }
+    // }
+
+    async isQuestionBelongsToAnyTest(
+        questionId: string
+    ): Promise<{ question: IQuestion | null; test: ITestResponse | null; belongsToTest: boolean }> {
+        const question = await prisma.question.findUnique({
+            where: { id: questionId },
+            include: {
+                answers: true, // Включаем ответы
+                test: {
+                    // Включаем тест
+                    include: {
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                            orderBy: { order: "asc" },
+                        },
+                    },
+                },
+            },
+        })
+
+        // 2. Если вопрос не найден
+        if (!question) {
+            return { question: null, test: null, belongsToTest: false }
+        }
+
+        // 3. Если вопрос найден, но не принадлежит тесту
+        if (!question.test) {
+            return {
+                question: this.mapToResponseQuestion(question),
+                test: null,
+                belongsToTest: false,
+            }
+        }
+
+        // 4. Если вопрос принадлежит тесту
+        return {
+            question: this.mapToResponseQuestion(question),
+            test: this.mapToResponseFullTest(question.test),
+            belongsToTest: true,
+        }
+    }
+    // ВОПРОСЫ
+    async getQuestionById(questionId: string): Promise<IQuestion> {
         const question = await prisma.question.findUnique({ where: { id: questionId } })
         if (!question) {
-            throw ApiError.BadRequest("Вопрос не найден")
+            throw ApiError.NotFound("Вопрос не найден")
         }
-        const test = await prisma.test.findUnique({ where: { id: question?.testId } })
-        if (test?.authorId !== user.id && user.role !== "ADMIN") {
-            throw ApiError.Forbidden()
-        }
+        return this.mapToResponseQuestion(question)
+    }
+
+    // Удаление вопроса
+    async deleteQuestion(questionId: string, user: UserDto): Promise<void> {
         await prisma.$transaction(async transaction => {
             await transaction.answer.deleteMany({
                 where: {
@@ -256,16 +352,6 @@ class TestService {
 
     // Удаление всех вопросов из теста
     async deleteAllQuestions(testId: string, user: UserDto): Promise<void> {
-        if (!ObjectId.isValid(testId)) {
-            throw ApiError.BadRequest("Тест не найден")
-        }
-        const existingTest = await prisma.test.findUnique({ where: { id: testId } })
-        if (!existingTest) {
-            throw ApiError.BadRequest("Тест не найден")
-        }
-        if (existingTest.authorId !== user.id && user.role !== "ADMIN") {
-            throw ApiError.Forbidden()
-        }
         await prisma.$transaction(async transaction => {
             await transaction.answer.deleteMany({
                 where: {
@@ -325,11 +411,11 @@ class TestService {
     // Удаление всех ответов к вопросу
     async deleteAllAnswers(questionId: string, user: UserDto): Promise<void> {
         if (!ObjectId.isValid(questionId)) {
-            throw ApiError.BadRequest("Вопрос не найден")
+            throw ApiError.NotFound("Вопрос не найден")
         }
         const question = await prisma.question.findUnique({ where: { id: questionId } })
         if (!question) {
-            throw ApiError.BadRequest("Вопрос не найден")
+            throw ApiError.NotFound("Вопрос не найден")
         }
         const test = await prisma.test.findUnique({ where: { id: question?.testId } })
         if (test?.authorId !== user.id && user.role !== "ADMIN") {
@@ -345,14 +431,14 @@ class TestService {
     // Изменение вопроса
     async updateQuestion(questionId: string, user: UserDto, updateData: IQuestion): Promise<void> {
         if (!ObjectId.isValid(questionId)) {
-            throw ApiError.BadRequest("Вопрос не найден")
+            throw ApiError.NotFound("Вопрос не найден")
         }
 
         const question = await prisma.question.findUnique({
             where: { id: questionId },
         })
         if (!question) {
-            throw ApiError.BadRequest("Вопрос не найден")
+            throw ApiError.NotFound("Вопрос не найден")
         }
 
         const test = await prisma.test.findUnique({
@@ -388,9 +474,6 @@ class TestService {
     }
 
     async getTestById(testId: string): Promise<ITestResponse> {
-        if (!ObjectId.isValid(testId)) {
-            throw ApiError.BadRequest("Некорректный ID теста")
-        }
         const test = await prisma.test.findUnique({
             where: { id: testId },
             include: {
@@ -400,10 +483,11 @@ class TestService {
                     },
                     orderBy: { order: "asc" },
                 },
+                settings: true, // settings будет null, если их нет
             },
         })
 
-        if (!test) throw ApiError.BadRequest("Тест не найден")
+        if (!test) throw ApiError.NotFound("Тест не найден")
         return this.mapToResponseFullTest(test)
     }
 
@@ -432,7 +516,7 @@ class TestService {
             include: { answers: true },
         })
 
-        if (!question) throw ApiError.BadRequest("Вопрос не найден")
+        if (!question) throw ApiError.NotFound("Вопрос не найден")
 
         return question.answers.map(a => ({
             id: a.id,
@@ -451,7 +535,7 @@ class TestService {
             include: { settings: true },
         })
 
-        if (!test) throw ApiError.BadRequest("Тест не найден")
+        if (!test) throw ApiError.NotFound("Тест не найден")
 
         const settings = test.settings
         if (settings?.requireRegistration && !userId) {

@@ -1,5 +1,6 @@
 import testController from "@/controllers/test.controller"
 import { adminMiddleware, authMiddleware } from "@/middleware/auth.middleware"
+import { questionOwnershipOrAdminMiddleware, testOwnershipOrAdminMiddleware } from "@/middleware/ownership.middleware"
 import { validateRequest } from "@/middleware/validate-request.middleware"
 import {
     completeTestAttemptSchema,
@@ -25,10 +26,9 @@ router.get("/user-tests", authMiddleware, testController.getUserTests)
 // Получение всех тестов (админ)
 router.get("/all-tests", authMiddleware, adminMiddleware, testController.getAllTests)
 // Удаление теста
-router.delete("/:testId", authMiddleware, testController.deleteTest)
-
-router.put("/:testId/settings", authMiddleware, testController.updateTestSettings)
-router.get("/:testId", authMiddleware, testController.getTestById)
+router.delete("/:testId", authMiddleware, testOwnershipOrAdminMiddleware, testController.deleteTest)
+router.put("/:testId/settings", authMiddleware, testOwnershipOrAdminMiddleware, testController.updateTestSettings)
+router.get("/:testId", authMiddleware, testOwnershipOrAdminMiddleware, testController.getTestById)
 
 /* =================================
     Управление вопросами теста
@@ -48,10 +48,20 @@ router.put(
     testController.updateQuestion
 )
 // Удаление вопроса из теста
-router.delete("/questions/:questionId", authMiddleware, testController.deleteQuestion)
+router.delete(
+    "/questions/:questionId",
+    authMiddleware,
+    questionOwnershipOrAdminMiddleware,
+    testController.deleteQuestion
+)
 
 // Удаление всех вопросов из теста
-router.delete("/:testId/questions", authMiddleware, testController.deleteAllQuestions)
+router.delete(
+    "/:testId/questions",
+    authMiddleware,
+    questionOwnershipOrAdminMiddleware,
+    testController.deleteAllQuestions
+)
 
 /* =================================
     Управление ответами на вопросы

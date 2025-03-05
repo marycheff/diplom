@@ -13,6 +13,9 @@ class ApiError extends Error {
     static BadRequest(message: string, errors: any[] = []) {
         return new ApiError(400, message, errors)
     }
+    static NotFound(message: string) {
+        return new ApiError(404, message)
+    }
     static Forbidden() {
         return new ApiError(403, "Недостаточно прав")
     }

@@ -10,11 +10,9 @@ class TestController {
         try {
             const authorId = req.user?.id
             const testData: ITest = req.body
-
             if (!authorId) {
                 throw ApiError.Unauthorized()
             }
-
             const createdTest = await testService.createTest(authorId, testData)
             res.status(201).json(createdTest)
         } catch (error) {
@@ -41,14 +39,10 @@ class TestController {
         }
     }
     async updateTestSettings(req: Request, res: Response, next: NextFunction) {
-        
         try {
-            const { testId } = req.params
-            const user = req.user
+            const testId = req.test?.id
             const settings: ITestSettings = req.body
-            if (!user) throw ApiError.Unauthorized()
-
-            await testService.updateTestSettings(user, testId, settings)
+            await testService.updateTestSettings(testId!, settings)
             res.status(200).json({ message: "Настройки теста успешно изменены" })
         } catch (error) {
             next(error)
@@ -78,10 +72,16 @@ class TestController {
     async deleteTest(req: Request, res: Response, next: NextFunction) {
         try {
             const { testId } = req.params
-            const user = req.user
-            if (!user) throw ApiError.Unauthorized()
-            await testService.deleteTest(testId, user)
+            await testService.deleteTest(testId)
             res.status(200).json({ message: "Тест успешно удален" })
+        } catch (error) {
+            next(error)
+        }
+    }
+    async getQuestionById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const question = req.question
+            res.json(question)
         } catch (error) {
             next(error)
         }
@@ -146,8 +146,7 @@ class TestController {
 
     async getTestById(req: Request, res: Response, next: NextFunction) {
         try {
-            const { testId } = req.params
-            const test = await testService.getTestById(testId)
+            const test = req.test
             res.status(200).json(test)
         } catch (error) {
             next(error)
