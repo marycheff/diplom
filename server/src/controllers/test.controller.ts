@@ -89,9 +89,7 @@ class TestController {
     async deleteQuestion(req: Request, res: Response, next: NextFunction) {
         try {
             const { questionId } = req.params
-            const user = req.user
-            if (!user) throw ApiError.Unauthorized()
-            await testService.deleteQuestion(questionId, user)
+            await testService.deleteQuestion(questionId)
             res.status(200).json({ message: "Вопрос успешно удален" })
         } catch (error) {
             next(error)
@@ -100,9 +98,7 @@ class TestController {
     async deleteAllQuestions(req: Request, res: Response, next: NextFunction) {
         try {
             const { testId } = req.params
-            const user = req.user
-            if (!user) throw ApiError.Unauthorized()
-            await testService.deleteAllQuestions(testId, user)
+            await testService.deleteAllQuestions(testId)
             res.status(200).json({ message: "Все вопросы успешно удалены" })
         } catch (error) {
             next(error)
@@ -110,21 +106,17 @@ class TestController {
     }
     async deleteAnswer(req: Request, res: Response, next: NextFunction) {
         try {
-            const { answerId } = req.params
-            const user = req.user
-            if (!user) throw ApiError.Unauthorized()
-            await testService.deleteAnswer(answerId, user)
+            const answer = req.answer
+            if (answer) await testService.deleteAnswer(answer)
             res.status(200).json({ message: "Ответ успешно удален" })
-        } catch (error) {
-            next(error)
+        } catch (e) {
+            next(e)
         }
     }
     async deleteAllAnswers(req: Request, res: Response, next: NextFunction) {
         try {
             const { questionId } = req.params
-            const user = req.user
-            if (!user) throw ApiError.Unauthorized()
-            await testService.deleteAllAnswers(questionId, user)
+            await testService.deleteAllAnswers(questionId)
             res.status(200).json({ message: "Все ответы успешно удалены" })
         } catch (error) {
             next(error)
@@ -134,10 +126,8 @@ class TestController {
     async updateQuestion(req: Request, res: Response, next: NextFunction) {
         try {
             const { questionId } = req.params
-            const user = req.user
             const updateQuestionData: IQuestion = req.body
-            if (!user || !updateQuestionData) throw ApiError.Unauthorized()
-            await testService.updateQuestion(questionId, user, updateQuestionData)
+            await testService.updateQuestion(questionId, updateQuestionData)
             res.status(200).json({ message: "Ответ успешно обновлен", data: updateQuestionData })
         } catch (error) {
             next(error)

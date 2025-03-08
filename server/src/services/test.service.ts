@@ -1,7 +1,7 @@
-import { UserDto } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
 import {
+    IAnswer,
     IAnswerResponse,
     InputFieldKey,
     InputFieldLabels,
@@ -18,7 +18,7 @@ import { ObjectId } from "mongodb"
 const prisma = new PrismaClient()
 
 class TestService {
-    private mapToResponseFullTest(
+    private mapToResponseTest(
         test: Test & { settings?: TestSettings | null } & { questions?: (Question & { answers: Answer[] })[] }
     ): ITestResponse {
         return {
@@ -33,44 +33,24 @@ class TestService {
                       showDetailedResults: test.settings.showDetailedResults,
                   }
                 : {},
-            questions: test.questions?.map(question => ({
-                id: question.id,
-                text: question.text,
-                order: question.order,
-                answers: question.answers.map(answer => ({
-                    id: answer.id,
-                    text: answer.text,
-                    isCorrect: answer.isCorrect,
-                })),
-            })),
+            questions: test.questions?.map(question => this.mapToResponseQuestion(question)) || [],
         }
     }
-    private mapToResponseSimple(test: Test & { settings?: TestSettings }): ITestResponse {
-        return {
-            id: test.id,
-            authorId: test.authorId,
-            title: test.title,
-            description: test.description || "",
-            settings: test.settings
-                ? {
-                      requireRegistration: test.settings.requireRegistration,
-                      inputFields: test.settings.inputFields,
-                      showDetailedResults: test.settings.showDetailedResults,
-                  }
-                : undefined,
-        }
-    }
-    private mapToResponseQuestion(question: Question & { answers?: Answer[] }): IQuestion {
+
+    private mapToResponseQuestion(question: Question & { answers?: Answer[] }): IQuestionResponse {
         return {
             id: question.id,
             text: question.text,
             order: question.order,
-            answers:
-                question.answers?.map(answer => ({
-                    id: answer.id,
-                    text: answer.text,
-                    isCorrect: answer.isCorrect,
-                })) || [],
+            answers: question.answers?.map(answer => this.mapToResponseAnswer(answer)) || [],
+        }
+    }
+
+    private mapToResponseAnswer(answer: Answer): IAnswerResponse {
+        return {
+            id: answer.id,
+            text: answer.text,
+            isCorrect: answer.isCorrect,
         }
     }
 
@@ -91,7 +71,6 @@ class TestService {
         }
 
         return prisma.$transaction(async tx => {
-            // 1. Создаем тест
             const createdTest = await tx.test.create({
                 data: {
                     title: testData.title,
@@ -100,8 +79,6 @@ class TestService {
                     status: "PENDING",
                 },
             })
-
-            // 2. Создаем настройки по умолчанию
             const settings = await tx.testSettings.create({
                 data: {
                     testId: createdTest.id,
@@ -111,9 +88,7 @@ class TestService {
                     showDetailedResults: testData.settings?.showDetailedResults ?? false,
                 },
             })
-
-            // 3. Возвращаем объединенный результат
-            return this.mapToResponseSimple({
+            return this.mapToResponseTest({
                 ...createdTest,
                 settings,
             })
@@ -168,7 +143,7 @@ class TestService {
                 (question): question is Question & { answers: Answer[] } => question !== null
             )
 
-            return this.mapToResponseFullTest({
+            return this.mapToResponseTest({
                 ...existingTest,
                 questions: validQuestions,
             })
@@ -189,7 +164,7 @@ class TestService {
             },
         })
 
-        return tests.map(test => this.mapToResponseFullTest(test))
+        return tests.map(test => this.mapToResponseTest(test))
     }
 
     // Получение всех тестов
@@ -205,7 +180,7 @@ class TestService {
             },
             orderBy: { createdAt: "desc" },
         })
-        return tests.map(test => this.mapToResponseFullTest(test))
+        return tests.map(test => this.mapToResponseTest(test))
     }
     // Удаление теста
     async deleteTest(testId: string): Promise<void> {
@@ -235,32 +210,6 @@ class TestService {
         })
     }
 
-    // async getTestByQuestionId(questionId: string): Promise<ITestResponse> {
-    //     const question = await prisma.question.findUnique({
-    //         where: { id: questionId },
-    //         select: { testId: true },
-    //     })
-
-    //     if (!question) {
-    //         throw ApiError.NotFound("Вопрос не найден")
-    //     }
-    //     const test = await prisma.test.findUnique({
-    //         where: { id: question.testId },
-    //         include: {
-    //             questions: {
-    //                 include: {
-    //                     answers: true,
-    //                 },
-    //                 orderBy: { order: "asc" },
-    //             },
-    //         },
-    //     })
-
-    //     if (!test) {
-    //         throw ApiError.NotFound("Тест не найден")
-    //     }
-    //     return this.mapToResponseFullTest(test)
-    // }
     async isQuestionBelongsToTest(questionId: string, testId: string): Promise<boolean> {
         const question = await prisma.question.findUnique({
             where: { id: questionId },
@@ -271,29 +220,15 @@ class TestService {
         }
         return question.testId === testId
     }
-    // async isQuestionBelongsToAnyTest(
-    //     questionId: string
-    // ): Promise<{ question: IQuestion | null; belongsToTest: boolean }> {
-    //     const question = await prisma.question.findUnique({
-    //         where: { id: questionId },
-    //         include: { answers: true },
-    //     })
-    //     if (!question) {
-    //         return { question: null, belongsToTest: false }
-    //     }
-    //     const mappedQuestion = this.mapToResponseQuestion(question)
-    //     return { question: mappedQuestion, belongsToTest: !!question.testId }
-    // }
 
     async isQuestionBelongsToAnyTest(
         questionId: string
-    ): Promise<{ question: IQuestion | null; test: ITestResponse | null; belongsToTest: boolean }> {
+    ): Promise<{ question: IQuestionResponse | null; test: ITestResponse | null; belongsToTest: boolean }> {
         const question = await prisma.question.findUnique({
             where: { id: questionId },
             include: {
-                answers: true, // Включаем ответы
+                answers: true,
                 test: {
-                    // Включаем тест
                     include: {
                         questions: {
                             include: {
@@ -323,12 +258,12 @@ class TestService {
         // 4. Если вопрос принадлежит тесту
         return {
             question: this.mapToResponseQuestion(question),
-            test: this.mapToResponseFullTest(question.test),
+            test: this.mapToResponseTest(question.test),
             belongsToTest: true,
         }
     }
     // ВОПРОСЫ
-    async getQuestionById(questionId: string): Promise<IQuestion> {
+    async getQuestionById(questionId: string): Promise<IQuestionResponse> {
         const question = await prisma.question.findUnique({ where: { id: questionId } })
         if (!question) {
             throw ApiError.NotFound("Вопрос не найден")
@@ -337,7 +272,7 @@ class TestService {
     }
 
     // Удаление вопроса
-    async deleteQuestion(questionId: string, user: UserDto): Promise<void> {
+    async deleteQuestion(questionId: string): Promise<void> {
         await prisma.$transaction(async transaction => {
             await transaction.answer.deleteMany({
                 where: {
@@ -351,7 +286,7 @@ class TestService {
     }
 
     // Удаление всех вопросов из теста
-    async deleteAllQuestions(testId: string, user: UserDto): Promise<void> {
+    async deleteAllQuestions(testId: string): Promise<void> {
         await prisma.$transaction(async transaction => {
             await transaction.answer.deleteMany({
                 where: {
@@ -368,24 +303,60 @@ class TestService {
         })
     }
 
-    // Удаление ответа
-    async deleteAnswer(answerId: string, user: UserDto): Promise<void> {
-        if (!ObjectId.isValid(answerId)) {
-            throw ApiError.BadRequest("Ответ не найден")
-        }
-        const answer = await prisma.answer.findUnique({ where: { id: answerId } })
-        if (!answer) {
-            throw ApiError.BadRequest("Ответ не найден")
-        }
-        const question = await prisma.question.findUnique({ where: { id: answer.questionId } })
-        const test = await prisma.test.findUnique({ where: { id: question?.testId } })
-        if (test?.authorId !== user.id && user.role !== "ADMIN") {
-            throw ApiError.Forbidden()
-        }
+    // ОТВЕТЫ
 
+    async isAnswerBelongsToAnyTest(answerId: string): Promise<{
+        answer: IAnswer | null
+        question: IQuestionResponse | null
+        test: ITestResponse | null
+        belongsToTest: boolean
+    }> {
+        const answer = await prisma.answer.findUnique({
+            where: { id: answerId },
+            include: {
+                question: {
+                    include: {
+                        test: {
+                            include: {
+                                questions: {
+                                    include: {
+                                        answers: true,
+                                    },
+                                    orderBy: { order: "asc" },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        })
+
+        if (!answer) {
+            return { answer: null, question: null, test: null, belongsToTest: false }
+        }
+        // Если ответ найден, но не принадлежит вопросу или тесту
+        if (!answer.question || !answer.question.test) {
+            return {
+                answer,
+                question: answer.question ? this.mapToResponseQuestion(answer.question) : null,
+                test: null,
+                belongsToTest: false,
+            }
+        }
+        return {
+            answer,
+            question: this.mapToResponseQuestion(answer.question),
+            test: this.mapToResponseTest(answer.question.test),
+            belongsToTest: true,
+        }
+    }
+
+    // Удаление ответа
+    async deleteAnswer(answer: IAnswer): Promise<void> {
+        const answerId = answer.id
         const correctAnswers = await prisma.answer.findMany({
             where: {
-                questionId: question?.id,
+                questionId: answer.questionId,
                 isCorrect: true,
             },
         })
@@ -393,7 +364,7 @@ class TestService {
         if (correctAnswers.length === 1 && correctAnswers[0].id === answerId) {
             const otherAnswers = await prisma.answer.findMany({
                 where: {
-                    questionId: question?.id,
+                    questionId: answer.questionId,
                     id: { not: answerId },
                 },
             })
@@ -403,24 +374,11 @@ class TestService {
             }
         }
 
-        await prisma.answer.delete({
-            where: { id: answerId },
-        })
+        await prisma.answer.delete({ where: { id: answerId } })
     }
 
     // Удаление всех ответов к вопросу
-    async deleteAllAnswers(questionId: string, user: UserDto): Promise<void> {
-        if (!ObjectId.isValid(questionId)) {
-            throw ApiError.NotFound("Вопрос не найден")
-        }
-        const question = await prisma.question.findUnique({ where: { id: questionId } })
-        if (!question) {
-            throw ApiError.NotFound("Вопрос не найден")
-        }
-        const test = await prisma.test.findUnique({ where: { id: question?.testId } })
-        if (test?.authorId !== user.id && user.role !== "ADMIN") {
-            throw ApiError.Forbidden()
-        }
+    async deleteAllAnswers(questionId: string): Promise<void> {
         await prisma.answer.deleteMany({
             where: {
                 questionId: questionId,
@@ -429,25 +387,7 @@ class TestService {
     }
 
     // Изменение вопроса
-    async updateQuestion(questionId: string, user: UserDto, updateData: IQuestion): Promise<void> {
-        if (!ObjectId.isValid(questionId)) {
-            throw ApiError.NotFound("Вопрос не найден")
-        }
-
-        const question = await prisma.question.findUnique({
-            where: { id: questionId },
-        })
-        if (!question) {
-            throw ApiError.NotFound("Вопрос не найден")
-        }
-
-        const test = await prisma.test.findUnique({
-            where: { id: question.testId },
-        })
-        if (test?.authorId !== user.id && user.role !== "ADMIN") {
-            throw ApiError.Forbidden()
-        }
-
+    async updateQuestion(questionId: string, updateData: IQuestion): Promise<void> {
         await prisma.$transaction(async transaction => {
             await transaction.question.update({
                 where: { id: questionId },
@@ -488,7 +428,7 @@ class TestService {
         })
 
         if (!test) throw ApiError.NotFound("Тест не найден")
-        return this.mapToResponseFullTest(test)
+        return this.mapToResponseTest(test)
     }
 
     async getTestQuestions(testId: string): Promise<IQuestionResponse[]> {

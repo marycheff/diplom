@@ -2,13 +2,29 @@ export interface IAnswer {
     id: string
     text: string
     isCorrect: boolean
+    questionId: string
 }
+export interface IAnswer {
+    id: string
+    text: string
+    isCorrect: boolean
+    questionId: string
+}
+
+export interface IAnswerResponse extends Omit<IAnswer, "questionId"> {}
 
 export interface IQuestion {
     id: string
     text: string
     order?: number
     answers: IAnswer[]
+}
+
+export interface IQuestionResponse {
+    id: string
+    text: string
+    order?: number
+    answers: IAnswerResponse[]
 }
 
 export interface ITest {
@@ -28,18 +44,18 @@ export interface ITestResponse {
     settings?: ITestSettings
 }
 
-export interface IQuestionResponse {
-    id: string
-    text: string
-    order: number
-    answers: IAnswerResponse[]
-}
+// export interface IQuestionResponse {
+//     id: string
+//     text: string
+//     order: number
+//     answers: IAnswerResponse[]
+// }
 
-export interface IAnswerResponse {
-    id: string
-    text: string
-    isCorrect: boolean
-}
+// export interface IAnswerResponse {
+//     id: string
+//     text: string
+//     isCorrect: boolean
+// }
 
 // Интерфейс для обновления теста
 export interface IUpdateTest {

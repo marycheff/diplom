@@ -1,6 +1,11 @@
 import testController from "@/controllers/test.controller"
-import { adminMiddleware, authMiddleware } from "@/middleware/auth.middleware"
-import { questionOwnershipOrAdminMiddleware, testOwnershipOrAdminMiddleware } from "@/middleware/ownership.middleware"
+import { adminMiddleware } from "@/middleware/admin.middleware"
+import { authMiddleware } from "@/middleware/auth.middleware"
+import {
+    answerOwnershipMiddleware,
+    questionOwnershipMiddleware,
+    testOwnershipMiddleware,
+} from "@/middleware/ownership.middleware"
 import { validateRequest } from "@/middleware/validate-request.middleware"
 import {
     completeTestAttemptSchema,
@@ -26,9 +31,9 @@ router.get("/user-tests", authMiddleware, testController.getUserTests)
 // Получение всех тестов (админ)
 router.get("/all-tests", authMiddleware, adminMiddleware, testController.getAllTests)
 // Удаление теста
-router.delete("/:testId", authMiddleware, testOwnershipOrAdminMiddleware, testController.deleteTest)
-router.put("/:testId/settings", authMiddleware, testOwnershipOrAdminMiddleware, testController.updateTestSettings)
-router.get("/:testId", authMiddleware, testOwnershipOrAdminMiddleware, testController.getTestById)
+router.delete("/:testId", authMiddleware, testOwnershipMiddleware, testController.deleteTest)
+router.put("/:testId/settings", authMiddleware, testOwnershipMiddleware, testController.updateTestSettings)
+router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.getTestById)
 
 /* =================================
     Управление вопросами теста
@@ -48,30 +53,25 @@ router.put(
     testController.updateQuestion
 )
 // Удаление вопроса из теста
-router.delete(
-    "/questions/:questionId",
-    authMiddleware,
-    questionOwnershipOrAdminMiddleware,
-    testController.deleteQuestion
-)
+router.delete("/questions/:questionId", authMiddleware, questionOwnershipMiddleware, testController.deleteQuestion)
 
 // Удаление всех вопросов из теста
-router.delete(
-    "/:testId/questions",
-    authMiddleware,
-    questionOwnershipOrAdminMiddleware,
-    testController.deleteAllQuestions
-)
+router.delete("/:testId/questions", authMiddleware, questionOwnershipMiddleware, testController.deleteAllQuestions)
 
 /* =================================
     Управление ответами на вопросы
  * ================================= */
 
 // Получение всех ответов вопроса
-router.get("/questions/:questionId/answers", authMiddleware, testController.getQuestionAnswers)
+router.get(
+    "/questions/:questionId/answers",
+    authMiddleware,
+    questionOwnershipMiddleware,
+    testController.getQuestionAnswers
+)
 
 // Удаление ответа из вопроса
-router.delete("/answers/:answerId", authMiddleware, testController.deleteAnswer)
+router.delete("/answers/:answerId", authMiddleware, answerOwnershipMiddleware, testController.deleteAnswer)
 
 /* =================================
     Попытки прохождения теста
