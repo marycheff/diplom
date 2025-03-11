@@ -1,4 +1,4 @@
-import { UpdateUserDto, UserDto, mapUserToDto } from "@/dtos/user.dto"
+import { UpdateUserDTO, UserDTO, mapUserToDto } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
 import { PrismaClient, User } from "@prisma/client"
 
@@ -7,21 +7,21 @@ import bcrypt from "bcryptjs"
 const prisma = new PrismaClient()
 
 class UserService {
-    async getUserByEmail(email: string): Promise<UserDto> {
+    async getUserByEmail(email: string): Promise<UserDTO> {
         const user = await prisma.user.findUnique({ where: { email } })
         if (!user) {
             throw ApiError.BadRequest(`Пользователь c email ${email} не найден`)
         }
         return mapUserToDto(user)
     }
-    async getUserById(id: string): Promise<UserDto> {
+    async getUserById(id: string): Promise<UserDTO> {
         const user = await prisma.user.findUnique({ where: { id } })
         if (!user) {
             throw ApiError.BadRequest(`Пользователь с id ${id} не найден`)
         }
         return mapUserToDto(user)
     }
-    async getUsers(): Promise<UserDto[]> {
+    async getUsers(): Promise<UserDTO[]> {
         const users = await prisma.user.findMany()
         return users.map(mapUserToDto)
     }
@@ -57,7 +57,7 @@ class UserService {
         return updatedUser
     }
 
-    async updateUser(id: string, updateData: UpdateUserDto): Promise<void> {
+    async updateUser(id: string, updateData: UpdateUserDTO): Promise<void> {
         try {
             // Проверяем, что хотя бы одно поле передано для обновления
             if (!updateData.name && !updateData.surname && !updateData.patronymic) {

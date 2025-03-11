@@ -1,6 +1,6 @@
 import { User } from "@prisma/client"
 
-export interface UserDto {
+export interface UserDTO {
     id: string
     email: string
     isActivated: boolean
@@ -10,13 +10,13 @@ export interface UserDto {
     surname?: string | null
     patronymic?: string | null
 }
-export interface UpdateUserDto {
+export interface UpdateUserDTO {
     name?: string
     surname?: string
     patronymic?: string
 }
 
-export const mapUserToDto = (user: User): UserDto => {
+export const mapUserToDto = (user: User): UserDTO => {
     return {
         id: user.id,
         email: user.email,

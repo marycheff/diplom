@@ -1,26 +1,22 @@
 import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
+import { InputFieldKey, InputFieldLabels } from "@/types/inputFields"
 import {
-    IAnswer,
-    IAnswerResponse,
-    InputFieldKey,
-    InputFieldLabels,
-    IQuestion,
-    IQuestionResponse,
-    ITest,
-    ITestResponse,
-    ITestSettings,
-    IUpdateTest,
+    AnswerDTO,
+    QuestionDTO,
+    TestDTO,
+    TestSettingsDTO,
+    UpdateTestDTO,
 } from "@/types/test.types"
-import { Answer, PrismaClient, Question, Test, TestSettings } from "@prisma/client"
+import { Answer, PrismaClient, Question, Test } from "@prisma/client"
 import { ObjectId } from "mongodb"
 
 const prisma = new PrismaClient()
 
 class TestService {
     private mapToResponseTest(
-        test: Test & { settings?: TestSettings | null } & { questions?: (Question & { answers: Answer[] })[] }
-    ): ITestResponse {
+        test: Test & { settings?: TestSettingsDTO | null } & { questions?: (Question & { answers: Answer[] })[] }
+    ): TestDTO {
         return {
             id: test.id,
             authorId: test.authorId,
@@ -37,7 +33,7 @@ class TestService {
         }
     }
 
-    private mapToResponseQuestion(question: Question & { answers?: Answer[] }): IQuestionResponse {
+    private mapToResponseQuestion(question: Question & { answers?: Answer[] }): QuestionDTO {
         return {
             id: question.id,
             text: question.text,
@@ -46,7 +42,7 @@ class TestService {
         }
     }
 
-    private mapToResponseAnswer(answer: Answer): IAnswerResponse {
+    private mapToResponseAnswer(answer: Answer): AnswerDTO {
         return {
             id: answer.id,
             text: answer.text,
@@ -55,14 +51,14 @@ class TestService {
     }
 
     // ТЕСТ
-    async updateTestSettings(testId: string, testSettings: ITestSettings) {
+    async updateTestSettings(testId: string, testSettings: TestSettingsDTO) {
         await prisma.testSettings.update({
             where: { testId },
             data: testSettings,
         })
     }
     // Создание теста без вопросов
-    async createTest(authorId: string, testData: ITest): Promise<ITestResponse> {
+    async createTest(authorId: string, testData: TestDTO): Promise<TestDTO> {
         if (testData.settings) {
             const validation = testSettingsSchema.safeParse(testData.settings)
             if (!validation.success) {
@@ -96,7 +92,7 @@ class TestService {
     }
 
     // Добавление вопросов к существующему тесту
-    async addQuestions(testId: string, userId: string, updateTestData: IUpdateTest): Promise<ITestResponse> {
+    async addQuestions(testId: string, userId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
         return prisma.$transaction(async transaction => {
             if (!ObjectId.isValid(testId)) {
                 throw ApiError.NotFound("Тест не найден")
@@ -151,7 +147,7 @@ class TestService {
     }
 
     // Получение всех тестов пользователя
-    async getUserTests(userId: string): Promise<ITestResponse[]> {
+    async getUserTests(userId: string): Promise<TestDTO[]> {
         const tests = await prisma.test.findMany({
             where: { authorId: userId },
             include: {
@@ -168,7 +164,7 @@ class TestService {
     }
 
     // Получение всех тестов
-    async getAllTests(): Promise<ITestResponse[]> {
+    async getAllTests(): Promise<TestDTO[]> {
         const tests = await prisma.test.findMany({
             include: {
                 questions: {
@@ -223,7 +219,7 @@ class TestService {
 
     async isQuestionBelongsToAnyTest(
         questionId: string
-    ): Promise<{ question: IQuestionResponse | null; test: ITestResponse | null; belongsToTest: boolean }> {
+    ): Promise<{ question: QuestionDTO | null; test: TestDTO | null; belongsToTest: boolean }> {
         const question = await prisma.question.findUnique({
             where: { id: questionId },
             include: {
@@ -263,7 +259,7 @@ class TestService {
         }
     }
     // ВОПРОСЫ
-    async getQuestionById(questionId: string): Promise<IQuestionResponse> {
+    async getQuestionById(questionId: string): Promise<QuestionDTO> {
         const question = await prisma.question.findUnique({ where: { id: questionId } })
         if (!question) {
             throw ApiError.NotFound("Вопрос не найден")
@@ -306,9 +302,9 @@ class TestService {
     // ОТВЕТЫ
 
     async isAnswerBelongsToAnyTest(answerId: string): Promise<{
-        answer: IAnswer | null
-        question: IQuestionResponse | null
-        test: ITestResponse | null
+        answer: AnswerDTO | null
+        question: QuestionDTO | null
+        test: TestDTO | null
         belongsToTest: boolean
     }> {
         const answer = await prisma.answer.findUnique({
@@ -352,7 +348,7 @@ class TestService {
     }
 
     // Удаление ответа
-    async deleteAnswer(answer: IAnswer): Promise<void> {
+    async deleteAnswer(answer: Answer): Promise<void> {
         const answerId = answer.id
         const correctAnswers = await prisma.answer.findMany({
             where: {
@@ -387,7 +383,7 @@ class TestService {
     }
 
     // Изменение вопроса
-    async updateQuestion(questionId: string, updateData: IQuestion): Promise<void> {
+    async updateQuestion(questionId: string, updateData: QuestionDTO): Promise<void> {
         await prisma.$transaction(async transaction => {
             await transaction.question.update({
                 where: { id: questionId },
@@ -413,7 +409,7 @@ class TestService {
         })
     }
 
-    async getTestById(testId: string): Promise<ITestResponse> {
+    async getTestById(testId: string): Promise<TestDTO> {
         const test = await prisma.test.findUnique({
             where: { id: testId },
             include: {
@@ -431,7 +427,7 @@ class TestService {
         return this.mapToResponseTest(test)
     }
 
-    async getTestQuestions(testId: string): Promise<IQuestionResponse[]> {
+    async getTestQuestions(testId: string): Promise<QuestionDTO[]> {
         const questions = await prisma.question.findMany({
             where: { testId },
             include: { answers: true },
@@ -450,7 +446,7 @@ class TestService {
         }))
     }
 
-    async getQuestionAnswers(questionId: string): Promise<IAnswerResponse[]> {
+    async getQuestionAnswers(questionId: string): Promise<AnswerDTO[]> {
         const question = await prisma.question.findUnique({
             where: { id: questionId },
             include: { answers: true },

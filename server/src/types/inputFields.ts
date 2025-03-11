@@ -1,0 +1,31 @@
+export enum InputFieldKey {
+    LastName = "lastName",
+    FirstName = "firstName",
+    Patronymic = "patronymic",
+    Gender = "gender",
+    BirthDate = "birthDate",
+    Age = "age",
+    City = "city",
+    Country = "country",
+    Phone = "phone",
+    Email = "email",
+    School = "school",
+    Grade = "grade",
+    Group = "group",
+}
+
+export const InputFieldLabels: Record<InputFieldKey, string> = {
+    [InputFieldKey.LastName]: "Фамилия",
+    [InputFieldKey.FirstName]: "Имя",
+    [InputFieldKey.Patronymic]: "Отчество",
+    [InputFieldKey.Gender]: "Пол",
+    [InputFieldKey.BirthDate]: "Дата рождения",
+    [InputFieldKey.Age]: "Возраст",
+    [InputFieldKey.City]: "Город",
+    [InputFieldKey.Country]: "Страна",
+    [InputFieldKey.Phone]: "Мобильный телефон",
+    [InputFieldKey.Email]: "Электронная почта",
+    [InputFieldKey.School]: "Номер школы",
+    [InputFieldKey.Grade]: "Класс",
+    [InputFieldKey.Group]: "Группа",
+}

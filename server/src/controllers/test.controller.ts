@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import testService from "@/services/test.service"
-import { IQuestion, ITest, ITestSettings, IUpdateTest } from "@/types/test.types"
+import {QuestionDTO, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
 
 import { NextFunction, Request, Response } from "express"
 
@@ -9,7 +9,7 @@ class TestController {
     async createTest(req: Request, res: Response, next: NextFunction) {
         try {
             const authorId = req.user?.id
-            const testData: ITest = req.body
+            const testData: TestDTO = req.body
             if (!authorId) {
                 throw ApiError.Unauthorized()
             }
@@ -25,8 +25,8 @@ class TestController {
         try {
             const { testId } = req.params
             const userId = req.user?.id
-            const updateTestData: IUpdateTest = {
-                questions: req.body.questions.map((question: IQuestion, index: number) => ({
+            const updateTestData: UpdateTestDTO = {
+                questions: req.body.questions.map((question: QuestionDTO, index: number) => ({
                     ...question,
                     order: index + 1,
                 })),
@@ -41,7 +41,7 @@ class TestController {
     async updateTestSettings(req: Request, res: Response, next: NextFunction) {
         try {
             const testId = req.test?.id
-            const settings: ITestSettings = req.body
+            const settings: TestSettingsDTO = req.body
             await testService.updateTestSettings(testId!, settings)
             res.status(200).json({ message: "Настройки теста успешно изменены" })
         } catch (error) {
@@ -126,7 +126,7 @@ class TestController {
     async updateQuestion(req: Request, res: Response, next: NextFunction) {
         try {
             const { questionId } = req.params
-            const updateQuestionData: IQuestion = req.body
+            const updateQuestionData: QuestionDTO = req.body
             await testService.updateQuestion(questionId, updateQuestionData)
             res.status(200).json({ message: "Ответ успешно обновлен", data: updateQuestionData })
         } catch (error) {

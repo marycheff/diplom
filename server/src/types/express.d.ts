@@ -1,12 +1,12 @@
-import { UserDto } from "@/dtos/user.dto"
-import { IAnswer, IAnswerResponse, IQuestionResponse, ITestResponse } from "@/types/test.types"
+import { UserDTO } from "@/dtos/user.dto"
+import { AnswerDTO, QuestionDTO, TestDTO } from "@/types/test.types"
 import "express"
 
 declare module "express" {
     interface Request {
-        user?: UserDto
-        test?: ITestResponse
-        question?: IQuestionResponse
-        answer?: IAnswer
+        user?: UserDTO
+        test?: TestDTO
+        question?: QuestionDTO
+        answer?: AnswerDTO
     }
 }

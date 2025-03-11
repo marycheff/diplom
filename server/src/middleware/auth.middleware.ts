@@ -1,4 +1,4 @@
-import { UserDto } from "@/dtos/user.dto"
+import { UserDTO } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
 import tokenService from "@/services/token.service"
 import { NextFunction, Request, Response } from "express"
@@ -13,7 +13,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         if (!accessToken) {
             return next(ApiError.Unauthorized())
         }
-        const userData = tokenService.validateAccessToken(accessToken) as UserDto
+        const userData = tokenService.validateAccessToken(accessToken) as UserDTO
         if (!userData) {
             return next(ApiError.Unauthorized())
         }

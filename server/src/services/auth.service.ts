@@ -1,4 +1,4 @@
-import { UserDto, mapUserToDto } from "@/dtos/user.dto"
+import { UserDTO, mapUserToDto } from "@/dtos/user.dto"
 import envConfig from "@/envConfig"
 import ApiError from "@/exceptions/api-error"
 import mailService from "@/services/mail.service"
@@ -12,7 +12,7 @@ import { v4 as uuid_v4 } from "uuid"
 const prisma = new PrismaClient()
 
 class AuthService {
-    async registration(user: CreateUser): Promise<{ accessToken: string; refreshToken: string; user: UserDto }> {
+    async registration(user: CreateUser): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
         const candidate = await prisma.user.findUnique({
             where: {
                 email: user.email,
@@ -80,7 +80,7 @@ class AuthService {
     async activate(activationLink: string): Promise<{
         accessToken: string
         refreshToken: string
-        user: UserDto
+        user: UserDTO
     }> {
         const user = await prisma.user.findFirst({
             where: { activationLink },
@@ -108,7 +108,7 @@ class AuthService {
     async login(
         email: string,
         password: string
-    ): Promise<{ accessToken: string; refreshToken: string; user: UserDto }> {
+    ): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
         const user = await prisma.user.findUnique({
             where: {
                 email,
@@ -138,7 +138,7 @@ class AuthService {
         return token
     }
 
-    async refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string; user: UserDto }> {
+    async refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
         if (!refreshToken) {
             throw ApiError.Unauthorized()
         }
