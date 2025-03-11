@@ -1,3 +1,5 @@
+import { JsonValue } from "@prisma/client/runtime/library"
+
 export interface AnswerDTO {
     id: string
     text: string
@@ -21,8 +23,8 @@ export interface TestDTO {
 }
 export interface TestSettingsDTO {
     requireRegistration?: boolean
-    inputFields?: any
-    requiredFields?: any
+    inputFields?: JsonValue
+    requiredFields?: JsonValue
     showDetailedResults?: boolean
 }
 
