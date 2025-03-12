@@ -1,4 +1,7 @@
-import testController from "@/controllers/test.controller"
+import answerController from "@/controllers/tests/answer.controller"
+import attemptController from "@/controllers/tests/attempt.controller"
+import questionController from "@/controllers/tests/question.controller"
+import testController from "@/controllers/tests/test.controller"
 import { adminMiddleware } from "@/middleware/admin.middleware"
 import { authMiddleware } from "@/middleware/auth.middleware"
 import {
@@ -50,13 +53,13 @@ router.put(
     "/questions/:questionId",
     authMiddleware,
     validateRequest(updateQuestionSchema),
-    testController.updateQuestion
+    questionController.updateQuestion
 )
 // Удаление вопроса из теста
-router.delete("/questions/:questionId", authMiddleware, questionOwnershipMiddleware, testController.deleteQuestion)
+router.delete("/questions/:questionId", authMiddleware, questionOwnershipMiddleware, questionController.deleteQuestion)
 
 // Удаление всех вопросов из теста
-router.delete("/:testId/questions", authMiddleware, questionOwnershipMiddleware, testController.deleteAllQuestions)
+router.delete("/:testId/questions", authMiddleware, questionOwnershipMiddleware, questionController.deleteAllQuestions)
 
 /* =================================
     Управление ответами на вопросы
@@ -67,37 +70,42 @@ router.get(
     "/questions/:questionId/answers",
     authMiddleware,
     questionOwnershipMiddleware,
-    testController.getQuestionAnswers
+    questionController.getQuestionAnswers
 )
 
 // Удаление ответа из вопроса
-router.delete("/answers/:answerId", authMiddleware, answerOwnershipMiddleware, testController.deleteAnswer)
+router.delete("/answers/:answerId", authMiddleware, answerOwnershipMiddleware, answerController.deleteAnswer)
 
 /* =================================
     Попытки прохождения теста
  * ================================= */
 
 // Получение всех попыток (админ)
-router.get("/attempts/all", authMiddleware, adminMiddleware, testController.getAllAttempts)
+router.get("/attempts/all", authMiddleware, adminMiddleware, attemptController.getAllAttempts)
 
 // Начало попытки прохождения теста
-router.post("/:testId/start", authMiddleware, validateRequest(startTestAttemptSchema), testController.startTestAttempt)
+router.post(
+    "/:testId/start",
+    authMiddleware,
+    validateRequest(startTestAttemptSchema),
+    attemptController.startTestAttempt
+)
 
 // Сохранение ответа во время попытки
 router.post(
     "/attempts/:attemptId/answers",
     authMiddleware,
     validateRequest(saveAnswerSchema),
-    testController.saveAnswer
+    attemptController.saveAnswer
 )
 // Завершение попытки
 router.post(
     "/attempts/:attemptId/complete",
     authMiddleware,
     validateRequest(completeTestAttemptSchema),
-    testController.completeTestAttempt
+    attemptController.completeTestAttempt
 )
 
-router.get("/attempts/:attemptId/", authMiddleware, adminMiddleware, testController.getAttempt)
+router.get("/attempts/:attemptId/", authMiddleware, adminMiddleware, attemptController.getAttempt)
 
 export default router

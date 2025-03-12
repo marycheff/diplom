@@ -1,7 +1,6 @@
-import { UpdateUserDTO, UserDTO, mapUserToDto } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
+import { mapUserToDto, UpdateUserDTO, UserDTO } from "@/types/user.types"
 import { PrismaClient, User } from "@prisma/client"
-
 import bcrypt from "bcryptjs"
 
 const prisma = new PrismaClient()

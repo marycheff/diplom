@@ -1,18 +1,16 @@
 import envConfig from "@/config/envConfig"
-import { UserDTO, mapUserToDto } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
 import tokenService from "@/services/auth/token.service"
 import mailService from "@/services/mail.service"
-import { CreateUser } from "@/types/user.types"
+import { CreateUserDTO, mapUserToDto, UserDTO } from "@/types/user.types"
 import { PrismaClient, Token } from "@prisma/client"
-
 import bcrypt from "bcryptjs"
 import { v4 as uuid_v4 } from "uuid"
 
 const prisma = new PrismaClient()
 
 class AuthService {
-    async registration(user: CreateUser): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
+    async registration(user: CreateUserDTO): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
         const candidate = await prisma.user.findUnique({
             where: {
                 email: user.email,
