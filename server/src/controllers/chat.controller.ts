@@ -1,8 +1,8 @@
-import envConfig from "@/envConfig"
+import envConfig from "@/config/envConfig"
 import ApiError from "@/exceptions/api-error"
 import { getAccessToken } from "@/services/gigachat-token.service"
 import { getChatContent } from "@/services/gigachat.service"
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 
 // Функция для парсинга ответов
 const parseAnswers = (response: string | undefined): string[] => {
@@ -16,14 +16,13 @@ const parseAnswers = (response: string | undefined): string[] => {
 }
 
 class ChatController {
-    async generateAnswers(req: Request, res: Response): Promise<void> {
+    async generateAnswers(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { question, answer, numOfAnswers } = req.body
 
             // Проверка на наличие обязательных полей
             if (!question || !answer || !numOfAnswers) {
-                ApiError.BadRequest("Не все данные заполнены")
-                return
+                throw next(ApiError.BadRequest("Не все данные заполнены"))
             }
             // Получаем токен для работы с нейросетью
             const token = await getAccessToken(envConfig.AUTH_DATA as string)
@@ -39,8 +38,7 @@ class ChatController {
 
             // Если все ответы пустые, возвращаем сообщение об ошибке
             if (!hasValidAnswers) {
-                ApiError.BadRequest("Некорректный вопрос, попробуйте задать другой.")
-                return
+                throw next(ApiError.BadRequest("Некорректный вопрос, попробуйте задать другой."))
             }
             // Если есть валидные ответы, возвращаем их
             res.status(200).json({ generatedAnswers: parsedAnswers })

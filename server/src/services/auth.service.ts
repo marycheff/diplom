@@ -1,5 +1,5 @@
+import envConfig from "@/config/envConfig"
 import { UserDTO, mapUserToDto } from "@/dtos/user.dto"
-import envConfig from "@/envConfig"
 import ApiError from "@/exceptions/api-error"
 import mailService from "@/services/mail.service"
 import tokenService from "@/services/token.service"

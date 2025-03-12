@@ -1,24 +1,23 @@
 import ApiError from "@/exceptions/api-error"
 import axios from "axios"
-import * as qs from "querystring"
+import qs from "querystring"
+import { https } from "follow-redirects"
 
-const httpsAgent = new (require("follow-redirects").https.Agent)({ rejectUnauthorized: false })
+const httpsAgent = new https.Agent({ rejectUnauthorized: false })
 
-const getRandomInt = (min: number, max: number): number => {
-    return Math.floor(Math.random() * (max - min + 1)) + min
-}
+const getRandomInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1)) + min
 
-const generateUUID = (): string => {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+const generateUUID = (): string =>
+    "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
         const r = getRandomInt(0, 15)
         const v = c === "x" ? r : (r & 0x3) | 0x8
         return v.toString(16)
     })
-}
 
 export const getAccessToken = async (authData: string): Promise<string> => {
     const postData = qs.stringify({ scope: "GIGACHAT_API_PERS" })
-    const options = {
+
+    const config = {
         method: "POST",
         url: "https://ngw.devices.sberbank.ru:9443/api/v2/oauth",
         headers: {
@@ -32,12 +31,11 @@ export const getAccessToken = async (authData: string): Promise<string> => {
     }
 
     try {
-        const response = await axios(options)
-        if (response.data.access_token) {
-            return response.data.access_token
-        } else {
-            throw ApiError.InternalError("Ошибка нейросети")
+        const { data } = await axios(config)
+        if (data?.access_token) {
+            return data.access_token
         }
+        throw ApiError.InternalError("Ошибка нейросети")
     } catch (error: any) {
         throw ApiError.InternalError("Ошибка получения токена доступа")
     }

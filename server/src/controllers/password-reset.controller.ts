@@ -25,7 +25,7 @@ class PasswordResetController {
         try {
             const isValid = await passwordResetService.verifyResetCode(email, code)
             if (!isValid) {
-                ApiError.BadRequest("Неверный код сброса")
+                throw next(ApiError.BadRequest("Неверный код сброса"))
                 return
             }
             res.status(200).json({ message: "Код сброса подтвержден." })

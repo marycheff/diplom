@@ -1,4 +1,4 @@
-import envConfig from "@/envConfig"
+import envConfig from "@/config/envConfig"
 import ApiError from "@/exceptions/api-error"
 import nodemailer from "nodemailer"
 import SMTPTransport from "nodemailer/lib/smtp-transport"
@@ -15,7 +15,7 @@ class MailService {
                 user: envConfig.SMTP_USER,
                 pass: envConfig.SMTP_PASSWORD,
             },
-        } as SMTPTransport.Options) 
+        } as SMTPTransport.Options)
     }
 
     async sendActivationMail(to: string, link: string) {

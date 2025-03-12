@@ -1,4 +1,4 @@
-import envConfig from "@/envConfig"
+import envConfig from "@/config/envConfig"
 import ApiError from "@/exceptions/api-error"
 import { PrismaClient, Token } from "@prisma/client"
 import jwt from "jsonwebtoken"

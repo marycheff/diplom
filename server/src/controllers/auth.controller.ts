@@ -1,4 +1,4 @@
-import envConfig from "@/envConfig"
+import envConfig from "@/config/envConfig"
 import ApiError from "@/exceptions/api-error"
 import authService from "@/services/auth.service"
 import { NextFunction, Request, Response } from "express"

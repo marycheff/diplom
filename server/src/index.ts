@@ -9,7 +9,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import express, { NextFunction, Request, Response } from "express"
 import "module-alias/register"
-import envConfig from "./envConfig"
+import envConfig from "./config/envConfig"
 
 dotenv.config()
 
