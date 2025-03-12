@@ -1,5 +1,7 @@
 import ApiError from "@/exceptions/api-error"
-import testService from "@/services/test.service"
+import testService from "@/services/tests/test.service"
+import answerService from "@/services/tests/answer.service"
+import questionService from "@/services/tests/question.service"
 import { NextFunction, Request, Response } from "express"
 import { ObjectId } from "mongodb"
 
@@ -31,7 +33,7 @@ export const questionOwnershipMiddleware = async (req: Request, res: Response, n
         if (!ObjectId.isValid(questionId)) {
             return next(ApiError.BadRequest("Некорректный ID теста"))
         }
-        const { question, test, belongsToTest } = await testService.isQuestionBelongsToAnyTest(questionId)
+        const { question, test, belongsToTest } = await questionService.isQuestionBelongsToAnyTest(questionId)
         if (!question) {
             return next(ApiError.NotFound("Вопрос не найден"))
         }
@@ -59,7 +61,7 @@ export const answerOwnershipMiddleware = async (req: Request, res: Response, nex
         if (!ObjectId.isValid(answerId)) {
             return next(ApiError.BadRequest("Некорректный ID теста"))
         }
-        const { answer, question, test, belongsToTest } = await testService.isAnswerBelongsToAnyTest(answerId)
+        const { answer, question, test, belongsToTest } = await answerService.isAnswerBelongsToAnyTest(answerId)
         if (!answer) {
             return next(ApiError.NotFound("Ответ не найден"))
         }

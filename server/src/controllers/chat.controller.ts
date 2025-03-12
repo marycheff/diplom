@@ -1,7 +1,7 @@
 import envConfig from "@/config/envConfig"
 import ApiError from "@/exceptions/api-error"
-import { getAccessToken } from "@/services/gigachat-token.service"
-import { getChatContent } from "@/services/gigachat.service"
+import { getAccessToken } from "@/services/gigachat/gigachat-token.service"
+import { getChatContent } from "@/services/gigachat/gigachat.service"
 import { NextFunction, Request, Response } from "express"
 
 // Функция для парсинга ответов

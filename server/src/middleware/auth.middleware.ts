@@ -1,6 +1,6 @@
 import { UserDTO } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
-import tokenService from "@/services/token.service"
+import tokenService from "@/services/auth/token.service"
 import { NextFunction, Request, Response } from "express"
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {

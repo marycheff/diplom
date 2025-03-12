@@ -1,6 +1,9 @@
 import ApiError from "@/exceptions/api-error"
-import testService from "@/services/test.service"
-import {QuestionDTO, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
+import testService from "@/services/tests/test.service"
+import answerService from "@/services/tests/answer.service"
+import attemptService from "@/services/tests/attempt.service"
+import questionService from "@/services/tests/question.service"
+import { QuestionDTO, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
 
 import { NextFunction, Request, Response } from "express"
 
@@ -89,7 +92,7 @@ class TestController {
     async deleteQuestion(req: Request, res: Response, next: NextFunction) {
         try {
             const { questionId } = req.params
-            await testService.deleteQuestion(questionId)
+            await questionService.deleteQuestion(questionId)
             res.status(200).json({ message: "Вопрос успешно удален" })
         } catch (error) {
             next(error)
@@ -98,7 +101,7 @@ class TestController {
     async deleteAllQuestions(req: Request, res: Response, next: NextFunction) {
         try {
             const { testId } = req.params
-            await testService.deleteAllQuestions(testId)
+            await questionService.deleteAllQuestions(testId)
             res.status(200).json({ message: "Все вопросы успешно удалены" })
         } catch (error) {
             next(error)
@@ -107,7 +110,7 @@ class TestController {
     async deleteAnswer(req: Request, res: Response, next: NextFunction) {
         try {
             const answer = req.answer
-            if (answer) await testService.deleteAnswer(answer)
+            if (answer) await answerService.deleteAnswer(answer)
             res.status(200).json({ message: "Ответ успешно удален" })
         } catch (e) {
             next(e)
@@ -116,7 +119,7 @@ class TestController {
     async deleteAllAnswers(req: Request, res: Response, next: NextFunction) {
         try {
             const { questionId } = req.params
-            await testService.deleteAllAnswers(questionId)
+            await answerService.deleteAllAnswers(questionId)
             res.status(200).json({ message: "Все ответы успешно удалены" })
         } catch (error) {
             next(error)
@@ -127,7 +130,7 @@ class TestController {
         try {
             const { questionId } = req.params
             const updateQuestionData: QuestionDTO = req.body
-            await testService.updateQuestion(questionId, updateQuestionData)
+            await questionService.updateQuestion(questionId, updateQuestionData)
             res.status(200).json({ message: "Ответ успешно обновлен", data: updateQuestionData })
         } catch (error) {
             next(error)
@@ -154,7 +157,7 @@ class TestController {
     async getQuestionAnswers(req: Request, res: Response, next: NextFunction) {
         try {
             const { questionId } = req.params
-            const answers = await testService.getQuestionAnswers(questionId)
+            const answers = await questionService.getQuestionAnswers(questionId)
             res.json(answers)
         } catch (error) {
             next(error)
@@ -168,7 +171,7 @@ class TestController {
             const userId = req.user?.id
             const userData = req.body.userData
 
-            const result = await testService.startTestAttempt(testId, userData, userId)
+            const result = await attemptService.startTestAttempt(testId, userData, userId)
 
             res.status(201).json(result)
         } catch (e) {
@@ -182,7 +185,7 @@ class TestController {
             const { attemptId } = req.params
             const { questionId, answerId } = req.body
 
-            await testService.saveAnswer(attemptId, questionId, answerId)
+            await attemptService.saveAnswer(attemptId, questionId, answerId)
             res.status(204).send()
         } catch (e) {
             next(e)
@@ -193,7 +196,7 @@ class TestController {
     async completeTestAttempt(req: Request, res: Response, next: NextFunction) {
         try {
             const { attemptId } = req.params
-            const result = await testService.completeTestAttempt(attemptId)
+            const result = await attemptService.completeTestAttempt(attemptId)
             res.json(result)
         } catch (e) {
             next(e)
@@ -204,7 +207,7 @@ class TestController {
         try {
             // const userId = req.user?.id
             // if (!userId) throw ApiError.Unauthorized()
-            const attempts = await testService.getAllAttempts()
+            const attempts = await attemptService.getAllAttempts()
             res.json(attempts)
         } catch (error) {
             next(error)
@@ -215,7 +218,7 @@ class TestController {
     async getAttempt(req: Request, res: Response, next: NextFunction) {
         try {
             const { attemptId } = req.params
-            const attempt = await testService.getAttempt(attemptId)
+            const attempt = await attemptService.getAttempt(attemptId)
             res.json(attempt)
         } catch (error) {
             next(error)
@@ -230,7 +233,7 @@ class TestController {
             // TODO: АДМИН или не АДМИН
 
             if (!userId) throw ApiError.Unauthorized()
-            const attempts = await testService.getUserAttempts(userId)
+            const attempts = await attemptService.getUserAttempts(userId)
             res.json(attempts)
         } catch (error) {
             next(error)

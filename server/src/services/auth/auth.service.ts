@@ -1,8 +1,8 @@
 import envConfig from "@/config/envConfig"
 import { UserDTO, mapUserToDto } from "@/dtos/user.dto"
 import ApiError from "@/exceptions/api-error"
+import tokenService from "@/services/auth/token.service"
 import mailService from "@/services/mail.service"
-import tokenService from "@/services/token.service"
 import { CreateUser } from "@/types/user.types"
 import { PrismaClient, Token } from "@prisma/client"
 

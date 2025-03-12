@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 
 import ApiError from "@/exceptions/api-error"
-import userService from "@/services/user.service"
+import userService from "@/services/auth/user.service"
 
 class UserController {
     async getUsers(req: Request, res: Response, next: NextFunction) {

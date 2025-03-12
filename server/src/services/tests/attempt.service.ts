@@ -1,0 +1,336 @@
+import ApiError from "@/exceptions/api-error"
+import { InputFieldKey, InputFieldLabels } from "@/types/inputFields"
+import { PrismaClient } from "@prisma/client"
+import { ObjectId } from "mongodb"
+const prisma = new PrismaClient()
+
+class AttemptService {
+    async startTestAttempt(
+        testId: string,
+        userData?: Record<string, any>,
+        userId?: string
+    ): Promise<{ attemptId: string }> {
+        const test = await prisma.test.findUnique({
+            where: { id: testId },
+            include: { settings: true },
+        })
+
+        if (!test) throw ApiError.NotFound("Тест не найден")
+
+        const settings = test.settings
+        if (settings?.requireRegistration && !userId) {
+            throw ApiError.Forbidden()
+        }
+
+        if (settings?.requiredFields) {
+            const requiredFields = settings.requiredFields as InputFieldKey[]
+            if (!userData || requiredFields.some(field => userData[field] == null)) {
+                const missingLabels = requiredFields.filter(field => userData?.[field] == null)
+                const missingLabelsRu = requiredFields
+                    .filter(field => userData?.[field] == null)
+                    .map(f => InputFieldLabels[f])
+                throw ApiError.BadRequest(
+                    `Не все обязательные поля заполнены: ${missingLabelsRu.join(", ")} (${missingLabels.join(", ")})`
+                )
+            }
+        }
+
+        const attempt = await prisma.testAttempt.create({
+            data: {
+                testId,
+                userId,
+                userData: test.settings?.requireRegistration ? null : userData,
+                status: "IN_PROGRESS",
+            },
+        })
+
+        return { attemptId: attempt.id }
+    }
+    // Сохранение ответа
+    async saveAnswer(attemptId: string, questionId: string, answerId: string): Promise<void> {
+        const attempt = await prisma.testAttempt.findUnique({
+            where: { id: attemptId },
+            include: { test: true },
+        })
+
+        if (!attempt || attempt.completedAt) {
+            throw ApiError.BadRequest("Попытка завершена или не существует")
+        }
+
+        // Проверка принадлежности вопроса тесту
+        const question = await prisma.question.findUnique({
+            where: { id: questionId, testId: attempt.testId },
+        })
+
+        if (!question) throw ApiError.BadRequest("Вопрос не принадлежит тесту")
+
+        // Проверка принадлежности ответа вопросу
+        const answer = await prisma.answer.findUnique({
+            where: { id: answerId, questionId },
+        })
+
+        if (!answer) throw ApiError.BadRequest("Ответ не принадлежит вопросу")
+
+        // Удаляем предыдущий ответ на этот вопрос (если есть)
+        await prisma.userAnswer.deleteMany({
+            where: { attemptId, questionId },
+        })
+
+        // Сохраняем новый ответ
+        await prisma.userAnswer.create({
+            data: { attemptId, questionId, answerId },
+        })
+    }
+
+    // Завершение теста и подсчет результатов
+    async completeTestAttempt(attemptId: string): Promise<{ score: number }> {
+        return prisma.$transaction(async tx => {
+            const attempt = await tx.testAttempt.findUnique({
+                where: { id: attemptId },
+                include: {
+                    answers: {
+                        include: {
+                            answer: true,
+                        },
+                    },
+                    test: {
+                        include: {
+                            questions: {
+                                include: {
+                                    answers: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            })
+
+            if (!attempt) throw ApiError.BadRequest("Попытка не найдена")
+            if (attempt.completedAt) throw ApiError.BadRequest("Тест уже завершен")
+
+            // Подсчет правильных ответов
+            const totalQuestions = attempt.test.questions.length
+            const correctAnswers = attempt.answers.filter(a => a.answer.isCorrect).length
+            const score = (correctAnswers / totalQuestions) * 100
+
+            // Обновление попытки
+            await tx.testAttempt.update({
+                where: { id: attemptId },
+                data: {
+                    score: Math.round(score * 100) / 100,
+                    status: "COMPLETED",
+                    completedAt: new Date(),
+                },
+            })
+
+            return { score }
+        })
+    }
+    async getAllAttempts(): Promise<any[]> {
+        const attempts = await prisma.testAttempt.findMany({
+            include: {
+                test: {
+                    include: {
+                        author: true,
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                            orderBy: { order: "asc" },
+                        },
+                    },
+                },
+                user: true,
+                answers: {
+                    include: {
+                        question: true,
+                        answer: true,
+                    },
+                },
+            },
+            orderBy: { startedAt: "desc" },
+        })
+
+        return attempts.map(attempt => ({
+            id: attempt.id,
+            status: attempt.status,
+            startedAt: attempt.startedAt,
+            completedAt: attempt.completedAt,
+            score: attempt.score,
+            user: attempt.user ? { id: attempt.user.id, email: attempt.user.email } : attempt.userData,
+
+            test: {
+                id: attempt.test.id,
+                title: attempt.test.title,
+                author: {
+                    id: attempt.test.author.id,
+                    email: attempt.test.author.email,
+                },
+            },
+            questions: attempt.test.questions.map(q => {
+                const userAnswer = attempt.answers.find(a => a.questionId === q.id)?.answer
+                return {
+                    question: {
+                        id: q.id,
+                        text: q.text,
+                    },
+                    answers: q.answers.map(a => ({
+                        id: a.id,
+                        text: a.text,
+                        isCorrect: a.isCorrect,
+                    })),
+                    userAnswer: userAnswer
+                        ? {
+                              id: userAnswer.id,
+                              text: userAnswer.text,
+                              isCorrect: userAnswer.isCorrect,
+                          }
+                        : null,
+                }
+            }),
+        }))
+    }
+
+    async getAttempt(attemptId: string): Promise<any> {
+        if (!ObjectId.isValid(attemptId)) {
+            throw ApiError.BadRequest("Некорректный ID попытки прохождения теста")
+        }
+
+        const attempt = await prisma.testAttempt.findUnique({
+            where: { id: attemptId },
+            include: {
+                test: {
+                    include: {
+                        author: true,
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                            orderBy: { order: "asc" },
+                        },
+                    },
+                },
+                user: true,
+                answers: {
+                    include: {
+                        question: true,
+                        answer: true,
+                    },
+                },
+            },
+        })
+
+        // Проверка, существует ли попытка
+        if (!attempt) {
+            throw ApiError.BadRequest("Попытка не найдена")
+        }
+
+        return {
+            id: attempt.id,
+            status: attempt.status,
+            startedAt: attempt.startedAt,
+            completedAt: attempt.completedAt,
+            score: attempt.score,
+            user: attempt.user ? { id: attempt.user.id, email: attempt.user.email } : attempt.userData,
+
+            test: {
+                id: attempt.test.id,
+                title: attempt.test.title,
+                author: {
+                    id: attempt.test.author.id,
+                    email: attempt.test.author.email,
+                },
+            },
+            questions: attempt.test.questions.map(q => {
+                const userAnswer = attempt.answers.find(a => a.questionId === q.id)?.answer
+                return {
+                    question: {
+                        id: q.id,
+                        text: q.text,
+                    },
+                    answers: q.answers.map(a => ({
+                        id: a.id,
+                        text: a.text,
+                        isCorrect: a.isCorrect,
+                    })),
+                    userAnswer: userAnswer
+                        ? {
+                              id: userAnswer.id,
+                              text: userAnswer.text,
+                              isCorrect: userAnswer.isCorrect,
+                          }
+                        : null,
+                }
+            }),
+        }
+    }
+
+    async getUserAttempts(userId: string): Promise<any[]> {
+        if (!ObjectId.isValid(userId)) {
+            throw ApiError.BadRequest("Некорректный ID пользователя")
+        }
+        const attempts = await prisma.testAttempt.findMany({
+            where: { userId: userId },
+            include: {
+                test: {
+                    include: {
+                        author: true,
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                            orderBy: { order: "asc" },
+                        },
+                    },
+                },
+                user: true,
+                answers: {
+                    include: {
+                        question: true,
+                        answer: true,
+                    },
+                },
+            },
+            orderBy: { startedAt: "desc" },
+        })
+
+        return attempts.map(attempt => ({
+            id: attempt.id,
+            startedAt: attempt.startedAt,
+            completedAt: attempt.completedAt,
+            score: attempt.score,
+            user: attempt.user ? { id: attempt.user.id, email: attempt.user.email } : attempt.userData,
+
+            test: {
+                id: attempt.test.id,
+                title: attempt.test.title,
+                author: {
+                    id: attempt.test.author.id,
+                    email: attempt.test.author.email,
+                },
+            },
+            questions: attempt.test.questions.map(q => {
+                const userAnswer = attempt.answers.find(a => a.questionId === q.id)?.answer
+                return {
+                    question: {
+                        id: q.id,
+                        text: q.text,
+                    },
+                    answers: q.answers.map(a => ({
+                        id: a.id,
+                        text: a.text,
+                        isCorrect: a.isCorrect,
+                    })),
+                    userAnswer: userAnswer
+                        ? {
+                              id: userAnswer.id,
+                              text: userAnswer.text,
+                              isCorrect: userAnswer.isCorrect,
+                          }
+                        : null,
+                }
+            }),
+        }))
+    }
+}
+export default new AttemptService()

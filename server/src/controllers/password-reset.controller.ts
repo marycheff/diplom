@@ -2,8 +2,8 @@ import ApiError from "@/exceptions/api-error"
 import mailService from "@/services/mail.service"
 import { generateCode } from "@/utils/math"
 import { NextFunction, Request, Response } from "express"
-import passwordResetService from "../services/password-reset.service"
-import userService from "../services/user.service"
+import passwordResetService from "../services/auth/password-reset.service"
+import userService from "../services/auth/user.service"
 
 class PasswordResetController {
     async requestReset(req: Request, res: Response, next: NextFunction) {
