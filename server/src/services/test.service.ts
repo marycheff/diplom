@@ -606,6 +606,7 @@ class TestService {
 
         return attempts.map(attempt => ({
             id: attempt.id,
+            status: attempt.status,
             startedAt: attempt.startedAt,
             completedAt: attempt.completedAt,
             score: attempt.score,
@@ -679,6 +680,7 @@ class TestService {
 
         return {
             id: attempt.id,
+            status: attempt.status,
             startedAt: attempt.startedAt,
             completedAt: attempt.completedAt,
             score: attempt.score,
