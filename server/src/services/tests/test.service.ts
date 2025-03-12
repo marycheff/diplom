@@ -1,32 +1,13 @@
 import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
-import questionService from "@/services/tests/question.service"
+import { mapToResponseTest } from "@/types/mappers"
 import { QuestionDTO, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
-import { Answer, PrismaClient, Question, Test } from "@prisma/client"
+import { Answer, PrismaClient, Question } from "@prisma/client"
 import { ObjectId } from "mongodb"
 
 const prisma = new PrismaClient()
 
 class TestService {
-    mapToResponseTest(
-        test: Test & { settings?: TestSettingsDTO | null } & { questions?: (Question & { answers: Answer[] })[] }
-    ): TestDTO {
-        return {
-            id: test.id,
-            authorId: test.authorId,
-            title: test.title,
-            description: test.description || "",
-            settings: test.settings
-                ? {
-                      requireRegistration: test.settings.requireRegistration,
-                      inputFields: test.settings.inputFields,
-                      showDetailedResults: test.settings.showDetailedResults,
-                  }
-                : {},
-            questions: test.questions?.map(question => questionService.mapToResponseQuestion(question)) || [],
-        }
-    }
-
     // ТЕСТ
     async updateTestSettings(testId: string, testSettings: TestSettingsDTO) {
         await prisma.testSettings.update({
@@ -61,7 +42,7 @@ class TestService {
                     showDetailedResults: testData.settings?.showDetailedResults ?? false,
                 },
             })
-            return this.mapToResponseTest({
+            return mapToResponseTest({
                 ...createdTest,
                 settings,
             })
@@ -117,7 +98,7 @@ class TestService {
                 (question): question is Question & { answers: Answer[] } => question !== null
             )
 
-            return this.mapToResponseTest({
+            return mapToResponseTest({
                 ...existingTest,
                 questions: validQuestions,
             })
@@ -138,7 +119,7 @@ class TestService {
             },
         })
 
-        return tests.map(test => this.mapToResponseTest(test))
+        return tests.map(test => mapToResponseTest(test))
     }
 
     // Получение всех тестов
@@ -154,7 +135,7 @@ class TestService {
             },
             orderBy: { createdAt: "desc" },
         })
-        return tests.map(test => this.mapToResponseTest(test))
+        return tests.map(test => mapToResponseTest(test))
     }
     // Удаление теста
     async deleteTest(testId: string): Promise<void> {
@@ -203,7 +184,7 @@ class TestService {
         })
 
         if (!test) throw ApiError.NotFound("Тест не найден")
-        return this.mapToResponseTest(test)
+        return mapToResponseTest(test)
     }
 
     async getTestQuestions(testId: string): Promise<QuestionDTO[]> {

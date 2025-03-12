@@ -1,22 +1,11 @@
 import ApiError from "@/exceptions/api-error"
-import answerService from "@/services/tests/answer.service"
-import testService from "@/services/tests/test.service"
+import { mapToResponseQuestion, mapToResponseTest } from "@/types/mappers"
 import { AnswerDTO, QuestionDTO, TestDTO } from "@/types/test.types"
-import { Answer, PrismaClient, Question } from "@prisma/client"
+import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
 class QuestionService {
-    public mapToResponseQuestion(question: Question & { answers?: Answer[] }): QuestionDTO {
-        return {
-            id: question.id,
-            text: question.text,
-            order: question.order,
-            type: question.type,
-            answers: question.answers?.map(answer => answerService.mapToResponseAnswer(answer)) || [],
-        }
-    }
-
     async isQuestionBelongsToTest(questionId: string, testId: string): Promise<boolean> {
         const question = await prisma.question.findUnique({
             where: { id: questionId },
@@ -56,7 +45,7 @@ class QuestionService {
         // 3. Если вопрос найден, но не принадлежит тесту
         if (!question.test) {
             return {
-                question: this.mapToResponseQuestion(question),
+                question: mapToResponseQuestion(question),
                 test: null,
                 belongsToTest: false,
             }
@@ -64,8 +53,8 @@ class QuestionService {
 
         // 4. Если вопрос принадлежит тесту
         return {
-            question: this.mapToResponseQuestion(question),
-            test: testService.mapToResponseTest(question.test),
+            question: mapToResponseQuestion(question),
+            test: mapToResponseTest(question.test),
             belongsToTest: true,
         }
     }
@@ -75,7 +64,7 @@ class QuestionService {
         if (!question) {
             throw ApiError.NotFound("Вопрос не найден")
         }
-        return this.mapToResponseQuestion(question)
+        return mapToResponseQuestion(question)
     }
 
     // Удаление вопроса

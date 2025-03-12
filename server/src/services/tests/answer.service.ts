@@ -1,20 +1,11 @@
 import ApiError from "@/exceptions/api-error"
-import testService from "@/services/tests/test.service"
-import questionService from "@/services/tests/question.service"
+import { mapToResponseQuestion, mapToResponseTest } from "@/types/mappers"
 import { AnswerDTO, QuestionDTO, TestDTO } from "@/types/test.types"
 import { Answer, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
 class AnswerService {
-    mapToResponseAnswer(answer: Answer): AnswerDTO {
-        return {
-            id: answer.id,
-            text: answer.text,
-            isCorrect: answer.isCorrect,
-        }
-    }
-
     async isAnswerBelongsToAnyTest(answerId: string): Promise<{
         answer: AnswerDTO | null
         question: QuestionDTO | null
@@ -48,15 +39,15 @@ class AnswerService {
         if (!answer.question || !answer.question.test) {
             return {
                 answer,
-                question: answer.question ? questionService.mapToResponseQuestion(answer.question) : null,
+                question: answer.question ? mapToResponseQuestion(answer.question) : null,
                 test: null,
                 belongsToTest: false,
             }
         }
         return {
             answer,
-            question: questionService.mapToResponseQuestion(answer.question),
-            test: testService.mapToResponseTest(answer.question.test),
+            question: mapToResponseQuestion(answer.question),
+            test: mapToResponseTest(answer.question.test),
             belongsToTest: true,
         }
     }

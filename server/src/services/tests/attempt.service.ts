@@ -1,5 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import { InputFieldKey, InputFieldLabels } from "@/types/inputFields"
+import { mapToTestAttemptDTO } from "@/types/mappers"
 import { PrismaClient } from "@prisma/client"
 import { ObjectId } from "mongodb"
 const prisma = new PrismaClient()
@@ -151,44 +152,7 @@ class AttemptService {
             orderBy: { startedAt: "desc" },
         })
 
-        return attempts.map(attempt => ({
-            id: attempt.id,
-            status: attempt.status,
-            startedAt: attempt.startedAt,
-            completedAt: attempt.completedAt,
-            score: attempt.score,
-            user: attempt.user ? { id: attempt.user.id, email: attempt.user.email } : attempt.userData,
-
-            test: {
-                id: attempt.test.id,
-                title: attempt.test.title,
-                author: {
-                    id: attempt.test.author.id,
-                    email: attempt.test.author.email,
-                },
-            },
-            questions: attempt.test.questions.map(q => {
-                const userAnswer = attempt.answers.find(a => a.questionId === q.id)?.answer
-                return {
-                    question: {
-                        id: q.id,
-                        text: q.text,
-                    },
-                    answers: q.answers.map(a => ({
-                        id: a.id,
-                        text: a.text,
-                        isCorrect: a.isCorrect,
-                    })),
-                    userAnswer: userAnswer
-                        ? {
-                              id: userAnswer.id,
-                              text: userAnswer.text,
-                              isCorrect: userAnswer.isCorrect,
-                          }
-                        : null,
-                }
-            }),
-        }))
+        return attempts.map(attempt => mapToTestAttemptDTO(attempt))
     }
 
     async getAttempt(attemptId: string): Promise<any> {
@@ -225,44 +189,7 @@ class AttemptService {
             throw ApiError.BadRequest("Попытка не найдена")
         }
 
-        return {
-            id: attempt.id,
-            status: attempt.status,
-            startedAt: attempt.startedAt,
-            completedAt: attempt.completedAt,
-            score: attempt.score,
-            user: attempt.user ? { id: attempt.user.id, email: attempt.user.email } : attempt.userData,
-
-            test: {
-                id: attempt.test.id,
-                title: attempt.test.title,
-                author: {
-                    id: attempt.test.author.id,
-                    email: attempt.test.author.email,
-                },
-            },
-            questions: attempt.test.questions.map(q => {
-                const userAnswer = attempt.answers.find(a => a.questionId === q.id)?.answer
-                return {
-                    question: {
-                        id: q.id,
-                        text: q.text,
-                    },
-                    answers: q.answers.map(a => ({
-                        id: a.id,
-                        text: a.text,
-                        isCorrect: a.isCorrect,
-                    })),
-                    userAnswer: userAnswer
-                        ? {
-                              id: userAnswer.id,
-                              text: userAnswer.text,
-                              isCorrect: userAnswer.isCorrect,
-                          }
-                        : null,
-                }
-            }),
-        }
+        return mapToTestAttemptDTO(attempt)
     }
 
     async getUserAttempts(userId: string): Promise<any[]> {
@@ -294,43 +221,7 @@ class AttemptService {
             orderBy: { startedAt: "desc" },
         })
 
-        return attempts.map(attempt => ({
-            id: attempt.id,
-            startedAt: attempt.startedAt,
-            completedAt: attempt.completedAt,
-            score: attempt.score,
-            user: attempt.user ? { id: attempt.user.id, email: attempt.user.email } : attempt.userData,
-
-            test: {
-                id: attempt.test.id,
-                title: attempt.test.title,
-                author: {
-                    id: attempt.test.author.id,
-                    email: attempt.test.author.email,
-                },
-            },
-            questions: attempt.test.questions.map(q => {
-                const userAnswer = attempt.answers.find(a => a.questionId === q.id)?.answer
-                return {
-                    question: {
-                        id: q.id,
-                        text: q.text,
-                    },
-                    answers: q.answers.map(a => ({
-                        id: a.id,
-                        text: a.text,
-                        isCorrect: a.isCorrect,
-                    })),
-                    userAnswer: userAnswer
-                        ? {
-                              id: userAnswer.id,
-                              text: userAnswer.text,
-                              isCorrect: userAnswer.isCorrect,
-                          }
-                        : null,
-                }
-            }),
-        }))
+        return attempts.map(attempt => mapToTestAttemptDTO(attempt))
     }
 }
 export default new AttemptService()

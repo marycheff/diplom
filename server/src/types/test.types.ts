@@ -1,3 +1,4 @@
+import { UserDTO } from "@/types/user.types"
 import { QuestionType } from "@prisma/client"
 import { JsonValue } from "@prisma/client/runtime/library"
 
@@ -35,4 +36,26 @@ export interface UpdateTestDTO {
     description?: string
     questions: QuestionDTO[]
     settings?: TestSettingsDTO
+}
+
+export interface TestAttemptDTO {
+    id: string
+    status: string
+    startedAt: Date
+    completedAt: Date | null
+    score: number | null
+    user: UserDTO | JsonValue | null
+    test: TestDTO
+    questions: AttemptQuestionDTO[]
+}
+
+export interface AttemptQuestionDTO {
+    question: {
+        id: string
+        text: string
+        order?: number
+        type: QuestionType
+    }
+    answers: AnswerDTO[]
+    userAnswer: AnswerDTO | null
 }
