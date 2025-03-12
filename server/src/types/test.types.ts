@@ -1,3 +1,4 @@
+import { QuestionType } from "@prisma/client"
 import { JsonValue } from "@prisma/client/runtime/library"
 
 export interface AnswerDTO {
@@ -11,6 +12,7 @@ export interface QuestionDTO {
     text: string
     order?: number
     answers: AnswerDTO[]
+    type: QuestionType
 }
 
 export interface TestDTO {

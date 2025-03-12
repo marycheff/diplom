@@ -1,13 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
 import { InputFieldKey, InputFieldLabels } from "@/types/inputFields"
-import {
-    AnswerDTO,
-    QuestionDTO,
-    TestDTO,
-    TestSettingsDTO,
-    UpdateTestDTO,
-} from "@/types/test.types"
+import { AnswerDTO, QuestionDTO, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
 import { Answer, PrismaClient, Question, Test } from "@prisma/client"
 import { ObjectId } from "mongodb"
 
@@ -38,6 +32,7 @@ class TestService {
             id: question.id,
             text: question.text,
             order: question.order,
+            type: question.type,
             answers: question.answers?.map(answer => this.mapToResponseAnswer(answer)) || [],
         }
     }
@@ -115,6 +110,7 @@ class TestService {
                             text: questionData.text,
                             order: index + 1,
                             testId: testId,
+                            type: questionData.type,
                         },
                     })
 
@@ -438,6 +434,7 @@ class TestService {
             id: q.id,
             text: q.text,
             order: q.order,
+            type: q.type,
             answers: q.answers.map(a => ({
                 id: a.id,
                 text: a.text,
@@ -496,6 +493,7 @@ class TestService {
                 testId,
                 userId,
                 userData: test.settings?.requireRegistration ? null : userData,
+                status: "IN_PROGRESS",
             },
         })
 
@@ -573,6 +571,7 @@ class TestService {
                 where: { id: attemptId },
                 data: {
                     score: Math.round(score * 100) / 100,
+                    status: "COMPLETED",
                     completedAt: new Date(),
                 },
             })

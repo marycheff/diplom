@@ -10,7 +10,7 @@
         "postinstall": "prisma generate"
     },
     "dependencies": {
-        "@prisma/client": "^6.4.1",
+        "@prisma/client": "^6.5.0",
         "@types/follow-redirects": "^1.14.4",
         "axios": "^1.7.9",
         "bcryptjs": "^3.0.2",
@@ -19,6 +19,7 @@
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
         "follow-redirects": "^1.15.9",
+        "i": "^0.3.7",
         "jsonwebtoken": "^9.0.2",
         "module-alias": "^2.2.3",
         "mongodb": "^6.13.0",
@@ -38,7 +39,7 @@
         "@types/nodemailer": "^6.4.17",
         "@types/uuid": "^10.0.0",
         "depcheck": "^1.4.7",
-        "prisma": "^6.4.1",
+        "prisma": "^6.5.0",
         "tsx": "^4.19.2",
         "typescript": "^5.7.3"
     }

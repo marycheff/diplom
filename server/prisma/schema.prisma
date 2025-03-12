@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  email          String        @unique
+  email          String        @unique @map("email")
   name           String?       @map("name")
   surname        String?       @map("surname")
   patronymic     String?       @map("patronymic")
@@ -44,10 +44,10 @@ model TestSettings {
   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
   testId              String   @unique @map("test_id") @db.ObjectId
   test                Test     @relation(fields: [testId], references: [id])
-  requireRegistration Boolean  @default(false)
-  inputFields         Json?
-  requiredFields      Json?
-  showDetailedResults Boolean  @default(false)
+  requireRegistration Boolean  @default(false) @map("require_registration")
+  inputFields         Json?    @map("input_fields")
+  requiredFields      Json?    @map("required_fields")
+  showDetailedResults Boolean  @default(false) @map("show_detailed_results")
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
 
@@ -55,17 +55,18 @@ model TestSettings {
 }
 
 model Test {
-  id           String           @id @default(auto()) @map("_id") @db.ObjectId
-  authorId     String           @map("author_id") @db.ObjectId
-  author       User             @relation("TestAuthor", fields: [authorId], references: [id])
-  title        String
-  description  String?
-  status       ModerationStatus @default(PENDING)
-  questions    Question[]
-  settings     TestSettings?
-  testAttempts TestAttempt[]
-  createdAt    DateTime         @default(now()) @map("created_at")
-  updatedAt    DateTime         @updatedAt @map("updated_at")
+  id            String           @id @default(auto()) @map("_id") @db.ObjectId
+  authorId      String           @map("author_id") @db.ObjectId
+  author        User             @relation("TestAuthor", fields: [authorId], references: [id])
+  title         String           @map("title")
+  description   String?          @map("description")
+  status        ModerationStatus @default(PENDING) @map("status")
+  totalAttempts Int?             @map("total_attempts")
+  questions     Question[]
+  settings      TestSettings?
+  testAttempts  TestAttempt[]
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
 
   @@map("tests")
 }
@@ -74,8 +75,9 @@ model Question {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   testId      String       @map("test_id") @db.ObjectId
   test        Test         @relation(fields: [testId], references: [id])
-  text        String
-  order       Int
+  text        String       @map("text")
+  order       Int          @map("order")
+  type        QuestionType @default(SINGLE_CHOICE) @map("type")
   answers     Answer[]
   userAnswers UserAnswer[]
   createdAt   DateTime     @default(now()) @map("created_at")
@@ -88,7 +90,7 @@ model Answer {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   questionId  String       @map("question_id") @db.ObjectId
   question    Question     @relation(fields: [questionId], references: [id])
-  text        String
+  text        String       @map("text")
   isCorrect   Boolean      @default(false) @map("is_correct")
   isGenerated Boolean      @default(false) @map("is_generated")
   userAnswers UserAnswer[]
@@ -99,38 +101,41 @@ model Answer {
 }
 
 model TestAttempt {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  testId      String       @db.ObjectId
-  userId      String?      @db.ObjectId
-  userData    Json?
-  score       Float?
-  startedAt   DateTime     @default(now())
-  completedAt DateTime?
-  test        Test         @relation(fields: [testId], references: [id])
-  user        User?        @relation("TestAttemptUser", fields: [userId], references: [id])
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  testId      String            @map("test_id") @db.ObjectId
+  test        Test              @relation(fields: [testId], references: [id])
+  userId      String?           @map("user_id") @db.ObjectId
+  user        User?             @relation("TestAttemptUser", fields: [userId], references: [id])
+  userData    Json?             @map("user_data")
+  score       Float?            @map("score")
+  startedAt   DateTime          @default(now()) @map("started_at")
+  completedAt DateTime?         @map("completed_at")
+  status      TestAttemptStatus @map("status")
   answers     UserAnswer[]
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
 
   @@map("test_attempts")
 }
 
 model UserAnswer {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  attemptId  String      @db.ObjectId
-  questionId String      @db.ObjectId
-  answerId   String      @db.ObjectId
-  createdAt  DateTime    @default(now())
+  attemptId  String      @map("attempt_id") @db.ObjectId
   attempt    TestAttempt @relation(fields: [attemptId], references: [id])
+  questionId String      @map("question_id") @db.ObjectId
   question   Question    @relation(fields: [questionId], references: [id])
+  answerId   String      @map("answer_id") @db.ObjectId
   answer     Answer      @relation(fields: [answerId], references: [id])
+  answeredAt DateTime?   @map("answered_at")
+  timeSpent  Int?        @map("time_spent")
+  createdAt  DateTime    @default(now()) @map("created_at")
 
   @@map("user_answers")
 }
 
 model BadWord {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  word      String   @unique
+  word      String   @unique @map("word")
   addedById String   @map("added_by_id") @db.ObjectId
   addedBy   User     @relation("AddedByUser", fields: [addedById], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
@@ -148,4 +153,15 @@ enum ModerationStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum TestAttemptStatus {
+  EXPIRED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
 }
