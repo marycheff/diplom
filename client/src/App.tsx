@@ -1,13 +1,14 @@
-import React from "react"
+import React, { StrictMode } from "react"
 import { BrowserRouter } from "react-router-dom"
 
 import { Toaster } from "react-hot-toast"
 import AppRouter from "./router/AppRouter"
 const App: React.FC = () => {
     return (
-        <BrowserRouter>
-            <AppRouter />
-            {/* <ToastContainer
+        
+            <BrowserRouter>
+                <AppRouter />
+                {/* <ToastContainer
                 position="top-right"
                 autoClose={500}
                 hideProgressBar={false}
@@ -17,8 +18,9 @@ const App: React.FC = () => {
                 theme="light"
                 transition={Slide}
             /> */}
-            <Toaster position="top-right" reverseOrder={true} />
-        </BrowserRouter>
+                <Toaster position="top-right" reverseOrder={true} />
+            </BrowserRouter>
+        
     )
 }
 

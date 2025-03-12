@@ -30,7 +30,7 @@ const UserProfilePage = () => {
     async function getUserInfo() {
         const userData = await getUserById(user?.id!)
         if (userData) {
-            const { id, role, ...fields } = userData
+            const { id, role, isBlocked, ...fields } = userData
             setUserFields(fields)
             setInitialUserFields(fields)
             const editingState = Object.keys(fields).reduce((acc, field) => {

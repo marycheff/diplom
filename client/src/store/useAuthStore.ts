@@ -24,13 +24,14 @@ export const useAuthStore = create<AuthState>(set => ({
                 isAuth: true,
                 isAdmin: response.data.user.role === "ADMIN",
             })
-            toast.success("Успешный вход")
+            //toast.success("Успешный вход")
         } catch (error) {
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data?.message || "Неизвестная ошибка")
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
         } finally {
             set({ isLoading: false })
         }
@@ -52,6 +53,7 @@ export const useAuthStore = create<AuthState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
         } finally {
             set({ isLoading: false })
         }
@@ -71,11 +73,12 @@ export const useAuthStore = create<AuthState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
         }
     },
 
     checkAuth: async () => {
-        set({ isAuthChecking: false })
+        set({ isAuthChecking: true })
         try {
             const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
             localStorage.setItem("token", response.data.accessToken)
@@ -90,6 +93,7 @@ export const useAuthStore = create<AuthState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
         } finally {
             set({ isAuthChecking: false })
         }

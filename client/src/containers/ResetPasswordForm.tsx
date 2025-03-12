@@ -24,34 +24,22 @@ const ResetPasswordForm: React.FC = () => {
     }, [secondsLeft])
 
     const handleSendCode = async () => {
-        try {
-            await requestResetCode(email)
-            setIsCodeSent(true)
-            setSecondsLeft(60) // Запуск таймера на 1 минуту
-            toast.success("Код отправлен на ваш email")
-        } catch (error) {
-            toast.error("Ошибка при отправке кода")
-        }
+        await requestResetCode(email)
+        setIsCodeSent(true)
+        setSecondsLeft(60) // Запуск таймера на 1 минуту
+        toast.success("Код отправлен на ваш email")
     }
 
     const handleVerifyCode = async () => {
-        try {
-            await verifyResetCode(email, code)
-            setIsCodeVerified(true)
-            toast.success("Код подтвержден, введите новый пароль")
-        } catch (error) {
-            toast.error("Неверный код")
-        }
+        await verifyResetCode(email, code)
+        setIsCodeVerified(true)
+        toast.success("Код подтвержден, введите новый пароль")
     }
 
     const handleResetPassword = async () => {
-        try {
-            await resetPassword(email, code, newPassword)
-            toast.success("Пароль успешно изменен")
-            await login(email, newPassword) // Автоматический вход после сброса пароля
-        } catch (error) {
-            toast.error("Ошибка при сбросе пароля")
-        }
+        await resetPassword(email, code, newPassword)
+        toast.success("Пароль успешно изменен")
+        await login(email, newPassword)
     }
 
     return (

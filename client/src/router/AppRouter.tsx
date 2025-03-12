@@ -9,60 +9,69 @@ import TestPage from "@/pages/TestPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useEffect, useState } from "react"
-import { Navigate, Route, Routes } from "react-router-dom"
+import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 
 const AppRouter: React.FC = () => {
-    const { user, isAuth, isAdmin, checkAuth, isLoading, isAuthChecking } = useAuthStore()
+    const { user, isAuth, isAdmin, checkAuth, isAuthChecking } = useAuthStore()
     const [authChecked, setAuthChecked] = useState(false)
 
+    const location = useLocation()
+    const [initialPath, setInitialPath] = useState<string | null>(null) // Сохраняем исходный URL
     useEffect(() => {
+        if (!initialPath) {
+            setInitialPath(location.pathname)
+        }
         if (localStorage.getItem("token")) {
             checkAuth().finally(() => setAuthChecked(true))
         } else {
-            setAuthChecked(false)
+            setAuthChecked(true)
         }
-    }, [checkAuth])
+    }, [checkAuth, location.pathname])
 
+    // Показываем загрузчик, пока идет проверка
     if (isAuthChecking || !authChecked) {
         return <Loader />
     }
 
-    const blockedUserRoutes = [<Route key="blocked" path="*" element={<BlockedUserPage />} />]
-
-    // Маршруты для авторизованных пользователей
-    const authenticatedRoutes = [
-        <Route key="home" path="/home" element={<HomePage />} />,
-        <Route key="test" path="/test" element={<TestPage />} />,
-        <Route key="profile" path="/profile" element={<UserProfilePage />} />,
-        <Route key="redirect" path="*" element={<Navigate to="/home" />} />,
-    ]
-
-    // Маршруты для администратора
-    const adminRoutes = [<Route key="admin" path="/admin" element={<AdminPage />} />]
-
-    // Маршруты для неавторизованных пользователей
+    // Список публичных маршрутов
     const publicRoutes = [
         <Route key="login" path="/login" element={<LoginAndRegisterPage />} />,
-        <Route key="redirect" path="*" element={<Navigate to="/login" />} />,
-    ]
-
-    // Основные маршруты (доступные всем)
-    const generalRoutes = [
         <Route key="activationError" path="/activation-error" element={<ActivationErrorPage />} />,
         <Route key="activationSuccess" path="/activation-success" element={<ActivationSuccessPage />} />,
     ]
 
+    // Список защищенных маршрутов для авторизованных пользователей
+    const authenticatedRoutes = [
+        <Route key="home" path="/home" element={<HomePage />} />,
+        <Route key="test" path="/test" element={<TestPage />} />,
+        <Route key="profile" path="/profile" element={<UserProfilePage />} />,
+        <Route key="admin" path="/admin" element={isAdmin ? <AdminPage /> : <Navigate to="/home" />} />,
+    ]
+
+    // Маршруты для заблокированных пользователей
+    const blockedUserRoutes = [<Route key="blocked" path="*" element={<BlockedUserPage />} />]
+
     return (
-        <div>
-            <Routes>
-                {generalRoutes}
-                {user?.isBlocked
-                    ? blockedUserRoutes
-                    : isAuth
-                    ? [...authenticatedRoutes, ...(isAdmin ? adminRoutes : [])]
-                    : publicRoutes}
-            </Routes>
-        </div>
+        <Routes>
+            {!user && publicRoutes}
+
+            {/* Логика в зависимости от состояния пользователя */}
+            {user?.isBlocked ? (
+                blockedUserRoutes
+            ) : isAuth ? (
+                <>
+                    {authenticatedRoutes}
+                    {/* Если текущий путь недоступен, перенаправляем на /home */}
+                    <Route
+                        path="*"
+                        element={<Navigate to="/home" />}
+                        // <Route path="*" element={<Error404Page />}
+                    />
+                </>
+            ) : (
+                <Route path="*" element={<Navigate to="/login" />} />
+            )}
+        </Routes>
     )
 }
 
