@@ -1,4 +1,4 @@
-import { InputFieldKey } from "@/types/inputFields"
+import { PreTestUserData } from "@/types/inputFields"
 import { z } from "zod"
 
 export const createTestSchema = z.object({
@@ -75,13 +75,13 @@ export const completeTestAttemptSchema = z.object({
 export const testSettingsSchema = z
     .object({
         requireRegistration: z.boolean().optional(),
-        inputFields: z.array(z.nativeEnum(InputFieldKey)).optional(),
+        inputFields: z.array(z.nativeEnum(PreTestUserData)).optional(),
         requiredFields: z
-            .array(z.nativeEnum(InputFieldKey))
+            .array(z.nativeEnum(PreTestUserData))
             .optional()
             .refine(fields => {
                 if (!fields) return true
-                return fields.every(f => Object.values(InputFieldKey).includes(f))
+                return fields.every(f => Object.values(PreTestUserData).includes(f))
             }, "Недопустимое поле в requiredFields"),
         showDetailedResults: z.boolean().optional(),
     })

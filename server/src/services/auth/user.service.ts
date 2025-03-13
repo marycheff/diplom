@@ -84,7 +84,7 @@ class UserService {
                     id: id,
                 },
             })
-        } catch (error: any) {
+        } catch (error) {
             throw ApiError.BadRequest("Ошибка при удалении пользователя")
         }
     }
@@ -99,7 +99,7 @@ class UserService {
                     isBlocked: true,
                 },
             })
-        } catch (error: any) {
+        } catch (error) {
             throw ApiError.BadRequest("Ошибка при блокировке пользователя")
         }
     }
@@ -113,7 +113,7 @@ class UserService {
                     isBlocked: false,
                 },
             })
-        } catch (error: any) {
+        } catch (error) {
             throw ApiError.BadRequest("Ошибка при разблокировке пользователя")
         }
     }

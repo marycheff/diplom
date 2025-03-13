@@ -1,4 +1,4 @@
-export enum InputFieldKey {
+export enum PreTestUserData {
     LastName = "lastName",
     FirstName = "firstName",
     Patronymic = "patronymic",
@@ -14,18 +14,18 @@ export enum InputFieldKey {
     Group = "group",
 }
 
-export const InputFieldLabels: Record<InputFieldKey, string> = {
-    [InputFieldKey.LastName]: "Фамилия",
-    [InputFieldKey.FirstName]: "Имя",
-    [InputFieldKey.Patronymic]: "Отчество",
-    [InputFieldKey.Gender]: "Пол",
-    [InputFieldKey.BirthDate]: "Дата рождения",
-    [InputFieldKey.Age]: "Возраст",
-    [InputFieldKey.City]: "Город",
-    [InputFieldKey.Country]: "Страна",
-    [InputFieldKey.Phone]: "Мобильный телефон",
-    [InputFieldKey.Email]: "Электронная почта",
-    [InputFieldKey.School]: "Номер школы",
-    [InputFieldKey.Grade]: "Класс",
-    [InputFieldKey.Group]: "Группа",
+export const PreTestUserDataLabels: Record<PreTestUserData, string> = {
+    [PreTestUserData.LastName]: "Фамилия",
+    [PreTestUserData.FirstName]: "Имя",
+    [PreTestUserData.Patronymic]: "Отчество",
+    [PreTestUserData.Gender]: "Пол",
+    [PreTestUserData.BirthDate]: "Дата рождения",
+    [PreTestUserData.Age]: "Возраст",
+    [PreTestUserData.City]: "Город",
+    [PreTestUserData.Country]: "Страна",
+    [PreTestUserData.Phone]: "Мобильный телефон",
+    [PreTestUserData.Email]: "Электронная почта",
+    [PreTestUserData.School]: "Номер школы",
+    [PreTestUserData.Grade]: "Класс",
+    [PreTestUserData.Group]: "Группа",
 }

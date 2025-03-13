@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import { mapToTestAttemptDTO } from "@/services/mappers/test.mappers"
-import { InputFieldKey, InputFieldLabels } from "@/types/inputFields"
+import { PreTestUserData, PreTestUserDataLabels } from "@/types/inputFields"
 import { TestAttemptDTO } from "@/types/test.types"
 import { PrismaClient } from "@prisma/client"
 import { ObjectId } from "mongodb"
@@ -27,12 +27,12 @@ class AttemptService {
         }
 
         if (settings?.requiredFields) {
-            const requiredFields = settings.requiredFields as InputFieldKey[]
+            const requiredFields = settings.requiredFields as PreTestUserData[]
             if (!userData || requiredFields.some(field => userData[field] == null)) {
                 const missingLabels = requiredFields.filter(field => userData?.[field] == null)
                 const missingLabelsRu = requiredFields
                     .filter(field => userData?.[field] == null)
-                    .map(f => InputFieldLabels[f])
+                    .map(f => PreTestUserDataLabels[f])
                 throw ApiError.BadRequest(
                     `Не все обязательные поля заполнены: ${missingLabelsRu.join(", ")} (${missingLabels.join(", ")})`
                 )

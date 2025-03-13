@@ -36,7 +36,7 @@ export const getAccessToken = async (authData: string): Promise<string> => {
             return data.access_token
         }
         throw ApiError.InternalError("Ошибка нейросети")
-    } catch (error: any) {
+    } catch (error) {
         throw ApiError.InternalError("Ошибка получения токена доступа")
     }
 }
