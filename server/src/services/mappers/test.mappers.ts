@@ -1,3 +1,4 @@
+import { mapUserToDto } from "@/services/mappers/user.mappers"
 import {
     AnswerDTO,
     AttemptQuestionDTO,
@@ -6,7 +7,6 @@ import {
     TestDTO,
     TestSettingsDTO,
 } from "@/types/test.types"
-import { UserDTO } from "@/types/user.types"
 import { Answer, Question, Test, TestAttempt, User } from "@prisma/client"
 
 export const mapToResponseAnswer = (answer: Answer): AnswerDTO => {
@@ -14,18 +14,6 @@ export const mapToResponseAnswer = (answer: Answer): AnswerDTO => {
         id: answer.id,
         text: answer.text,
         isCorrect: answer.isCorrect,
-    }
-}
-export const mapUserToDto = (user: User): UserDTO => {
-    return {
-        id: user.id,
-        email: user.email,
-        isActivated: user.isActivated,
-        isBlocked: user.isBlocked,
-        role: user.role,
-        name: user.name,
-        surname: user.surname,
-        patronymic: user.patronymic,
     }
 }
 export const mapToResponseQuestion = (question: Question & { answers?: Answer[] }): QuestionDTO => {
@@ -46,10 +34,12 @@ export const mapToResponseTest = (
         authorId: test.authorId,
         title: test.title,
         description: test.description || "",
+        totalAttempts: test.totalAttempts,
         settings: test.settings
             ? {
                   requireRegistration: test.settings.requireRegistration,
                   inputFields: test.settings.inputFields,
+                  requiredFields: test.settings.requiredFields,
                   showDetailedResults: test.settings.showDetailedResults,
               }
             : {},

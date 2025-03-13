@@ -61,7 +61,7 @@ model Test {
   title         String           @map("title")
   description   String?          @map("description")
   status        ModerationStatus @default(PENDING) @map("status")
-  totalAttempts Int?             @map("total_attempts")
+  totalAttempts Int              @default(0) @map("total_attempts")
   questions     Question[]
   settings      TestSettings?
   testAttempts  TestAttempt[]

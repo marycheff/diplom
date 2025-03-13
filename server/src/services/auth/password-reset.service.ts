@@ -28,8 +28,6 @@ class PasswordResetService {
     }
 
     async resetPassword(email: string, newPassword: string) {
-        console.log(newPassword)
-
         const hashedPassword = await bcrypt.hash(newPassword, 10)
         await prisma.user.update({
             where: { email },

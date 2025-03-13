@@ -23,6 +23,7 @@ export interface TestDTO {
     description?: string
     questions?: QuestionDTO[]
     settings?: TestSettingsDTO
+    totalAttempts: number
 }
 export interface TestSettingsDTO {
     requireRegistration?: boolean

@@ -1,11 +1,21 @@
 import ApiError from "@/exceptions/api-error"
-import { mapToResponseQuestion, mapToResponseTest } from "@/types/mappers"
+import { mapToResponseAnswer, mapToResponseQuestion, mapToResponseTest } from "@/services/mappers/test.mappers"
 import { AnswerDTO, QuestionDTO, TestDTO } from "@/types/test.types"
 import { Answer, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
 class AnswerService {
+    async getQuestionAnswers(questionId: string): Promise<AnswerDTO[]> {
+        const question = await prisma.question.findUnique({
+            where: { id: questionId },
+            include: { answers: true },
+        })
+
+        if (!question) throw ApiError.NotFound("Вопрос не найден")
+
+        return question.answers.map(mapToResponseAnswer)
+    }
     async isAnswerBelongsToAnyTest(answerId: string): Promise<{
         answer: AnswerDTO | null
         question: QuestionDTO | null

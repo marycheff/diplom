@@ -1,7 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
-import { mapToResponseTest } from "@/types/mappers"
-import { QuestionDTO, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
+import { mapToResponseTest } from "@/services/mappers/test.mappers"
+import { TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
 import { Answer, PrismaClient, Question } from "@prisma/client"
 import { ObjectId } from "mongodb"
 
@@ -165,10 +165,6 @@ class TestService {
         })
     }
 
-    // ВОПРОСЫ
-
-    // ОТВЕТЫ
-
     async getTestById(testId: string): Promise<TestDTO> {
         const test = await prisma.test.findUnique({
             where: { id: testId },
@@ -179,32 +175,12 @@ class TestService {
                     },
                     orderBy: { order: "asc" },
                 },
-                settings: true, // settings будет null, если их нет
+                settings: true,
             },
         })
 
         if (!test) throw ApiError.NotFound("Тест не найден")
         return mapToResponseTest(test)
-    }
-
-    async getTestQuestions(testId: string): Promise<QuestionDTO[]> {
-        const questions = await prisma.question.findMany({
-            where: { testId },
-            include: { answers: true },
-            orderBy: { order: "asc" },
-        })
-
-        return questions.map(q => ({
-            id: q.id,
-            text: q.text,
-            order: q.order,
-            type: q.type,
-            answers: q.answers.map(a => ({
-                id: a.id,
-                text: a.text,
-                isCorrect: a.isCorrect,
-            })),
-        }))
     }
 }
 

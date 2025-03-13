@@ -1,11 +1,30 @@
 import ApiError from "@/exceptions/api-error"
-import { mapToResponseQuestion, mapToResponseTest } from "@/types/mappers"
-import { AnswerDTO, QuestionDTO, TestDTO } from "@/types/test.types"
+import { mapToResponseQuestion, mapToResponseTest } from "@/services/mappers/test.mappers"
+import { QuestionDTO, TestDTO } from "@/types/test.types"
 import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
 class QuestionService {
+    async getTestQuestions(testId: string): Promise<QuestionDTO[]> {
+        const questions = await prisma.question.findMany({
+            where: { testId },
+            include: { answers: true },
+            orderBy: { order: "asc" },
+        })
+
+        return questions.map(q => ({
+            id: q.id,
+            text: q.text,
+            order: q.order,
+            type: q.type,
+            answers: q.answers.map(a => ({
+                id: a.id,
+                text: a.text,
+                isCorrect: a.isCorrect,
+            })),
+        }))
+    }
     async isQuestionBelongsToTest(questionId: string, testId: string): Promise<boolean> {
         const question = await prisma.question.findUnique({
             where: { id: questionId },
@@ -124,20 +143,6 @@ class QuestionService {
                 })),
             })
         })
-    }
-    async getQuestionAnswers(questionId: string): Promise<AnswerDTO[]> {
-        const question = await prisma.question.findUnique({
-            where: { id: questionId },
-            include: { answers: true },
-        })
-
-        if (!question) throw ApiError.NotFound("Вопрос не найден")
-
-        return question.answers.map(a => ({
-            id: a.id,
-            text: a.text,
-            isCorrect: a.isCorrect,
-        }))
     }
 }
 

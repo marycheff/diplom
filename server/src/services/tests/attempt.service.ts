@@ -1,6 +1,7 @@
 import ApiError from "@/exceptions/api-error"
+import { mapToTestAttemptDTO } from "@/services/mappers/test.mappers"
 import { InputFieldKey, InputFieldLabels } from "@/types/inputFields"
-import { mapToTestAttemptDTO } from "@/types/mappers"
+import { TestAttemptDTO } from "@/types/test.types"
 import { PrismaClient } from "@prisma/client"
 import { ObjectId } from "mongodb"
 const prisma = new PrismaClient()
@@ -13,14 +14,16 @@ class AttemptService {
     ): Promise<{ attemptId: string }> {
         const test = await prisma.test.findUnique({
             where: { id: testId },
-            include: { settings: true },
+            include: { settings: true, questions: true },
         })
 
         if (!test) throw ApiError.NotFound("Тест не найден")
-
+        if (!test.questions || test.questions.length === 0) {
+            throw ApiError.BadRequest("Невозможно начать прохождение теста без вопросов")
+        }
         const settings = test.settings
         if (settings?.requireRegistration && !userId) {
-            throw ApiError.Forbidden()
+            throw ApiError.BadRequest("Для прохождения этого теста необходимо зарегистрироваться")
         }
 
         if (settings?.requiredFields) {
@@ -44,6 +47,10 @@ class AttemptService {
                 status: "IN_PROGRESS",
             },
         })
+        await prisma.test.update({
+            where: { id: testId },
+            data: { totalAttempts: test.totalAttempts + 1 },
+        })
 
         return { attemptId: attempt.id }
     }
@@ -54,8 +61,11 @@ class AttemptService {
             include: { test: true },
         })
 
-        if (!attempt || attempt.completedAt) {
-            throw ApiError.BadRequest("Попытка завершена или не существует")
+        if (!attempt) {
+            throw ApiError.BadRequest("Попытка не существует")
+        }
+        if (attempt.status === "COMPLETED" || attempt.completedAt) {
+            throw ApiError.BadRequest("Попытка уже завершена")
         }
 
         // Проверка принадлежности вопроса тесту
@@ -221,6 +231,34 @@ class AttemptService {
             orderBy: { startedAt: "desc" },
         })
 
+        return attempts.map(attempt => mapToTestAttemptDTO(attempt))
+    }
+
+    async getTestAttempts(testId: string): Promise<TestAttemptDTO[]> {
+        const attempts = await prisma.testAttempt.findMany({
+            where: { testId: testId },
+            include: {
+                test: {
+                    include: {
+                        author: true,
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                            orderBy: { order: "asc" },
+                        },
+                    },
+                },
+                user: true,
+                answers: {
+                    include: {
+                        question: true,
+                        answer: true,
+                    },
+                },
+            },
+            orderBy: { startedAt: "desc" },
+        })
         return attempts.map(attempt => mapToTestAttemptDTO(attempt))
     }
 }

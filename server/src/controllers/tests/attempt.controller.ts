@@ -45,7 +45,7 @@ class AttemptController {
     // Получить все попытки
     async getAllAttempts(req: Request, res: Response, next: NextFunction) {
         try {
-            // const userId = req.user?.id
+            const userId = req.user?.id
             // if (!userId) throw ApiError.Unauthorized()
             const attempts = await attemptService.getAllAttempts()
             res.json(attempts)
@@ -74,6 +74,16 @@ class AttemptController {
 
             if (!userId) throw ApiError.Unauthorized()
             const attempts = await attemptService.getUserAttempts(userId)
+            res.json(attempts)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getTestAttempts(req: Request, res: Response, next: NextFunction){
+        try {
+            const { testId } = req.params
+            const attempts = await attemptService.getTestAttempts(testId)
             res.json(attempts)
         } catch (error) {
             next(error)

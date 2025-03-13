@@ -87,15 +87,7 @@ class TestController {
             next(error)
         }
     }
-    async getTestQuestions(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { testId } = req.params
-            const questions = await testService.getTestQuestions(testId)
-            res.json(questions)
-        } catch (error) {
-            next(error)
-        }
-    }
+   
 }
 
 export default new TestController()

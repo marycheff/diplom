@@ -1,6 +1,15 @@
 import answerService from "@/services/tests/answer.service"
 import { NextFunction, Request, Response } from "express"
 class AnswerController {
+    async getQuestionAnswers(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { questionId } = req.params
+            const answers = await answerService.getQuestionAnswers(questionId)
+            res.json(answers)
+        } catch (error) {
+            next(error)
+        }
+    }
     async deleteAnswer(req: Request, res: Response, next: NextFunction) {
         try {
             const answer = req.answer

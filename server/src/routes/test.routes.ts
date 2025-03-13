@@ -4,6 +4,7 @@ import questionController from "@/controllers/tests/question.controller"
 import testController from "@/controllers/tests/test.controller"
 import { adminMiddleware } from "@/middleware/admin.middleware"
 import { authMiddleware } from "@/middleware/auth.middleware"
+import conditionalAuthMiddleware from "@/middleware/conditional.middleware"
 import {
     answerOwnershipMiddleware,
     questionOwnershipMiddleware,
@@ -46,7 +47,7 @@ router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.g
 router.put("/:testId/questions", authMiddleware, validateRequest(updateTestSchema), testController.updateTest)
 
 // Получение всех вопросов теста
-router.get("/:testId/questions", authMiddleware, testController.getTestQuestions)
+router.get("/:testId/questions", authMiddleware, questionController.getTestQuestions)
 
 // Обновление вопроса
 router.put(
@@ -70,7 +71,7 @@ router.get(
     "/questions/:questionId/answers",
     authMiddleware,
     questionOwnershipMiddleware,
-    questionController.getQuestionAnswers
+    answerController.getQuestionAnswers
 )
 
 // Удаление ответа из вопроса
@@ -86,7 +87,8 @@ router.get("/attempts/all", authMiddleware, adminMiddleware, attemptController.g
 // Начало попытки прохождения теста
 router.post(
     "/:testId/start",
-    authMiddleware,
+    // authMiddleware,
+    conditionalAuthMiddleware,
     validateRequest(startTestAttemptSchema),
     attemptController.startTestAttempt
 )
@@ -94,18 +96,21 @@ router.post(
 // Сохранение ответа во время попытки
 router.post(
     "/attempts/:attemptId/answers",
-    authMiddleware,
+    // authMiddleware,
+    conditionalAuthMiddleware,
     validateRequest(saveAnswerSchema),
     attemptController.saveAnswer
 )
 // Завершение попытки
 router.post(
     "/attempts/:attemptId/complete",
-    authMiddleware,
+    // authMiddleware,
     validateRequest(completeTestAttemptSchema),
     attemptController.completeTestAttempt
 )
 
 router.get("/attempts/:attemptId/", authMiddleware, adminMiddleware, attemptController.getAttempt)
+
+router.get("/:testId/attempts", authMiddleware, testOwnershipMiddleware, attemptController.getTestAttempts)
 
 export default router

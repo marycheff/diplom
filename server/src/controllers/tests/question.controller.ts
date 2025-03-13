@@ -2,6 +2,15 @@ import questionService from "@/services/tests/question.service"
 import { QuestionDTO } from "@/types/test.types"
 import { NextFunction, Request, Response } from "express"
 class QuestionController {
+    async getTestQuestions(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const questions = await questionService.getTestQuestions(testId)
+            res.json(questions)
+        } catch (error) {
+            next(error)
+        }
+    }
     async getQuestionById(req: Request, res: Response, next: NextFunction) {
         try {
             const question = req.question
@@ -40,14 +49,6 @@ class QuestionController {
         }
     }
 
-    async getQuestionAnswers(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { questionId } = req.params
-            const answers = await questionService.getQuestionAnswers(questionId)
-            res.json(answers)
-        } catch (error) {
-            next(error)
-        }
-    }
+    
 }
 export default new QuestionController()

@@ -1,5 +1,5 @@
 import ApiError from "@/exceptions/api-error"
-import { mapUserToDto } from "@/types/mappers"
+import { mapUserToDto } from "@/services/mappers/user.mappers"
 import { UpdateUserDTO, UserDTO } from "@/types/user.types"
 import { PrismaClient, User } from "@prisma/client"
 import bcrypt from "bcryptjs"
