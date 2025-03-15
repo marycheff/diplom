@@ -10,7 +10,7 @@ const AdminPage = () => {
     return (
         <div>
             {isLoading ? (
-                <Loader />
+                <Loader delay={300} />
             ) : (
                 <>
                     <button onClick={() => navigate(-1)}>Назад</button>

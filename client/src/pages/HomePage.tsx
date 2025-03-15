@@ -1,10 +1,8 @@
 import { useAuthStore } from "@/store/useAuthStore"
-import { useUserStore } from "@/store/useUserStore"
 import { useNavigate } from "react-router-dom"
 
 const HomePage = () => {
     const navigate = useNavigate()
-    const { isLoading } = useUserStore()
     const { user, logout, isAdmin } = useAuthStore()
 
     return (

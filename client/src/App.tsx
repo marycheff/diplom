@@ -1,11 +1,11 @@
-import React, { StrictMode } from "react"
 import { BrowserRouter } from "react-router-dom"
 
+import { StrictMode } from "react"
 import { Toaster } from "react-hot-toast"
 import AppRouter from "./router/AppRouter"
-const App: React.FC = () => {
+const App = () => {
     return (
-        
+        <StrictMode>
             <BrowserRouter>
                 <AppRouter />
                 {/* <ToastContainer
@@ -20,7 +20,7 @@ const App: React.FC = () => {
             /> */}
                 <Toaster position="top-right" reverseOrder={true} />
             </BrowserRouter>
-        
+        </StrictMode>
     )
 }
 

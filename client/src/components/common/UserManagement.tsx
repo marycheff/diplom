@@ -57,34 +57,37 @@ const UserManagement = () => {
     useEffect(() => {
         getUsersFromStore()
     }, [])
-    if (isUsersFetching) {
-        return <Loader text="Получение пользователей" />
-    }
 
     return (
         <div>
             <h1>Пользователи</h1>
-            <button onClick={getUsersFromStore}>
-                {users.length == 0 ? "Получить список пользователей " : `Обновить`}
-            </button>
-            {users &&
-                users.map(user => (
-                    <div key={user.id} style={{ display: "flex", alignItems: "center" }}>
-                        {user.id === currentUser?.id ? (
-                            <div>{user.email} (Вы)</div>
-                        ) : (
-                            <>
-                                <div>{user.email} </div>
-                                {user.isBlocked ? (
-                                    <button onClick={() => handleUnblockUser(user.id)}>Разблокировать</button>
+            {isUsersFetching ? (
+                <Loader delay={3000} />
+            ) : (
+                <>
+                    <button onClick={getUsersFromStore}>
+                        {users.length === 0 ? "Получить список пользователей " : `Обновить`}
+                    </button>
+                    {users &&
+                        users.map(user => (
+                            <div key={user.id} style={{ display: "flex", alignItems: "center" }}>
+                                {user.id === currentUser?.id ? (
+                                    <div>{user.email} (Вы)</div>
                                 ) : (
-                                    <button onClick={() => handleBlockUser(user.id)}>Заблокировать</button>
+                                    <>
+                                        <div>{user.email} </div>
+                                        {user.isBlocked ? (
+                                            <button onClick={() => handleUnblockUser(user.id)}>Разблокировать</button>
+                                        ) : (
+                                            <button onClick={() => handleBlockUser(user.id)}>Заблокировать</button>
+                                        )}
+                                        <button onClick={() => handleDeleteUser(user.id)}>Удалить</button>
+                                    </>
                                 )}
-                                <button onClick={() => handleDeleteUser(user.id)}>Удалить</button>
-                            </>
-                        )}
-                    </div>
-                ))}
+                            </div>
+                        ))}
+                </>
+            )}
         </div>
     )
 }

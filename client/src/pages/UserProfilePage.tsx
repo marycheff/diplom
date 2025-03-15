@@ -17,7 +17,7 @@ const fieldLabels: { [key: string]: string } = {
 }
 
 const UserProfilePage = () => {
-    const { user, isLoading, updateActivationLink, isEmailSending } = useAuthStore()
+    const { user, updateActivationLink, isEmailSending } = useAuthStore()
     const { getUserById, updateUser, isLoading: isUserLoading } = useUserStore()
     const navigate = useNavigate()
     const [userFields, setUserFields] = useState<UserFields>({})
@@ -80,7 +80,7 @@ const UserProfilePage = () => {
 
     return (
         <div style={{ position: "relative" }}>
-            {(isLoading || isUserLoading) && <Loader text="Загрузка..." />}
+            {isUserLoading && <Loader delay={300} />}
             <button onClick={() => navigate(-1)}>Назад</button>
             {userFields ? (
                 <div>

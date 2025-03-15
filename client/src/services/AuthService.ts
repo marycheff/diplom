@@ -1,5 +1,4 @@
 import { AxiosResponse } from "axios"
-
 import axiosInstance from "../http/axios"
 import { AuthResponse } from "../models/response/AuthResponse"
 
@@ -11,9 +10,17 @@ export default class AuthService {
         return axiosInstance.post<AuthResponse>("/auth/registration", { email, password })
     }
     static async logout(): Promise<void> {
-        return axiosInstance.post("/auth/logout")
+        try {
+            await axiosInstance.post("/auth/logout")
+            localStorage.removeItem("token")
+        } catch (error) {
+            console.log(error)
+        }
     }
     static async updateActivationLink(email: string): Promise<AxiosResponse<AuthResponse>> {
         return axiosInstance.post<AuthResponse>("/auth/send-update-activation-link", { email })
+    }
+    static async checkAuth(): Promise<AxiosResponse<AuthResponse>> {
+        return axiosInstance.get<AuthResponse>("/auth/refresh")
     }
 }

@@ -41,6 +41,8 @@ axiosInstance.interceptors.response.use(
                 return axiosInstance(originalRequest)
             } catch (e) {
                 console.log("Пользователь не авторизован")
+                localStorage.removeItem("token")
+                sessionStorage.removeItem("authChecked")
             }
         }
 

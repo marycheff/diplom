@@ -24,6 +24,23 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 })
 
 app.use(cors({ credentials: true, origin: envConfig.CLIENT_URL }))
+// const allowedOrigins = [
+//     "http://192.168.0.110:3000",
+//     "http://localhost:3000"
+// ]
+
+// app.use(
+//     cors({
+//         credentials: true,
+//         origin: (origin, callback) => {
+//             if (!origin || allowedOrigins.includes(origin)) {
+//                 callback(null, true)
+//             } else {
+//                 callback(new Error("Not allowed by CORS"))
+//             }
+//         },
+//     })
+// )
 
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
@@ -40,7 +57,8 @@ app.get("/", (req: Request, res: Response) => {
 const start = async () => {
     try {
         await prisma.$connect()
-        app.listen(PORT, () => console.log(`✓ Сервер запущен. Порт ${PORT}`))
+        // app.listen(PORT, () => console.log(`✓ Сервер запущен. Порт ${PORT}`))
+        app.listen(PORT, "0.0.0.0", () => console.log(`✓ Сервер запущен. Порт ${PORT}`))
     } catch {
         await prisma.$disconnect()
         process.exit(1)

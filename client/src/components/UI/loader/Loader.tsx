@@ -1,15 +1,27 @@
-import React from "react"
-import "./Loader.css" // Импортируем CSS файл
+import React, { useEffect, useState } from "react"
+import styles from "./Loader.module.css" 
 
-interface LoaderProps {
-    text?: string // Необязательный пропс
-}
+const Loader: React.FC<{ delay?: number; text?: string }> = ({ delay = 0, text = "" }) => {
+    const [showLoader, setShowLoader] = useState(false)
 
-const Loader: React.FC<LoaderProps> = ({ text = "" }) => {
+    if (delay > 0) {
+        useEffect(() => {
+            const timer = setTimeout(() => {
+                setShowLoader(true)
+            }, delay)
+
+            return () => clearTimeout(timer)
+        }, [delay])
+
+        if (!showLoader) {
+            return null
+        }
+    }
+
     return (
-        <div className='loader-overlay'>
-            <div className='loader'></div>
-            <div className='loader-text'>{text}</div>
+        <div className={styles.loaderOverlay}>
+            <div className={styles.loader}></div>
+            <div className={styles.loaderText}>{text}</div>
         </div>
     )
 }

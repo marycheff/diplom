@@ -1,4 +1,4 @@
-.loader-overlay {
+.loaderOverlay {
     position: fixed; 
     top: 0;
     left: 0;
@@ -45,9 +45,9 @@
     }
 }
 
-.loader-text {
-    margin-top: 16px; /* Отступ между загрузчиком и текстом */
-    color: #a3a3a3; /* Цвет текста */
-    font-size: 16px; /* Размер шрифта */
-    text-align: center; /* Центрирование текста */
+.loaderText {
+    margin-top: 16px; 
+    color: #a3a3a3; 
+    font-size: 16px;
+    text-align: center; 
 }

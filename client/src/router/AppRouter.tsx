@@ -1,3 +1,4 @@
+import InternetConnectionStatus from "@/components/UI/internetConnection/InternetConnectionStatus"
 import Loader from "@/components/UI/loader/Loader"
 import ActivationErrorPage from "@/pages/ActivationErrorPage"
 import ActivationSuccessPage from "@/pages/ActivationSuccessPage"
@@ -9,26 +10,22 @@ import TestPage from "@/pages/TestPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useEffect, useState } from "react"
-import { Navigate, Route, Routes, useLocation } from "react-router-dom"
+import { Navigate, Route, Routes } from "react-router-dom"
 
-const AppRouter: React.FC = () => {
+const AppRouter = () => {
     const { user, isAuth, isAdmin, checkAuth, isAuthChecking } = useAuthStore()
     const [authChecked, setAuthChecked] = useState(false)
-
-    const location = useLocation()
-    const [initialPath, setInitialPath] = useState<string | null>(null) // Сохраняем исходный URL
     useEffect(() => {
-        if (!initialPath) {
-            setInitialPath(location.pathname)
-        }
-        if (localStorage.getItem("token")) {
-            checkAuth().finally(() => setAuthChecked(true))
+        const token = localStorage.getItem("token")
+        if (token && !isAuth) {
+            checkAuth().finally(() => {
+                setAuthChecked(true)
+            })
         } else {
             setAuthChecked(true)
         }
-    }, [checkAuth, location.pathname])
+    }, [checkAuth, isAuth])
 
-    // Показываем загрузчик, пока идет проверка
     if (isAuthChecking || !authChecked) {
         return <Loader />
     }
@@ -52,26 +49,22 @@ const AppRouter: React.FC = () => {
     const blockedUserRoutes = [<Route key="blocked" path="*" element={<BlockedUserPage />} />]
 
     return (
-        <Routes>
-            {!user && publicRoutes}
-
-            {/* Логика в зависимости от состояния пользователя */}
-            {user?.isBlocked ? (
-                blockedUserRoutes
-            ) : isAuth ? (
-                <>
-                    {authenticatedRoutes}
-                    {/* Если текущий путь недоступен, перенаправляем на /home */}
-                    <Route
-                        path="*"
-                        element={<Navigate to="/home" />}
-                        // <Route path="*" element={<Error404Page />}
-                    />
-                </>
-            ) : (
-                <Route path="*" element={<Navigate to="/login" />} />
-            )}
-        </Routes>
+        <>
+            <InternetConnectionStatus />
+            <Routes>
+                {!user && publicRoutes}
+                {user?.isBlocked ? (
+                    blockedUserRoutes
+                ) : isAuth ? (
+                    <>
+                        {authenticatedRoutes}
+                        <Route path="*" element={<Navigate to="/home" />} />
+                    </>
+                ) : (
+                    <Route path="*" element={<Navigate to="/login" />} />
+                )}
+            </Routes>
+        </>
     )
 }
 
