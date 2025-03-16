@@ -1,10 +1,9 @@
-// TestForm.tsx
+import axiosInstance from "@/axios"
+import AnswersList from "@/components/shared/AnswersList"
+import QuestionForm from "@/components/shared/QuestionForm"
+import { Button } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import api from "../../axios/axios"
-import Button from "../ui/Button/Button"
-import AnswersList from "./AnswersList"
-import QuestionForm from "./QuestionForm"
 
 type FormData = {
     question: string
@@ -41,7 +40,7 @@ const TestForm = () => {
         setIsButtonDisabled(true)
 
         try {
-            const res = await api.post("/chat/generate-answers", {
+            const res = await axiosInstance.post("/chat/generate-answers", {
                 question: data.question,
                 answer: data.answer,
                 numOfAnswers: data.numOfAnswers,

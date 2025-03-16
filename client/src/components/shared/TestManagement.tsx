@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/Button/Button"
 import Loader from "@/components/ui/Loader/Loader"
 import { useTestStore } from "@/store/useTestStore"
 import { TestDTO } from "@/types/testTypes"
@@ -19,11 +20,9 @@ const TestManagement = () => {
         <section className="tests-section">
             <h2>Тесты</h2>
             <div className="tests-actions">
-                <button onClick={getTestsFromStore} type="button" disabled={isTestsFetching}>
-                    <span className="button-text">
-                        {isTestsFetching ? "Загрузка..." : tests.length === 0 ? "Получить список тестов" : "Обновить"}
-                    </span>
-                </button>
+                <Button onClick={getTestsFromStore} disabled={isTestsFetching} isLoading={isTestsFetching}>
+                    {tests.length === 0 ? "Получить список тестов" : "Обновить"}
+                </Button>
             </div>
             {isTestsFetching ? (
                 <Loader fullScreen={false} />

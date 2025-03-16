@@ -1,4 +1,4 @@
-import { API_URL } from "@/axios/axios"
+import { API_URL } from "@/axios"
 import { ResetPasswordState } from "@/types/authTypes"
 import axios, { AxiosError } from "axios"
 import toast from "react-hot-toast"

@@ -1,7 +1,7 @@
 import { AuthResponse } from "@/types/authTypes"
 import { UpdateUser, UserDTO } from "@/types/userTypes"
 import { AxiosResponse } from "axios"
-import axiosInstance from "../axios/axios"
+import axiosInstance from "../axios"
 
 class UserService {
     getUsers(): Promise<AxiosResponse<UserDTO[]>> {

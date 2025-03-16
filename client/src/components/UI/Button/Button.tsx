@@ -1,14 +1,16 @@
-import { FC, ReactNode } from "react"
+import { ButtonProps } from "@/components/ui/Button/Button.props"
+import { FC } from "react"
 
-interface ButtonProps {
-    children?: ReactNode
-    isLoading?: boolean
-    disabled?: boolean // Добавляем свойство disabled
-    onClick?: () => void
+export const Button: FC<ButtonProps> = ({ children, isLoading, disabled, onClick, loadingText = "Загрузка..." }) => {
+    const handleClick = () => {
+        if (onClick) {
+            onClick()
+        }
+    }
+
+    return (
+        <button disabled={isLoading || disabled} onClick={handleClick}>
+            {isLoading ? loadingText : children}
+        </button>
+    )
 }
-
-const Button: FC<ButtonProps> = ({ children, isLoading, disabled }) => {
-    return <button disabled={isLoading || disabled}>{isLoading ? "Загрузка..." : children}</button>
-}
-
-export default Button

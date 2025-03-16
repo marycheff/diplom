@@ -1,18 +1,18 @@
-import ActivationErrorPage from "@/pages/ActivationErrorPage"
-import ActivationSuccessPage from "@/pages/ActivationSuccessPage"
-import AdminPage from "@/pages/AdminPage"
+import ActivationErrorPage from "@/pages/Activation/Error"
+import ActivationSuccessPage from "@/pages/Activation/Success"
+import AdminPage from "@/pages/Admin/AdminPage"
 import BlockedUserPage from "@/pages/BlockedUserPage"
-import HomePage from "@/pages/HomePage"
+import HomePage from "@/pages/Home/HomePage"
 import LoginAndRegisterPage from "@/pages/LoginAndRegisterPage"
-import TestPage from "@/pages/TestPage"
+import TestPage from "@/pages/Test/TestPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import { Navigate, Route } from "react-router-dom"
 
-export const authenticatedRoutes = [
+export const authenticatedRoutes = (isAdmin: boolean) => [
     <Route key="home" path="/home" element={<HomePage />} />,
     <Route key="test" path="/test" element={<TestPage />} />,
     <Route key="profile" path="/profile" element={<UserProfilePage />} />,
-    // Динамическая проверка isAdmin переносится в AppRouter
+    <Route key="admin" path="/admin" element={isAdmin ? <AdminPage /> : <Navigate to="/home" />} />,
 ]
 
 export const publicRoutes = [

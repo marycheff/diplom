@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import TestManagement from "@/components/shared/TestManagement"
 import UserManagement from "@/components/shared/UserManagement"
-import Loader from "../components/ui/Loader/Loader"
+import Loader from "@/components/ui/Loader/Loader"
 
 const AdminPage = () => {
     const navigate = useNavigate()

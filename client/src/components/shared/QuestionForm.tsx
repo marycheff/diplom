@@ -1,15 +1,16 @@
+import { Button } from "@/components/ui/Button/Button"
+import Input from "@/components/ui/Input/Input"
+import Loader from "@/components/ui/Loader/Loader"
+import Select from "@/components/ui/Select/Select"
+
 import { FC } from "react"
-import Button from "../ui/Button/Button"
-import Input from "../ui/Input/Input"
-import Loader from "../ui/Loader/Loader"
-import Select from "../ui/Select/Select"
 
 type QuestionFormProps = {
     register: any
     errors: any
     isButtonDisabled: boolean
-    isLoading: boolean // Добавлено новое свойство
-    onSubmit: () => void // Функция, вызываемая при отправке формы
+    isLoading: boolean
+    onSubmit: () => void
 }
 
 const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisabled, isLoading, onSubmit }) => {

@@ -1,4 +1,4 @@
-import axiosInstance from "@/axios/axios"
+import axiosInstance from "@/axios"
 import { TestDTO } from "@/types/testTypes"
 import { AxiosResponse } from "axios"
 
