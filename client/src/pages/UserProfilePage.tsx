@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import EditableField from "../components/UI/input/EditableField"
-import Loader from "../components/UI/loader/Loader"
+import EditableField from "../components/ui/Input/EditableField"
+import Loader from "../components/ui/Loader/Loader"
 import UpdatePasswordForm from "../containers/UpdatePasswordForm"
 import { useAuthStore } from "../store/useAuthStore"
 import { useUserStore } from "../store/useUserStore"
 
 type UserFields = {
-    [key: string]: string | boolean | undefined
+    [key: string]: string | boolean | undefined | null
 }
 const fieldLabels: { [key: string]: string } = {
     name: "Имя",

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import TestForm from "../components/common/TestForm"
+import TestForm from "../components/shared/TestForm"
 
 const TestPage = () => {
     const navigate = useNavigate()

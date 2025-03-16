@@ -1,4 +1,4 @@
-import React from "react"
+import { FC } from "react"
 
 type Answer = {
     text: string
@@ -13,7 +13,7 @@ type AnswersListProps = {
     addAnswer: () => void
 }
 
-const AnswersList: React.FC<AnswersListProps> = ({
+const AnswersList: FC<AnswersListProps> = ({
     answers,
     handleAnswerChange,
     handleCorrectChange,
@@ -26,20 +26,19 @@ const AnswersList: React.FC<AnswersListProps> = ({
             {answers.map((answer, index) => (
                 <div key={index} style={{ display: "flex", alignItems: "center" }}>
                     <input
-                        type='text'
+                        type="text"
                         value={answer.text}
                         onChange={e => handleAnswerChange(index, e.target.value)}
                         placeholder={`Ответ ${index + 1}`}
                     />
-                    <input type='checkbox' checked={answer.isCorrect} onChange={() => handleCorrectChange(index)} />
-                    
-                        <button type='button' disabled={answer.isCorrect} onClick={() => removeAnswer(index)}>
-                            X
-                        </button>
-                    
+                    <input type="checkbox" checked={answer.isCorrect} onChange={() => handleCorrectChange(index)} />
+
+                    <button type="button" disabled={answer.isCorrect} onClick={() => removeAnswer(index)}>
+                        X
+                    </button>
                 </div>
             ))}
-            <button type='button' onClick={addAnswer}>
+            <button type="button" onClick={addAnswer}>
                 +
             </button>
         </div>

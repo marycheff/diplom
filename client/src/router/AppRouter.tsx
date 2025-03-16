@@ -1,5 +1,5 @@
-import InternetConnectionStatus from "@/components/UI/internetConnection/InternetConnectionStatus"
-import Loader from "@/components/UI/loader/Loader"
+import InternetConnectionStatus from "@/components/ui/InternetConnection/InternetConnectionStatus"
+import Loader from "@/components/ui/Loader/Loader"
 import ActivationErrorPage from "@/pages/ActivationErrorPage"
 import ActivationSuccessPage from "@/pages/ActivationSuccessPage"
 import AdminPage from "@/pages/AdminPage"

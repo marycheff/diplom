@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { ChangeEvent, FC, useState } from "react"
 
 interface EditableFieldProps {
     label: string
@@ -8,7 +8,7 @@ interface EditableFieldProps {
     onEditingChange?: (isEditing: boolean) => void // Новый пропс
 }
 
-const EditableField: React.FC<EditableFieldProps> = ({ label, value, onChange, placeholder, onEditingChange }) => {
+const EditableField: FC<EditableFieldProps> = ({ label, value, onChange, placeholder, onEditingChange }) => {
     const [isEditing, setIsEditing] = useState(false)
     const safeValue = value === null ? "" : value
     const handleEditClick = () => {
@@ -21,7 +21,7 @@ const EditableField: React.FC<EditableFieldProps> = ({ label, value, onChange, p
         onEditingChange?.(false) // Сообщаем родителю, что редактирование завершено
     }
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         onChange(e.target.value)
     }
 

@@ -1,7 +1,7 @@
-import { UpdateUser, UserDTO } from "@/types/user.types"
+import { AuthResponse } from "@/types/authTypes"
+import { UpdateUser, UserDTO } from "@/types/userTypes"
 import { AxiosResponse } from "axios"
-import axiosInstance from "../http/axios"
-import { AuthResponse } from "@/types/auth.types"
+import axiosInstance from "../axios/axios"
 
 class UserService {
     getUsers(): Promise<AxiosResponse<UserDTO[]>> {
@@ -33,4 +33,4 @@ class UserService {
     }
 }
 
-export const userService = new UserService ()
+export const userService = new UserService()

@@ -3,8 +3,8 @@ export interface UserState {
     isUsersFetching: boolean
     isAuthChecking: boolean
     updatePassword: (email: string, oldPassword: string, newPassword: string) => Promise<void>
-    getUsers: () => Promise<any>
-    getUserById: (id: string) => Promise<any>
+    getUsers: () => Promise<UserDTO[] | undefined>
+    getUserById: (id: string) => Promise<UserDTO | undefined>
     updateUser: (id: string, updateData: UpdateUser) => Promise<UserDTO | undefined>
     deleteUser: (id: string) => Promise<void>
     blockUser: (id: string) => Promise<void>

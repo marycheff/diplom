@@ -1,12 +1,12 @@
-import React from "react"
+import { FC } from "react"
 import { UseFormRegister } from "react-hook-form"
 
-interface MySelectProps {
+interface SelectProps {
     name: string
     register: UseFormRegister<any>
 }
 
-const MySelect: React.FC<MySelectProps> = ({ name, register }) => {
+const Select: FC<SelectProps> = ({ name, register }) => {
     return (
         <div>
             <label>Количество ответов для генерации:</label>
@@ -20,4 +20,4 @@ const MySelect: React.FC<MySelectProps> = ({ name, register }) => {
     )
 }
 
-export default MySelect
+export default Select

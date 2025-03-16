@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import styles from "./Loader.module.css"
 
 interface LoaderProps {
@@ -7,7 +7,7 @@ interface LoaderProps {
     fullScreen?: boolean
 }
 
-const Loader: React.FC<LoaderProps> = ({ delay = 0, text = "", fullScreen = false }) => {
+const Loader: FC<LoaderProps> = ({ delay = 0, text = "", fullScreen = false }) => {
     const [showLoader, setShowLoader] = useState(false)
 
     if (delay > 0) {

@@ -1,4 +1,4 @@
-import { AuthResponse } from "@/types/auth.types"
+import { AuthResponse } from "@/types/authTypes"
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios"
 
 export const API_URL = import.meta.env.VITE_API_URL
@@ -45,7 +45,6 @@ axiosInstance.interceptors.response.use(
                 sessionStorage.removeItem("authChecked")
             }
         }
-
         // Пробрасываем ошибку дальше, если она не связана с истекшим токеном
         throw error
     }

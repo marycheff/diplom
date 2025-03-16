@@ -1,5 +1,5 @@
 import { testService } from "@/services/testService"
-import { TestState } from "@/types/test.types"
+import { TestState } from "@/types/testTypes"
 import { AxiosError } from "axios"
 import toast from "react-hot-toast"
 import { create } from "zustand"

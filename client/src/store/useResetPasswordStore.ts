@@ -1,13 +1,13 @@
-import { API_URL } from "@/http/axios"
-import { ResetPasswordState } from "@/types/auth.types"
+import { API_URL } from "@/axios/axios"
+import { ResetPasswordState } from "@/types/authTypes"
 import axios, { AxiosError } from "axios"
 import toast from "react-hot-toast"
 import { create } from "zustand"
 
 export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
     resetCodeTimestamp: null,
-    isLoading: false,  
-    
+    isLoading: false,
+
     requestResetCode: async email => {
         set({ isLoading: true })
         try {
@@ -39,10 +39,9 @@ export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data?.message || "Неизвестная ошибка")
             } else {
-                toast.error("Неизвестная ошибка, перезагрузите страницу")      
+                toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
             throw error
-            
         } finally {
             set({ isLoading: false })
         }
@@ -53,7 +52,7 @@ export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
         if (!get().isResetCodeValid()) {
             set({ isLoading: false })
             toast.error("Срок действия кода сброса истек. Пожалуйста, запросите новый код.")
-            throw new Error
+            throw new Error()
         }
         try {
             const response = await axios.post(`${API_URL}/auth/reset-password`, { email, code, newPassword })

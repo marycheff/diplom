@@ -1,9 +1,9 @@
 import { useUserStore } from "@/store/useUserStore"
 import { useNavigate } from "react-router-dom"
 
-import TestManagement from "@/components/common/TestManagement"
-import UserManagement from "@/components/common/UserManagement"
-import Loader from "../components/UI/loader/Loader"
+import TestManagement from "@/components/shared/TestManagement"
+import UserManagement from "@/components/shared/UserManagement"
+import Loader from "../components/ui/Loader/Loader"
 
 const AdminPage = () => {
     const navigate = useNavigate()

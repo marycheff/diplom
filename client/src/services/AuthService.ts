@@ -1,6 +1,6 @@
-import { AuthResponse } from "@/types/auth.types"
+import { AuthResponse } from "@/types/authTypes"
 import { AxiosResponse } from "axios"
-import axiosInstance from "../http/axios"
+import axiosInstance from "../axios/axios"
 
 class AuthService {
     async login(email: string, password: string): Promise<AxiosResponse<AuthResponse>> {

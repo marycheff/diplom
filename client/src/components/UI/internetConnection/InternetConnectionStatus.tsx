@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import styles from "./InternetConnectionStatus.module.css"
 
-const InternetConnectionStatus: React.FC = () => {
+const InternetConnectionStatus: FC = () => {
     const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine)
 
     useEffect(() => {

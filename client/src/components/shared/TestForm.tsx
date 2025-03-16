@@ -1,8 +1,8 @@
 // TestForm.tsx
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import api from "../../http/axios"
-import MyButton from "../UI/button/MyButton"
+import api from "../../axios/axios"
+import Button from "../ui/Button/Button"
 import AnswersList from "./AnswersList"
 import QuestionForm from "./QuestionForm"
 
@@ -113,8 +113,8 @@ const TestForm = () => {
                 removeAnswer={removeAnswer}
                 addAnswer={addAnswer}
             />
-            <MyButton>Следующий вопрос</MyButton>
-            <MyButton>Завершить</MyButton>
+            <Button>Следующий вопрос</Button>
+            <Button>Завершить</Button>
 
             {!isLoading && isSubmitted && response.length === 0 && (
                 <p>Данный вопрос некорректен, задайте другой вопрос</p>

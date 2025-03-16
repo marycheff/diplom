@@ -1,9 +1,8 @@
-// QuestionForm.tsx
-import React from "react"
-import MyButton from "../UI/button/MyButton"
-import MyInput from "../UI/input/MyInput"
-import MySelect from "../UI/select/MySelect"
-import Loader from "../UI/loader/Loader"
+import { FC } from "react"
+import Button from "../ui/Button/Button"
+import Input from "../ui/Input/Input"
+import Loader from "../ui/Loader/Loader"
+import Select from "../ui/Select/Select"
 
 type QuestionFormProps = {
     register: any
@@ -13,14 +12,13 @@ type QuestionFormProps = {
     onSubmit: () => void // Функция, вызываемая при отправке формы
 }
 
-const QuestionForm: React.FC<QuestionFormProps> = ({ register, errors, isButtonDisabled, isLoading, onSubmit }) => {
+const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisabled, isLoading, onSubmit }) => {
     return (
-        
         <form onSubmit={onSubmit}>
             {isLoading && <Loader />}
-            <MyInput
-                placeholder='Вопрос'
-                name='question'
+            <Input
+                placeholder="Вопрос"
+                name="question"
                 register={register}
                 validationRules={{
                     required: "Вопрос обязателен",
@@ -42,9 +40,9 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ register, errors, isButtonD
                 }}
                 errors={errors}
             />
-            <MyInput
-                placeholder='Введите правильный ответ'
-                name='answer'
+            <Input
+                placeholder="Введите правильный ответ"
+                name="answer"
                 register={register}
                 validationRules={{
                     required: "Ответ обязателен",
@@ -65,10 +63,10 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ register, errors, isButtonD
                 }}
                 errors={errors}
             />
-            <MySelect name='numOfAnswers' register={register} />
-            <MyButton disabled={isButtonDisabled}>
+            <Select name="numOfAnswers" register={register} />
+            <Button disabled={isButtonDisabled}>
                 {isLoading ? "Загрузка..." : "Генерация"} {/* Изменение текста кнопки */}
-            </MyButton>
+            </Button>
         </form>
     )
 }

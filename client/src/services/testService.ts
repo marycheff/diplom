@@ -1,5 +1,5 @@
-import axiosInstance from "@/http/axios"
-import { TestDTO } from "@/types/test.types"
+import axiosInstance from "@/axios/axios"
+import { TestDTO } from "@/types/testTypes"
 import { AxiosResponse } from "axios"
 
 class TestService {

@@ -1,6 +1,6 @@
-import Loader from "@/components/UI/loader/Loader"
+import Loader from "@/components/ui/Loader/Loader"
 import { useTestStore } from "@/store/useTestStore"
-import { TestDTO } from "@/types/test.types"
+import { TestDTO } from "@/types/testTypes"
 import { useState } from "react"
 const TestManagement = () => {
     const { getTests, isTestsFetching } = useTestStore()

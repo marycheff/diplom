@@ -1,7 +1,6 @@
-import { API_URL } from "@/http/axios"
 import { authService } from "@/services/authService"
-import { AuthState } from "@/types/auth.types"
-import axios, { AxiosError } from "axios"
+import { AuthState } from "@/types/authTypes"
+import { AxiosError } from "axios"
 import toast from "react-hot-toast"
 import { create } from "zustand"
 

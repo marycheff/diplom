@@ -1,15 +1,15 @@
 import { Box, Tab, Tabs } from "@mui/material"
-import React, { useState } from "react"
+import { FC, SyntheticEvent, useState } from "react"
 import LoginForm from "../containers/LoginForm"
 import RegistrationForm from "../containers/RegistrationForm"
 import ResetPasswordForm from "../containers/ResetPasswordForm"
 
-const LoginAndRegisterPage: React.FC = () => {
+const LoginAndRegisterPage: FC = () => {
     const [activeTab, setActiveTab] = useState(0)
     const [isResetPasswordVisible, setIsResetPasswordVisible] = useState(false)
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = (event: SyntheticEvent, newValue: number) => {
         setActiveTab(newValue)
-        setIsResetPasswordVisible(false) // Скрываем форму сброса пароля при переключении вкладок
+        setIsResetPasswordVisible(false)
     }
 
     const handleResetPasswordClick = () => {

@@ -1,9 +1,9 @@
 import { useAuthStore } from "@/store/useAuthStore"
 import { useResetPasswordStore } from "@/store/useResetPasswordStore"
-import React, { useEffect, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-const ResetPasswordForm: React.FC = () => {
+const ResetPasswordForm: FC = () => {
     const [email, setEmail] = useState("")
     const [code, setCode] = useState("")
     const [newPassword, setNewPassword] = useState("")

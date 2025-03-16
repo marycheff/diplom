@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react"
-import { toast } from "react-toastify"
-import Loader from "@/components/UI/loader/Loader"
+import Loader from "@/components/ui/Loader/Loader"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useUserStore } from "@/store/useUserStore"
-import { UserDTO } from "@/types/user.types"
-
+import { UserDTO } from "@/types/userTypes"
+import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 
 const UserManagement = () => {
     const [users, setUsers] = useState<UserDTO[]>([])

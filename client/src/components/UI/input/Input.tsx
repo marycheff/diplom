@@ -1,7 +1,7 @@
-import React from "react"
+import { FC } from "react"
 import { FieldErrors, UseFormRegister } from "react-hook-form"
 
-interface MyInputProps {
+interface InputProps {
     placeholder: string
     name: string
     register: UseFormRegister<any>
@@ -9,13 +9,13 @@ interface MyInputProps {
     errors: FieldErrors
 }
 
-const MyInput: React.FC<MyInputProps> = ({ placeholder, name, register, validationRules, errors }) => {
+const Input: FC<InputProps> = ({ placeholder, name, register, validationRules, errors }) => {
     return (
         <div>
-            <input type='text' placeholder={placeholder} {...register(name, validationRules)} />
+            <input type="text" placeholder={placeholder} {...register(name, validationRules)} />
             {errors[name] && <p>{String(errors[name]?.message)}</p>}
         </div>
     )
 }
 
-export default MyInput
+export default Input
