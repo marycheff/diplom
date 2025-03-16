@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
-
 import Loader from "@/components/UI/loader/Loader"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useUserStore } from "@/store/useUserStore"
-import { IUser } from "../../models/IUser"
+import { UserDTO } from "@/types/user.types"
+
 
 const UserManagement = () => {
-    const [users, setUsers] = useState<IUser[]>([])
+    const [users, setUsers] = useState<UserDTO[]>([])
     const [isUsersVisible, setIsUsersVisible] = useState(false) // Состояние для видимости списка
     const { getUsers, isUsersFetching, blockUser, unblockUser, deleteUser } = useUserStore()
     const { user: currentUser } = useAuthStore()

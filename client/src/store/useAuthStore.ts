@@ -1,5 +1,4 @@
 import { API_URL } from "@/http/axios"
-import { AuthResponse } from "@/models/response/AuthResponse"
 import { authService } from "@/services/authService"
 import { AuthState } from "@/types/auth.types"
 import axios, { AxiosError } from "axios"
@@ -91,24 +90,6 @@ export const useAuthStore = create<AuthState>(set => ({
             console.log(error)
         } finally {
             set({ isAuthChecking: false })
-        }
-    },
-
-    noLoadingCheckAuth: async () => {
-        try {
-            const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
-            localStorage.setItem("token", response.data.accessToken)
-            set({
-                user: response.data.user,
-                isAuth: true,
-                isAdmin: response.data.user.role === "ADMIN",
-            })
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Неизвестная ошибка")
-            } else {
-                toast.error("Неизвестная ошибка, перезагрузите страницу")
-            }
         }
     },
 

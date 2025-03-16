@@ -47,7 +47,7 @@ router.post(
 )
 
 // Проверка кода сброса пароля
-router.post("/verify-reset-code", validateRequest(verifyResetCodeSchema), passwordResetController.verifyResetCode)
+router.post("/verify-reset-code", validateRequest(verifyResetCodeSchema), passwordResetController.verifyResetCode) 
 
 // Сброс пароля
 router.post("/reset-password", validateRequest(resetPasswordSchema), passwordResetController.resetPassword)

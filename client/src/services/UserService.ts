@@ -1,8 +1,7 @@
-import { UserDTO } from "@/types/user.types"
+import { UpdateUser, UserDTO } from "@/types/user.types"
 import { AxiosResponse } from "axios"
 import axiosInstance from "../http/axios"
-import { IUpdateUser } from "../models/IUpdateUser"
-import { AuthResponse } from "../models/response/AuthResponse"
+import { AuthResponse } from "@/types/auth.types"
 
 class UserService {
     getUsers(): Promise<AxiosResponse<UserDTO[]>> {
@@ -17,7 +16,7 @@ class UserService {
         return axiosInstance.get<UserDTO>(`/users/${id}`)
     }
 
-    updateUser(id: string, updateData: IUpdateUser): Promise<AxiosResponse<UserDTO>> {
+    updateUser(id: string, updateData: UpdateUser): Promise<AxiosResponse<UserDTO>> {
         return axiosInstance.put<UserDTO>(`/users/update-profile/${id}`, updateData)
     }
 

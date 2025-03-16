@@ -1,5 +1,3 @@
-import { IUpdateUser } from "@/models/IUpdateUser"
-
 export interface UserState {
     isLoading: boolean
     isUsersFetching: boolean
@@ -7,7 +5,7 @@ export interface UserState {
     updatePassword: (email: string, oldPassword: string, newPassword: string) => Promise<void>
     getUsers: () => Promise<any>
     getUserById: (id: string) => Promise<any>
-    updateUser: (id: string, updateData: IUpdateUser) => Promise<UserDTO | undefined>
+    updateUser: (id: string, updateData: UpdateUser) => Promise<UserDTO | undefined>
     deleteUser: (id: string) => Promise<void>
     blockUser: (id: string) => Promise<void>
     unblockUser: (id: string) => Promise<void>
@@ -27,4 +25,9 @@ export interface UserDTO {
 export enum Role {
     USER = "USER",
     ADMIN = "ADMIN",
+}
+export interface UpdateUser {
+    name?: string
+    surname?: string
+    patronymic?: string
 }

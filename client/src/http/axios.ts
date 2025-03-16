@@ -1,5 +1,5 @@
+import { AuthResponse } from "@/types/auth.types"
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios"
-import { AuthResponse } from "../models/response/AuthResponse"
 
 export const API_URL = import.meta.env.VITE_API_URL
 
