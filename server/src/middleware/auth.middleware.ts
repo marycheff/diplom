@@ -17,6 +17,9 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         if (!userData) {
             return next(ApiError.Unauthorized())
         }
+        if (userData.isBlocked) {
+            return next(ApiError.Forbidden())
+        }
 
         // Добавляем userData в req
         req.user = userData
