@@ -2,7 +2,7 @@ import React, { useState } from "react"
 
 interface EditableFieldProps {
     label: string
-    value: string
+    value: string | null
     onChange: (value: string) => void
     placeholder?: string
     onEditingChange?: (isEditing: boolean) => void // Новый пропс
@@ -10,7 +10,7 @@ interface EditableFieldProps {
 
 const EditableField: React.FC<EditableFieldProps> = ({ label, value, onChange, placeholder, onEditingChange }) => {
     const [isEditing, setIsEditing] = useState(false)
-
+    const safeValue = value === null ? "" : value
     const handleEditClick = () => {
         setIsEditing(true)
         onEditingChange?.(true) // Сообщаем родителю, что поле редактируется
@@ -29,8 +29,8 @@ const EditableField: React.FC<EditableFieldProps> = ({ label, value, onChange, p
         <div>
             <label>{label}</label>
             <input
-                type='text'
-                value={value}
+                type="text"
+                value={safeValue}
                 onChange={handleInputChange}
                 disabled={!isEditing}
                 placeholder={placeholder || "<Пусто>"}

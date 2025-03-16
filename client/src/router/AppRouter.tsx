@@ -27,7 +27,7 @@ const AppRouter = () => {
     }, [checkAuth, isAuth])
 
     if (isAuthChecking || !authChecked) {
-        return <Loader />
+        return <Loader fullScreen />
     }
 
     // Список публичных маршрутов

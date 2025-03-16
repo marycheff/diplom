@@ -1,6 +1,6 @@
 import { API_URL } from "@/http/axios"
 import { AuthResponse } from "@/models/response/AuthResponse"
-import AuthService from "@/services/AuthService"
+import { authService } from "@/services/authService"
 import { AuthState } from "@/types/auth.types"
 import axios, { AxiosError } from "axios"
 import toast from "react-hot-toast"
@@ -17,7 +17,7 @@ export const useAuthStore = create<AuthState>(set => ({
     login: async (email, password) => {
         set({ isLoading: true })
         try {
-            const response = await AuthService.login(email, password)
+            const response = await authService.login(email, password)
             localStorage.setItem("token", response.data.accessToken)
             set({
                 user: response.data.user,
@@ -40,7 +40,7 @@ export const useAuthStore = create<AuthState>(set => ({
     registration: async (email, password) => {
         set({ isLoading: true })
         try {
-            const response = await AuthService.registration(email, password)
+            const response = await authService.registration(email, password)
             localStorage.setItem("token", response.data.accessToken)
             set({
                 user: response.data.user,
@@ -61,7 +61,7 @@ export const useAuthStore = create<AuthState>(set => ({
 
     logout: async () => {
         try {
-            await AuthService.logout()
+            await authService.logout()
             localStorage.removeItem("token")
             set({
                 user: null,
@@ -80,8 +80,7 @@ export const useAuthStore = create<AuthState>(set => ({
     checkAuth: async () => {
         set({ isAuthChecking: true })
         try {
-            const response = await AuthService.checkAuth()
-            console.log("checkAuth response:", response.data)
+            const response = await authService.checkAuth()
             localStorage.setItem("token", response.data.accessToken)
             set({
                 user: response.data.user,
@@ -116,7 +115,7 @@ export const useAuthStore = create<AuthState>(set => ({
     updateActivationLink: async (email: string) => {
         set({ isEmailSending: true })
         try {
-            const response = await AuthService.updateActivationLink(email)
+            const response = await authService.updateActivationLink(email)
             toast.success("Ссылка для активации отправлена на вашу электронную почту")
             return response.data
         } catch (error) {

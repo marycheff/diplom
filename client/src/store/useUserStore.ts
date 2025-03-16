@@ -1,4 +1,4 @@
-import UserService from "@/services/UserService"
+import { userService } from "@/services/userService"
 import { UserState } from "@/types/user.types"
 import { AxiosError } from "axios"
 import toast from "react-hot-toast"
@@ -11,7 +11,7 @@ export const useUserStore = create<UserState>(set => ({
     updatePassword: async (email, oldPassword, newPassword) => {
         set({ isLoading: true })
         try {
-            await UserService.updatePassword(email, oldPassword, newPassword)
+            await userService.updatePassword(email, oldPassword, newPassword)
             console.log("Пароль успешно обновлен")
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -27,7 +27,7 @@ export const useUserStore = create<UserState>(set => ({
         set({ isUsersFetching: true })
         try {
             //await useAuthStore.getState().noLoadingCheckAuth()
-            const response = await UserService.getUsers()
+            const response = await userService.getUsers()
             return response.data
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -44,7 +44,7 @@ export const useUserStore = create<UserState>(set => ({
         set({ isLoading: true })
         try {
             //await useAuthStore.getState().noLoadingCheckAuth()
-            const response = await UserService.getUserById(id)
+            const response = await userService.getUserById(id)
             return response.data
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -60,7 +60,7 @@ export const useUserStore = create<UserState>(set => ({
     updateUser: async (id, updateData) => {
         set({ isLoading: true })
         try {
-            const response = await UserService.updateUser(id, updateData)
+            const response = await userService.updateUser(id, updateData)
             toast.success("Данные пользователя успешно изменены")
             return response.data
         } catch (error) {
@@ -77,7 +77,7 @@ export const useUserStore = create<UserState>(set => ({
     deleteUser: async id => {
         set({ isLoading: true })
         try {
-            await UserService.deleteUser(id)
+            await userService.deleteUser(id)
         } catch (error) {
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data?.message || "Неизвестная ошибка")
@@ -92,7 +92,7 @@ export const useUserStore = create<UserState>(set => ({
     blockUser: async id => {
         set({ isLoading: true })
         try {
-            await UserService.blockUser(id)
+            await userService.blockUser(id)
         } catch (error) {
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data?.message || "Неизвестная ошибка")
@@ -107,7 +107,7 @@ export const useUserStore = create<UserState>(set => ({
     unblockUser: async id => {
         set({ isLoading: true })
         try {
-            await UserService.unblockUser(id)
+            await userService.unblockUser(id)
         } catch (error) {
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data?.message || "Неизвестная ошибка")

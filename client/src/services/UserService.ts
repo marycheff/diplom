@@ -1,40 +1,37 @@
+import { UserDTO } from "@/types/user.types"
 import { AxiosResponse } from "axios"
 import axiosInstance from "../http/axios"
 import { IUpdateUser } from "../models/IUpdateUser"
-import { IUser } from "../models/IUser"
 import { AuthResponse } from "../models/response/AuthResponse"
-import { UserDto } from "@/types/user.types"
 
-export default class UserService {
-    static getUsers(): Promise<AxiosResponse<IUser[]>> {
-        return axiosInstance.get<IUser[]>("/users")
+class UserService {
+    getUsers(): Promise<AxiosResponse<UserDTO[]>> {
+        return axiosInstance.get<UserDTO[]>("/users")
     }
 
-    static updatePassword(
-        email: string,
-        oldPassword: string,
-        newPassword: string
-    ): Promise<AxiosResponse<AuthResponse>> {
+    updatePassword(email: string, oldPassword: string, newPassword: string): Promise<AxiosResponse<AuthResponse>> {
         return axiosInstance.post<AuthResponse>("/auth/update-password", { email, oldPassword, newPassword })
     }
 
-    static getUserById(id: string): Promise<AxiosResponse<IUser>> {
-        return axiosInstance.get<IUser>(`/users/${id}`)
+    getUserById(id: string): Promise<AxiosResponse<UserDTO>> {
+        return axiosInstance.get<UserDTO>(`/users/${id}`)
     }
 
-    static updateUser(id: string, updateData: IUpdateUser): Promise<AxiosResponse<UserDto>> {
-        return axiosInstance.put<IUser>(`/users/update-profile/${id}`, updateData)
+    updateUser(id: string, updateData: IUpdateUser): Promise<AxiosResponse<UserDTO>> {
+        return axiosInstance.put<UserDTO>(`/users/update-profile/${id}`, updateData)
     }
 
-    static deleteUser(id: string): Promise<AxiosResponse<IUser>> {
-        return axiosInstance.delete<IUser>(`/users/${id}`)
+    deleteUser(id: string): Promise<AxiosResponse<UserDTO>> {
+        return axiosInstance.delete<UserDTO>(`/users/${id}`)
     }
 
-    static blockUser(id: string): Promise<AxiosResponse<IUser>> {
-        return axiosInstance.post<IUser>(`/users/block/${id}`)
+    blockUser(id: string): Promise<AxiosResponse<UserDTO>> {
+        return axiosInstance.post<UserDTO>(`/users/block/${id}`)
     }
 
-    static unblockUser(id: string): Promise<AxiosResponse<IUser>> {
-        return axiosInstance.post<IUser>(`/users/unblock/${id}`)
+    unblockUser(id: string): Promise<AxiosResponse<UserDTO>> {
+        return axiosInstance.post<UserDTO>(`/users/unblock/${id}`)
     }
 }
+
+export const userService = new UserService ()
