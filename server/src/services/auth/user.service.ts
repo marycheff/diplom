@@ -60,9 +60,9 @@ class UserService {
     async updateUser(id: string, updateData: UpdateUserDTO): Promise<void> {
         try {
             // Проверяем, что хотя бы одно поле передано для обновления
-            if (!updateData.name && !updateData.surname && !updateData.patronymic) {
-                throw ApiError.BadRequest("Нет данных для обновления")
-            }
+            // if (!updateData.name && !updateData.surname && !updateData.patronymic) {
+            //     throw ApiError.BadRequest("Нет данных для обновления")
+            // }
 
             await prisma.user.update({
                 where: {

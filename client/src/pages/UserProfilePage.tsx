@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import EditableField from "../components/ui/Input/EditableField"
+import EditableInput from "../components/ui/Input/Editable/EditableInput"
 import Loader from "../components/ui/Loader/Loader"
 import UpdatePasswordForm from "../containers/UpdatePasswordForm"
 import { useAuthStore } from "../store/useAuthStore"
@@ -97,7 +97,7 @@ const UserProfilePage = () => {
                         field =>
                             field !== "email" &&
                             field !== "isActivated" && (
-                                <EditableField
+                                <EditableInput
                                     key={field}
                                     label={fieldLabels[field] || field}
                                     value={userFields[field] as string}

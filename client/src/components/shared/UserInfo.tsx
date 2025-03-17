@@ -6,7 +6,7 @@ import { UserDTO } from "@/types/userTypes"
 import { isValidObjectId } from "@/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 const UserInfo = () => {
     const { userId } = useParams<{ userId: string }>()
@@ -18,9 +18,10 @@ const UserInfo = () => {
         return <div>Невалидный Id</div>
     }
 
-    const { getUserById, isLoading, blockUser, unblockUser, deleteUser } = useUserStore()
+    const { getUserById, isLoading, blockUser, unblockUser, deleteUser, isUsersFetching } = useUserStore()
     const [user, setUser] = useState<UserDTO>({} as UserDTO)
     const { user: currentUser } = useAuthStore()
+    const navigate = useNavigate()
     const getUserFromStore = async () => {
         const user = await getUserById(userId)
         if (user !== undefined) {
@@ -28,18 +29,19 @@ const UserInfo = () => {
         }
     }
     const handleDeleteUser = async (id: string) => {
-        deleteUser(id)
+        await deleteUser(id)
         toast.success("Пользователь удален")
+        navigate("/admin")
     }
 
     const handleBlockUser = async (id: string) => {
-        blockUser(id)
+        await blockUser(id)
         setUser({ ...user, isBlocked: true })
         toast.success("Пользователь заблокирован")
     }
 
     const handleUnblockUser = async (id: string) => {
-        unblockUser(id)
+        await unblockUser(id)
         setUser({ ...user, isBlocked: false })
         toast.success("Пользователь разблокирован")
     }
@@ -48,9 +50,13 @@ const UserInfo = () => {
         getUserFromStore()
     }, [])
 
+    if (Object.keys(user).length === 0) {
+        return <div>Пользователь не найден</div>
+    }
+
     return (
         <>
-            {isLoading ? (
+            {isUsersFetching ? (
                 <Loader delay={3000} />
             ) : (
                 user && (
@@ -82,13 +88,19 @@ const UserInfo = () => {
                                         <td>{user.id}</td>
                                         <td>
                                             {user.isBlocked ? (
-                                                <Button onClick={() => handleUnblockUser(user.id)}>
+                                                <Button
+                                                    onClick={() => handleUnblockUser(user.id)}
+                                                    isLoading={isLoading}>
                                                     Разблокировать
                                                 </Button>
                                             ) : (
-                                                <Button onClick={() => handleBlockUser(user.id)}>Заблокировать</Button>
+                                                <Button onClick={() => handleBlockUser(user.id)} disabled={isLoading}>
+                                                    Заблокировать
+                                                </Button>
                                             )}
-                                            <button onClick={() => handleDeleteUser(user.id)}>Удалить</button>
+                                            <Button onClick={() => handleDeleteUser(user.id)} disabled={isLoading}>
+                                                Удалить
+                                            </Button>
                                         </td>
                                     </tr>
                                 </tbody>

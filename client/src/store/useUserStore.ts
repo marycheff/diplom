@@ -19,6 +19,7 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
         }
         set({ isLoading: false })
     },
@@ -34,13 +35,15 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
+
         } finally {
             set({ isUsersFetching: false })
         }
     },
 
     getUserById: async id => {
-        set({ isLoading: true })
+        set({ isUsersFetching: true })
         try {
             //await useAuthStore.getState().noLoadingCheckAuth()
             const response = await userService.getUserById(id)
@@ -51,8 +54,9 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
         } finally {
-            set({ isLoading: false })
+            set({ isUsersFetching: false })
         }
     },
 
@@ -68,6 +72,7 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
         } finally {
             set({ isLoading: false })
         }
@@ -83,6 +88,7 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
         } finally {
             set({ isLoading: false })
         }
@@ -98,6 +104,7 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
         } finally {
             set({ isLoading: false })
         }
@@ -113,6 +120,7 @@ export const useUserStore = create<UserState>(set => ({
             } else {
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
+            throw error
         } finally {
             set({ isLoading: false })
         }

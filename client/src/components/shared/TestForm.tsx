@@ -17,16 +17,16 @@ const TestForm = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [isSubmitted, setIsSubmitted] = useState(false)
     const [isButtonDisabled, setIsButtonDisabled] = useState(false)
-    const [answers, setAnswers] = useState<{ text: string; isCorrect: boolean }[]>([
-        { text: "", isCorrect: true }, // Правильный ответ
-    ])
+    const [answers, setAnswers] = useState<{ text: string; isCorrect: boolean }[]>([{ text: "", isCorrect: true }])
 
     const {
         register,
         handleSubmit,
         formState: { errors },
         watch,
-    } = useForm<FormData>()
+    } = useForm<FormData>({
+        mode: "onChange",
+    })
 
     const watchedQuestion = watch("question")
     const watchedAnswer = watch("answer")

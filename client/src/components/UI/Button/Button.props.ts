@@ -6,4 +6,5 @@ export interface ButtonProps {
     disabled?: boolean
     onClick?: () => void
     loadingText?: string
+    type?: "button" | "reset" | "submit"
 }
