@@ -78,7 +78,6 @@ class UserController {
                 return next(ApiError.BadRequest("Некорректный ID пользователя"))
             }
             if (!(await userService.getUserById(id))) {
-                //Проверяем, что пользователь существует
                 ApiError.BadRequest("Нет такого пользователя")
                 return
             }

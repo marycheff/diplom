@@ -79,10 +79,18 @@ class UserService {
 
     async deleteUser(id: string) {
         try {
-            await prisma.user.delete({
-                where: {
-                    id: id,
-                },
+            await prisma.$transaction(async prisma => {
+                await prisma.token.deleteMany({
+                    where: {
+                        userId: id,
+                    },
+                })
+
+                await prisma.user.delete({
+                    where: {
+                        id: id,
+                    },
+                })
             })
         } catch (error) {
             throw ApiError.BadRequest("Ошибка при удалении пользователя")
