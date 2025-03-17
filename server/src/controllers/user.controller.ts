@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express"
 
 import ApiError from "@/exceptions/api-error"
 import userService from "@/services/auth/user.service"
+import { isValidObjectId } from "@/utils/validator"
 
 class UserController {
     async getUsers(req: Request, res: Response, next: NextFunction) {
@@ -36,8 +37,10 @@ class UserController {
     async getUserById(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
+            if (!isValidObjectId(id)) {
+                return next(ApiError.BadRequest("Некорректный ID пользователя"))
+            }
             const userIdFromToken = req.user?.id // Получаем ID текущего пользователя из токена
-
             // Если пользователь не администратор и не запрашивает свою собственную информацию
             if (id !== userIdFromToken && req.user?.role !== "ADMIN") {
                 return next(ApiError.Forbidden())
@@ -53,6 +56,9 @@ class UserController {
     async updateUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
+            if (!isValidObjectId(id)) {
+                return next(ApiError.BadRequest("Некорректный ID пользователя"))
+            }
             if (!(await userService.getUserById(id))) {
                 ApiError.BadRequest("Нет такого пользователя")
                 return
@@ -68,6 +74,9 @@ class UserController {
     async deleteUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
+            if (!isValidObjectId(id)) {
+                return next(ApiError.BadRequest("Некорректный ID пользователя"))
+            }
             if (!(await userService.getUserById(id))) {
                 //Проверяем, что пользователь существует
                 ApiError.BadRequest("Нет такого пользователя")
@@ -83,6 +92,9 @@ class UserController {
     async blockUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
+            if (!isValidObjectId(id)) {
+                return next(ApiError.BadRequest("Некорректный ID пользователя"))
+            }
             await userService.blockUser(id)
             res.status(200).json({ message: "Пользователь успешно заблокирован" })
         } catch (e) {
@@ -93,6 +105,9 @@ class UserController {
     async unblockUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
+            if (!isValidObjectId(id)) {
+                return next(ApiError.BadRequest("Некорректный ID пользователя"))
+            }
             await userService.unblockUser(id)
             res.status(200).json({ message: "Пользователь успешно разблокирован" })
         } catch (e) {

@@ -1,14 +1,16 @@
+import { Button } from "@/components/ui/Button/Button"
 import Loader from "@/components/ui/Loader/Loader"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useUserStore } from "@/store/useUserStore"
 import { UserDTO } from "@/types/userTypes"
 import { useEffect, useState } from "react"
-import { toast } from "react-toastify"
+import toast from "react-hot-toast"
+import { Link } from "react-router-dom"
 
 const UserManagement = () => {
     const [users, setUsers] = useState<UserDTO[]>([])
     const [isUsersVisible, setIsUsersVisible] = useState(false) // Состояние для видимости списка
-    const { getUsers, isUsersFetching, blockUser, unblockUser, deleteUser } = useUserStore()
+    const { getUsers, isUsersFetching, blockUser, unblockUser, deleteUser, isLoading } = useUserStore()
     const { user: currentUser } = useAuthStore()
 
     const getUsersFromStore = async () => {
@@ -20,33 +22,21 @@ const UserManagement = () => {
     }
 
     const handleDeleteUser = async (id: string) => {
-        try {
-            deleteUser(id)
-            setUsers(users.filter(user => user.id !== id))
-            toast.success("Пользователь удален")
-        } catch (e: any) {
-            toast.error(e.response?.data?.message)
-        }
+        deleteUser(id)
+        setUsers(users.filter(user => user.id !== id))
+        toast.success("Пользователь удален")
     }
 
     const handleBlockUser = async (id: string) => {
-        try {
-            blockUser(id)
-            setUsers(users.map(user => (user.id === id ? { ...user, isBlocked: true } : user)))
-            toast.success("Пользователь заблокирован")
-        } catch (e: any) {
-            toast.error(e.response?.data?.message)
-        }
+        blockUser(id)
+        setUsers(users.map(user => (user.id === id ? { ...user, isBlocked: true } : user)))
+        toast.success("Пользователь заблокирован")
     }
 
     const handleUnblockUser = async (id: string) => {
-        try {
-            unblockUser(id)
-            setUsers(users.map(user => (user.id === id ? { ...user, isBlocked: false } : user)))
-            toast.success("Пользователь разблокирован")
-        } catch (e: any) {
-            console.log(e.response?.data?.message)
-        }
+        unblockUser(id)
+        setUsers(users.map(user => (user.id === id ? { ...user, isBlocked: false } : user)))
+        toast.success("Пользователь разблокирован")
     }
 
     const toggleUsersVisibility = () => {
@@ -74,13 +64,16 @@ const UserManagement = () => {
                                     <div>{user.email} (Вы)</div>
                                 ) : (
                                     <>
-                                        <div>{user.email} </div>
+                                        <div>{user.email}</div>
                                         {user.isBlocked ? (
-                                            <button onClick={() => handleUnblockUser(user.id)}>Разблокировать</button>
+                                            <Button onClick={() => handleUnblockUser(user.id)}>Разблокировать</Button>
                                         ) : (
-                                            <button onClick={() => handleBlockUser(user.id)}>Заблокировать</button>
+                                            <Button onClick={() => handleBlockUser(user.id)}>Заблокировать</Button>
                                         )}
                                         <button onClick={() => handleDeleteUser(user.id)}>Удалить</button>
+                                        <Link to={`/admin/user/${user.id}`}>
+                                            <Button>Перейти</Button>
+                                        </Link>
                                     </>
                                 )}
                             </div>

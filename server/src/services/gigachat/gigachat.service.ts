@@ -1,10 +1,10 @@
 import ApiError from "@/exceptions/api-error"
 import { ChatContentResponse, GetChatContentParams } from "@/types/gigachat.types"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
+import https from "https"
 
-const httpsAgent = new (require("follow-redirects").https.Agent)({ rejectUnauthorized: false })
+const httpsAgent = new https.Agent({ rejectUnauthorized: false })
 
-// Функция для отправки запроса к API нейросети и получения ответов
 export const getChatContent = async ({
     token,
     numOfAnswers,
@@ -16,15 +16,15 @@ export const getChatContent = async ({
         messages: [
             {
                 role: "user",
-                content: `Я напишу тебе вопрос. Ты должен придумать ${numOfAnswers} абсолютно неправильных ответа. Ты должен нумеровать свои ответы цифрами. Твои ответы не должны совпадать с правильным ответом. Ты можешь путать даты, имена, временные промежутки, факты. Формат ответа должен быть таким же, как и правильный ответ. Вопрос: ${question}? Правильный ответ: ${answer}.`,
+                content: `Я задам вопрос. Ты должен придумать ${numOfAnswers} абсолютно неправильных ответа. Нумеруй свои ответы цифрами. Ответы не должны совпадать с правильным. Можешь путать даты, имена, временные промежутки и факты. Формат ответа должен быть таким же, как и правильный ответ. Вопрос: ${question}? Правильный ответ: ${answer}.`,
             },
         ],
         stream: false,
         repetition_penalty: 1,
     }
 
-    const options = {
-        method: "POST",
+    const requestOptions = {
+        method: "POST" as const,
         url: "https://gigachat.devices.sberbank.ru/api/v1/chat/completions",
         headers: {
             "Content-Type": "application/json",
@@ -36,16 +36,20 @@ export const getChatContent = async ({
     }
 
     try {
-        const response = await axios<ChatContentResponse>(options)
+        const response = await axios<ChatContentResponse>(requestOptions)
         if (response.data.choices && response.data.choices.length > 0) {
-            console.log(`Токенов: ${response.data.usage.total_tokens}`)
+            console.log(`Использовано токенов: ${response.data.usage?.total_tokens}`)
             return response.data.choices[0].message.content
         } else {
-            ApiError.InternalError("Ответ не найден в ответе от API")
-            return
+            throw ApiError.InternalError("Ответ не найден в ответе от API")
         }
-    } catch {
-        ApiError.InternalError(`Ошибка при получении контента`)
-        return
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            const axiosError = error as AxiosError
+            console.error(`Ошибка при получении контента: ${axiosError.message}`, axiosError.response?.data)
+        } else {
+            console.error("Неизвестная ошибка:", error)
+        }
+        throw ApiError.InternalError("Ошибка при получении контента")
     }
 }

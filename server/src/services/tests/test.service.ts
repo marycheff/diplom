@@ -2,13 +2,13 @@ import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
 import { mapToResponseTest } from "@/services/mappers/test.mappers"
 import { TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
+import { isValidObjectId } from "@/utils/validator"
 import { Answer, PrismaClient, Question } from "@prisma/client"
-import { ObjectId } from "mongodb"
 
 const prisma = new PrismaClient()
 
 class TestService {
-    // ТЕСТ
+    // Обновление настроек теста
     async updateTestSettings(testId: string, testSettings: TestSettingsDTO) {
         await prisma.testSettings.update({
             where: { testId },
@@ -52,7 +52,7 @@ class TestService {
     // Добавление вопросов к существующему тесту
     async addQuestions(testId: string, userId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
         return prisma.$transaction(async transaction => {
-            if (!ObjectId.isValid(testId)) {
+            if (!isValidObjectId(testId)) {
                 throw ApiError.NotFound("Тест не найден")
             }
 

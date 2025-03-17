@@ -1,7 +1,8 @@
 import axiosInstance from "@/axios"
 import AnswersList from "@/components/shared/AnswersList"
 import QuestionForm from "@/components/shared/QuestionForm"
-import { Button } from "@mui/material"
+import { Button } from "@/components/ui/Button/Button"
+
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 

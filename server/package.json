@@ -11,7 +11,6 @@
     },
     "dependencies": {
         "@prisma/client": "^6.5.0",
-        "@types/follow-redirects": "^1.14.4",
         "axios": "^1.8.3",
         "bcryptjs": "^3.0.2",
         "cookie": "^1.0.2",
@@ -19,10 +18,8 @@
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
         "follow-redirects": "^1.15.9",
-        "i": "^0.3.7",
         "jsonwebtoken": "^9.0.2",
         "module-alias": "^2.2.3",
-        "mongodb": "^6.14.2",
         "nodemailer": "^6.10.0",
         "uuid": "^11.1.0",
         "zod": "^3.24.2"
@@ -34,6 +31,7 @@
         "@types/cookie": "^1.0.0",
         "@types/cors": "^2.8.17",
         "@types/express": "^5.0.0",
+        "@types/follow-redirects": "^1.14.4",
         "@types/jsonwebtoken": "^9.0.9",
         "@types/node": "^22.13.10",
         "@types/nodemailer": "^6.4.17",

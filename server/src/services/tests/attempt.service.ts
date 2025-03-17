@@ -2,8 +2,8 @@ import ApiError from "@/exceptions/api-error"
 import { mapToTestAttemptDTO } from "@/services/mappers/test.mappers"
 import { PreTestUserData, PreTestUserDataLabels } from "@/types/inputFields"
 import { TestAttemptDTO } from "@/types/test.types"
+import { isValidObjectId } from "@/utils/validator"
 import { PrismaClient } from "@prisma/client"
-import { ObjectId } from "mongodb"
 const prisma = new PrismaClient()
 
 class AttemptService {
@@ -166,7 +166,7 @@ class AttemptService {
     }
 
     async getAttempt(attemptId: string): Promise<any> {
-        if (!ObjectId.isValid(attemptId)) {
+        if (!isValidObjectId(attemptId)) {
             throw ApiError.BadRequest("Некорректный ID попытки прохождения теста")
         }
 
@@ -203,7 +203,7 @@ class AttemptService {
     }
 
     async getUserAttempts(userId: string): Promise<any[]> {
-        if (!ObjectId.isValid(userId)) {
+        if (!isValidObjectId(userId)) {
             throw ApiError.BadRequest("Некорректный ID пользователя")
         }
         const attempts = await prisma.testAttempt.findMany({

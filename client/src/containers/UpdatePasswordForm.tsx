@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/Button/Button"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useUserStore } from "@/store/useUserStore"
 import { useState } from "react"
@@ -23,9 +24,9 @@ const UpdatePasswordForm = () => {
                 placeholder="Новый пароль"
             />
 
-            <button onClick={() => updatePassword(user?.email!, oldPassword, newPassword)} disabled={isLoading}>
+            <Button onClick={() => updatePassword(user?.email!, oldPassword, newPassword)} isLoading={isLoading}>
                 Обновить пароль
-            </button>
+            </Button>
         </div>
     )
 }

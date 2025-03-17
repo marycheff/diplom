@@ -12,8 +12,8 @@ export const registrationSchema = z.object({
 
 export const loginSchema = z.object({
     body: z.object({
-        email: z.string().email("Некорректный email"),
-        password: z.string().min(1, "Пароль обязателен"),
+        // email: z.string().email("Некорректный email"),
+        // password: z.string().min(1, "Пароль обязателен"),
     }),
 })
 

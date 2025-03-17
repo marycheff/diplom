@@ -1,15 +1,15 @@
 import ApiError from "@/exceptions/api-error"
-import testService from "@/services/tests/test.service"
 import answerService from "@/services/tests/answer.service"
 import questionService from "@/services/tests/question.service"
+import testService from "@/services/tests/test.service"
 import { NextFunction, Request, Response } from "express"
-import { ObjectId } from "mongodb"
+import { isValidObjectId } from "@/utils/validator"
 
 export const testOwnershipMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const testId = req.params.testId
 
-        if (!ObjectId.isValid(testId)) {
+        if (!isValidObjectId(testId)) {
             return next(ApiError.BadRequest("Некорректный ID теста"))
         }
         const test = await testService.getTestById(testId)
@@ -30,7 +30,7 @@ export const testOwnershipMiddleware = async (req: Request, res: Response, next:
 export const questionOwnershipMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const questionId = req.params.questionId
-        if (!ObjectId.isValid(questionId)) {
+        if (!isValidObjectId(questionId)) {
             return next(ApiError.BadRequest("Некорректный ID теста"))
         }
         const { question, test, belongsToTest } = await questionService.isQuestionBelongsToAnyTest(questionId)
@@ -58,7 +58,7 @@ export const questionOwnershipMiddleware = async (req: Request, res: Response, n
 export const answerOwnershipMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const answerId = req.params.answerId
-        if (!ObjectId.isValid(answerId)) {
+        if (!isValidObjectId(answerId)) {
             return next(ApiError.BadRequest("Некорректный ID теста"))
         }
         const { answer, question, test, belongsToTest } = await answerService.isAnswerBelongsToAnyTest(answerId)
