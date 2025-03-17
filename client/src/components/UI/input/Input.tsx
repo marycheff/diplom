@@ -1,4 +1,3 @@
-// components/ui/Input/Input.tsx
 import { ChangeEvent, useRef } from "react"
 import { FieldError, Path, PathValue, RegisterOptions, UseFormRegister, UseFormSetValue } from "react-hook-form"
 import styles from "./Input.module.css"
@@ -38,6 +37,9 @@ const Input = <T extends Record<string, any>>({
         }
     }
 
+    const showClearButton =
+        clearable && !disabled && ((inputRef.current?.value && register) || (value && value.length > 0))
+
     return (
         <div className={styles.inputWrapper}>
             <div className={styles.inputContainer}>
@@ -49,7 +51,7 @@ const Input = <T extends Record<string, any>>({
                     ref={inputRef}
                     className={styles.input}
                 />
-                {clearable && !disabled && inputRef.current?.value && (
+                {showClearButton && (
                     <button type="button" onClick={handleClear} className={styles.clearButton}>
                         &times;
                     </button>
