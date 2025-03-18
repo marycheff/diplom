@@ -16,6 +16,14 @@ const HomePage = () => {
 
                 <button onClick={() => navigate("/profile")}>Профиль</button>
                 <button onClick={() => navigate("/test")}>Тест</button>
+
+                {/* <Select
+                    register={register}
+                    label="Количество ответов для генерации"
+                    name="numOfAnswers"
+                    options={[{ value: "1" }, { value: "2" }, { value: "3" }, { value: "4" }]}
+                    value="1"
+                /> */}
             </div>
         </>
     )
