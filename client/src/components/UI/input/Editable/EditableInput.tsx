@@ -1,18 +1,8 @@
 import { Button } from "@/components/ui/Button/Button"
-import Input from "@/components/ui/Input/Input"
+import Input from "@/components/ui/Input/Base/Input"
+import { EditableInputProps } from "@/components/ui/Input/Editable/EditableInput.props"
 import { ChangeEvent, JSX, useState } from "react"
-import { Path } from "react-hook-form"
 import styles from "./EditableInput.module.css"
-
-
-interface EditableInputProps<T extends Record<string, any>> {
-    name: Path<T> 
-    label: string
-    value: string | null
-    onChange: (value: string) => void
-    placeholder?: string
-    onEditingChange?: (isEditing: boolean) => void
-}
 
 const EditableInput = <T extends Record<string, any>>({
     name,
@@ -44,7 +34,7 @@ const EditableInput = <T extends Record<string, any>>({
             <label className={styles.label}>{label}</label>
             <div className={styles.rowContainer}>
                 <Input
-                    name={name} 
+                    name={name}
                     placeholder={placeholder || "<Пусто>"}
                     disabled={!isEditing}
                     clearable={isEditing}

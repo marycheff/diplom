@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/Button/Button"
-import PasswordInput from "@/components/ui/Input/Validated/PasswordInput"
-import ValidatedInput from "@/components/ui/Input/Validated/ValidatedInput"
-
+import { PasswordInput, ValidatedInput } from "@/components/ui/Input"
 import ResetPasswordForm from "@/containers/ResetPasswordForm"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useState } from "react"
@@ -52,13 +50,7 @@ const LoginPage = () => {
                         },
                     }}
                 />
-                <PasswordInput
-                    clearable
-                    name="password"
-                    register={register}
-                    setValue={setValue}
-                    errors={errors.password}
-                />
+                <PasswordInput name="password" register={register} setValue={setValue} errors={errors.password} />
                 <Button type="submit" isLoading={isLoading}>
                     Вход
                 </Button>

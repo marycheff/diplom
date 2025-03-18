@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/Button/Button"
-import Input from "@/components/ui/Input/Input"
+import ValidatedInput from "@/components/ui/Input/Validated/ValidatedInput"
+
 import Loader from "@/components/ui/Loader/Loader"
 import Select from "@/components/ui/Select/Select"
 import { FC } from "react"
 import { FieldErrors, RegisterOptions, UseFormRegister, UseFormSetValue } from "react-hook-form"
-
 
 type QuestionFormFields = {
     question: string
@@ -50,7 +50,7 @@ const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisable
     return (
         <form onSubmit={onSubmit}>
             {isLoading && <Loader />}
-            <Input
+            <ValidatedInput
                 clearable
                 placeholder="Вопрос"
                 name="question"
@@ -59,7 +59,7 @@ const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisable
                 errors={errors?.question}
                 validationRules={questionValidation}
             />
-            <Input
+            <ValidatedInput
                 clearable
                 placeholder="Введите правильный ответ"
                 name="answer"

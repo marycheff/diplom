@@ -1,19 +1,8 @@
+import { InputProps } from "@/components/ui/Input/Base/Input.props"
 import { ChangeEvent, FC } from "react"
-import styles from "./SimpleInput.module.css"
+import styles from "./Input.module.css"
 
-interface SimpleInputProps {
-    name: string
-    value?: string
-    placeholder?: string
-    disabled?: boolean
-    type?: "text" | "email" | "password"
-    className?: string
-    onChange?: (e: ChangeEvent<HTMLInputElement>) => void
-    clearable?: boolean
-    showToggle?: boolean
-}
-
-const SimpleInput: FC<SimpleInputProps> = ({
+export const Input: FC<InputProps> = ({
     name,
     value = "",
     placeholder,
@@ -53,4 +42,4 @@ const SimpleInput: FC<SimpleInputProps> = ({
     )
 }
 
-export default SimpleInput
+export default Input

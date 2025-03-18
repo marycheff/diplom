@@ -1,6 +1,6 @@
+import { EditableInput } from "@/components/ui/Input"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import EditableInput from "../components/ui/Input/Editable/EditableInput"
 import Loader from "../components/ui/Loader/Loader"
 import UpdatePasswordForm from "../containers/UpdatePasswordForm"
 import { useAuthStore } from "../store/useAuthStore"

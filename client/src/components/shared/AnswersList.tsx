@@ -1,4 +1,4 @@
-import Input from "@/components/ui/Input/Input"
+import { Input } from "@/components/ui/Input"
 import { FC } from "react"
 
 type Answer = {
@@ -35,7 +35,7 @@ const AnswersList: FC<AnswersListProps> = ({
                     <input type="checkbox" checked={answer.isCorrect} onChange={() => handleCorrectChange(index)} />
 
                     <button type="button" disabled={answer.isCorrect} onClick={() => removeAnswer(index)}>
-                        X
+                        &times;
                     </button>
                 </div>
             ))}

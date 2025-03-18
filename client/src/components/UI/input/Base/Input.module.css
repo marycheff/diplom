@@ -1,47 +1,48 @@
+/* @import url("../Input/baseInputStyles.module");*/
+
+.inputContainer:has(.clearButton) .input {
+    padding-right: 30px;
+} 
+
 .inputWrapper {
-    position: relative;
     display: flex;
     flex-direction: column;
+    gap: 4px;
+    width: 20%;
 }
 
 .inputContainer {
-    position: relative;
     display: flex;
     align-items: center;
+    position: relative;
+    width: 100%;
 }
 
 .input {
+    flex: 1;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 14px;
     width: 100%;
+    transition: padding-right 0.2s ease;
+    box-sizing: border-box;
 }
 
 .clearButton {
     position: absolute;
-    right: 30px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    border: none;
     background: none;
-    cursor: pointer;
-    font-size: 18px;
-}
-
-.toggleButton {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
     border: none;
-    background: none;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
+    color: #999;
 }
 
 .error {
     color: red;
-    font-size: 12px;
+    font-size: 14px;
     margin-top: 4px;
 }
