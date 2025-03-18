@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/Button/Button"
-import Input from "@/components/ui/Input/Input"
-import PasswordInput from "@/components/ui/Input/Password/PasswordInput"
+import PasswordInput from "@/components/ui/Input/Validated/PasswordInput"
+import ValidatedInput from "@/components/ui/Input/Validated/ValidatedInput"
+
 import ResetPasswordForm from "@/containers/ResetPasswordForm"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
 
-// Тип данных формы
 type LoginFormData = {
     email: string
     password: string
@@ -23,7 +23,7 @@ const LoginPage = () => {
         formState: { errors },
         setValue,
     } = useForm<LoginFormData>({
-        // mode: "onBlur",
+        mode: "onChange",
     })
 
     const handleResetPasswordClick = () => {
@@ -37,7 +37,7 @@ const LoginPage = () => {
     return (
         <div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Input
+                <ValidatedInput
                     clearable
                     name="email"
                     placeholder="Email"
@@ -52,17 +52,20 @@ const LoginPage = () => {
                         },
                     }}
                 />
-                <PasswordInput name="password" register={register} setValue={setValue} errors={errors.password} />
+                <PasswordInput
+                    clearable
+                    name="password"
+                    register={register}
+                    setValue={setValue}
+                    errors={errors.password}
+                />
                 <Button type="submit" isLoading={isLoading}>
                     Вход
                 </Button>
             </form>
-            <div className="">
-                <p className="">
-                    Нет аккаунта?{" "}
-                    <Link to="/signup" className="">
-                        Зарегистрироваться
-                    </Link>
+            <div>
+                <p>
+                    Нет аккаунта? <Link to="/signup">Зарегистрироваться</Link>
                 </p>
             </div>
             {!isResetPasswordVisible && (
