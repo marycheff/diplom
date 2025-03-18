@@ -10,10 +10,13 @@ interface InputProps<T extends Record<string, any>> {
     value?: string
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void
     register?: UseFormRegister<T>
-    setValue?: UseFormSetValue<T> // Добавляем setValue для управления значением
+    setValue?: UseFormSetValue<T>
     validationRules?: RegisterOptions<T, Path<T>>
     errors?: FieldError | undefined
-    type?: "text" | "email" | "password"
+    type?: "text" | "email" | "password" // Type определяет тип поля
+    className?: string
+    onTogglePasswordVisibility?: () => void // Коллбэк для переключения видимости пароля
+    isPasswordVisible?: boolean // Состояние видимости пароля
 }
 
 const Input: FC<InputProps<any>> = ({
@@ -24,10 +27,13 @@ const Input: FC<InputProps<any>> = ({
     value: controlledValue,
     onChange: controlledOnChange,
     register,
-    setValue, // Добавляем в пропсы
+    setValue,
     validationRules,
     errors,
     type = "text",
+    className = "",
+    onTogglePasswordVisibility,
+    isPasswordVisible = false,
 }) => {
     const [localValue, setLocalValue] = useState("")
 
@@ -36,8 +42,8 @@ const Input: FC<InputProps<any>> = ({
             controlledOnChange({ target: { value: "" } } as ChangeEvent<HTMLInputElement>)
         }
         if (register && setValue) {
-            setValue(name, "") // Очищаем значение через react-hook-form
-            setLocalValue("") // Обновляем локальное состояние для отображения
+            setValue(name, "")
+            setLocalValue("")
         }
     }
 
@@ -46,7 +52,7 @@ const Input: FC<InputProps<any>> = ({
             controlledOnChange(e)
         }
         if (register) {
-            setLocalValue(e.target.value) // Только обновляем локальное состояние для отображения
+            setLocalValue(e.target.value)
         }
     }
 
@@ -70,16 +76,27 @@ const Input: FC<InputProps<any>> = ({
         <div className={styles.inputWrapper}>
             <div className={styles.inputContainer}>
                 <input
-                    type={type}
+                    type={type === "password" && isPasswordVisible ? "text" : type} // Переключаем тип ввода
                     name={name.toString()}
                     placeholder={placeholder}
                     disabled={disabled}
-                    className={styles.input}
+                    className={`${styles.input} ${className}`}
                     {...inputProps}
                 />
                 {clearable && !disabled && hasValue && (
-                    <button type="button" onClick={handleClear} className={styles.clearButton}>
+                    <button
+                        type="button"
+                        onClick={handleClear}
+                        className={`${styles.clearButton} ${
+                            type === "password" ? "" : styles["clearButton--without-toggle"]
+                        }`}>
                         ×
+                    </button>
+                )}
+                {/* Кнопка переключения видимости пароля рендерится только для type="password" */}
+                {type === "password" && (
+                    <button type="button" onClick={onTogglePasswordVisibility} className={styles.toggleButton}>
+                        {isPasswordVisible ? "🙈" : "👁️"}
                     </button>
                 )}
             </div>

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button/Button"
 import Input from "@/components/ui/Input/Input"
+import PasswordInput from "@/components/ui/Input/Password/PasswordInput"
 import ResetPasswordForm from "@/containers/ResetPasswordForm"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useState } from "react"
@@ -22,7 +23,7 @@ const LoginPage = () => {
         formState: { errors },
         setValue,
     } = useForm<LoginFormData>({
-        // mode: "onBlur", 
+        // mode: "onBlur",
     })
 
     const handleResetPasswordClick = () => {
@@ -40,9 +41,9 @@ const LoginPage = () => {
                     clearable
                     name="email"
                     placeholder="Email"
-                    register={register} 
-                    setValue={setValue} 
-                    errors={errors.email} 
+                    register={register}
+                    setValue={setValue}
+                    errors={errors.email}
                     validationRules={{
                         required: "Email обязателен",
                         pattern: {
@@ -51,26 +52,7 @@ const LoginPage = () => {
                         },
                     }}
                 />
-                <Input
-                    clearable
-                    name="password"
-                    type="password"
-                    placeholder="Пароль"
-                    register={register} 
-                    setValue={setValue} 
-                    errors={errors.password}
-                    validationRules={{
-                        required: "Пароль обязателен",
-                        minLength: {
-                            value: 3,
-                            message: "Пароль должен содержать минимум 3 символа",
-                        },
-                        maxLength: {
-                            value: 32,
-                            message: "Пароль не должен превышать 32 символа",
-                        },
-                    }}
-                />
+                <PasswordInput name="password" register={register} setValue={setValue} errors={errors.password} />
                 <Button type="submit" isLoading={isLoading}>
                     Вход
                 </Button>

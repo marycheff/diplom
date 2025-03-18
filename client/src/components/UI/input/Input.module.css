@@ -1,3 +1,5 @@
+/* Input.module.css */
+
 .inputWrapper {
     display: flex;
     flex-direction: column;
@@ -19,11 +21,14 @@
     border-radius: 4px;
     font-size: 14px;
     width: 100%;
+    padding-right: 50px; /* Увеличиваем отступ справа для размещения кнопок */
 }
 
 .clearButton {
     position: absolute;
-    right: 8px;
+    right: 36px; /* Стандартное положение, если есть toggleButton */
+    top: 50%;
+    transform: translateY(-50%);
     background: none;
     border: none;
     cursor: pointer;
@@ -31,12 +36,28 @@
     color: #999;
 }
 
-.clearButton:hover {
+.clearButton.without-toggle {
+    right: 8px; /* Прижимаем к правому краю, если toggleButton отсутствует */
+}
+
+.toggleButton {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #aaa;
+}
+
+.toggleButton:hover {
     color: #333;
 }
 
 .error {
     color: red;
     font-size: 14px;
-    margin-top: 4px; /* Отступ между input и текстом ошибки */
+    margin-top: 4px;
 }
