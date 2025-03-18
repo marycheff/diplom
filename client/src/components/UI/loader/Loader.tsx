@@ -1,6 +1,6 @@
 import { LoaderProps } from "@/components/ui/Loader/Loader.props"
 import { FC, useEffect, useState } from "react"
-import styles from "./Loader.module.css"
+import styles from "./Loader.module.scss"
 
 const Loader: FC<LoaderProps> = ({ delay = 0, text = "", fullScreen = false }) => {
     const [showLoader, setShowLoader] = useState(false)

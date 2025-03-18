@@ -1,6 +1,6 @@
 import { ValidatedInputProps } from "@/components/ui/Input/Validated/ValidatedInput.props"
 import { ChangeEvent, FC, useState } from "react"
-import styles from "./ValidatedInput.module.css"
+import styles from "./ValidatedInput.module.scss"
 
 const ValidatedInput: FC<ValidatedInputProps<any>> = ({
     name,

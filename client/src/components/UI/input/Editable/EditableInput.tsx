@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button/Button"
 import Input from "@/components/ui/Input/Base/Input"
 import { EditableInputProps } from "@/components/ui/Input/Editable/EditableInput.props"
 import { ChangeEvent, JSX, useState } from "react"
-import styles from "./EditableInput.module.css"
+import styles from "./EditableInput.module.scss"
 
 const EditableInput = <T extends Record<string, any>>({
     name,

@@ -1,4 +1,5 @@
-@import url("../Base/Input.module");
+// @import url("../Base/Input.module");
+@use "../Base/Input.module";
 
 .inputContainer:has(.clearButton) .input {
     padding-right: 30px;

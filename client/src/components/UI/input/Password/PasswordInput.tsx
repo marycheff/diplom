@@ -1,7 +1,7 @@
 import { PasswordInputProps } from "@/components/ui/Input/Password/PasswordInput.props"
 import { FC, useState } from "react"
 import { RegisterOptions } from "react-hook-form"
-import styles from "./PasswordInput.module.css"
+import styles from "./PasswordInput.module.scss"
 
 const PasswordInput: FC<PasswordInputProps<any>> = ({
     name,

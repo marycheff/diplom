@@ -1,6 +1,6 @@
 import { InputProps } from "@/components/ui/Input/Base/Input.props"
 import { ChangeEvent, FC } from "react"
-import styles from "./Input.module.css"
+import styles from "./Input.module.scss"
 
 export const Input: FC<InputProps> = ({
     name,

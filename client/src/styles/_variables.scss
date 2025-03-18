@@ -1,0 +1,40 @@
+
+@use "sass:map";
+$primary: (
+    100: #E0E7E1,
+    200: #C1CFC3,
+    400: #3C493F, // Основной оттенок
+    600: #2E3A30,
+    800: #202B21
+) !default;
+
+$secondary: (
+    100: #E8EBEA,
+    200: #D1D7D5,
+    400: #7E8D85, // Основной оттенок
+    600: #626F68,
+    800: #46514B
+) !default;
+
+$background: (
+    100: #FFFFFF,
+    200: #F8FCFA,
+    400: #F0F7F4, // Основной оттенок
+    600: #D8E5E0,
+    800: #C0D3CC
+) !default;
+
+$error: (
+    100: #FFCDD2,
+    200: #EF9A9A,
+    400: #E53935, // Основной оттенок
+    600: #D32F2F,
+    800: #C62828
+) !default;
+
+
+
+
+@function color($color-name, $shade: 400) {
+    @return map.get($color-name, $shade);
+}

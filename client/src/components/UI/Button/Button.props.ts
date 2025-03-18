@@ -7,4 +7,5 @@ export interface ButtonProps {
     onClick?: () => void
     loadingText?: string
     type?: "button" | "reset" | "submit"
+    tooltip? : string
 }

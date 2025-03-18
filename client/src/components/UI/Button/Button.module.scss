@@ -1,0 +1,53 @@
+.button {
+    position: relative;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+    &:not(:disabled):hover {
+        background-color: #0070e8;
+    }
+
+    &--with-tooltip {
+        &::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            font-size: 14px;
+            white-space: nowrap;
+            border-radius: 4px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            pointer-events: none;
+        }
+
+        &[data-tooltip-position="top"]::after {
+            bottom: 100%; // Подсказка сверху
+            margin-bottom: 8px;
+        }
+
+        &[data-tooltip-position="bottom"]::after {
+            top: 100%; // Подсказка снизу
+            margin-top: 8px;
+        }
+
+        &:hover::after {
+            opacity: 1; // Показываем подсказку
+            visibility: visible;
+        }
+    }
+}
