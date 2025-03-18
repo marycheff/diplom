@@ -1,10 +1,10 @@
+import Input from "@/components/ui/Input/Input"
 import { FC } from "react"
 
 type Answer = {
     text: string
     isCorrect: boolean
 }
-
 type AnswersListProps = {
     answers: Answer[]
     handleAnswerChange: (index: number, value: string) => void
@@ -12,7 +12,6 @@ type AnswersListProps = {
     removeAnswer: (index: number) => void
     addAnswer: () => void
 }
-
 const AnswersList: FC<AnswersListProps> = ({
     answers,
     handleAnswerChange,
@@ -25,7 +24,9 @@ const AnswersList: FC<AnswersListProps> = ({
             <h3>Ответы</h3>
             {answers.map((answer, index) => (
                 <div key={index} style={{ display: "flex", alignItems: "center" }}>
-                    <input
+                    <Input
+                        name={answer.text}
+                        clearable
                         type="text"
                         value={answer.text}
                         onChange={e => handleAnswerChange(index, e.target.value)}

@@ -98,6 +98,7 @@ const UserProfilePage = () => {
                             field !== "email" &&
                             field !== "isActivated" && (
                                 <EditableInput
+                                    name={field}
                                     key={field}
                                     label={fieldLabels[field] || field}
                                     value={userFields[field] as string}

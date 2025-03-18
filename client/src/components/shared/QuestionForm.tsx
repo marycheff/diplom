@@ -3,9 +3,9 @@ import Input from "@/components/ui/Input/Input"
 import Loader from "@/components/ui/Loader/Loader"
 import Select from "@/components/ui/Select/Select"
 import { FC } from "react"
-import { FieldErrors, UseFormHandleSubmit, UseFormRegister } from "react-hook-form"
+import { FieldErrors, RegisterOptions, UseFormRegister, UseFormSetValue } from "react-hook-form"
 
-// Update this type to match FormData in TestForm.tsx
+
 type QuestionFormFields = {
     question: string
     answer: string
@@ -14,57 +14,62 @@ type QuestionFormFields = {
 
 type QuestionFormProps = {
     register: UseFormRegister<QuestionFormFields>
-    errors?: FieldErrors<QuestionFormFields> | undefined
+    errors?: FieldErrors<QuestionFormFields>
     isLoading: boolean
-    onSubmit: ReturnType<UseFormHandleSubmit<QuestionFormFields>>
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
     isButtonDisabled: boolean
+    setValue: UseFormSetValue<QuestionFormFields>
 }
 
-const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisabled, isLoading, onSubmit }) => {
+const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisabled, isLoading, onSubmit, setValue }) => {
+    const hasText = (value: string): boolean => /[a-zA-Zа-яА-Я]/.test(value)
+    const isWithinWordCount = (value: string, min: number, max: number): boolean => {
+        const wordCount = value.trim().split(/\s+/).length
+        return wordCount >= min && wordCount <= max
+    }
+    const isWithinCharLimit = (value: string, max: number): boolean => value.length <= max
+
+    const questionValidation: RegisterOptions = {
+        required: "Вопрос обязателен",
+        validate: (value: string) => {
+            if (!hasText(value)) return "Вопрос должен содержать текст"
+            if (!isWithinCharLimit(value, 100)) return "Вопрос не должен превышать 100 символов"
+            if (!isWithinWordCount(value, 2, 10)) return "Вопрос должен содержать от 2 до 10 слов"
+            return true
+        },
+    }
+    const answerValidation: RegisterOptions = {
+        required: "Ответ обязателен",
+        validate: (value: string) => {
+            if (!isWithinCharLimit(value, 100)) return "Ответ не должен превышать 100 символов"
+            if (!isWithinWordCount(value, 1, 5)) return "Ответ должен содержать от 1 до 5 слов"
+            return true
+        },
+    }
+
     return (
         <form onSubmit={onSubmit}>
             {isLoading && <Loader />}
-            <Input<QuestionFormFields>
+            <Input
                 clearable
                 placeholder="Вопрос"
                 name="question"
                 register={register}
+                setValue={setValue}
                 errors={errors?.question}
-                validationRules={{
-                    required: "Вопрос обязателен",
-                    validate: (value: string | number) => {
-                        // Convert to string to handle both string and number types
-                        const strValue = String(value)
-                        const wordCount = strValue.trim().split(/\s+/).length
-                        const hasText = /[a-zA-Zа-яА-Я]/.test(strValue)
-
-                        if (!hasText) return "Вопрос должен содержать текст"
-                        if (strValue.length > 100) return "Вопрос не должен превышать 100 символов"
-
-                        return wordCount >= 2 && wordCount <= 10 ? true : "Вопрос должен содержать от 2 до 10 слов"
-                    },
-                }}
+                validationRules={questionValidation}
             />
-            <Input<QuestionFormFields>
+            <Input
+                clearable
                 placeholder="Введите правильный ответ"
                 name="answer"
                 register={register}
+                setValue={setValue}
                 errors={errors?.answer}
-                validationRules={{
-                    required: "Ответ обязателен",
-                    validate: (value: string | number) => {
-                        // Convert to string to handle both string and number types
-                        const strValue = String(value)
-                        const wordCount = strValue.trim().split(/\s+/).length
-
-                        if (strValue.length > 100) return "Ответ не должен превышать 100 символов"
-
-                        return wordCount >= 1 && wordCount <= 5 ? true : "Ответ должен содержать от 1 до 5 слов"
-                    },
-                }}
+                validationRules={answerValidation}
             />
             <Select name="numOfAnswers" register={register} />
-            <Button type="submit" disabled={isButtonDisabled}>
+            <Button type="submit" disabled={isButtonDisabled || isLoading}>
                 {isLoading ? "Загрузка..." : "Генерация"}
             </Button>
         </form>

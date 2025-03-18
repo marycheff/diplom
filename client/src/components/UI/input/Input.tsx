@@ -1,59 +1,85 @@
-import { ChangeEvent, useRef } from "react"
-import { FieldError, Path, PathValue, RegisterOptions, UseFormRegister, UseFormSetValue } from "react-hook-form"
+import { ChangeEvent, FC, useState } from "react"
+import { FieldError, Path, RegisterOptions, UseFormRegister, UseFormSetValue } from "react-hook-form"
 import styles from "./Input.module.css"
 
 interface InputProps<T extends Record<string, any>> {
-    name?: Path<T>
+    name: Path<T>
     placeholder?: string
     disabled?: boolean
     clearable?: boolean
-    register?: UseFormRegister<T>
-    validationRules?: RegisterOptions<T, Path<T>>
-    errors?: FieldError | undefined
     value?: string
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void
-    setValue?: UseFormSetValue<T>
+    register?: UseFormRegister<T>
+    setValue?: UseFormSetValue<T> // Добавляем setValue для управления значением
+    validationRules?: RegisterOptions<T, Path<T>>
+    errors?: FieldError | undefined
+    type?: "text" | "email" | "password"
 }
 
-const Input = <T extends Record<string, any>>({
+const Input: FC<InputProps<any>> = ({
     name,
     placeholder,
     disabled = false,
     clearable = false,
+    value: controlledValue,
+    onChange: controlledOnChange,
     register,
+    setValue, // Добавляем в пропсы
     validationRules,
     errors,
-    value,
-    onChange,
-    setValue,
-}: InputProps<T>) => {
-    const inputRef = useRef<HTMLInputElement>(null)
+    type = "text",
+}) => {
+    const [localValue, setLocalValue] = useState("")
 
     const handleClear = () => {
-        if (name && setValue) {
-            setValue(name, "" as PathValue<T, typeof name>)
-        } else if (onChange) {
-            onChange({ target: { value: "" } } as ChangeEvent<HTMLInputElement>)
+        if (controlledOnChange) {
+            controlledOnChange({ target: { value: "" } } as ChangeEvent<HTMLInputElement>)
+        }
+        if (register && setValue) {
+            setValue(name, "") // Очищаем значение через react-hook-form
+            setLocalValue("") // Обновляем локальное состояние для отображения
         }
     }
 
-    const showClearButton =
-        clearable && !disabled && ((inputRef.current?.value && register) || (value && value.length > 0))
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (controlledOnChange) {
+            controlledOnChange(e)
+        }
+        if (register) {
+            setLocalValue(e.target.value) // Только обновляем локальное состояние для отображения
+        }
+    }
+
+    const inputProps = register
+        ? {
+              ...register(name, {
+                  ...validationRules,
+                  onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                      handleChange(e)
+                  },
+              }),
+          }
+        : {
+              value: controlledValue,
+              onChange: handleChange,
+          }
+
+    const hasValue = register ? localValue.length > 0 : controlledValue !== undefined && controlledValue.length > 0
 
     return (
         <div className={styles.inputWrapper}>
             <div className={styles.inputContainer}>
                 <input
-                    type="text"
-                    {...(register && name ? register(name, validationRules) : { value, onChange })}
+                    type={type}
+                    name={name.toString()}
                     placeholder={placeholder}
                     disabled={disabled}
-                    ref={inputRef}
                     className={styles.input}
+                    {...inputProps}
                 />
-                {showClearButton && (
+                {clearable && !disabled && hasValue && (
                     <button type="button" onClick={handleClear} className={styles.clearButton}>
-                        &times;
+                        ×
                     </button>
                 )}
             </div>

@@ -24,6 +24,7 @@ const TestForm = () => {
         handleSubmit,
         formState: { errors },
         watch,
+        setValue,
     } = useForm<FormData>({
         mode: "onChange",
     })
@@ -101,6 +102,7 @@ const TestForm = () => {
             <h2>Задать вопрос нейросети</h2>
             <QuestionForm
                 register={register}
+                setValue={setValue}
                 errors={errors}
                 isLoading={isLoading}
                 isButtonDisabled={isButtonDisabled}
