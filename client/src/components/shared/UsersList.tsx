@@ -54,30 +54,33 @@ const UserManagement = () => {
                 <Loader delay={3000} />
             ) : (
                 <>
-                    <button onClick={getUsersFromStore}>
+                    <Button onClick={getUsersFromStore}>
                         {users.length === 0 ? "Получить список пользователей " : `Обновить`}
-                    </button>
-                    {users &&
-                        users.map(user => (
-                            <div key={user.id} style={{ display: "flex", alignItems: "center" }}>
-                                {user.id === currentUser?.id ? (
-                                    <div>{user.email} (Вы)</div>
-                                ) : (
-                                    <>
-                                        <div>{user.email}</div>
-                                        {user.isBlocked ? (
+                    </Button>
+                    
+                        {users &&
+                            users.map(user => (
+                                <div key={user.id} style={{ display: "flex", alignItems: "center" }}>
+                                    {user.id === currentUser?.id ? (
+                                        <div>{user.email} (Вы)</div>
+                                    ) : (
+                                        <>
+                                            <div>{user.email}</div>
+                                            {/* {user.isBlocked ? (
                                             <Button onClick={() => handleUnblockUser(user.id)}>Разблокировать</Button>
                                         ) : (
                                             <Button onClick={() => handleBlockUser(user.id)}>Заблокировать</Button>
-                                        )}
-                                        <button onClick={() => handleDeleteUser(user.id)}>Удалить</button>
-                                        <Link to={`/admin/user/${user.id}`}>
-                                            <Button>Перейти</Button>
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-                        ))}
+                                        )} */}
+                                            {/* <Button onClick={() => handleDeleteUser(user.id)}>Удалить</Button> */}
+
+                                            <Link to={`/admin/user/${user.id}`}>
+                                                <Button>Перейти</Button>
+                                            </Link>
+                                        </>
+                                    )}
+                                </div>
+                            ))}
+                    
                 </>
             )}
         </div>

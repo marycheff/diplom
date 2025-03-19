@@ -45,7 +45,6 @@ export const useUserStore = create<UserState>(set => ({
     getUserById: async id => {
         set({ isUsersFetching: true })
         try {
-            //await useAuthStore.getState().noLoadingCheckAuth()
             const response = await userService.getUserById(id)
             return response.data
         } catch (error) {

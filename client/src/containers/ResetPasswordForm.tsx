@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/Button/Button"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useResetPasswordStore } from "@/store/useResetPasswordStore"
 import { FC, useEffect, useState } from "react"
@@ -53,19 +54,19 @@ const ResetPasswordForm: FC = () => {
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                     />
-                    <button onClick={handleSendCode} disabled={isLoading || secondsLeft > 0}>
+                    <Button onClick={handleSendCode} disabled={isLoading || secondsLeft > 0}>
                         {isLoading ? "Загрузка..." : "Отправить код"}
-                    </button>
+                    </Button>
                 </div>
             ) : !isCodeVerified ? (
                 <div>
                     <input type="text" placeholder="Введите код" value={code} onChange={e => setCode(e.target.value)} />
-                    <button onClick={handleSendCode} disabled={secondsLeft > 0}>
+                    <Button onClick={handleSendCode} disabled={secondsLeft > 0}>
                         {secondsLeft > 0 ? `Запросить новый (${secondsLeft})` : "Запросить новый"}
-                    </button>
-                    <button onClick={handleVerifyCode} disabled={isLoading}>
+                    </Button>
+                    <Button onClick={handleVerifyCode} disabled={isLoading}>
                         {isLoading ? "Загрузка..." : "Подтвердить код"}
-                    </button>
+                    </Button>
                 </div>
             ) : (
                 <div>
@@ -75,9 +76,9 @@ const ResetPasswordForm: FC = () => {
                         value={newPassword}
                         onChange={e => setNewPassword(e.target.value)}
                     />
-                    <button onClick={handleResetPassword} disabled={isLoading}>
+                    <Button onClick={handleResetPassword} disabled={isLoading}>
                         {isLoading ? "Загрузка..." : "Сбросить пароль"}
-                    </button>
+                    </Button>
                 </div>
             )}
         </div>

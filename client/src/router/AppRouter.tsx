@@ -1,4 +1,3 @@
-import UserInfo from "@/components/shared/UserInfo"
 import InternetConnectionStatus from "@/components/ui/InternetConnection/InternetConnectionStatus"
 import Loader from "@/components/ui/Loader/Loader"
 import ActivationErrorPage from "@/pages/Activation/Error"
@@ -9,15 +8,15 @@ import HomePage from "@/pages/Home/HomePage"
 import LoginPage from "@/pages/Login/LoginPage"
 import SignupPage from "@/pages/Signup/SignupPage"
 import TestPage from "@/pages/Test/TestPage"
+import UserInfoPage from "@/pages/UserInfo/UserInfoPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useEffect, useState } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 
-
 interface AdminRouteProps {
-    component: React.ComponentType 
-    isAdmin: boolean 
+    component: React.ComponentType
+    isAdmin: boolean
 }
 
 // Компонент-обертка для маршрутов администраторов
@@ -65,7 +64,7 @@ const AppRouter = () => {
         <Route
             key="admin-user"
             path="/admin/user/:userId"
-            element={<AdminRoute component={UserInfo} isAdmin={isAdmin} />}
+            element={<AdminRoute component={UserInfoPage} isAdmin={isAdmin} />}
         />,
     ]
 

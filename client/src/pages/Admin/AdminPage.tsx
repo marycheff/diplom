@@ -2,29 +2,12 @@ import { useNavigate } from "react-router-dom"
 
 import TestManagement from "@/components/shared/TestManagement"
 import UserManagement from "@/components/shared/UsersList"
+import BackButton from "@/components/ui/Button/BackButton/BackButton"
 
 const AdminPage = () => {
-    // const navigate = useNavigate()
-    // const { isLoading } = useUserStore()
-
-    // return (
-    //     <div>
-    //         {isLoading ? (
-    //             <Loader delay={300} />
-    //         ) : (
-    //             <>
-    //                 <button onClick={() => navigate(-1)}>Назад</button>
-    //                 <UserManagement />
-    //                 <TestManagement />
-    //             </>
-    //         )}
-    //     </div>
-    // )
-    const navigate = useNavigate()
-
     return (
         <div>
-            <button onClick={() => navigate(-1)}>Назад</button>
+            <BackButton />
             <UserManagement />
             <TestManagement />
         </div>

@@ -1,13 +1,13 @@
+import UserInfo from "@/components/shared/UserInfo"
 import BackButton from "@/components/ui/Button/BackButton/BackButton"
-import TestForm from "../../components/shared/TestForm"
 
-const TestPage = () => {
+const UserInfoPage = () => {
     return (
         <div>
             <BackButton />
-            <TestForm />
+            <UserInfo />
         </div>
     )
 }
 
-export default TestPage
+export default UserInfoPage

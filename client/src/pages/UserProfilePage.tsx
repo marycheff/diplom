@@ -1,6 +1,6 @@
+import BackButton from "@/components/ui/Button/BackButton/BackButton"
 import { EditableInput } from "@/components/ui/Input"
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import Loader from "../components/ui/Loader/Loader"
 import UpdatePasswordForm from "../containers/UpdatePasswordForm"
 import { useAuthStore } from "../store/useAuthStore"
@@ -19,7 +19,6 @@ const fieldLabels: { [key: string]: string } = {
 const UserProfilePage = () => {
     const { user, updateActivationLink, isEmailSending } = useAuthStore()
     const { getUserById, updateUser, isLoading: isUserLoading } = useUserStore()
-    const navigate = useNavigate()
     const [userFields, setUserFields] = useState<UserFields>({})
     const [initialUserFields, setInitialUserFields] = useState<UserFields>({})
     const [isEditingFields, setIsEditingFields] = useState<{ [key: string]: boolean }>({})
@@ -81,7 +80,7 @@ const UserProfilePage = () => {
     return (
         <div style={{ position: "relative" }}>
             {isUserLoading && <Loader delay={300} />}
-            <button onClick={() => navigate(-1)}>Назад</button>
+            <BackButton />
             {userFields ? (
                 <div>
                     <label>Электронная почта: {userFields.email}</label>

@@ -20,12 +20,20 @@ const UserInfo = () => {
 
     const { getUserById, isLoading, blockUser, unblockUser, deleteUser, isUsersFetching } = useUserStore()
     const [user, setUser] = useState<UserDTO>({} as UserDTO)
+    const [isLocalLoading, setIsLocalLoading] = useState(true)
     const { user: currentUser } = useAuthStore()
     const navigate = useNavigate()
+
     const getUserFromStore = async () => {
-        const user = await getUserById(userId)
-        if (user !== undefined) {
-            setUser(user)
+        try {
+            setIsLocalLoading(true)
+            const user = await getUserById(userId)
+            if (user !== undefined) {
+                setUser(user)
+            }
+        } catch {} 
+        finally {
+            setIsLocalLoading(false)
         }
     }
     const handleDeleteUser = async (id: string) => {
@@ -49,7 +57,9 @@ const UserInfo = () => {
     useEffect(() => {
         getUserFromStore()
     }, [])
-
+    if (isLocalLoading) {
+        return <Loader />
+    }
     if (Object.keys(user).length === 0) {
         return <div>Пользователь не найден</div>
     }
@@ -57,7 +67,7 @@ const UserInfo = () => {
     return (
         <>
             {isUsersFetching ? (
-                <Loader delay={3000} />
+                <Loader />
             ) : (
                 user && (
                     <div>

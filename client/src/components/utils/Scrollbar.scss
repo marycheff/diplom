@@ -1,0 +1,44 @@
+// Переменные для скроллбара
+$scrollbar-width: 10px;
+$track-bg: rgba(241, 241, 241, 0.5);
+$track-bg-hover: #f1f1f1;
+$thumb-bg: #888;
+$thumb-bg-hover: #555;
+$thumb-bg-active: #333;
+$corner-bg: rgba(241, 241, 241, 0.5);
+
+// Стили для скроллбара
+:root {
+    --scrollbar-width: #{$scrollbar-width}; // Используем интерполяцию для CSS-переменной
+}
+
+::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+    background: $track-bg;
+    border-radius: 10px;
+
+    &:hover {
+        background: $track-bg-hover;
+    }
+}
+
+::-webkit-scrollbar-thumb {
+    background: $thumb-bg;
+    border-radius: 10px;
+    border: 3px solid $track-bg;
+
+    &:hover {
+        background: $thumb-bg-hover;
+    }
+
+    &:active {
+        background: $thumb-bg-active;
+    }
+}
+
+::-webkit-scrollbar-corner {
+    background: $corner-bg;
+}

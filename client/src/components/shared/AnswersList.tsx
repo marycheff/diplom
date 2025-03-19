@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/Button/Button"
+import Checkbox from "@/components/ui/Checkbox/Checkbox"
 import { Input } from "@/components/ui/Input"
 import { FC } from "react"
 
@@ -5,7 +7,7 @@ type Answer = {
     text: string
     isCorrect: boolean
 }
-type AnswersListProps = {
+interface AnswersListProps {
     answers: Answer[]
     handleAnswerChange: (index: number, value: string) => void
     handleCorrectChange: (index: number) => void
@@ -32,16 +34,19 @@ const AnswersList: FC<AnswersListProps> = ({
                         onChange={e => handleAnswerChange(index, e.target.value)}
                         placeholder={`Ответ ${index + 1}`}
                     />
-                    <input type="checkbox" checked={answer.isCorrect} onChange={() => handleCorrectChange(index)} />
+                    {/* <input type="checkbox" checked={answer.isCorrect} onChange={() => handleCorrectChange(index)} /> */}
+                    <Checkbox
+                        id={`answer-${index}`}
+                        checked={answer.isCorrect}
+                        onChange={() => handleCorrectChange(index)}
+                    />
 
-                    <button type="button" disabled={answer.isCorrect} onClick={() => removeAnswer(index)}>
+                    <Button disabled={answer.isCorrect} onClick={() => removeAnswer(index)}>
                         &times;
-                    </button>
+                    </Button>
                 </div>
             ))}
-            <button type="button" onClick={addAnswer}>
-                +
-            </button>
+            <Button onClick={addAnswer}>+</Button>
         </div>
     )
 }

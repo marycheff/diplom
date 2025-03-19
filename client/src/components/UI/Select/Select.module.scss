@@ -22,17 +22,18 @@
         background: #ffffff;
         position: relative;
         cursor: pointer;
-        color: #7e8d85; // grey3
+        color: #7e8d85;
+        
         // display: inline-flex;
         &.error {
-            border: 1px solid #e53935; // error
+            border: 1px solid #e53935;
         }
 
         &:not(.error) {
-            border: 1px solid #e0e0e0; // grey6
+            border: 1px solid #e0e0e0;
 
             &:focus {
-                border: 1px solid #3c493f; // primary1
+                border: 1px solid #3c493f;
             }
         }
     }
@@ -87,13 +88,13 @@
         display: block;
         padding: 5px 8px;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.1s;
         border-radius: 6px;
         color: #7e8d85; // grey3
         font-size: 14px;
         line-height: 14px;
         margin-bottom: 12px;
-        height: 32px;
+        // height: 32px;
 
         &.selected {
             background-color: #e0f0e0; // primary5

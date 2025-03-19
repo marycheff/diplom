@@ -72,7 +72,7 @@ const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisable
                 register={register}
                 label="Количество ответов для генерации"
                 name="numOfAnswers"
-                options={[{ value: "111111111" }, { value: "2" }, { value: "3" }, { value: "4" }]}
+                options={[{ value: "1" }, { value: "2" }, { value: "3" }, { value: "4" }]}
                 value="1"
             />
             <Button type="submit" disabled={isButtonDisabled || isLoading}>
