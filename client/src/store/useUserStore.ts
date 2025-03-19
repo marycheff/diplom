@@ -20,8 +20,9 @@ export const useUserStore = create<UserState>(set => ({
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
             throw error
+        } finally {
+            set({ isLoading: false })
         }
-        set({ isLoading: false })
     },
 
     getUsers: async () => {
@@ -36,7 +37,6 @@ export const useUserStore = create<UserState>(set => ({
                 toast.error("Неизвестная ошибка, перезагрузите страницу")
             }
             throw error
-
         } finally {
             set({ isUsersFetching: false })
         }

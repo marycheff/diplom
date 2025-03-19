@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button/Button"
+import { Button } from "@/components/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/components/ui/Input"
 import ResetPasswordForm from "@/containers/ResetPasswordForm"
 import { useAuthStore } from "@/store/useAuthStore"
@@ -6,7 +6,7 @@ import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
 
-type LoginFormData = {
+export type LoginFormData = {
     email: string
     password: string
 }
@@ -50,7 +50,13 @@ const LoginPage = () => {
                         },
                     }}
                 />
-                <PasswordInput name="password" register={register} setValue={setValue} errors={errors.password} />
+                <PasswordInput
+                    name="password"
+                    register={register}
+                    setValue={setValue}
+                    errors={errors.password}
+                    noValidation
+                />
                 <Button type="submit" isLoading={isLoading}>
                     Вход
                 </Button>

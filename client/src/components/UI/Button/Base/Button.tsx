@@ -1,4 +1,4 @@
-import { ButtonProps } from "@/components/ui/Button/Button.props"
+import { ButtonProps } from "@/components/ui/Button/Base/Button.props"
 import { FC, useState } from "react"
 import styles from "./Button.module.scss"
 
@@ -9,7 +9,7 @@ export const Button: FC<ButtonProps> = ({
     disabled,
     onClick,
     loadingText = "Загрузка...",
-    tooltip, 
+    tooltip,
 }) => {
     const [tooltipPosition, setTooltipPosition] = useState<"top" | "bottom">("top")
 
@@ -34,12 +34,13 @@ export const Button: FC<ButtonProps> = ({
             type={type}
             disabled={isLoading || disabled}
             onClick={handleClick}
-            onMouseEnter={handleMouseEnter} 
+            onMouseEnter={handleMouseEnter}
             className={`${styles.button} ${tooltip ? styles["button--with-tooltip"] : ""}`}
             data-tooltip={tooltip}
-            data-tooltip-position={tooltipPosition} 
-        >
+            data-tooltip-position={tooltipPosition}>
             {isLoading ? loadingText : children}
         </button>
     )
 }
+
+export default Button

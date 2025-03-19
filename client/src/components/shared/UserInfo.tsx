@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button/Button"
+import { Button } from "@/components/ui/Button"
 import Loader from "@/components/ui/Loader/Loader"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useUserStore } from "@/store/useUserStore"
@@ -31,8 +31,8 @@ const UserInfo = () => {
             if (user !== undefined) {
                 setUser(user)
             }
-        } catch {} 
-        finally {
+        } catch {
+        } finally {
             setIsLocalLoading(false)
         }
     }

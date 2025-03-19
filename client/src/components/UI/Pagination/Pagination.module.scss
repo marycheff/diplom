@@ -1,0 +1,18 @@
+.pageWrapper{
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+.page{
+    padding: 5px 12px 5px 12px;
+    border: 2px solid teal;
+    cursor: pointer;
+}
+.pageCurrent{
+    background-color: #00a9a9;
+    color: white;
+}
+.page:hover{
+    background-color: #00a9a9;
+    color: white;
+}

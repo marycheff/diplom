@@ -1,32 +1,56 @@
-import { Button } from "@/components/ui/Button/Button"
+import { Button } from "@/components/ui/Button"
+import { PasswordInput } from "@/components/ui/Input"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useUserStore } from "@/store/useUserStore"
-import { useState } from "react"
+import { SubmitHandler, useForm } from "react-hook-form"
+
+export type ChangePasswordFormData = {
+    oldPassword: string
+    newPassword: string
+}
 
 const UpdatePasswordForm = () => {
-    const [oldPassword, setOldPassword] = useState<string>("")
-    const [newPassword, setNewPassword] = useState<string>("")
     const { user } = useAuthStore()
     const { updatePassword, isLoading } = useUserStore()
+
+    const {
+        register,
+        formState: { errors },
+        setValue,
+        handleSubmit,
+    } = useForm<ChangePasswordFormData>({
+        mode: "onChange",
+    })
+
+    const onSubmit: SubmitHandler<ChangePasswordFormData> = async data => {
+        console.log(data.oldPassword)
+        await updatePassword(user?.email!, data.oldPassword, data.newPassword)
+    }
+
     return (
         <div>
             <h1>Обновить пароль</h1>
-            <input
-                onChange={e => setOldPassword(e.target.value)}
-                value={oldPassword}
-                type="password"
-                placeholder="Старый пароль"
-            />
-            <input
-                onChange={e => setNewPassword(e.target.value)}
-                value={newPassword}
-                type="password"
-                placeholder="Новый пароль"
-            />
 
-            <Button onClick={() => updatePassword(user?.email!, oldPassword, newPassword)} isLoading={isLoading}>
-                Обновить пароль
-            </Button>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <PasswordInput
+                    name="oldPassword"
+                    register={register}
+                    setValue={setValue}
+                    errors={errors.oldPassword}
+                    placeholder="Старый пароль"
+                    noValidation
+                />
+                <PasswordInput
+                    name="newPassword"
+                    register={register}
+                    setValue={setValue}
+                    errors={errors.newPassword}
+                    placeholder="Новый пароль"
+                />
+                <Button type="submit" isLoading={isLoading}>
+                    Обновить пароль
+                </Button>
+            </form>
         </div>
     )
 }

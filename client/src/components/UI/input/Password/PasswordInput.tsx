@@ -12,22 +12,27 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
     setValue,
     errors,
     clearable = false,
+    noValidation = false, // Новая опция
 }) => {
     const [localValue, setLocalValue] = useState("")
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
-    const passwordValidation: RegisterOptions = {
-        required: "Пароль обязателен",
-        minLength: {
-            value: 3,
-            message: "Пароль должен содержать минимум 3 символа",
-        },
-        maxLength: {
-            value: 32,
-            message: "Пароль не должен превышать 32 символа",
-        },
-    }
+    // Делаем валидацию опциональной
+    const passwordValidation: RegisterOptions = noValidation
+        ? { required: "Пароль обязателен"}
+        : {
+              required: "Пароль обязателен",
+              minLength: {
+                  value: 3,
+                  message: "Пароль должен содержать минимум 3 символа",
+              },
+              maxLength: {
+                  value: 32,
+                  message: "Пароль не должен превышать 32 символа",
+              },
+          }
 
+    // Остальной код без изменений
     const handleClear = () => {
         setValue(name, "")
         setLocalValue("")
@@ -71,6 +76,7 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
                     </button>
                 )}
             </div>
+            {/* Показываем ошибки только если валидация включена */}
             {errors && <p className={styles.error}>{errors.message}</p>}
         </div>
     )

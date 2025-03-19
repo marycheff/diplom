@@ -1,3 +1,4 @@
+import Pagination from "@/components/ui/Pagination/Pagination"
 import { TestDTO } from "@/types/testTypes"
 import { FC } from "react"
 interface TestsListProps {
@@ -42,6 +43,7 @@ const TestsList: FC<TestsListProps> = ({ tests }) => {
                             </tbody>
                         </table>
                     </div>
+                    <Pagination page={2} totalPages={3} changePage={() => {}} />
                 </div>
             )}
         </>

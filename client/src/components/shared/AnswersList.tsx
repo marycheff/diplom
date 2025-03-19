@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button/Button"
+import { Button } from "@/components/ui/Button"
 import Checkbox from "@/components/ui/Checkbox/Checkbox"
 import { Input } from "@/components/ui/Input"
 import { FC } from "react"

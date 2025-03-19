@@ -1,8 +1,6 @@
-import { useNavigate } from "react-router-dom"
-
 import TestManagement from "@/components/shared/TestManagement"
 import UserManagement from "@/components/shared/UsersList"
-import BackButton from "@/components/ui/Button/BackButton/BackButton"
+import { BackButton } from "@/components/ui/Button"
 
 const AdminPage = () => {
     return (

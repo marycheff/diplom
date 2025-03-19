@@ -1,5 +1,5 @@
 import TestsList from "@/components/shared/TestsList"
-import { Button } from "@/components/ui/Button/Button"
+import { Button } from "@/components/ui/Button"
 import Loader from "@/components/ui/Loader/Loader"
 import { useTestStore } from "@/store/useTestStore"
 import { TestDTO } from "@/types/testTypes"

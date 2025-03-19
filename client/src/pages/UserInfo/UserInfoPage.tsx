@@ -1,5 +1,5 @@
 import UserInfo from "@/components/shared/UserInfo"
-import BackButton from "@/components/ui/Button/BackButton/BackButton"
+import { BackButton } from "@/components/ui/Button"
 
 const UserInfoPage = () => {
     return (

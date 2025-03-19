@@ -8,4 +8,5 @@ export interface PasswordInputProps<T extends Record<string, any>> {
     setValue: UseFormSetValue<T>
     errors?: FieldError | undefined
     clearable?: boolean
+    noValidation? : boolean
 }

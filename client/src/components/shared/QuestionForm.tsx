@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button/Button"
+import { Button } from "@/components/ui/Button"
 import ValidatedInput from "@/components/ui/Input/Validated/ValidatedInput"
 
 import Loader from "@/components/ui/Loader/Loader"

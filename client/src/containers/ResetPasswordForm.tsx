@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button/Button"
+import { Button } from "@/components/ui/Button"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useResetPasswordStore } from "@/store/useResetPasswordStore"
 import { FC, useEffect, useState } from "react"

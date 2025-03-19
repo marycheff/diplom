@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button/Button"
+import { Button } from "@/components/ui/Button"
 import Loader from "@/components/ui/Loader/Loader"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useUserStore } from "@/store/useUserStore"
@@ -57,30 +57,29 @@ const UserManagement = () => {
                     <Button onClick={getUsersFromStore}>
                         {users.length === 0 ? "Получить список пользователей " : `Обновить`}
                     </Button>
-                    
-                        {users &&
-                            users.map(user => (
-                                <div key={user.id} style={{ display: "flex", alignItems: "center" }}>
-                                    {user.id === currentUser?.id ? (
-                                        <div>{user.email} (Вы)</div>
-                                    ) : (
-                                        <>
-                                            <div>{user.email}</div>
-                                            {/* {user.isBlocked ? (
+
+                    {users &&
+                        users.map(user => (
+                            <div key={user.id} style={{ display: "flex", alignItems: "center" }}>
+                                {user.id === currentUser?.id ? (
+                                    <div>{user.email} (Вы)</div>
+                                ) : (
+                                    <>
+                                        <div>{user.email}</div>
+                                        {/* {user.isBlocked ? (
                                             <Button onClick={() => handleUnblockUser(user.id)}>Разблокировать</Button>
                                         ) : (
                                             <Button onClick={() => handleBlockUser(user.id)}>Заблокировать</Button>
                                         )} */}
-                                            {/* <Button onClick={() => handleDeleteUser(user.id)}>Удалить</Button> */}
+                                        {/* <Button onClick={() => handleDeleteUser(user.id)}>Удалить</Button> */}
 
-                                            <Link to={`/admin/user/${user.id}`}>
-                                                <Button>Перейти</Button>
-                                            </Link>
-                                        </>
-                                    )}
-                                </div>
-                            ))}
-                    
+                                        <Link to={`/admin/user/${user.id}`}>
+                                            <Button>Перейти</Button>
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
+                        ))}
                 </>
             )}
         </div>

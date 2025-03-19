@@ -1,4 +1,4 @@
-import BackButton from "@/components/ui/Button/BackButton/BackButton"
+import { BackButton, Button } from "@/components/ui/Button"
 import { EditableInput } from "@/components/ui/Input"
 import { useEffect, useState } from "react"
 import Loader from "../components/ui/Loader/Loader"
@@ -107,11 +107,11 @@ const UserProfilePage = () => {
                             )
                     )}
 
-                    <button
+                    <Button
                         onClick={handleSaveClick}
                         disabled={!isFormChanged || Object.values(isEditingFields).includes(true)}>
                         Сохранить изменения
-                    </button>
+                    </Button>
 
                     <UpdatePasswordForm />
                 </div>

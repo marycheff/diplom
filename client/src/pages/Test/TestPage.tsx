@@ -1,4 +1,4 @@
-import BackButton from "@/components/ui/Button/BackButton/BackButton"
+import { BackButton } from "@/components/ui/Button"
 import TestForm from "../../components/shared/TestForm"
 
 const TestPage = () => {
