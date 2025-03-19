@@ -2,7 +2,7 @@ import { UserDTO } from "@/types/userTypes"
 
 export interface TestState {
     isTestsFetching: boolean
-    getTests: () => Promise<TestDTO[] | undefined>
+    getTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
 }
 
 export interface AnswerDTO {
@@ -17,6 +17,10 @@ export interface QuestionDTO {
     order?: number
     answers: AnswerDTO[]
     type: QuestionType
+}
+export interface TestsListDTO {
+    tests: TestDTO[]
+    total: number
 }
 
 export interface TestDTO {

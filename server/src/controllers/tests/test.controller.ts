@@ -62,7 +62,13 @@ class TestController {
     }
     async getAllTests(req: Request, res: Response, next: NextFunction) {
         try {
-            const tests = await testService.getAllTests()
+            const page = parseInt(req.query.page as string) || 1
+            const limit = parseInt(req.query.limit as string) || 10
+
+            if (page < 1 || limit < 1) {
+                throw new Error("Page and limit must be positive numbers")
+            }
+            const tests = await testService.getAllTests(page, limit)
             res.json(tests)
         } catch (error) {
             next(error)
@@ -87,7 +93,6 @@ class TestController {
             next(error)
         }
     }
-   
 }
 
 export default new TestController()

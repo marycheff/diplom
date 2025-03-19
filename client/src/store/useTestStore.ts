@@ -6,10 +6,10 @@ import { create } from "zustand"
 
 export const useTestStore = create<TestState>(set => ({
     isTestsFetching: false,
-    getTests: async () => {
+    getTests: async (page = 1, limit = 10) => {
         try {
             set({ isTestsFetching: true })
-            const response = await testService.getTests()
+            const response = await testService.getTests(page, limit)
             return response.data
         } catch (error) {
             if (error instanceof AxiosError) {

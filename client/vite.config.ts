@@ -1,4 +1,5 @@
 import react from "@vitejs/plugin-react"
+import path from "path"
 import { defineConfig } from "vite"
 import tsconfigPaths from "vite-tsconfig-paths"
 export default defineConfig({
@@ -15,6 +16,20 @@ export default defineConfig({
     build: {
         outDir: "dist",
         sourcemap: true,
+    },
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "./src"), // Корень src
+            "@components": path.resolve(__dirname, "./src/components"),
+            "@styles": path.resolve(__dirname, "./src/styles"),
+        },
+    },
+    css: {
+        preprocessorOptions: {
+            scss: {
+                additionalData: `@use "@styles/variables" as *;`, // Автоматически добавляет импорт в каждый SCSS-файл
+            },
+        },
     },
     base: "./",
 })

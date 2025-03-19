@@ -1,19 +1,23 @@
-import Pagination from "@/components/ui/Pagination/Pagination"
 import { TestDTO } from "@/types/testTypes"
 import { FC } from "react"
+import styles from "./TestList.module.scss"
+
 interface TestsListProps {
     tests: TestDTO[]
+    total: number
 }
-const TestsList: FC<TestsListProps> = ({ tests }) => {
+
+const TestsList: FC<TestsListProps> = ({ tests, total }) => {
     return (
         <>
             {tests && tests.length > 0 && (
-                <div className="tests-data">
-                    <div className="tests-count">
-                        <h3>Тестов: {tests.length}</h3>
+                <div className={styles.testsData}>
+                    <div className={styles.testsCount}>
+                        <h3>Всего: {total}</h3>
+                        <h3>На странице: {tests.length}</h3>
                     </div>
 
-                    <div className="table-responsive">
+                    <div className={styles.tableResponsive}>
                         <table>
                             <thead>
                                 <tr>
@@ -33,7 +37,7 @@ const TestsList: FC<TestsListProps> = ({ tests }) => {
                                         <td>{test.id}</td>
                                         <td>{test.authorId}</td>
                                         <td>{test.title}</td>
-                                        <td>{test.description || "Нет описания"}</td>
+                                        <td>{test.description || "–"}</td>
                                         <td>{test.questions ? test.questions.length : 0}</td>
                                         <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
                                         <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td>
@@ -43,7 +47,6 @@ const TestsList: FC<TestsListProps> = ({ tests }) => {
                             </tbody>
                         </table>
                     </div>
-                    <Pagination page={2} totalPages={3} changePage={() => {}} />
                 </div>
             )}
         </>

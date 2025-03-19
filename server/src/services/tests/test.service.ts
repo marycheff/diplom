@@ -123,8 +123,13 @@ class TestService {
     }
 
     // Получение всех тестов
-    async getAllTests(): Promise<TestDTO[]> {
+    // server/src/services/testService.ts
+    async getAllTests(page: number = 1, limit: number = 10): Promise<{ tests: TestDTO[]; total: number }> {
+        const skip = (page - 1) * limit
+        const total = await prisma.test.count()
         const tests = await prisma.test.findMany({
+            skip, 
+            take: limit, 
             include: {
                 questions: {
                     include: {
@@ -135,7 +140,11 @@ class TestService {
             },
             orderBy: { createdAt: "desc" },
         })
-        return tests.map(test => mapToResponseTest(test))
+
+        return {
+            tests: tests.map(test => mapToResponseTest(test)),
+            total, 
+        }
     }
     // Удаление теста
     async deleteTest(testId: string): Promise<void> {
