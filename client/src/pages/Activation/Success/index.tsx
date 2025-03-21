@@ -1,17 +1,18 @@
+import { Button } from "@/components/ui/Button"
 import { useNavigate } from "react-router-dom"
 
 const ActivationSuccessPage = () => {
     const navigate = useNavigate()
 
     const handleLoginClick = () => {
-        navigate("/login") // Перенаправляем на страницу входа
+        navigate("/login") 
     }
 
     return (
         <div>
             <h1>Активация прошла успешно!</h1>
             <p>Пожалуйста, войдите в систему снова, чтобы продолжить.</p>
-            <button onClick={handleLoginClick}>Войти</button>
+            <Button onClick={handleLoginClick}>Войти</Button>
         </div>
     )
 }

@@ -1,5 +1,11 @@
 import { Role, User } from "@prisma/client"
 
+
+export interface UsersListDTO{
+    users: UserDTO[]
+    total: number
+}
+
 export interface UserDTO {
     id: string
     email: string

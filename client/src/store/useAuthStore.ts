@@ -44,7 +44,6 @@ export const useAuthStore = create<AuthState>(set => ({
                 user: response.data.user,
                 isAuth: true,
             })
-            toast.success("Успешная регистрация")
         } catch (error) {
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data?.message || "Неизвестная ошибка")

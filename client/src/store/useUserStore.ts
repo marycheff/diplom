@@ -25,10 +25,10 @@ export const useUserStore = create<UserState>(set => ({
         }
     },
 
-    getUsers: async () => {
+    getUsers: async (page = 1, limit = 10) => {
         set({ isUsersFetching: true })
         try {
-            const response = await userService.getUsers()
+            const response = await userService.getUsers(page, limit)
             return response.data
         } catch (error) {
             if (error instanceof AxiosError) {

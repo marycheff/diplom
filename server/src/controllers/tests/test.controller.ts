@@ -66,7 +66,7 @@ class TestController {
             const limit = parseInt(req.query.limit as string) || 10
 
             if (page < 1 || limit < 1) {
-                throw new Error("Page and limit must be positive numbers")
+                throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
             }
             const tests = await testService.getAllTests(page, limit)
             res.json(tests)

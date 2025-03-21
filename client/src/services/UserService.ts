@@ -1,11 +1,16 @@
 import { AuthResponse } from "@/types/authTypes"
-import { UpdateUser, UserDTO } from "@/types/userTypes"
+import { UpdateUser, UserDTO, UsersListDTO } from "@/types/userTypes"
 import { AxiosResponse } from "axios"
 import axiosInstance from "../axios"
 
 class UserService {
-    getUsers(): Promise<AxiosResponse<UserDTO[]>> {
-        return axiosInstance.get<UserDTO[]>("/users")
+    getUsers(page = 1, limit = 10): Promise<AxiosResponse<UsersListDTO>> {
+        return axiosInstance.get<UsersListDTO>("/users", {
+            params: {
+                page,
+                limit,
+            },
+        })
     }
 
     updatePassword(email: string, oldPassword: string, newPassword: string): Promise<AxiosResponse<AuthResponse>> {

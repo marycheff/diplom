@@ -1,7 +1,6 @@
-import TestsSkeleton from "@/components/skeleton/TestSkeleton/TestsSkeleton"
 import TestsList from "@/components/shared/TestList/TestsList"
+import TestsListSkeleton from "@/components/skeleton/TestsListSkeleton/TestsSkeleton"
 import { Button } from "@/components/ui/Button"
-import Loader from "@/components/ui/Loader/Loader"
 import Pagination from "@/components/ui/Pagination/Pagination"
 import { useTestStore } from "@/store/useTestStore"
 import { TestDTO } from "@/types/testTypes"
@@ -16,12 +15,11 @@ const TestManagement = () => {
 
     const getTestsFromStore = async (currentPage: number = page) => {
         const data = await getTests(currentPage, limit)
-        console.log(data?.total)
-        console.log(data)
         if (data) {
             setTests(data.tests)
             setTotal(data.total)
         }
+        return
     }
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -30,6 +28,7 @@ const TestManagement = () => {
     useEffect(() => {
         getTestsFromStore(page)
     }, [page])
+    
     const totalPages = Math.ceil(total / limit)
     return (
         <section className="tests-section">
@@ -41,7 +40,7 @@ const TestManagement = () => {
             </div>
             {isTestsFetching ? (
                 // <Loader fullScreen={false} />
-                <TestsSkeleton/>
+                <TestsListSkeleton />
             ) : (
                 <>
                     <TestsList tests={tests} total={total} />

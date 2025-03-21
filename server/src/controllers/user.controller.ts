@@ -7,7 +7,12 @@ import { isValidObjectId } from "@/utils/validator"
 class UserController {
     async getUsers(req: Request, res: Response, next: NextFunction) {
         try {
-            const users = await userService.getUsers()
+            const page = parseInt(req.query.page as string) || 1
+            const limit = parseInt(req.query.limit as string) || 10
+            if (page < 1 || limit < 1) {
+                throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
+            }
+            const users = await userService.getUsers(page, limit)
             res.json(users)
         } catch (e) {
             next(e)

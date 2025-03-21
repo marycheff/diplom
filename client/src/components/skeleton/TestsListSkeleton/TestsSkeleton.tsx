@@ -1,9 +1,9 @@
+import stylesPagination from "@/components/ui/Pagination/Pagination.module.scss"
 import { TestDTO } from "@/types/testTypes"
 import { FC } from "react"
-import stylesPagination from "@/components/ui/Pagination/Pagination.module.scss"
-import "./Skeleton.scss"
+import "./TestsListSkeleton.scss"
 
-const TestsSkeleton: FC = () => {
+const TestsListSkeleton: FC = () => {
     const skeletonTests: Partial<TestDTO>[] = Array(10).fill({})
     const pagesArray = [1, 2, 3]
 
@@ -80,4 +80,4 @@ const TestsSkeleton: FC = () => {
     )
 }
 
-export default TestsSkeleton
+export default TestsListSkeleton

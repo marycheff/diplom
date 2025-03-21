@@ -85,6 +85,7 @@ const UserInfo = () => {
                                         <th>Заблокирован</th>
                                         <th>ID</th>
                                         <th>Действия</th>
+                                        <th>Роль</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -112,6 +113,7 @@ const UserInfo = () => {
                                                 Удалить
                                             </Button>
                                         </td>
+                                        <td>{user.role}</td>
                                     </tr>
                                 </tbody>
                             </table>

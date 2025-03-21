@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
-import { UpdateUserDTO, UserDTO } from "@/types/user.types"
+import { UpdateUserDTO, UserDTO, UsersListDTO } from "@/types/user.types"
 import { PrismaClient, User } from "@prisma/client"
 import bcrypt from "bcryptjs"
 
@@ -21,9 +21,18 @@ class UserService {
         }
         return mapUserToDto(user)
     }
-    async getUsers(): Promise<UserDTO[]> {
-        const users = await prisma.user.findMany()
-        return users.map(mapUserToDto)
+    async getUsers(page: number = 1, limit: number = 10): Promise<UsersListDTO> {
+        const skip = (page - 1) * limit
+        const total = await prisma.user.count()
+        const users = await prisma.user.findMany({
+            skip,
+            take: limit,
+            orderBy: { createdAt: "desc" },
+        })
+        return {
+            users: users.map(user => mapUserToDto(user)),
+            total,
+        }
     }
 
     private async checkPassword(email: string, password: string): Promise<boolean> {
@@ -93,6 +102,7 @@ class UserService {
                 })
             })
         } catch (error) {
+            console.log(error)
             throw ApiError.BadRequest("Ошибка при удалении пользователя")
         }
     }

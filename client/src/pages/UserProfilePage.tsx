@@ -18,17 +18,19 @@ const fieldLabels: { [key: string]: string } = {
 
 const UserProfilePage = () => {
     const { user, updateActivationLink, isEmailSending } = useAuthStore()
-    const { getUserById, updateUser, isLoading: isUserLoading } = useUserStore()
+    const { getUserById, updateUser, isUsersFetching } = useUserStore()
     const [userFields, setUserFields] = useState<UserFields>({})
     const [initialUserFields, setInitialUserFields] = useState<UserFields>({})
     const [isEditingFields, setIsEditingFields] = useState<{ [key: string]: boolean }>({})
     const [isFormChanged, setIsFormChanged] = useState(false)
-    const [showModal, setShowModal] = useState(false)
+
+    const [isLoadingFields, setIsLoadingFields] = useState(false)
 
     // Получение данных пользователя
     async function getUserInfo() {
         const userData = await getUserById(user?.id!)
         if (userData) {
+            setIsLoadingFields(true)
             const { id, role, isBlocked, ...fields } = userData
             setUserFields(fields)
             setInitialUserFields(fields)
@@ -37,6 +39,7 @@ const UserProfilePage = () => {
                 return acc
             }, {} as { [key: string]: boolean })
             setIsEditingFields(editingState)
+            setIsLoadingFields(false)
         }
     }
 
@@ -78,24 +81,29 @@ const UserProfilePage = () => {
     }, [userFields, initialUserFields])
 
     return (
-        <div style={{ position: "relative" }}>
-            {isUserLoading && <Loader delay={300} />}
+        <div>
             <BackButton />
-            {userFields ? (
+            {(isUsersFetching || isLoadingFields) && <Loader delay={300}/>}
+
+            {Object.keys(userFields).length === 0 && !isLoadingFields ? null : ( // Проверяем, загрузились ли данные
                 <div>
-                    <label>Электронная почта: {userFields.email}</label>
-                    <p>Почта активирована: {userFields.isActivated ? "Да" : "Нет"}</p>
-                    {!userFields.isActivated && (
-                        <button onClick={handleSendActivationLink} disabled={isEmailSending}>
+                    {userFields.email && <label>Электронная почта: {userFields.email}</label>}
+                    {userFields.isActivated !== undefined && (
+                        <p>Почта активирована: {userFields.isActivated ? "Да" : "Нет"}</p>
+                    )}
+
+                    {!userFields.isActivated && userFields.email && (
+                        <Button onClick={handleSendActivationLink} disabled={isEmailSending}>
                             {isEmailSending ? "Отправка..." : "Отправить ссылку еще раз"}
-                        </button>
+                        </Button>
                     )}
 
                     {/* Генерация полей для редактирования */}
                     {Object.keys(userFields).map(
                         field =>
                             field !== "email" &&
-                            field !== "isActivated" && (
+                            field !== "isActivated" &&
+                            userFields[field] !== undefined && (
                                 <EditableInput
                                     name={field}
                                     key={field}
@@ -114,33 +122,6 @@ const UserProfilePage = () => {
                     </Button>
 
                     <UpdatePasswordForm />
-                </div>
-            ) : (
-                <Loader />
-            )}
-
-            {/* Модальное окно */}
-            {showModal && (
-                <div
-                    style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}>
-                    <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "5px" }}>
-                        <h2>Письмо отправлено!</h2>
-                        <p>
-                            Мы отправили письмо для активации на ваш email. Пожалуйста, проверьте почту. Эту вкладку
-                            можно закрыть.
-                        </p>
-                        <button onClick={() => setShowModal(false)}>Закрыть</button>
-                    </div>
                 </div>
             )}
         </div>

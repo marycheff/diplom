@@ -11,17 +11,21 @@ import TestPage from "@/pages/Test/TestPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import { Navigate, Route } from "react-router-dom"
 
+const commonRoutes = [
+    <Route key="activationError" path="/activation-error" element={<ActivationErrorPage />} />,
+    <Route key="activationSuccess" path="/activation-success" element={<ActivationSuccessPage />} />,
+]
 export const authenticatedRoutes = [
     <Route key="home" path="/home" element={<HomePage />} />,
     <Route key="test" path="/test" element={<TestPage />} />,
     <Route key="profile" path="/profile" element={<UserProfilePage />} />,
+    ...commonRoutes,
 ]
 
 export const publicRoutes = [
     <Route key="login" path="/login" element={<LoginPage />} />,
     <Route key="signup" path="/login" element={<SignupPage />} />,
-    <Route key="activationError" path="/activation-error" element={<ActivationErrorPage />} />,
-    <Route key="activationSuccess" path="/activation-success" element={<ActivationSuccessPage />} />,
+    ...commonRoutes,
 ]
 
 export const adminRoutes = (isAdmin: boolean) => [

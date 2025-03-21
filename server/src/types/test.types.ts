@@ -7,6 +7,10 @@ export interface AnswerDTO {
     text: string
     isCorrect: boolean
 }
+export interface TestsListDTO {
+    tests: TestDTO[]
+    total: number
+}
 
 export interface QuestionDTO {
     id: string

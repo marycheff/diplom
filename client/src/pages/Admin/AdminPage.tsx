@@ -1,13 +1,12 @@
-import TestManagement from "@/components/shared/TestManagement"
-import UserManagement from "@/components/shared/UsersList"
+import UsersList from "@/components/shared/UserList/UsersList"
 import { BackButton } from "@/components/ui/Button"
 
 const AdminPage = () => {
     return (
         <div>
             <BackButton />
-            <UserManagement />
-            <TestManagement />
+            <UsersList />
+            {/* <TestManagement /> */}
         </div>
     )
 }

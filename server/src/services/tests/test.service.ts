@@ -1,7 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
 import { mapToResponseTest } from "@/services/mappers/test.mappers"
-import { TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
+import { TestDTO, TestSettingsDTO, TestsListDTO, UpdateTestDTO } from "@/types/test.types"
 import { isValidObjectId } from "@/utils/validator"
 import { Answer, PrismaClient, Question } from "@prisma/client"
 
@@ -124,12 +124,12 @@ class TestService {
 
     // Получение всех тестов
     // server/src/services/testService.ts
-    async getAllTests(page: number = 1, limit: number = 10): Promise<{ tests: TestDTO[]; total: number }> {
+    async getAllTests(page: number = 1, limit: number = 10): Promise<TestsListDTO> {
         const skip = (page - 1) * limit
         const total = await prisma.test.count()
         const tests = await prisma.test.findMany({
-            skip, 
-            take: limit, 
+            skip,
+            take: limit,
             include: {
                 questions: {
                     include: {
@@ -143,7 +143,7 @@ class TestService {
 
         return {
             tests: tests.map(test => mapToResponseTest(test)),
-            total, 
+            total,
         }
     }
     // Удаление теста

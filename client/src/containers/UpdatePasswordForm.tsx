@@ -3,6 +3,7 @@ import { PasswordInput } from "@/components/ui/Input"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useUserStore } from "@/store/useUserStore"
 import { SubmitHandler, useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 
 export type ChangePasswordFormData = {
     oldPassword: string
@@ -23,8 +24,8 @@ const UpdatePasswordForm = () => {
     })
 
     const onSubmit: SubmitHandler<ChangePasswordFormData> = async data => {
-        console.log(data.oldPassword)
         await updatePassword(user?.email!, data.oldPassword, data.newPassword)
+        toast.success("Пароль успешно изменен")
     }
 
     return (

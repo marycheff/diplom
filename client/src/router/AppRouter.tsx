@@ -56,6 +56,8 @@ const AppRouter = () => {
         <Route key="home" path="/home" element={<HomePage />} />,
         <Route key="test" path="/test" element={<TestPage />} />,
         <Route key="profile" path="/profile" element={<UserProfilePage />} />,
+        <Route key="activationError" path="/activation-error" element={<ActivationErrorPage />} />,
+        <Route key="activationSuccess" path="/activation-success" element={<ActivationSuccessPage />} />,
     ]
 
     // Маршруты для администраторов
