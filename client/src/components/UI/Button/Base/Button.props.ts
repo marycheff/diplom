@@ -8,4 +8,5 @@ export interface ButtonProps {
     loadingText?: string
     type?: "button" | "reset" | "submit"
     tooltip? : string
+    className?: string
 }

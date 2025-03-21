@@ -28,7 +28,7 @@ const TestManagement = () => {
     useEffect(() => {
         getTestsFromStore(page)
     }, [page])
-    
+
     const totalPages = Math.ceil(total / limit)
     return (
         <section className="tests-section">

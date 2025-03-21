@@ -10,6 +10,7 @@ export const Button: FC<ButtonProps> = ({
     onClick,
     loadingText = "Загрузка...",
     tooltip,
+    className,
 }) => {
     const [tooltipPosition, setTooltipPosition] = useState<"top" | "bottom">("top")
 
@@ -35,7 +36,7 @@ export const Button: FC<ButtonProps> = ({
             disabled={isLoading || disabled}
             onClick={handleClick}
             onMouseEnter={handleMouseEnter}
-            className={`${styles.button} ${tooltip ? styles["button--with-tooltip"] : ""}`}
+            className={`${styles.button} ${tooltip ? styles["button--with-tooltip"] : ""} ${className}`}
             data-tooltip={tooltip}
             data-tooltip-position={tooltipPosition}>
             {isLoading ? loadingText : children}

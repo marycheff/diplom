@@ -1,25 +1,35 @@
 .pageWrapper {
     margin-top: 30px;
     display: flex;
-    gap: 5px; // Расстояние между кнопками
+    gap: 8px; // Расстояние между кнопками
+    align-items: center;
 }
 
-.page {
-    padding: 8px 12px; // Увеличил вертикальный padding для лучшего вида
-    border: 2px solid teal;
-    border-radius: 50px; // Делает кнопки округлыми
+.navigationButtons {
+    // margin: 0 5px;
+}
+.navigationButton {
+    font-weight: bold;
+    padding: 7px 15px;
+    
+    // border-radius: 50px;
     cursor: pointer;
-    transition: all 0.3s ease; // Плавный переход для hover-эффекта
+    transition: all 0.3s ease;
+}
+.page {
+    padding: 5px 12px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: color($secondary, 200);
 }
 
 .pageCurrent {
-    background-color: #00a9a9;
+    background-color: color($secondary, 600);
     color: white;
-    border-color: #00a9a9; // Чтобы граница соответствовала фону
 }
 
 .page:hover {
-    background-color: #00a9a9;
+    background-color: color($secondary, 400);
     color: white;
-    border-color: #00a9a9;
 }

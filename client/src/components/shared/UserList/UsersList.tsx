@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/store/useAuthStore"
 import { UserDTO } from "@/types/userTypes"
 import { FC } from "react"
 import { Link } from "react-router-dom"
@@ -9,6 +10,7 @@ interface UsersListProps {
 }
 
 const UsersList: FC<UsersListProps> = ({ users, total }) => {
+    const { user: currentUser } = useAuthStore()
     return (
         <>
             {users && users.length > 0 && (
@@ -29,24 +31,26 @@ const UsersList: FC<UsersListProps> = ({ users, total }) => {
                                     <th scope="col">Отчество</th>
                                     <th scope="col">Роль</th>
                                     <th scope="col">Статус</th>
-                                    <th scope="col">Действия</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {users.map(user => (
                                     <tr key={user.id}>
-                                        <td>{user.id}</td>
+                                        <td>
+                                            {user.id === currentUser?.id ? (
+                                                user.id
+                                            ) : (
+                                                <Link to={`/admin/user/${user.id}`} className={styles.actionLink}>
+                                                    {user.id}
+                                                </Link>
+                                            )}
+                                        </td>
                                         <td>{user.email}</td>
                                         <td>{user.name || "—"}</td>
                                         <td>{user.surname || "—"}</td>
                                         <td>{user.patronymic || "—"}</td>
                                         <td>{user.role}</td>
                                         <td>{user.isBlocked ? "Заблокирован" : "Активен"}</td>
-                                        <td>
-                                            <Link to={`/admin/user/${user.id}`} className={styles.actionLink}>
-                                                Просмотр
-                                            </Link>
-                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

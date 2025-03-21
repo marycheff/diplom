@@ -1,6 +1,8 @@
+import { Button } from "@/components/ui/Button"
 import { usePagination } from "@/hooks/usePagination"
 import { FC } from "react"
 import styles from "./Pagination.module.scss"
+
 interface PaginationProps {
     totalPages: number
     page: number
@@ -11,6 +13,15 @@ const Pagination: FC<PaginationProps> = ({ totalPages, page, changePage }) => {
     let pagesArray = usePagination(totalPages)
     return (
         <div className={styles.pageWrapper}>
+            <div className={styles.navigationButtons}>
+                <Button className={styles.navigationButton} onClick={() => changePage(1)} disabled={page === 1}>
+                    {"<<"}
+                </Button>
+                <Button className={styles.navigationButton} onClick={() => changePage(page - 1)} disabled={page === 1}>
+                    {"<"}
+                </Button>
+            </div>
+
             {pagesArray.map(p => (
                 <span
                     key={p}
@@ -19,6 +30,20 @@ const Pagination: FC<PaginationProps> = ({ totalPages, page, changePage }) => {
                     {p}
                 </span>
             ))}
+            <div className={styles.navigationButtons}>
+                <Button
+                    className={styles.navigationButton}
+                    onClick={() => changePage(page + 1)}
+                    disabled={page === totalPages}>
+                    {">"}
+                </Button>
+                <Button
+                    className={styles.navigationButton}
+                    onClick={() => changePage(totalPages)}
+                    disabled={page === totalPages}>
+                    {">>"}
+                </Button>
+            </div>
         </div>
     )
 }
