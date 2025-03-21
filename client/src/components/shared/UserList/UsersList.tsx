@@ -1,81 +1,60 @@
-import { Button } from "@/components/ui/Button"
-import Loader from "@/components/ui/Loader/Loader"
-import { useAuthStore } from "@/store/useAuthStore"
-import { useUserStore } from "@/store/useUserStore"
-import { UserDTO, UsersListDTO } from "@/types/userTypes"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+import { UserDTO } from "@/types/userTypes"
+import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./UserList.module.scss"
 
-const UsersList = () => {
-    const [users, setUsers] = useState<UsersListDTO>()
-    const { getUsers, isUsersFetching,  isLoading } = useUserStore()
-    const { user: currentUser } = useAuthStore()
+interface UsersListProps {
+    users: UserDTO[] | undefined
+    total: number
+}
 
-    const getUsersFromStore = async () => {
-        const users = await getUsers()
-        if (users !== undefined) {
-            setUsers(users)
-        }
-    }
-
-    useEffect(() => {
-        getUsersFromStore()
-    }, [])
-
+const UsersList: FC<UsersListProps> = ({ users, total }) => {
     return (
-        <div>
-            <h1>Пользователи</h1>
-            {isUsersFetching ? (
-                <Loader delay={3000} />
-            ) : (
-                <>
-                    <Button onClick={getUsersFromStore}>
-                        {users.length === 0 ? "Получить список пользователей " : `Обновить`}
-                    </Button>
+        <>
+            {users && users.length > 0 && (
+                <div className={styles.usersData}>
+                    <div className={styles.usersCount}>
+                        <h3>Всего: {total}</h3>
+                        <h3>На странице: {users.length}</h3>
+                    </div>
 
-                    {users.map(user => (
-                        <div className={styles.usersData}>
-                            <div key={user.id}>
-                                <div className={styles.tableResponsive}>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Email</th>
-                                                <th>Имя</th>
-                                                <th>Фамилия</th>
-                                                <th>Отчество</th>
-                                                <th>Роль</th>
-                                                <th>Статус</th>
-                                                <th>Действия</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>{user.id}</td>
-                                                <td>{user.email}</td>
-                                                <td>{user.name || "—"}</td>
-                                                <td>{user.surname || "—"}</td>
-                                                <td>{user.patronymic || "—"}</td>
-                                                <td>{user.role}</td>
-                                                <td>{user.isBlocked ? "Заблокирован" : "Активен"}</td>
-                                                <td>
-                                                    <Link to={`/admin/user/${user.id}`} className={styles.actionLink}>
-                                                        Просмотр
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </>
+                    <div className={styles.tableResponsive}>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Имя</th>
+                                    <th scope="col">Фамилия</th>
+                                    <th scope="col">Отчество</th>
+                                    <th scope="col">Роль</th>
+                                    <th scope="col">Статус</th>
+                                    <th scope="col">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {users.map(user => (
+                                    <tr key={user.id}>
+                                        <td>{user.id}</td>
+                                        <td>{user.email}</td>
+                                        <td>{user.name || "—"}</td>
+                                        <td>{user.surname || "—"}</td>
+                                        <td>{user.patronymic || "—"}</td>
+                                        <td>{user.role}</td>
+                                        <td>{user.isBlocked ? "Заблокирован" : "Активен"}</td>
+                                        <td>
+                                            <Link to={`/admin/user/${user.id}`} className={styles.actionLink}>
+                                                Просмотр
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             )}
-        </div>
+        </>
     )
 }
 
