@@ -1,159 +1,94 @@
 import { userService } from "@/services/userService"
 import { UserDTO, UserState } from "@/types/userTypes"
-import { AxiosError } from "axios"
-import toast from "react-hot-toast"
 import { create } from "zustand"
+import { createApiHandler } from "@/hooks/userStoreHelpers"
+import toast from "react-hot-toast"
 
-export const useUserStore = create<UserState>(set => ({
-    isLoading: false,
-    isAuthChecking: false,
-    isUsersFetching: false,
-    cache: {},
-    MAX_CACHE_ENTRIES: 50,
-    setCache: (key: string, data: { users: UserDTO[]; total: number }) => {
-        set(state => {
-            const newCache = { ...state.cache, [key]: data }
-            const keys = Object.keys(newCache)
-            if (keys.length > state.MAX_CACHE_ENTRIES) {
-                delete newCache[keys[0]]
-            }
-            return { cache: newCache }
-        })
-    },
-    clearCache: () => {
-        set({ cache: {} })
-    },
+export const useUserStore = create<UserState>(set => {
+    const withLoading = createApiHandler(set, "isLoading")
+    const withFetching = createApiHandler(set, "isFetching")
 
-    updatePassword: async (email, oldPassword, newPassword) => {
-        set({ isLoading: true })
-        try {
-            await userService.updatePassword(email, oldPassword, newPassword)
-            console.log("Пароль успешно обновлен")
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Неизвестная ошибка")
-            } else {
-                toast.error("Неизвестная ошибка, перезагрузите страницу")
-            }
-            throw error
-        } finally {
-            set({ isLoading: false })
-        }
-    },
+    return {
+        isLoading: false,
+        isAuthChecking: false,
+        isFetching: false,
+        cache: {},
+        MAX_CACHE_ENTRIES: 50,
 
-    getUsers: async (page = 1, limit = 10) => {
-        set({ isUsersFetching: true })
-        try {
-            const response = await userService.getUsers(page, limit)
-            return response.data
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Неизвестная ошибка")
-            } else {
-                toast.error("Неизвестная ошибка, перезагрузите страницу")
-            }
-            throw error
-        } finally {
-            set({ isUsersFetching: false })
-        }
-    },
+        setCache: (key: string, data: { users: UserDTO[]; total: number }) => {
+            set(state => {
+                const newCache = { ...state.cache, [key]: data }
+                const keys = Object.keys(newCache)
+                if (keys.length > state.MAX_CACHE_ENTRIES) {
+                    delete newCache[keys[0]]
+                }
+                return { cache: newCache }
+            })
+        },
 
-    getUserById: async id => {
-        set({ isUsersFetching: true })
-        try {
-            const response = await userService.getUserById(id)
-            return response.data
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Неизвестная ошибка")
-            } else {
-                toast.error("Неизвестная ошибка, перезагрузите страницу")
-            }
-            throw error
-        } finally {
-            set({ isUsersFetching: false })
-        }
-    },
+        clearCache: () => {
+            set({ cache: {} })
+        },
 
-    updateUser: async (id, updateData) => {
-        set({ isLoading: true })
-        try {
-            const response = await userService.updateUser(id, updateData)
-            toast.success("Данные пользователя успешно изменены")
-            return response.data
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Неизвестная ошибка")
-            } else {
-                toast.error("Неизвестная ошибка, перезагрузите страницу")
+        updatePassword: async (email, oldPassword, newPassword) => {
+            const operation = async () => {
+                await userService.updatePassword(email, oldPassword, newPassword)
             }
-            throw error
-        } finally {
-            set({ isLoading: false })
-        }
-    },
+            return withLoading(operation)
+        },
 
-    deleteUser: async id => {
-        set({ isLoading: true })
-        try {
-            await userService.deleteUser(id)
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Неизвестная ошибка")
-            } else {
-                toast.error("Неизвестная ошибка, перезагрузите страницу")
+        getUsers: async (page = 1, limit = 10) => {
+            const operation = async () => {
+                const response = await userService.getUsers(page, limit)
+                return response.data
             }
-            throw error
-        } finally {
-            set({ isLoading: false })
-        }
-    },
+            return withFetching(operation)
+        },
 
-    blockUser: async id => {
-        set({ isLoading: true })
-        try {
-            await userService.blockUser(id)
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Неизвестная ошибка")
-            } else {
-                toast.error("Неизвестная ошибка, перезагрузите страницу")
+        getUserById: async id => {
+            const operation = async () => {
+                const response = await userService.getUserById(id)
+                return response.data
             }
-            throw error
-        } finally {
-            set({ isLoading: false })
-        }
-    },
+            return withFetching(operation)
+        },
 
-    unblockUser: async id => {
-        set({ isLoading: true })
-        try {
-            await userService.unblockUser(id)
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Неизвестная ошибка")
-            } else {
-                toast.error("Неизвестная ошибка, перезагрузите страницу")
+        updateUser: async (id, updateData) => {
+            const operation = async () => {
+                const response = await userService.updateUser(id, updateData)
+                toast.success("Данные пользователя успешно изменены")
+                return response.data
             }
-            throw error
-        } finally {
-            set({ isLoading: false })
-        }
-    },
-    searchUser: async (query, page = 1, limit = 10) => {
-        set({ isUsersFetching: true })
-        try {
-            const response = await userService.searchUser(query, page, limit)
-            return response.data
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data?.message || "Неизвестная ошибка")
-            } else {
-                toast.error("Неизвестная ошибка, перезагрузите страницу")
+            return withLoading(operation)
+        },
+
+        deleteUser: async id => {
+            const operation = async () => {
+                await userService.deleteUser(id)
             }
-            throw error
-        } finally {
-            set({ isUsersFetching: false })
-        }
-    },
-}))
+            return withLoading(operation)
+        },
+
+        blockUser: async id => {
+            const operation = async () => {
+                await userService.blockUser(id)
+            }
+            return withLoading(operation)
+        },
+
+        unblockUser: async id => {
+            const operation = async () => {
+                await userService.unblockUser(id)
+            }
+            return withLoading(operation)
+        },
+
+        searchUser: async (query, page = 1, limit = 10) => {
+            const operation = async () => {
+                const response = await userService.searchUser(query, page, limit)
+                return response.data
+            }
+            return withFetching(operation)
+        },
+    }
+})

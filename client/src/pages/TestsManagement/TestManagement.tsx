@@ -6,7 +6,7 @@ import { useTestStore } from "@/store/useTestStore"
 import { TestDTO } from "@/types/testTypes"
 import { useEffect, useState } from "react"
 
-const TestManagement = () => {
+const TestsManagement = () => {
     const { getTests, isTestsFetching } = useTestStore()
     const [tests, setTests] = useState<TestDTO[]>([])
     const [total, setTotal] = useState<number>(0)
@@ -51,4 +51,4 @@ const TestManagement = () => {
     )
 }
 
-export default TestManagement
+export default TestsManagement

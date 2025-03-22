@@ -18,7 +18,7 @@ const UserInfo = () => {
         return <div>Невалидный Id</div>
     }
 
-    const { getUserById, isLoading, blockUser, unblockUser, deleteUser, isUsersFetching } = useUserStore()
+    const { getUserById, isLoading, blockUser, unblockUser, deleteUser, isFetching } = useUserStore()
     const [user, setUser] = useState<UserDTO>({} as UserDTO)
     const [isLocalLoading, setIsLocalLoading] = useState(true)
     const { user: currentUser } = useAuthStore()
@@ -66,7 +66,7 @@ const UserInfo = () => {
 
     return (
         <>
-            {isUsersFetching ? (
+            {isFetching ? (
                 <Loader />
             ) : (
                 user && (

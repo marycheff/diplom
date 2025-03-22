@@ -18,7 +18,7 @@ const fieldLabels: { [key: string]: string } = {
 
 const UserProfilePage = () => {
     const { user, updateActivationLink, isEmailSending } = useAuthStore()
-    const { getUserById, updateUser, isUsersFetching } = useUserStore()
+    const { getUserById, updateUser, isFetching } = useUserStore()
     const [userFields, setUserFields] = useState<UserFields>({})
     const [initialUserFields, setInitialUserFields] = useState<UserFields>({})
     const [isEditingFields, setIsEditingFields] = useState<{ [key: string]: boolean }>({})
@@ -83,7 +83,7 @@ const UserProfilePage = () => {
     return (
         <div>
             <BackButton />
-            {(isUsersFetching || isLoadingFields) && <Loader delay={300}/>}
+            {(isFetching || isLoadingFields) && <Loader delay={300} />}
 
             {Object.keys(userFields).length === 0 && !isLoadingFields ? null : ( // Проверяем, загрузились ли данные
                 <div>

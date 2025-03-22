@@ -1,6 +1,6 @@
 export interface UserState {
     isLoading: boolean
-    isUsersFetching: boolean
+    isFetching: boolean
     isAuthChecking: boolean
 
     updatePassword: (email: string, oldPassword: string, newPassword: string) => Promise<void>

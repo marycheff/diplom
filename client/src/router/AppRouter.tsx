@@ -8,6 +8,7 @@ import HomePage from "@/pages/Home/HomePage"
 import LoginPage from "@/pages/Login/LoginPage"
 import SignupPage from "@/pages/Signup/SignupPage"
 import TestPage from "@/pages/Test/TestPage"
+import TestsManagement from "@/pages/TestsManagement/TestManagement"
 import UserInfoPage from "@/pages/UserInfo/UserInfoPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import UsersManagement from "@/pages/UsersManagement/UsersManagement"
@@ -73,6 +74,11 @@ const AppRouter = () => {
             key="admin-user"
             path="/admin/user/:userId"
             element={<AdminRoute component={UserInfoPage} isAdmin={isAdmin} />}
+        />,
+        <Route
+            key="admin-tests"
+            path="/admin/tests"
+            element={<AdminRoute component={TestsManagement} isAdmin={isAdmin} />}
         />,
     ]
 

@@ -12,7 +12,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 
 const UsersManagement = () => {
     const [users, setUsers] = useState<UserDTO[]>()
-    const { getUsers, searchUser, isUsersFetching } = useUserStore()
+    const { getUsers, searchUser, isFetching } = useUserStore()
     const [total, setTotal] = useState<number>(0)
     const [limit] = useState<number>(2)
     const [page, setPage] = useState<number>(1)
@@ -22,7 +22,6 @@ const UsersManagement = () => {
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion } = useUsersCache()
     const { handleSearch: handleSearchFromHook, handleReset: handleResetFromHook } = useUsersSearch()
 
-    
     useEffect(() => {
         if (searchQuery) {
             searchUsersFromStore(page, searchQuery)
@@ -119,7 +118,7 @@ const UsersManagement = () => {
         <>
             <BackButton />
             <HomeButton />
-            {isUsersFetching ? (
+            {isFetching ? (
                 <TestsListSkeleton />
             ) : (
                 <>
@@ -132,11 +131,11 @@ const UsersManagement = () => {
                         placeholder="Поиск"
                     />
 
-                    <Button onClick={handleResetSearch} disabled={isUsersFetching || !searchQuery}>
+                    <Button onClick={handleResetSearch} disabled={isFetching || !searchQuery}>
                         Сбросить
                     </Button>
 
-                    <Button onClick={handleUpdateButton} disabled={isUsersFetching} isLoading={isUsersFetching}>
+                    <Button onClick={handleUpdateButton} disabled={isFetching} isLoading={isFetching}>
                         Обновить
                     </Button>
 
