@@ -1,4 +1,3 @@
-import UserManagement from "@/components/shared/UserManagement"
 import InternetConnectionStatus from "@/components/ui/InternetConnection/InternetConnectionStatus"
 import Loader from "@/components/ui/Loader/Loader"
 import ActivationErrorPage from "@/pages/Activation/Error"
@@ -11,6 +10,7 @@ import SignupPage from "@/pages/Signup/SignupPage"
 import TestPage from "@/pages/Test/TestPage"
 import UserInfoPage from "@/pages/UserInfo/UserInfoPage"
 import UserProfilePage from "@/pages/UserProfilePage"
+import UsersManagement from "@/pages/UsersManagement/UsersManagement"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useEffect, useState } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
@@ -64,7 +64,11 @@ const AppRouter = () => {
     // Маршруты для администраторов
     const adminRoutes = [
         <Route key="admin" path="/admin" element={<AdminRoute component={AdminPage} isAdmin={isAdmin} />} />,
-        <Route key="admin-users" path="/admin/users" element={<AdminRoute component={UserManagement} isAdmin={isAdmin} />} />,
+        <Route
+            key="admin-users"
+            path="/admin/users"
+            element={<AdminRoute component={UsersManagement} isAdmin={isAdmin} />}
+        />,
         <Route
             key="admin-user"
             path="/admin/user/:userId"

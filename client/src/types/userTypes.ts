@@ -2,6 +2,7 @@ export interface UserState {
     isLoading: boolean
     isUsersFetching: boolean
     isAuthChecking: boolean
+
     updatePassword: (email: string, oldPassword: string, newPassword: string) => Promise<void>
     getUsers: (page: number, limit: number) => Promise<UsersListDTO | undefined>
     getUserById: (id: string) => Promise<UserDTO | undefined>
@@ -10,7 +11,13 @@ export interface UserState {
     blockUser: (id: string) => Promise<void>
     unblockUser: (id: string) => Promise<void>
     searchUser: (query: string, page: number, limit: number) => Promise<UsersListDTO | undefined>
+
+    MAX_CACHE_ENTRIES: number
+    cache: Record<string, any>
+    setCache: (key: string, data: { users: UserDTO[]; total: number }) => void
+    clearCache: () => void
 }
+
 export interface UsersListDTO {
     users: UserDTO[]
     total: number

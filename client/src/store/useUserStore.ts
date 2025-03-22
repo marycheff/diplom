@@ -1,5 +1,5 @@
 import { userService } from "@/services/userService"
-import { UserState } from "@/types/userTypes"
+import { UserDTO, UserState } from "@/types/userTypes"
 import { AxiosError } from "axios"
 import toast from "react-hot-toast"
 import { create } from "zustand"
@@ -8,6 +8,22 @@ export const useUserStore = create<UserState>(set => ({
     isLoading: false,
     isAuthChecking: false,
     isUsersFetching: false,
+    cache: {},
+    MAX_CACHE_ENTRIES: 50,
+    setCache: (key: string, data: { users: UserDTO[]; total: number }) => {
+        set(state => {
+            const newCache = { ...state.cache, [key]: data }
+            const keys = Object.keys(newCache)
+            if (keys.length > state.MAX_CACHE_ENTRIES) {
+                delete newCache[keys[0]]
+            }
+            return { cache: newCache }
+        })
+    },
+    clearCache: () => {
+        set({ cache: {} })
+    },
+
     updatePassword: async (email, oldPassword, newPassword) => {
         set({ isLoading: true })
         try {

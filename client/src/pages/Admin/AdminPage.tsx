@@ -1,4 +1,3 @@
-import UserManagement from "@/components/shared/UserManagement"
 import { BackButton } from "@/components/ui/Button"
 import { Link } from "react-router-dom"
 

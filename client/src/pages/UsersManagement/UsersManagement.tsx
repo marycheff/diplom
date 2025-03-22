@@ -1,22 +1,35 @@
 import SearchBar from "@/components/shared/SearchBar/SearchBar"
 import UsersList from "@/components/shared/UserList/UsersList"
-import TestsListSkeleton from "@/components/skeleton/TestsListSkeleton/TestsSkeleton"
+import TestsListSkeleton from "@/components/skeletons/TestsListSkeleton/TestsSkeleton"
 import { BackButton, Button, HomeButton } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
+import { useUsersCache } from "@/hooks/useUsersCache"
+import { useUsersSearch } from "@/hooks/useUsersSearch"
 import { useUserStore } from "@/store/useUserStore"
 import { UserDTO } from "@/types/userTypes"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
-const UserManagement = () => {
+const UsersManagement = () => {
     const [users, setUsers] = useState<UserDTO[]>()
     const { getUsers, searchUser, isUsersFetching } = useUserStore()
     const [total, setTotal] = useState<number>(0)
-    const [limit] = useState<number>(20)
+    const [limit] = useState<number>(2)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
     const location = useLocation()
+    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion } = useUsersCache()
+    const { handleSearch: handleSearchFromHook, handleReset: handleResetFromHook } = useUsersSearch()
+
+    
+    useEffect(() => {
+        if (searchQuery) {
+            searchUsersFromStore(page, searchQuery)
+        } else {
+            getUsersFromStore(page)
+        }
+    }, [cacheVersion])
 
     useEffect(() => {
         const params = new URLSearchParams(location.search)
@@ -34,18 +47,36 @@ const UserManagement = () => {
     }, [location.search])
 
     const getUsersFromStore = async (currentPage: number = page) => {
+        const cacheKey = getCacheKey(currentPage, "")
+        const cachedData = getCachedData(cacheKey)
+        if (cachedData) {
+            setUsers(cachedData.users)
+            setTotal(cachedData.total)
+            return
+        }
+
         const data = await getUsers(currentPage, limit)
         if (data) {
             setUsers(data.users)
             setTotal(data.total)
+            saveToCache(cacheKey, data)
         }
     }
 
     const searchUsersFromStore = async (currentPage: number = page, query: string = "") => {
+        const cacheKey = getCacheKey(currentPage, query)
+        const cachedData = getCachedData(cacheKey)
+        if (cachedData) {
+            setUsers(cachedData.users)
+            setTotal(cachedData.total)
+            return
+        }
+
         const data = await searchUser(query, currentPage, limit)
         if (data) {
             setUsers(data.users)
             setTotal(data.total)
+            saveToCache(cacheKey, data)
         }
     }
 
@@ -62,18 +93,12 @@ const UserManagement = () => {
         navigate({ search: params.toString() })
     }
 
-    const handleSearch = async () => {
+    const handleSearch = () => {
         const trimmedQuery = searchQuery.trim()
-        const params = new URLSearchParams(location.search)
-        const paramsQueryText = params.get("query")
-
-        if (paramsQueryText === trimmedQuery || trimmedQuery === "") {
+        if (trimmedQuery === "") {
             return
         }
-        params.set("query", trimmedQuery)
-        params.set("page", "1")
-        navigate({ search: params.toString() })
-        await searchUsersFromStore(1, trimmedQuery)
+        handleSearchFromHook(trimmedQuery, 1)
     }
 
     const handleClearSearchBar = () => {
@@ -81,12 +106,11 @@ const UserManagement = () => {
     }
 
     const handleResetSearch = () => {
-        setSearchQuery("")
-        const params = new URLSearchParams(location.search)
-        params.delete("query")
-        params.set("page", "1")
-        navigate({ search: params.toString() })
-        getUsersFromStore(1)
+        handleResetFromHook()
+    }
+
+    const handleUpdateButton = () => {
+        clearCache()
     }
 
     const totalPages = Math.ceil(total / limit)
@@ -108,24 +132,21 @@ const UserManagement = () => {
                         placeholder="Поиск"
                     />
 
-                    <Button onClick={handleResetSearch} disabled={isUsersFetching}>
+                    <Button onClick={handleResetSearch} disabled={isUsersFetching || !searchQuery}>
                         Сбросить
                     </Button>
 
-                    <Button
-                        onClick={() => getUsersFromStore(page)}
-                        disabled={isUsersFetching}
-                        isLoading={isUsersFetching}>
-                        {users?.length === 0 ? "Получить список пользователей" : "Обновить"}
+                    <Button onClick={handleUpdateButton} disabled={isUsersFetching} isLoading={isUsersFetching}>
+                        Обновить
                     </Button>
 
-                    {totalPages > 0 ? (
+                    {totalPages > 0 && page <= totalPages ? (
                         <>
                             <UsersList users={users} total={total} />
                             <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
                         </>
                     ) : (
-                        <div>Нет пользователей</div>
+                        <div>Ничего не найдено</div>
                     )}
                 </>
             )}
@@ -133,4 +154,4 @@ const UserManagement = () => {
     )
 }
 
-export default UserManagement
+export default UsersManagement

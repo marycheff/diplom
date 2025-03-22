@@ -1,5 +1,5 @@
 import TestsList from "@/components/shared/TestList/TestsList"
-import TestsListSkeleton from "@/components/skeleton/TestsListSkeleton/TestsSkeleton"
+import TestsListSkeleton from "@/components/skeletons/TestsListSkeleton/TestsSkeleton"
 import { Button } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
 import { useTestStore } from "@/store/useTestStore"

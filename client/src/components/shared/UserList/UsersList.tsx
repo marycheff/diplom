@@ -38,7 +38,7 @@ const UsersList: FC<UsersListProps> = ({ users, total }) => {
                                     <tr key={user.id}>
                                         <td>
                                             {user.id === currentUser?.id ? (
-                                                user.id
+                                                <>{user.id} (Вы) </>
                                             ) : (
                                                 <Link to={`/admin/user/${user.id}`} className={styles.actionLink}>
                                                     {user.id}
