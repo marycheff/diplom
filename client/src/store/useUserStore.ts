@@ -124,4 +124,20 @@ export const useUserStore = create<UserState>(set => ({
             set({ isLoading: false })
         }
     },
+    searchUser: async (query, page = 1, limit = 10) => {
+        set({ isUsersFetching: true })
+        try {
+            const response = await userService.searchUser(query, page, limit)
+            return response.data
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data?.message || "Неизвестная ошибка")
+            } else {
+                toast.error("Неизвестная ошибка, перезагрузите страницу")
+            }
+            throw error
+        } finally {
+            set({ isUsersFetching: false })
+        }
+    },
 }))

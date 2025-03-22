@@ -1,3 +1,4 @@
+import UserManagement from "@/components/shared/UserManagement"
 import InternetConnectionStatus from "@/components/ui/InternetConnection/InternetConnectionStatus"
 import Loader from "@/components/ui/Loader/Loader"
 import ActivationErrorPage from "@/pages/Activation/Error"
@@ -63,6 +64,7 @@ const AppRouter = () => {
     // Маршруты для администраторов
     const adminRoutes = [
         <Route key="admin" path="/admin" element={<AdminRoute component={AdminPage} isAdmin={isAdmin} />} />,
+        <Route key="admin-users" path="/admin/users" element={<AdminRoute component={UserManagement} isAdmin={isAdmin} />} />,
         <Route
             key="admin-user"
             path="/admin/user/:userId"

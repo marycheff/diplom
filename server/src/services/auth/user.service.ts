@@ -21,7 +21,7 @@ class UserService {
         }
         return mapUserToDto(user)
     }
-    async getUsers(page: number = 1, limit: number = 10): Promise<UsersListDTO> {
+    async getUsers(page = 1, limit = 10): Promise<UsersListDTO> {
         const skip = (page - 1) * limit
         const total = await prisma.user.count()
         const users = await prisma.user.findMany({
@@ -133,6 +133,42 @@ class UserService {
             })
         } catch (error) {
             throw ApiError.BadRequest("Ошибка при разблокировке пользователя")
+        }
+    }
+
+    async searchUser(query: string, page = 1, limit = 10): Promise<UsersListDTO> {
+        try {
+            const skip = (page - 1) * limit
+            const result = await prisma.user.findMany({
+                skip,
+                take: limit,
+                where: {
+                    OR: [
+                        { email: { contains: query } },
+                        { name: { contains: query } },
+                        { surname: { contains: query } },
+                        { patronymic: { contains: query } },
+                    ],
+                },
+                orderBy: { createdAt: "desc" },
+            })
+
+            const total = await prisma.user.count({
+                where: {
+                    OR: [
+                        { email: { contains: query } },
+                        { name: { contains: query } },
+                        { surname: { contains: query } },
+                        { patronymic: { contains: query } },
+                    ],
+                },
+            })
+            return {
+                users: result.map(user => mapUserToDto(user)),
+                total,
+            }
+        } catch (error) {
+            throw ApiError.BadRequest("Ошибка при поиске пользователей")
         }
     }
 }

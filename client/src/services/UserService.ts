@@ -36,6 +36,15 @@ class UserService {
     unblockUser(id: string): Promise<AxiosResponse<UserDTO>> {
         return axiosInstance.post<UserDTO>(`/users/unblock/${id}`)
     }
+    searchUser(query: string, page = 1, limit = 10): Promise<AxiosResponse<UsersListDTO>> {
+        return axiosInstance.get<UsersListDTO>("/users/search", {
+            params: {
+                query,
+                page,
+                limit,
+            },
+        })
+    }
 }
 
 export const userService = new UserService()

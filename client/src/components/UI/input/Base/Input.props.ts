@@ -10,4 +10,5 @@ export interface InputProps {
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void
     clearable?: boolean
     showToggle?: boolean
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
 }

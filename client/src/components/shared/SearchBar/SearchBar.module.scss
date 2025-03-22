@@ -1,0 +1,47 @@
+.searchBar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px; // Адаптивная ширина
+    padding: 8px 12px;
+    background-color: #f3f4f6; // Цвет фона
+    border-radius: 8px; // Скругление углов
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Тень
+}
+
+.input {
+    flex-grow: 1;
+    border: none;
+    background-color: transparent;
+    font-size: 14px;
+    outline: none;
+    padding: 8px 0;
+}
+
+.clearButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #6b7280; // Цвет текста
+    margin-right: 8px;
+
+    &:hover {
+        color: #000; // Цвет при наведении
+    }
+}
+
+.searchButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #3b82f6; // Цвет текста
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #e0f2fe; // Цвет фона при наведении
+    }
+}

@@ -14,10 +14,16 @@ const Pagination: FC<PaginationProps> = ({ totalPages, page, changePage }) => {
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.navigationButtons}>
-                <Button className={styles.navigationButton} onClick={() => changePage(1)} disabled={page === 1}>
+                <Button
+                    className={styles.navigationButton}
+                    onClick={() => changePage(1)}
+                    disabled={page === 1 || totalPages === 0}>
                     {"<<"}
                 </Button>
-                <Button className={styles.navigationButton} onClick={() => changePage(page - 1)} disabled={page === 1}>
+                <Button
+                    className={styles.navigationButton}
+                    onClick={() => changePage(page - 1)}
+                    disabled={page === 1 || totalPages === 0}>
                     {"<"}
                 </Button>
             </div>
@@ -34,13 +40,13 @@ const Pagination: FC<PaginationProps> = ({ totalPages, page, changePage }) => {
                 <Button
                     className={styles.navigationButton}
                     onClick={() => changePage(page + 1)}
-                    disabled={page === totalPages}>
+                    disabled={page === totalPages || totalPages === 0}>
                     {">"}
                 </Button>
                 <Button
                     className={styles.navigationButton}
                     onClick={() => changePage(totalPages)}
-                    disabled={page === totalPages}>
+                    disabled={page === totalPages || totalPages === 0}>
                     {">>"}
                 </Button>
             </div>

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button"
 import { useAuthStore } from "@/store/useAuthStore"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 const HomePage = () => {
     const navigate = useNavigate()
@@ -12,7 +12,13 @@ const HomePage = () => {
                 <h1>{user?.isActivated ? "Аккаунт активирован" : "Аккаунт Не активирован!!!"}</h1>
                 <Button onClick={() => logout()}>Выйти</Button>
 
-                {isAdmin && <Button onClick={() => navigate("/admin")}>Админ панель</Button>}
+                {isAdmin && (
+                    <>
+                        <Button onClick={() => navigate("/admin")}>Админ панель</Button>
+                        <Button onClick={() => navigate("/admin/users")}>Пользователи</Button>
+                        {/* <Link to={"/admin/users"}>Пользователи</Link> */}
+                    </>
+                )}
                 {!isAdmin && <h1>Не админ</h1>}
 
                 <Button onClick={() => navigate("/profile")}>Профиль</Button>

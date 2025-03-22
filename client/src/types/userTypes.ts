@@ -9,6 +9,7 @@ export interface UserState {
     deleteUser: (id: string) => Promise<void>
     blockUser: (id: string) => Promise<void>
     unblockUser: (id: string) => Promise<void>
+    searchUser: (query: string, page: number, limit: number) => Promise<UsersListDTO | undefined>
 }
 export interface UsersListDTO {
     users: UserDTO[]

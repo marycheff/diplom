@@ -48,7 +48,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                 />
                 {clearable && !disabled && hasValue && (
                     <button type="button" onClick={handleClear} className={styles.clearButton}>
-                        ×
+                        &times;
                     </button>
                 )}
             </div>

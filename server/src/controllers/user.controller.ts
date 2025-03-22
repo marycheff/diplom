@@ -118,6 +118,27 @@ class UserController {
             next(e)
         }
     }
+
+    async searchUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const page = parseInt(req.query.page as string) || 1
+            const limit = parseInt(req.query.limit as string) || 10
+            const query = req.query.query as string
+
+            if (page < 1 || limit < 1) {
+                throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
+            }
+
+            if (!query) {
+                throw ApiError.BadRequest("Нет поискового запроса")
+            }
+
+            const users = await userService.searchUser(query, page, limit)
+            res.json(users)
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 export default new UserController()

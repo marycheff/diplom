@@ -11,6 +11,7 @@ export const Input: FC<InputProps> = ({
     className = "",
     onChange,
     clearable = false,
+    onKeyDown,
 }) => {
     const handleClear = () => {
         if (onChange) {
@@ -31,10 +32,11 @@ export const Input: FC<InputProps> = ({
                     disabled={disabled}
                     className={`${styles.input} ${className}`}
                     onChange={onChange}
+                    onKeyDown={onKeyDown}
                 />
                 {clearable && !disabled && hasValue && (
                     <button type="button" onClick={handleClear} className={styles.clearButton}>
-                        ×
+                        &times;
                     </button>
                 )}
             </div>

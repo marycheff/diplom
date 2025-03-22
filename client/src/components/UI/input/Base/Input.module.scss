@@ -1,6 +1,6 @@
 .inputContainer:has(.clearButton) .input {
     padding-right: 30px;
-} 
+}
 
 .inputWrapper {
     display: flex;
@@ -37,6 +37,9 @@
     cursor: pointer;
     font-size: 16px;
     color: #999;
+    &:hover {
+        color: #000;
+    }
 }
 
 .error {
