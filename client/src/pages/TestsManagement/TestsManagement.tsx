@@ -7,6 +7,7 @@ import { useTestsCache } from "@/hooks/useTestsCache"
 import { useSearch } from "@/hooks/useUsersSearch"
 import { useTestStore } from "@/store/useTestStore"
 import { TestDTO } from "@/types/testTypes"
+import { formatDate } from "@/utils/formatter"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
@@ -14,12 +15,12 @@ const TestsManagement = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
     const { getTests, searchTest, isTestsFetching } = useTestStore()
     const [total, setTotal] = useState<number>(0)
-    const [limit] = useState<number>(2)
+    const [limit] = useState<number>(10)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
     const location = useLocation()
-    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion } = useTestsCache()
+    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useTestsCache()
     const { handleSearch: handleSearchFromHook, handleReset: handleResetFromHook } = useSearch()
 
     useEffect(() => {
@@ -34,15 +35,8 @@ const TestsManagement = () => {
         const params = new URLSearchParams(location.search)
         const query = params.get("query") || ""
         const pageParam = parseInt(params.get("page") || "1", 10)
-
         setSearchQuery(query)
         setPage(pageParam)
-
-        if (query) {
-            searchTestsFromStore(pageParam, query)
-        } else {
-            getTestsFromStore(pageParam)
-        }
     }, [location.search])
 
     const getTestsFromStore = async (currentPage = page) => {
@@ -135,6 +129,9 @@ const TestsManagement = () => {
             <Button onClick={handleUpdateButton} disabled={isTestsFetching}>
                 Обновить
             </Button>
+            <div className="cache-info">
+                <span>Последнее обновление: {formatDate(lastUpdateDate)}</span>
+            </div>
             {isTestsFetching ? (
                 <TestsListSkeleton />
             ) : (

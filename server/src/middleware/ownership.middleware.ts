@@ -2,8 +2,8 @@ import ApiError from "@/exceptions/api-error"
 import answerService from "@/services/tests/answer.service"
 import questionService from "@/services/tests/question.service"
 import testService from "@/services/tests/test.service"
-import { NextFunction, Request, Response } from "express"
 import { isValidObjectId } from "@/utils/validator"
+import { NextFunction, Request, Response } from "express"
 
 export const testOwnershipMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -17,7 +17,7 @@ export const testOwnershipMiddleware = async (req: Request, res: Response, next:
             return next(ApiError.NotFound("Тест не найден"))
         }
         const user = req.user
-        if (test.authorId !== user?.id && user?.role !== "ADMIN") {
+        if (test.author.id !== user?.id && user?.role !== "ADMIN") {
             return next(ApiError.Forbidden())
         }
         req.test = test
@@ -44,7 +44,7 @@ export const questionOwnershipMiddleware = async (req: Request, res: Response, n
             return next(ApiError.BadRequest("Вопрос не принадлежит ни к какому тесту"))
         }
         const user = req.user
-        if (test.authorId !== user?.id && user?.role !== "ADMIN") {
+        if (test.author.id !== user?.id && user?.role !== "ADMIN") {
             return next(ApiError.Forbidden())
         }
 
@@ -75,7 +75,7 @@ export const answerOwnershipMiddleware = async (req: Request, res: Response, nex
             return next(ApiError.BadRequest("Ответ не принадлежит ни к какому тесту"))
         }
         const user = req.user
-        if (test.authorId !== user?.id && user?.role !== "ADMIN") {
+        if (test.author.id !== user?.id && user?.role !== "ADMIN") {
             return next(ApiError.Forbidden())
         }
 

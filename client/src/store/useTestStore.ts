@@ -10,6 +10,7 @@ export const useTestStore = create<TestState>(set => {
         isTestsFetching: false,
         cache: {},
         MAX_CACHE_ENTRIES: 50,
+        lastCacheUpdateDate: null,
         setCache: (key: string, data: TestsListDTO) => {
             set(state => {
                 const newCache = { ...state.cache, [key]: data }
@@ -17,11 +18,11 @@ export const useTestStore = create<TestState>(set => {
                 if (keys.length > state.MAX_CACHE_ENTRIES) {
                     delete newCache[keys[0]]
                 }
-                return { cache: newCache }
+                return { cache: newCache, lastCacheUpdateDate: new Date() }
             })
         },
         clearCache: () => {
-            set({ cache: {} })
+            set({ cache: {}, lastCacheUpdateDate: new Date() })
         },
 
         getTests: async (page = 1, limit = 10) => {

@@ -9,6 +9,7 @@ export interface TestState {
     cache: Record<string, any>
     setCache: (key: string, data: TestsListDTO) => void
     clearCache: () => void
+    lastCacheUpdateDate: Date | null
 }
 
 export interface AnswerDTO {
@@ -31,7 +32,13 @@ export interface TestsListDTO {
 
 export interface TestDTO {
     id: string
-    authorId: string
+    author: {
+        id: string
+        email: string
+        name?: string | null
+        surname?: string | null
+        patronymic?: string | null
+    }
     title: string
     description?: string
     questions?: QuestionDTO[]

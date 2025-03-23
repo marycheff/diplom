@@ -3,7 +3,7 @@ import { testSettingsSchema } from "@/schemas/test.schema"
 import { mapToResponseTest } from "@/services/mappers/test.mappers"
 import { TestDTO, TestSettingsDTO, TestsListDTO, UpdateTestDTO } from "@/types/test.types"
 import { isValidObjectId } from "@/utils/validator"
-import { Answer, PrismaClient, Question } from "@prisma/client"
+import { Answer, Prisma, PrismaClient, Question } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
@@ -32,7 +32,19 @@ class TestService {
                     authorId: authorId,
                     status: "PENDING",
                 },
+                include: {
+                    author: {
+                        select: {
+                            id: true,
+                            email: true,
+                            name: true,
+                            surname: true,
+                            patronymic: true,
+                        },
+                    },
+                },
             })
+
             const settings = await tx.testSettings.create({
                 data: {
                     testId: createdTest.id,
@@ -42,9 +54,11 @@ class TestService {
                     showDetailedResults: testData.settings?.showDetailedResults ?? false,
                 },
             })
+
             return mapToResponseTest({
                 ...createdTest,
                 settings,
+                questions: [],
             })
         })
     }
@@ -58,6 +72,17 @@ class TestService {
 
             const existingTest = await transaction.test.findUnique({
                 where: { id: testId },
+                include: {
+                    author: {
+                        select: {
+                            id: true,
+                            email: true,
+                            name: true,
+                            surname: true,
+                            patronymic: true,
+                        },
+                    },
+                },
             })
 
             if (!existingTest) throw ApiError.NotFound("Тест не найден")
@@ -116,13 +141,22 @@ class TestService {
                     },
                 },
                 settings: true,
+
+                author: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        surname: true,
+                        patronymic: true,
+                    },
+                },
             },
         })
 
         return tests.map(test => mapToResponseTest(test))
     }
 
-    // Получение всех тестов
     async getAllTests(page: number = 1, limit: number = 10): Promise<TestsListDTO> {
         const skip = (page - 1) * limit
         const total = await prisma.test.count()
@@ -136,6 +170,15 @@ class TestService {
                     },
                 },
                 settings: true,
+                author: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        surname: true,
+                        patronymic: true,
+                    },
+                },
             },
             orderBy: { createdAt: "desc" },
         })
@@ -183,6 +226,15 @@ class TestService {
                     },
                     orderBy: { order: "asc" },
                 },
+                author: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        surname: true,
+                        patronymic: true,
+                    },
+                },
                 settings: true,
             },
         })
@@ -195,24 +247,79 @@ class TestService {
         try {
             const skip = (page - 1) * limit
 
+            // Явно указываем тип для условий поиска
+            const orConditions: Prisma.TestWhereInput[] = [
+                { title: { contains: query, mode: "insensitive" } },
+                { description: { contains: query, mode: "insensitive" } },
+                {
+                    questions: {
+                        some: {
+                            text: { contains: query, mode: "insensitive" },
+                        },
+                    },
+                },
+                {
+                    questions: {
+                        some: {
+                            answers: {
+                                some: {
+                                    text: { contains: query, mode: "insensitive" },
+                                },
+                            },
+                        },
+                    },
+                },
+                {
+                    author: {
+                        OR: [
+                            { email: { contains: query, mode: "insensitive" } },
+                            { name: { contains: query, mode: "insensitive" } },
+                            { surname: { contains: query, mode: "insensitive" } },
+                            { patronymic: { contains: query, mode: "insensitive" } },
+                        ],
+                    },
+                },
+            ]
+
+            if (isValidObjectId(query)) {
+                orConditions.unshift({ id: { equals: query } })
+            }
+
             const result = await prisma.test.findMany({
                 skip,
                 take: limit,
-                where: {
-                    OR: [{ title: { contains: query } }, { description: { contains: query } }],
+                where: { OR: orConditions },
+                include: {
+                    questions: {
+                        include: {
+                            answers: true,
+                        },
+                        orderBy: { order: "asc" },
+                    },
+                    settings: true,
+                    author: {
+                        select: {
+                            id: true,
+                            email: true,
+                            name: true,
+                            surname: true,
+                            patronymic: true,
+                        },
+                    },
                 },
                 orderBy: { createdAt: "desc" },
             })
+
             const total = await prisma.test.count({
-                where: {
-                    OR: [{ title: { contains: query } }, { description: { contains: query } }],
-                },
+                where: { OR: orConditions },
             })
+
             return {
                 tests: result.map(test => mapToResponseTest(test)),
                 total,
             }
         } catch (error) {
+            console.error(error)
             throw ApiError.BadRequest("Ошибка при поиске тестов")
         }
     }

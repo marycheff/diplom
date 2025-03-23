@@ -35,7 +35,13 @@ const TestsList: FC<TestsListProps> = ({ tests, total }) => {
                                 {tests.map(test => (
                                     <tr key={test.id}>
                                         <td>{test.id}</td>
-                                        <td>{test.authorId}</td>
+                                        <td>
+                                            {test.author.id}
+                                            <br />
+                                            {test.author.email}
+                                            <br />
+                                            {test.author.name} {test.author.surname} {test.author.patronymic}
+                                        </td>
                                         <td>{test.title}</td>
                                         <td>{test.description || "–"}</td>
                                         <td>{test.questions ? test.questions.length : 0}</td>

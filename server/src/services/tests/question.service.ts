@@ -51,6 +51,15 @@ class QuestionService {
                             },
                             orderBy: { order: "asc" },
                         },
+                        author: {
+                            select: {
+                                id: true,
+                                email: true,
+                                name: true,
+                                surname: true,
+                                patronymic: true,
+                            },
+                        },
                     },
                 },
             },

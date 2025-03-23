@@ -27,11 +27,27 @@ export const mapToResponseQuestion = (question: Question & { answers?: Answer[] 
 }
 
 export const mapToResponseTest = (
-    test: Test & { settings?: TestSettingsDTO | null } & { questions?: (Question & { answers: Answer[] })[] }
+    test: Test & {
+        settings?: TestSettingsDTO | null
+        questions?: (Question & { answers: Answer[] })[]
+        author: {
+            id: string
+            email: string
+            name?: string | null
+            surname?: string | null
+            patronymic?: string | null
+        }
+    }
 ): TestDTO => {
     return {
         id: test.id,
-        authorId: test.authorId,
+        author: {
+            id: test.author.id,
+            email: test.author.email,
+            name: test.author.name,
+            surname: test.author.surname,
+            patronymic: test.author.patronymic,
+        },
         title: test.title,
         description: test.description || "",
         totalAttempts: test.totalAttempts,
@@ -46,7 +62,6 @@ export const mapToResponseTest = (
         questions: test.questions?.map(question => mapToResponseQuestion(question)) || [],
     }
 }
-
 export const mapToAttemptQuestionDTO = (
     question: Question & { answers: Answer[] },
     userAnswers: { questionId: string; answer: Answer }[]
@@ -66,7 +81,16 @@ export const mapToAttemptQuestionDTO = (
 
 export const mapToTestAttemptDTO = (
     attempt: TestAttempt & {
-        test: Test & { questions: (Question & { answers: Answer[] })[] }
+        test: Test & {
+            questions: (Question & { answers: Answer[] })[]
+            author: {
+                id: string
+                email: string
+                name?: string | null
+                surname?: string | null
+                patronymic?: string | null
+            }
+        }
         user: User | null
         answers: { questionId: string; answer: Answer }[]
     }
