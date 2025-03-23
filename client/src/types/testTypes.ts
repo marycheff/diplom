@@ -3,6 +3,12 @@ import { UserDTO } from "@/types/userTypes"
 export interface TestState {
     isTestsFetching: boolean
     getTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
+    searchTest: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
+
+    MAX_CACHE_ENTRIES: number
+    cache: Record<string, any>
+    setCache: (key: string, data: TestsListDTO) => void
+    clearCache: () => void
 }
 
 export interface AnswerDTO {

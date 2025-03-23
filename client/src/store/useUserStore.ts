@@ -1,8 +1,8 @@
-import { userService } from "@/services/userService"
-import { UserDTO, UserState } from "@/types/userTypes"
-import { create } from "zustand"
 import { createApiHandler } from "@/hooks/userStoreHelpers"
+import { userService } from "@/services/userService"
+import { UsersListDTO, UserState } from "@/types/userTypes"
 import toast from "react-hot-toast"
+import { create } from "zustand"
 
 export const useUserStore = create<UserState>(set => {
     const withLoading = createApiHandler(set, "isLoading")
@@ -15,7 +15,7 @@ export const useUserStore = create<UserState>(set => {
         cache: {},
         MAX_CACHE_ENTRIES: 50,
 
-        setCache: (key: string, data: { users: UserDTO[]; total: number }) => {
+        setCache: (key: string, data: UsersListDTO) => {
             set(state => {
                 const newCache = { ...state.cache, [key]: data }
                 const keys = Object.keys(newCache)

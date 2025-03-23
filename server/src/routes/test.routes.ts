@@ -26,10 +26,10 @@ const router = express.Router()
 /* =================================
         Управление тестами
   ================================= */
+router.get("/search", authMiddleware, testController.searchTests)
 
 // Создание теста
 router.post("/create", authMiddleware, validateRequest(createTestSchema), testController.createTest)
-// Получение теста по ID
 // Получение всех тестов пользователя (только свои)
 router.get("/user-tests", authMiddleware, testController.getUserTests)
 // Получение всех тестов (админ)
@@ -37,6 +37,7 @@ router.get("/all-tests", authMiddleware, adminMiddleware, testController.getAllT
 // Удаление теста
 router.delete("/:testId", authMiddleware, testOwnershipMiddleware, testController.deleteTest)
 router.put("/:testId/settings", authMiddleware, testOwnershipMiddleware, testController.updateTestSettings)
+// Получение теста по ID
 router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.getTestById)
 
 /* =================================

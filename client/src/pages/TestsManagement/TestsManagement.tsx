@@ -1,32 +1,32 @@
 import SearchBar from "@/components/shared/SearchBar/SearchBar"
-import UsersList from "@/components/shared/UserList/UsersList"
+import TestsList from "@/components/shared/TestList/TestsList"
 import TestsListSkeleton from "@/components/skeletons/TestsListSkeleton/TestsSkeleton"
 import { BackButton, Button, HomeButton } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
-import { useUsersCache } from "@/hooks/useUsersCache"
+import { useTestsCache } from "@/hooks/useTestsCache"
 import { useSearch } from "@/hooks/useUsersSearch"
-import { useUserStore } from "@/store/useUserStore"
-import { UserDTO } from "@/types/userTypes"
+import { useTestStore } from "@/store/useTestStore"
+import { TestDTO } from "@/types/testTypes"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
-const UsersManagement = () => {
-    const [users, setUsers] = useState<UserDTO[]>()
-    const { getUsers, searchUser, isFetching } = useUserStore()
+const TestsManagement = () => {
+    const [tests, setTests] = useState<TestDTO[]>([])
+    const { getTests, searchTest, isTestsFetching } = useTestStore()
     const [total, setTotal] = useState<number>(0)
     const [limit] = useState<number>(2)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
     const location = useLocation()
-    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion } = useUsersCache()
+    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion } = useTestsCache()
     const { handleSearch: handleSearchFromHook, handleReset: handleResetFromHook } = useSearch()
 
     useEffect(() => {
         if (searchQuery) {
-            searchUsersFromStore(page, searchQuery)
+            searchTestsFromStore(page, searchQuery)
         } else {
-            getUsersFromStore(page)
+            getTestsFromStore(page)
         }
     }, [cacheVersion])
 
@@ -39,41 +39,41 @@ const UsersManagement = () => {
         setPage(pageParam)
 
         if (query) {
-            searchUsersFromStore(pageParam, query)
+            searchTestsFromStore(pageParam, query)
         } else {
-            getUsersFromStore(pageParam)
+            getTestsFromStore(pageParam)
         }
     }, [location.search])
 
-    const getUsersFromStore = async (currentPage = page) => {
+    const getTestsFromStore = async (currentPage = page) => {
         const cacheKey = getCacheKey(currentPage, "")
         const cachedData = getCachedData(cacheKey)
         if (cachedData) {
-            setUsers(cachedData.users)
+            setTests(cachedData.tests)
             setTotal(cachedData.total)
             return
         }
 
-        const data = await getUsers(currentPage, limit)
+        const data = await getTests(currentPage, limit)
         if (data) {
-            setUsers(data.users)
+            setTests(data.tests)
             setTotal(data.total)
             saveToCache(cacheKey, data)
         }
     }
 
-    const searchUsersFromStore = async (currentPage = page, query = "") => {
+    const searchTestsFromStore = async (currentPage = page, query = "") => {
         const cacheKey = getCacheKey(currentPage, query)
         const cachedData = getCachedData(cacheKey)
         if (cachedData) {
-            setUsers(cachedData.users)
+            setTests(cachedData.tests)
             setTotal(cachedData.total)
             return
         }
 
-        const data = await searchUser(query, currentPage, limit)
+        const data = await searchTest(query, currentPage, limit)
         if (data) {
-            setUsers(data.users)
+            setTests(data.tests)
             setTotal(data.total)
             saveToCache(cacheKey, data)
         }
@@ -85,9 +85,9 @@ const UsersManagement = () => {
         params.set("page", newPage.toString())
         if (searchQuery) {
             params.set("query", searchQuery)
-            searchUsersFromStore(newPage, searchQuery)
+            searchTestsFromStore(newPage, searchQuery)
         } else {
-            getUsersFromStore(newPage)
+            getTestsFromStore(newPage)
         }
         navigate({ search: params.toString() })
     }
@@ -118,7 +118,7 @@ const UsersManagement = () => {
         <>
             <BackButton />
             <HomeButton />
-            {isFetching ? (
+            {isTestsFetching ? (
                 <TestsListSkeleton />
             ) : (
                 <>
@@ -131,17 +131,17 @@ const UsersManagement = () => {
                         placeholder="Поиск"
                     />
 
-                    <Button onClick={handleResetSearch} disabled={isFetching || !searchQuery}>
+                    <Button onClick={handleResetSearch} disabled={isTestsFetching || !searchQuery}>
                         Сбросить
                     </Button>
 
-                    <Button onClick={handleUpdateButton} disabled={isFetching} isLoading={isFetching}>
+                    <Button onClick={handleUpdateButton} disabled={isTestsFetching} isLoading={isTestsFetching}>
                         Обновить
                     </Button>
 
                     {totalPages > 0 && page <= totalPages ? (
                         <>
-                            <UsersList users={users} total={total} />
+                            <TestsList tests={tests} total={total} />
                             <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
                         </>
                     ) : (
@@ -153,4 +153,4 @@ const UsersManagement = () => {
     )
 }
 
-export default UsersManagement
+export default TestsManagement

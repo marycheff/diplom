@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom"
 
-// hooks/useUsersSearch.ts
-export const useUsersSearch = () => {
+export const useSearch = () => {
     const navigate = useNavigate()
     const location = useLocation()
 

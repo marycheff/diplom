@@ -191,6 +191,32 @@ class TestService {
         if (!test) throw ApiError.NotFound("Тест не найден")
         return mapToResponseTest(test)
     }
+
+    async searchTests(query: string, page = 1, limit = 10): Promise<TestsListDTO> {
+        try {
+            const skip = (page - 1) * limit
+
+            const result = await prisma.test.findMany({
+                skip,
+                take: limit,
+                where: {
+                    OR: [{ title: { contains: query } }, { description: { contains: query } }],
+                },
+                orderBy: { createdAt: "desc" },
+            })
+            const total = await prisma.test.count({
+                where: {
+                    OR: [{ title: { contains: query } }, { description: { contains: query } }],
+                },
+            })
+            return {
+                tests: result.map(test => mapToResponseTest(test)),
+                total,
+            }
+        } catch (error) {
+            throw ApiError.BadRequest("Ошибка при поиске тестов")
+        }
+    }
 }
 
 export default new TestService()

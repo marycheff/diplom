@@ -1,3 +1,5 @@
+import { TestsListDTO } from "@/types/testTypes"
+
 export interface UserState {
     isLoading: boolean
     isFetching: boolean
@@ -14,7 +16,7 @@ export interface UserState {
 
     MAX_CACHE_ENTRIES: number
     cache: Record<string, any>
-    setCache: (key: string, data: { users: UserDTO[]; total: number }) => void
+    setCache: (key: string, data: UsersListDTO) => void
     clearCache: () => void
 }
 

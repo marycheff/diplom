@@ -136,7 +136,7 @@ class UserService {
         }
     }
 
-    async searchUser(query: string, page = 1, limit = 10): Promise<UsersListDTO> {
+    async searchUsers(query: string, page = 1, limit = 10): Promise<UsersListDTO> {
         try {
             const skip = (page - 1) * limit
             const result = await prisma.user.findMany({

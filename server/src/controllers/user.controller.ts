@@ -119,7 +119,7 @@ class UserController {
         }
     }
 
-    async searchUser(req: Request, res: Response, next: NextFunction) {
+    async searchUsers(req: Request, res: Response, next: NextFunction) {
         try {
             const page = parseInt(req.query.page as string) || 1
             const limit = parseInt(req.query.limit as string) || 10
@@ -133,7 +133,7 @@ class UserController {
                 throw ApiError.BadRequest("Нет поискового запроса")
             }
 
-            const users = await userService.searchUser(query, page, limit)
+            const users = await userService.searchUsers(query, page, limit)
             res.json(users)
         } catch (e) {
             next(e)

@@ -8,7 +8,7 @@ const router = Router()
 // Получение списка всех пользователей (админ)
 router.get("/", authMiddleware, adminMiddleware, userController.getUsers)
 
-router.get("/search", authMiddleware, userController.searchUser)
+router.get("/search", authMiddleware, userController.searchUsers)
 
 // Получение информации о пользователе по его ID
 router.get("/:id", authMiddleware, userController.getUserById)

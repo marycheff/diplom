@@ -1,6 +1,6 @@
 import { createApiHandler } from "@/hooks/userStoreHelpers"
 import { testService } from "@/services/testService"
-import { TestState } from "@/types/testTypes"
+import { TestsListDTO, TestState } from "@/types/testTypes"
 import { create } from "zustand"
 
 export const useTestStore = create<TestState>(set => {
@@ -8,9 +8,32 @@ export const useTestStore = create<TestState>(set => {
 
     return {
         isTestsFetching: false,
+        cache: {},
+        MAX_CACHE_ENTRIES: 50,
+        setCache: (key: string, data: TestsListDTO) => {
+            set(state => {
+                const newCache = { ...state.cache, [key]: data }
+                const keys = Object.keys(newCache)
+                if (keys.length > state.MAX_CACHE_ENTRIES) {
+                    delete newCache[keys[0]]
+                }
+                return { cache: newCache }
+            })
+        },
+        clearCache: () => {
+            set({ cache: {} })
+        },
+
         getTests: async (page = 1, limit = 10) => {
             const operation = async () => {
                 const response = await testService.getTests(page, limit)
+                return response.data
+            }
+            return withFetching(operation)
+        },
+        searchTest: async (query, page = 1, limit = 10) => {
+            const operation = async () => {
+                const response = await testService.searchTest(query, page, limit)
                 return response.data
             }
             return withFetching(operation)
