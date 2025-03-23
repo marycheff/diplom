@@ -36,7 +36,12 @@ export const Button: FC<ButtonProps> = ({
             disabled={isLoading || disabled}
             onClick={handleClick}
             onMouseEnter={handleMouseEnter}
-            className={`${styles.button} ${tooltip ? styles["button--with-tooltip"] : ""} ${className}`}
+            className={`
+                ${styles.button}
+                ${tooltip ? styles["button--with-tooltip"] : ""} 
+                ${isLoading ? styles["button--loading"] : ""}
+                ${className}
+            `}
             data-tooltip={tooltip}
             data-tooltip-position={tooltipPosition}>
             {isLoading ? loadingText : children}

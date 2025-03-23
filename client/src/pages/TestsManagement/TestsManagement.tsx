@@ -118,27 +118,27 @@ const TestsManagement = () => {
         <>
             <BackButton />
             <HomeButton />
+            <SearchBar
+                name="search"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                handleSearch={handleSearch}
+                onClearSearch={handleClearSearchBar}
+                placeholder="Поиск"
+                disabled={isTestsFetching}
+            />
+
+            <Button onClick={handleResetSearch} disabled={isTestsFetching}>
+                Сбросить
+            </Button>
+
+            <Button onClick={handleUpdateButton} disabled={isTestsFetching}>
+                Обновить
+            </Button>
             {isTestsFetching ? (
                 <TestsListSkeleton />
             ) : (
                 <>
-                    <SearchBar
-                        name="search"
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        handleSearch={handleSearch}
-                        onClearSearch={handleClearSearchBar}
-                        placeholder="Поиск"
-                    />
-
-                    <Button onClick={handleResetSearch} disabled={isTestsFetching || !searchQuery}>
-                        Сбросить
-                    </Button>
-
-                    <Button onClick={handleUpdateButton} disabled={isTestsFetching} isLoading={isTestsFetching}>
-                        Обновить
-                    </Button>
-
                     {totalPages > 0 && page <= totalPages ? (
                         <>
                             <TestsList tests={tests} total={total} />

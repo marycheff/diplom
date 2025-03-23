@@ -123,7 +123,6 @@ class TestService {
     }
 
     // Получение всех тестов
-    // server/src/services/testService.ts
     async getAllTests(page: number = 1, limit: number = 10): Promise<TestsListDTO> {
         const skip = (page - 1) * limit
         const total = await prisma.test.count()

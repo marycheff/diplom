@@ -118,27 +118,26 @@ const UsersManagement = () => {
         <>
             <BackButton />
             <HomeButton />
+            <SearchBar
+                name="search"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                handleSearch={handleSearch}
+                onClearSearch={handleClearSearchBar}
+                placeholder="Поиск"
+            />
+
+            <Button onClick={handleResetSearch} disabled={isFetching}>
+                Сбросить
+            </Button>
+
+            <Button onClick={handleUpdateButton} disabled={isFetching}>
+                Обновить
+            </Button>
             {isFetching ? (
                 <TestsListSkeleton />
             ) : (
                 <>
-                    <SearchBar
-                        name="search"
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        handleSearch={handleSearch}
-                        onClearSearch={handleClearSearchBar}
-                        placeholder="Поиск"
-                    />
-
-                    <Button onClick={handleResetSearch} disabled={isFetching || !searchQuery}>
-                        Сбросить
-                    </Button>
-
-                    <Button onClick={handleUpdateButton} disabled={isFetching} isLoading={isFetching}>
-                        Обновить
-                    </Button>
-
                     {totalPages > 0 && page <= totalPages ? (
                         <>
                             <UsersList users={users} total={total} />
