@@ -13,7 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 
 const TestsManagement = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
-    const { getTests, searchTest, isTestsFetching } = useTestStore()
+    const { getTests, searchTests, isFetching } = useTestStore()
     const [total, setTotal] = useState<number>(0)
     const [limit] = useState<number>(10)
     const [page, setPage] = useState<number>(1)
@@ -27,7 +27,7 @@ const TestsManagement = () => {
         if (searchQuery) {
             searchTestsFromStore(page, searchQuery)
         } else {
-            getTestsFromStore(page)
+            fetchTests(page)
         }
     }, [cacheVersion])
 
@@ -39,7 +39,7 @@ const TestsManagement = () => {
         setPage(pageParam)
     }, [location.search])
 
-    const getTestsFromStore = async (currentPage = page) => {
+    const fetchTests = async (currentPage = page) => {
         const cacheKey = getCacheKey(currentPage, "")
         const cachedData = getCachedData(cacheKey)
         if (cachedData) {
@@ -65,7 +65,7 @@ const TestsManagement = () => {
             return
         }
 
-        const data = await searchTest(query, currentPage, limit)
+        const data = await searchTests(query, currentPage, limit)
         if (data) {
             setTests(data.tests)
             setTotal(data.total)
@@ -81,7 +81,7 @@ const TestsManagement = () => {
             params.set("query", searchQuery)
             searchTestsFromStore(newPage, searchQuery)
         } else {
-            getTestsFromStore(newPage)
+            fetchTests(newPage)
         }
         navigate({ search: params.toString() })
     }
@@ -119,20 +119,20 @@ const TestsManagement = () => {
                 handleSearch={handleSearch}
                 onClearSearch={handleClearSearchBar}
                 placeholder="Поиск"
-                disabled={isTestsFetching}
+                disabled={isFetching}
             />
 
-            <Button onClick={handleResetSearch} disabled={isTestsFetching}>
+            <Button onClick={handleResetSearch} disabled={isFetching}>
                 Сбросить
             </Button>
 
-            <Button onClick={handleUpdateButton} disabled={isTestsFetching}>
+            <Button onClick={handleUpdateButton} disabled={isFetching}>
                 Обновить
             </Button>
             <div className="cache-info">
                 <span>Последнее обновление: {formatDate(lastUpdateDate)}</span>
             </div>
-            {isTestsFetching ? (
+            {isFetching ? (
                 <TestsListSkeleton />
             ) : (
                 <>

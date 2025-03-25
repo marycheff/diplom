@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/ui/Button"
 import TestForm from "../../components/shared/TestForm"
 
-const TestPage = () => {
+const CreateTestPage = () => {
     return (
         <div>
             <BackButton />
@@ -10,4 +10,4 @@ const TestPage = () => {
     )
 }
 
-export default TestPage
+export default CreateTestPage

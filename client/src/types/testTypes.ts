@@ -1,10 +1,11 @@
+import { PreTestUserData } from "@/types/inputFields"
 import { UserDTO } from "@/types/userTypes"
 
 export interface TestState {
-    isTestsFetching: boolean
+    isFetching: boolean
     getTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
-    searchTest: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
-
+    searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
+    getTestById: (id: string) => Promise<TestDTO | undefined>
     MAX_CACHE_ENTRIES: number
     cache: Record<string, any>
     setCache: (key: string, data: TestsListDTO) => void
@@ -47,8 +48,8 @@ export interface TestDTO {
 }
 export interface TestSettingsDTO {
     requireRegistration?: boolean
-    inputFields?: JsonValue
-    requiredFields?: JsonValue
+    inputFields?: PreTestUserData[]
+    requiredFields?: PreTestUserData[]
     showDetailedResults?: boolean
 }
 

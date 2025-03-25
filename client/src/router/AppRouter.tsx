@@ -4,10 +4,11 @@ import ActivationErrorPage from "@/pages/Activation/Error"
 import ActivationSuccessPage from "@/pages/Activation/Success"
 import AdminPage from "@/pages/Admin/AdminPage"
 import BlockedUserPage from "@/pages/BlockedUserPage"
+import CreateTestPage from "@/pages/CreateTest/CreateTestPage"
 import HomePage from "@/pages/Home/HomePage"
 import LoginPage from "@/pages/Login/LoginPage"
 import SignupPage from "@/pages/Signup/SignupPage"
-import TestPage from "@/pages/Test/TestPage"
+import TestInfoPage from "@/pages/TestInfo/TestInfoPage"
 import TestsManagement from "@/pages/TestsManagement/TestsManagement"
 import UserInfoPage from "@/pages/UserInfo/UserInfoPage"
 import UserProfilePage from "@/pages/UserProfilePage"
@@ -56,7 +57,7 @@ const AppRouter = () => {
     // Список защищенных маршрутов для авторизованных пользователей
     const authenticatedRoutes = [
         <Route key="home" path="/home" element={<HomePage />} />,
-        <Route key="test" path="/test" element={<TestPage />} />,
+        <Route key="create-test" path="/create-test" element={<CreateTestPage />} />,
         <Route key="profile" path="/profile" element={<UserProfilePage />} />,
         <Route key="activationError" path="/activation-error" element={<ActivationErrorPage />} />,
         <Route key="activationSuccess" path="/activation-success" element={<ActivationSuccessPage />} />,
@@ -79,6 +80,11 @@ const AppRouter = () => {
             key="admin-tests"
             path="/admin/tests"
             element={<AdminRoute component={TestsManagement} isAdmin={isAdmin} />}
+        />,
+        <Route
+            key="admin-test"
+            path="/admin/test/:testId"
+            element={<AdminRoute component={TestInfoPage} isAdmin={isAdmin} />}
         />,
     ]
 

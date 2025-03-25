@@ -18,6 +18,7 @@ export interface UserState {
     cache: Record<string, any>
     setCache: (key: string, data: UsersListDTO) => void
     clearCache: () => void
+    lastCacheUpdateDate: Date | null
 }
 
 export interface UsersListDTO {

@@ -7,7 +7,7 @@ import HomePage from "@/pages/Home/HomePage"
 import LoginPage from "@/pages/Login/LoginPage"
 import SignupPage from "@/pages/Signup/SignupPage"
 
-import TestPage from "@/pages/Test/TestPage"
+import CreateTestPage from "@/pages/CreateTest/CreateTestPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import { Navigate, Route } from "react-router-dom"
 
@@ -17,7 +17,7 @@ const commonRoutes = [
 ]
 export const authenticatedRoutes = [
     <Route key="home" path="/home" element={<HomePage />} />,
-    <Route key="test" path="/test" element={<TestPage />} />,
+    <Route key="test" path="/test" element={<CreateTestPage />} />,
     <Route key="profile" path="/profile" element={<UserProfilePage />} />,
     ...commonRoutes,
 ]

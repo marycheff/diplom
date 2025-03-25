@@ -7,6 +7,7 @@ import { useUsersCache } from "@/hooks/useUsersCache"
 import { useSearch } from "@/hooks/useUsersSearch"
 import { useUserStore } from "@/store/useUserStore"
 import { UserDTO } from "@/types/userTypes"
+import { formatDate } from "@/utils/formatter"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
@@ -14,19 +15,19 @@ const UsersManagement = () => {
     const [users, setUsers] = useState<UserDTO[]>()
     const { getUsers, searchUser, isFetching } = useUserStore()
     const [total, setTotal] = useState<number>(0)
-    const [limit] = useState<number>(2)
+    const [limit] = useState<number>(10)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
     const location = useLocation()
-    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion } = useUsersCache()
+    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useUsersCache()
     const { handleSearch: handleSearchFromHook, handleReset: handleResetFromHook } = useSearch()
 
     useEffect(() => {
         if (searchQuery) {
             searchUsersFromStore(page, searchQuery)
         } else {
-            getUsersFromStore(page)
+            fetchUsers(page)
         }
     }, [cacheVersion])
 
@@ -38,14 +39,14 @@ const UsersManagement = () => {
         setSearchQuery(query)
         setPage(pageParam)
 
-        if (query) {
-            searchUsersFromStore(pageParam, query)
-        } else {
-            getUsersFromStore(pageParam)
-        }
+        // if (query) {
+        //     searchUsersFromStore(pageParam, query)
+        // } else {
+        //     getUsersFromStore(pageParam)
+        // }
     }, [location.search])
 
-    const getUsersFromStore = async (currentPage = page) => {
+    const fetchUsers = async (currentPage = page) => {
         const cacheKey = getCacheKey(currentPage, "")
         const cachedData = getCachedData(cacheKey)
         if (cachedData) {
@@ -87,7 +88,7 @@ const UsersManagement = () => {
             params.set("query", searchQuery)
             searchUsersFromStore(newPage, searchQuery)
         } else {
-            getUsersFromStore(newPage)
+            fetchUsers(newPage)
         }
         navigate({ search: params.toString() })
     }
@@ -134,6 +135,10 @@ const UsersManagement = () => {
             <Button onClick={handleUpdateButton} disabled={isFetching}>
                 Обновить
             </Button>
+            <div className="cache-info">
+                <span>Последнее обновление: {formatDate(lastUpdateDate)}</span>
+            </div>
+
             {isFetching ? (
                 <TestsListSkeleton />
             ) : (

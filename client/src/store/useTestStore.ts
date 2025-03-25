@@ -4,10 +4,10 @@ import { TestsListDTO, TestState } from "@/types/testTypes"
 import { create } from "zustand"
 
 export const useTestStore = create<TestState>(set => {
-    const withFetching = createApiHandler(set, "isTestsFetching")
+    const withFetching = createApiHandler(set, "isFetching")
 
     return {
-        isTestsFetching: false,
+        isFetching: false,
         cache: {},
         MAX_CACHE_ENTRIES: 50,
         lastCacheUpdateDate: null,
@@ -32,9 +32,16 @@ export const useTestStore = create<TestState>(set => {
             }
             return withFetching(operation)
         },
-        searchTest: async (query, page = 1, limit = 10) => {
+        searchTests: async (query, page = 1, limit = 10) => {
             const operation = async () => {
-                const response = await testService.searchTest(query, page, limit)
+                const response = await testService.searchTests(query, page, limit)
+                return response.data
+            }
+            return withFetching(operation)
+        },
+        getTestById: async (id: string) => {
+            const operation = async () => {
+                const response = await testService.getTestById(id)
                 return response.data
             }
             return withFetching(operation)

@@ -1,5 +1,6 @@
 import { TestDTO } from "@/types/testTypes"
 import { FC } from "react"
+import { Link } from "react-router-dom"
 import styles from "./TestList.module.scss"
 
 interface TestsListProps {
@@ -34,7 +35,11 @@ const TestsList: FC<TestsListProps> = ({ tests, total }) => {
                             <tbody>
                                 {tests.map(test => (
                                     <tr key={test.id}>
-                                        <td>{test.id}</td>
+                                        <td>
+                                            <Link to={`/admin/test/${test.id}`} className={styles.actionLink}>
+                                                {test.id}
+                                            </Link>
+                                        </td>
                                         <td>
                                             {test.author.id}
                                             <br />

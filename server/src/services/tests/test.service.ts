@@ -10,10 +10,23 @@ const prisma = new PrismaClient()
 class TestService {
     // Обновление настроек теста
     async updateTestSettings(testId: string, testSettings: TestSettingsDTO) {
-        await prisma.testSettings.update({
+        const existingSettings = await prisma.testSettings.findUnique({
             where: { testId },
-            data: testSettings,
         })
+
+        if (existingSettings) {
+            await prisma.testSettings.update({
+                where: { testId },
+                data: testSettings,
+            })
+        } else {
+            await prisma.testSettings.create({
+                data: {
+                    ...testSettings,
+                    testId,
+                },
+            })
+        }
     }
     // Создание теста без вопросов
     async createTest(authorId: string, testData: TestDTO): Promise<TestDTO> {
@@ -54,6 +67,7 @@ class TestService {
                     showDetailedResults: testData.settings?.showDetailedResults ?? false,
                 },
             })
+            
 
             return mapToResponseTest({
                 ...createdTest,

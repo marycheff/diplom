@@ -20,20 +20,13 @@ const UserInfo = () => {
 
     const { getUserById, isLoading, blockUser, unblockUser, deleteUser, isFetching } = useUserStore()
     const [user, setUser] = useState<UserDTO>({} as UserDTO)
-    const [isLocalLoading, setIsLocalLoading] = useState(true)
     const { user: currentUser } = useAuthStore()
     const navigate = useNavigate()
 
-    const getUserFromStore = async () => {
-        try {
-            setIsLocalLoading(true)
-            const user = await getUserById(userId)
-            if (user !== undefined) {
-                setUser(user)
-            }
-        } catch {
-        } finally {
-            setIsLocalLoading(false)
+    const fetchUser = async () => {
+        const user = await getUserById(userId)
+        if (user !== undefined) {
+            setUser(user)
         }
     }
     const handleDeleteUser = async (id: string) => {
@@ -55,9 +48,9 @@ const UserInfo = () => {
     }
 
     useEffect(() => {
-        getUserFromStore()
-    }, [])
-    if (isLocalLoading) {
+        fetchUser()
+    }, [userId, getUserById])
+    if (isFetching) {
         return <Loader />
     }
     if (Object.keys(user).length === 0) {

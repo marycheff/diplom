@@ -1,0 +1,231 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    // background-color: color($background, 200);
+}
+
+.navigation {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.topGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+
+    /* Responsive grid adjustments */
+    @media screen and (max-width: 1100px) {
+        grid-template-columns: repeat(2, 1fr);
+
+        & > .infoBlock:nth-child(3) {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        grid-template-columns: 1fr;
+
+        /* Reset the third block width on small screens */
+        & > .infoBlock:nth-child(3) {
+            grid-column: auto;
+        }
+    }
+}
+
+.infoBlock {
+    background-color: color($background, 100);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+    height: 100%; 
+
+    /* Only add margin-bottom to the questions block (which is outside the grid) */
+    &:not(.topGrid > *) {
+        margin-bottom: 24px;
+    }
+}
+
+.blockTitle {
+    background-color: color($primary, 400);
+    color: color($background, 100);
+    padding: 15px 20px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.blockContent {
+    padding: 20px;
+    height: calc(100% - 50px); /* Account for header height */
+    display: flex;
+    flex-direction: column;
+}
+
+.infoRow {
+    display: flex;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid color($background, 600);
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    @media screen and (max-width: 480px) {
+        flex-direction: column;
+
+        .label {
+            width: 100%;
+            margin-bottom: 4px;
+        }
+    }
+}
+
+.label {
+    font-weight: 600;
+    color: color($secondary, 600);
+    width: 35%;
+    min-width: 120px;
+
+    @media screen and (max-width: 768px) {
+        min-width: 120px;
+    }
+}
+
+.value {
+    color: color($primary, 600);
+    flex: 1;
+    width: 65%;
+    word-break: break-word;
+}
+
+.emptyField {
+    color: color($secondary, 400);
+    font-style: italic;
+}
+
+.emptyBlock {
+    text-align: center;
+    color: color($secondary, 400);
+    font-style: italic;
+    padding: 20px 0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.questionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.questionBlock {
+    background-color: color($background, 400);
+    border-radius: 12px;
+    padding: 15px;
+    border-left: 4px solid color($primary, 400);
+}
+
+.questionHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+
+    @media screen and (max-width: 576px) {
+        flex-wrap: wrap;
+
+        .questionType {
+            margin-top: 5px;
+        }
+    }
+}
+
+.questionNumber {
+    background-color: color($primary, 400);
+    color: color($background, 100);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.questionText {
+    font-weight: 600;
+    font-size: 16px;
+    flex: 1;
+    color: color($primary, 600);
+}
+
+.questionType {
+    background-color: color($background, 600);
+    color: color($secondary, 800);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.answersList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: 40px;
+
+    @media screen and (max-width: 576px) {
+        margin-left: 10px;
+    }
+}
+
+.answerItem {
+    background-color: color($background, 200);
+    border-radius: 8px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid color($background, 600);
+
+    &:hover {
+        background-color: color($background, 400);
+    }
+
+    @media screen and (max-width: 480px) {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .correctBadge {
+            margin-top: 5px;
+            align-self: flex-end;
+        }
+    }
+}
+
+.correctAnswer {
+    border-left: 4px solid color($primary, 400);
+}
+
+.answerText {
+    flex: 1;
+    color: color($primary, 600);
+}
+
+.correctBadge {
+    background-color: color($primary, 400);
+    color: color($background, 100);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}

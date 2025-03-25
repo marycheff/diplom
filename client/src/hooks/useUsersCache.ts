@@ -3,7 +3,7 @@ import { UsersListDTO } from "@/types/userTypes"
 import { useCallback, useState } from "react"
 
 export const useUsersCache = () => {
-    const { cache, setCache, clearCache: clearCacheFromStore } = useUserStore()
+    const { cache, setCache, clearCache: clearCacheFromStore, lastCacheUpdateDate } = useUserStore()
     const [cacheVersion, setCacheVersion] = useState(0)
 
     const getCacheKey = (page: number, query: string) => (query ? `search-${query}-${page}` : `users-${page}`)
@@ -19,5 +19,5 @@ export const useUsersCache = () => {
         setCacheVersion(prev => prev + 1)
     }, [clearCacheFromStore])
 
-    return { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion }
+    return { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate: lastCacheUpdateDate }
 }
