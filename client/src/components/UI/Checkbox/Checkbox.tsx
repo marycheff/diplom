@@ -1,4 +1,4 @@
-import React from "react"
+import { ChangeEvent, FC } from "react"
 import styles from "./Checkbox.module.scss"
 
 interface CheckboxProps {
@@ -6,10 +6,10 @@ interface CheckboxProps {
     label?: string
     checked: boolean
     disabled?: boolean
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ id, label, checked, disabled, onChange }) => {
+const Checkbox: FC<CheckboxProps> = ({ id, label, checked, disabled, onChange }) => {
     return (
         <div className={styles.checkboxWrapper}>
             <input

@@ -41,11 +41,13 @@ const TestsList: FC<TestsListProps> = ({ tests, total }) => {
                                             </Link>
                                         </td>
                                         <td>
-                                            {test.author.id}
+                                            {/* {test.author.id} */}
+                                            <Link to={`/admin/user/${test.author.id}`} className={styles.actionLink}>
+                                                {test.author.id}
+                                            </Link>
+
                                             <br />
                                             {test.author.email}
-                                            <br />
-                                            {test.author.name} {test.author.surname} {test.author.patronymic}
                                         </td>
                                         <td>{test.title}</td>
                                         <td>{test.description || "–"}</td>

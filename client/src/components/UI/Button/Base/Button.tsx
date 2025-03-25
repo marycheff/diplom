@@ -1,5 +1,5 @@
 import { ButtonProps } from "@/components/ui/Button/Base/Button.props"
-import { FC, useState } from "react"
+import { FC, MouseEvent, useState } from "react"
 import styles from "./Button.module.scss"
 
 export const Button: FC<ButtonProps> = ({
@@ -20,7 +20,7 @@ export const Button: FC<ButtonProps> = ({
         }
     }
 
-    const handleMouseEnter = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleMouseEnter = (event: MouseEvent<HTMLButtonElement>) => {
         const button = event.currentTarget
         const rect = button.getBoundingClientRect()
         if (rect.top < 20) {

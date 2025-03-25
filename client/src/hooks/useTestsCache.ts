@@ -6,13 +6,19 @@ export const useTestsCache = () => {
     const { cache, setCache, clearCache: clearCacheFromStore, lastCacheUpdateDate } = useTestStore()
     const [cacheVersion, setCacheVersion] = useState(0)
 
-    const getCacheKey = (page: number, query: string) => (query ? `search-${query}-${page}` : `tests-${page}`)
+    const getCacheKey = useCallback(
+        (page: number, query: string = "") => (query ? `search-${query}-${page}` : `tests-${page}`),
+        []
+    )
 
-    const getCachedData = (key: string) => cache[key]
+    const getCachedData = useCallback((key: string) => cache[key], [cache])
 
-    const saveToCache = (key: string, data: TestsListDTO) => {
-        setCache(key, data)
-    }
+    const saveToCache = useCallback(
+        (key: string, data: TestsListDTO) => {
+            setCache(key, data)
+        },
+        [setCache]
+    )
 
     const clearCache = useCallback(() => {
         clearCacheFromStore()
@@ -25,6 +31,6 @@ export const useTestsCache = () => {
         saveToCache,
         clearCache,
         cacheVersion,
-        lastUpdateDate: lastCacheUpdateDate, 
+        lastUpdateDate: lastCacheUpdateDate,
     }
 }

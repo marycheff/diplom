@@ -3,7 +3,7 @@ import ValidatedInput from "@/components/ui/Input/Validated/ValidatedInput"
 
 import Loader from "@/components/ui/Loader/Loader"
 import Select from "@/components/ui/Select/Select"
-import { FC } from "react"
+import { FC, FormEvent } from "react"
 import { FieldErrors, RegisterOptions, UseFormRegister, UseFormSetValue } from "react-hook-form"
 
 type QuestionFormFields = {
@@ -16,7 +16,7 @@ type QuestionFormProps = {
     register: UseFormRegister<QuestionFormFields>
     errors?: FieldErrors<QuestionFormFields>
     isLoading: boolean
-    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+    onSubmit: (e: FormEvent<HTMLFormElement>) => void
     isButtonDisabled: boolean
     setValue: UseFormSetValue<QuestionFormFields>
 }

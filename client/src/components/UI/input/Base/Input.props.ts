@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react"
+import { ChangeEvent, KeyboardEvent } from "react"
 
 export interface InputProps {
     name: string
@@ -10,5 +10,5 @@ export interface InputProps {
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void
     clearable?: boolean
     showToggle?: boolean
-    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+    onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
 }

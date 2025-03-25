@@ -14,16 +14,16 @@ import UserInfoPage from "@/pages/UserInfo/UserInfoPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import UsersManagement from "@/pages/UsersManagement/UsersManagement"
 import { useAuthStore } from "@/store/useAuthStore"
-import { useEffect, useState } from "react"
+import { ComponentType, FC, useEffect, useState } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 
 interface AdminRouteProps {
-    component: React.ComponentType
+    component: ComponentType
     isAdmin: boolean
 }
 
 // Компонент-обертка для маршрутов администраторов
-const AdminRoute: React.FC<AdminRouteProps> = ({ component: Component, isAdmin }) => {
+const AdminRoute: FC<AdminRouteProps> = ({ component: Component, isAdmin }) => {
     return isAdmin ? <Component /> : <Navigate to="/home" />
 }
 

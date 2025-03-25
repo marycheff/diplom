@@ -1,5 +1,5 @@
 import { PasswordInputProps } from "@/components/ui/Input/Password/PasswordInput.props"
-import { FC, useState } from "react"
+import { ChangeEvent, FC, useState } from "react"
 import { RegisterOptions } from "react-hook-form"
 import styles from "./PasswordInput.module.scss"
 
@@ -12,14 +12,14 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
     setValue,
     errors,
     clearable = false,
-    noValidation = false, // Новая опция
+    noValidation = false,
 }) => {
     const [localValue, setLocalValue] = useState("")
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
     // Делаем валидацию опциональной
     const passwordValidation: RegisterOptions = noValidation
-        ? { required: "Пароль обязателен"}
+        ? { required: "Пароль обязателен" }
         : {
               required: "Пароль обязателен",
               minLength: {
@@ -38,7 +38,7 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
         setLocalValue("")
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setLocalValue(e.target.value)
     }
 

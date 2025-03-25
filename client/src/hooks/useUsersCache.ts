@@ -6,18 +6,32 @@ export const useUsersCache = () => {
     const { cache, setCache, clearCache: clearCacheFromStore, lastCacheUpdateDate } = useUserStore()
     const [cacheVersion, setCacheVersion] = useState(0)
 
-    const getCacheKey = (page: number, query: string) => (query ? `search-${query}-${page}` : `users-${page}`)
+    const getCacheKey = useCallback(
+        (page: number, query: string = "") => (query ? `search-${query}-${page}` : `users-${page}`),
+        []
+    )
 
-    const getCachedData = (key: string) => cache[key]
+    const getCachedData = useCallback((key: string) => cache[key], [cache])
 
-    const saveToCache = (key: string, data: UsersListDTO) => {
-        setCache(key, data)
-    }
+    const saveToCache = useCallback(
+        (key: string, data: UsersListDTO) => {
+            setCache(key, data)
+        },
+        [setCache]
+    )
 
     const clearCache = useCallback(() => {
         clearCacheFromStore()
         setCacheVersion(prev => prev + 1)
-    }, [clearCacheFromStore])
 
-    return { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate: lastCacheUpdateDate }
+    }, [clearCacheFromStore, ])
+
+    return {
+        getCacheKey,
+        getCachedData,
+        saveToCache,
+        clearCache,
+        cacheVersion,
+        lastUpdateDate: lastCacheUpdateDate,
+    }
 }

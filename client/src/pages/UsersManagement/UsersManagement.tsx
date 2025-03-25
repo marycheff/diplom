@@ -4,111 +4,91 @@ import TestsListSkeleton from "@/components/skeletons/TestsListSkeleton/TestsSke
 import { BackButton, Button, HomeButton } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
 import { useUsersCache } from "@/hooks/useUsersCache"
-import { useSearch } from "@/hooks/useUsersSearch"
 import { useUserStore } from "@/store/useUserStore"
 import { UserDTO } from "@/types/userTypes"
 import { formatDate } from "@/utils/formatter"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
 const UsersManagement = () => {
-    const [users, setUsers] = useState<UserDTO[]>()
+    const [users, setUsers] = useState<UserDTO[]>([])
     const { getUsers, searchUser, isFetching } = useUserStore()
     const [total, setTotal] = useState<number>(0)
-    const [limit] = useState<number>(10)
+    const [limit] = useState<number>(2)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
     const location = useLocation()
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useUsersCache()
-    const { handleSearch: handleSearchFromHook, handleReset: handleResetFromHook } = useSearch()
 
-    useEffect(() => {
-        if (searchQuery) {
-            searchUsersFromStore(page, searchQuery)
-        } else {
-            fetchUsers(page)
-        }
-    }, [cacheVersion])
+    const fetchData = useCallback(
+        async (currentPage: number, query?: string) => {
+            const cacheKey = getCacheKey(currentPage, query)
+            const cachedData = getCachedData(cacheKey)
+
+            if (cachedData) {
+                setUsers(cachedData.users)
+                setTotal(cachedData.total)
+                return
+            }
+            let data
+            if (query) {
+                data = await searchUser(query, currentPage, limit)
+            } else {
+                data = await getUsers(currentPage, limit)
+            }
+            if (data) {
+                setUsers(data.users)
+                setTotal(data.total)
+                saveToCache(cacheKey, data)
+            }
+        },
+        [getCacheKey, getCachedData, saveToCache, searchUser, getUsers, limit]
+    )
 
     useEffect(() => {
         const params = new URLSearchParams(location.search)
         const query = params.get("query") || ""
         const pageParam = parseInt(params.get("page") || "1", 10)
-
         setSearchQuery(query)
         setPage(pageParam)
-
-        // if (query) {
-        //     searchUsersFromStore(pageParam, query)
-        // } else {
-        //     getUsersFromStore(pageParam)
-        // }
-    }, [location.search])
-
-    const fetchUsers = async (currentPage = page) => {
-        const cacheKey = getCacheKey(currentPage, "")
-        const cachedData = getCachedData(cacheKey)
-        if (cachedData) {
-            setUsers(cachedData.users)
-            setTotal(cachedData.total)
-            return
-        }
-
-        const data = await getUsers(currentPage, limit)
-        if (data) {
-            setUsers(data.users)
-            setTotal(data.total)
-            saveToCache(cacheKey, data)
-        }
-    }
-
-    const searchUsersFromStore = async (currentPage = page, query = "") => {
-        const cacheKey = getCacheKey(currentPage, query)
-        const cachedData = getCachedData(cacheKey)
-        if (cachedData) {
-            setUsers(cachedData.users)
-            setTotal(cachedData.total)
-            return
-        }
-
-        const data = await searchUser(query, currentPage, limit)
-        if (data) {
-            setUsers(data.users)
-            setTotal(data.total)
-            saveToCache(cacheKey, data)
-        }
-    }
+        fetchData(pageParam, query || undefined)
+    }, [location.search, fetchData, cacheVersion])
 
     const handlePageChange = (newPage: number) => {
-        setPage(newPage)
         const params = new URLSearchParams(location.search)
         params.set("page", newPage.toString())
+
         if (searchQuery) {
             params.set("query", searchQuery)
-            searchUsersFromStore(newPage, searchQuery)
-        } else {
-            fetchUsers(newPage)
         }
+
         navigate({ search: params.toString() })
     }
 
     const handleSearch = () => {
         const trimmedQuery = searchQuery.trim()
-        if (trimmedQuery === "") {
-            return
+        if (trimmedQuery) {
+            const params = new URLSearchParams(location.search)
+            params.set("query", trimmedQuery)
+            params.set("page", "1")
+            navigate({ search: params.toString() })
         }
-        handleSearchFromHook(trimmedQuery, 1)
     }
 
     const handleClearSearchBar = () => {
-        setSearchQuery("")
+        const params = new URLSearchParams(location.search)
+        params.delete("query")
+        navigate({ search: params.toString() })
     }
 
     const handleResetSearch = () => {
-        handleResetFromHook()
+        const params = new URLSearchParams(location.search)
+        params.delete("query")
+        params.set("page", "1")
+        navigate({ search: params.toString() })
+        clearCache()
     }
-
     const handleUpdateButton = () => {
         clearCache()
     }
@@ -131,12 +111,12 @@ const UsersManagement = () => {
             <Button onClick={handleResetSearch} disabled={isFetching}>
                 Сбросить
             </Button>
-
             <Button onClick={handleUpdateButton} disabled={isFetching}>
                 Обновить
             </Button>
+
             <div className="cache-info">
-                <span>Последнее обновление: {formatDate(lastUpdateDate)}</span>
+                <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
             </div>
 
             {isFetching ? (
