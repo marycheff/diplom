@@ -57,6 +57,7 @@ export const mapToResponseTest = (
                   inputFields: test.settings.inputFields,
                   requiredFields: test.settings.requiredFields,
                   showDetailedResults: test.settings.showDetailedResults,
+                  timeLimit: test.settings.timeLimit,
               }
             : {},
         questions: test.questions?.map(question => mapToResponseQuestion(question)) || [],

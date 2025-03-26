@@ -2,14 +2,14 @@ import { useAuthStore } from "@/store/useAuthStore"
 import { UserDTO } from "@/types/userTypes"
 import { FC } from "react"
 import { Link } from "react-router-dom"
-import styles from "./UserList.module.scss"
+import styles from "./UsersTable.module.scss"
 
-interface UsersListProps {
+interface UsersTableProps {
     users: UserDTO[] | undefined
     total: number
 }
 
-const UsersList: FC<UsersListProps> = ({ users, total }) => {
+const UsersTable: FC<UsersTableProps> = ({ users, total }) => {
     const { user: currentUser } = useAuthStore()
     return (
         <>
@@ -40,7 +40,7 @@ const UsersList: FC<UsersListProps> = ({ users, total }) => {
                                             {user.id === currentUser?.id ? (
                                                 <>{user.id} (Вы) </>
                                             ) : (
-                                                <Link to={`/admin/user/${user.id}`} className={styles.actionLink}>
+                                                <Link to={`/admin/user/${user.id}`} className="actionLink">
                                                     {user.id}
                                                 </Link>
                                             )}
@@ -62,4 +62,4 @@ const UsersList: FC<UsersListProps> = ({ users, total }) => {
     )
 }
 
-export default UsersList
+export default UsersTable

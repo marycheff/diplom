@@ -6,8 +6,7 @@ import BlockedUserPage from "@/pages/BlockedUserPage"
 import HomePage from "@/pages/Home/HomePage"
 import LoginPage from "@/pages/Login/LoginPage"
 import SignupPage from "@/pages/Signup/SignupPage"
-
-import CreateTestPage from "@/pages/CreateTest/CreateTestPage"
+import CreateTestPage from "@/pages/Tests/CreateTest/CreateTestPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import { Navigate, Route } from "react-router-dom"
 

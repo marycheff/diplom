@@ -2,9 +2,11 @@ import stylesPagination from "@/components/ui/Pagination/Pagination.module.scss"
 import { TestDTO } from "@/types/testTypes"
 import { FC } from "react"
 import "./TestsListSkeleton.scss"
-
-const TestsListSkeleton: FC = () => {
-    const skeletonTests: Partial<TestDTO>[] = Array(10).fill({})
+interface TestsListSkeletonProps {
+    rows?: number
+}
+const TestsListSkeleton: FC<TestsListSkeletonProps> = ({ rows = 10 }) => {
+    const skeletonTests: Partial<TestDTO>[] = Array(rows).fill({})
     const pagesArray = [1, 2, 3]
 
     return (

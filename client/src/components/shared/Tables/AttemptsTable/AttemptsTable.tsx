@@ -1,0 +1,83 @@
+import { PreTestUserData, PreTestUserDataLabels } from "@/types/inputFields"
+import { TestAttemptDTO } from "@/types/testTypes"
+import { formatDate } from "@/utils/formatter"
+import { FC } from "react"
+import { Link } from "react-router-dom"
+import styles from "./AttemptsTable.module.scss"
+interface AttemptsTableProps {
+    attempts: TestAttemptDTO[] | undefined
+    total: number
+}
+const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
+    return (
+        <>
+            {attempts && attempts.length > 0 && (
+                <div className={styles.attemptsData}>
+                    <div className={styles.attemptsCount}>
+                        <h3>Всего: {total}</h3>
+                        <h3>На странице: {attempts.length}</h3>
+                    </div>
+
+                    <div className={styles.tableResponsive}>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Статус</th>
+                                    <th scope="col">Начат</th>
+                                    <th scope="col">Завершен</th>
+                                    <th scope="col">Баллы</th>
+                                    <th scope="col">Пользователь</th>
+                                    <th scope="col">Тест</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {attempts.map(attempt => (
+                                    <tr key={attempt.id}>
+                                        <td>{attempt.id}</td>
+                                        <td>{attempt.status}</td>
+                                        <td>{formatDate(attempt.startedAt)}</td>
+                                        <td>{attempt.completedAt ? formatDate(attempt.completedAt) : "—"}</td>
+                                        <td>{attempt.score || "—"}</td>
+                                        <td>
+                                            {attempt.user ? (
+                                                "id" in attempt.user ? (
+                                                    // UserDTO
+                                                    <Link to={`/admin/user/${attempt.user.id}`} className="actionLink">
+                                                        {attempt.user.id}
+                                                    </Link>
+                                                ) : (
+                                                    // Record<PreTestUserData, string>
+                                                    <span>
+                                                        {Object.entries(attempt.user)
+                                                            .map(([key, value]) => {
+                                                                const label =
+                                                                    PreTestUserDataLabels[key as PreTestUserData] || key
+                                                                return `${label}: ${value}`
+                                                            })
+                                                            .join(", ")}
+                                                    </span>
+                                                )
+                                            ) : (
+                                                "—"
+                                            )}
+                                        </td>
+                                        <td>
+                                            <Link to={`/admin/test/${attempt.test.id}`} className="actionLink">
+                                                {attempt.test.id}
+                                            </Link>
+                                            <br />
+                                            {attempt.test.title}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+        </>
+    )
+}
+
+export default AttemptsTable

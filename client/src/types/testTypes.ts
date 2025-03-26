@@ -6,9 +6,21 @@ export interface TestState {
     getTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     getTestById: (id: string) => Promise<TestDTO | undefined>
+    // CACHE
     MAX_CACHE_ENTRIES: number
     cache: Record<string, any>
     setCache: (key: string, data: TestsListDTO) => void
+    clearCache: () => void
+    lastCacheUpdateDate: Date | null
+}
+
+export interface AttemptState {
+    isFetching: boolean
+    getTestAttempts: (testId: string, page?: number, limit?: number) => Promise<AttemptsListDTO | undefined>
+    // CACHE
+    MAX_CACHE_ENTRIES: number
+    cache: Record<string, any>
+    setCache: (key: string, data: AttemptsListDTO) => void
     clearCache: () => void
     lastCacheUpdateDate: Date | null
 }
@@ -51,6 +63,7 @@ export interface TestSettingsDTO {
     inputFields?: PreTestUserData[]
     requiredFields?: PreTestUserData[]
     showDetailedResults?: boolean
+    timeLimit?: number | null
 }
 
 export interface UpdateTestDTO {
@@ -66,11 +79,15 @@ export interface TestAttemptDTO {
     startedAt: Date
     completedAt: Date | null
     score: number | null
-    user: UserDTO | JsonValue | null
+    user: UserDTO | Record<PreTestUserData, string> | null
     test: TestDTO
     questions: AttemptQuestionDTO[]
 }
 
+export interface AttemptsListDTO {
+    attempts: TestAttemptDTO[]
+    total: number
+}
 export interface AttemptQuestionDTO {
     question: {
         id: string

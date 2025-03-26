@@ -3,9 +3,10 @@ import Loader from "@/components/ui/Loader/Loader"
 import { useTestStore } from "@/store/useTestStore"
 import { PreTestUserDataLabels } from "@/types/inputFields"
 import { TestDTO } from "@/types/testTypes"
+import { formatSeconds } from "@/utils/formatter"
 import { isValidObjectId } from "@/utils/validator"
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import styles from "./TestInfoPage.module.scss"
 
 const TestInfoPage = () => {
@@ -14,7 +15,7 @@ const TestInfoPage = () => {
     const [test, setTest] = useState<TestDTO | null>(null)
 
     if (!testId) {
-        return <div>ID пользователя не указан</div>
+        return <div>ID теста не указан</div>
     }
     if (!isValidObjectId(testId)) {
         return <div>Невалидный Id</div>
@@ -66,7 +67,15 @@ const TestInfoPage = () => {
                         </div>
                         <div className={styles.infoRow}>
                             <span className={styles.label}>Всего попыток:</span>
-                            <span className={styles.value}>{test.totalAttempts}</span>
+                            <span className={styles.value}>
+                                {test.totalAttempts === 0 ? (
+                                    "0"
+                                ) : (
+                                    <Link to={`/admin/test/${test.id}/attempts`} className="actionLink">
+                                        {test.totalAttempts}
+                                    </Link>
+                                )}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -113,6 +122,16 @@ const TestInfoPage = () => {
                                         )}
                                     </span>
                                 </div>
+                                <div className={styles.infoRow}>
+                                    <span className={styles.label}>Лимит времени:</span>
+                                    <span className={styles.value}>
+                                        {test.settings.timeLimit ? (
+                                            formatSeconds(test.settings.timeLimit)
+                                        ) : (
+                                            <span className={styles.emptyField}>не указан</span>
+                                        )}
+                                    </span>
+                                </div>
                             </>
                         ) : (
                             <div className={styles.emptyBlock}>Настройки теста не определены</div>
@@ -126,7 +145,11 @@ const TestInfoPage = () => {
                     <div className={styles.blockContent}>
                         <div className={styles.infoRow}>
                             <span className={styles.label}>ID:</span>
-                            <span className={styles.value}>{test.author.id}</span>
+                            <span className={styles.value}>
+                                <Link to={`/admin/user/${test.author.id}`} className="actionLink">
+                                    {test.author.id}
+                                </Link>
+                            </span>
                         </div>
                         <div className={styles.infoRow}>
                             <span className={styles.label}>Email:</span>

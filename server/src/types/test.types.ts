@@ -40,6 +40,7 @@ export interface TestSettingsDTO {
     inputFields?: JsonValue
     requiredFields?: JsonValue
     showDetailedResults?: boolean
+    timeLimit?: number | null
 }
 
 export interface UpdateTestDTO {
@@ -58,6 +59,10 @@ export interface TestAttemptDTO {
     user: UserDTO | JsonValue | null
     test: TestDTO
     questions: AttemptQuestionDTO[]
+}
+export interface AttemptsListDTO {
+    attempts: TestAttemptDTO[]
+    total: number
 }
 
 export interface AttemptQuestionDTO {

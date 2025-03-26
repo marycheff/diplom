@@ -11,3 +11,20 @@ export const formatDate = (date: Date | null) => {
         second: "2-digit",
     })
 }
+
+
+export const formatSeconds = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const remainingSeconds = seconds % 60
+
+    const formattedTime = [
+        hours > 0 ? `${hours}ч.` : "",
+        minutes > 0 ? `${minutes}мин.` : "",
+        remainingSeconds > 0 ? `${remainingSeconds}сек.` : "",
+    ]
+        .filter(Boolean)
+        .join(" ")
+
+    return formattedTime || "0с"
+}

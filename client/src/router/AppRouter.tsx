@@ -4,12 +4,13 @@ import ActivationErrorPage from "@/pages/Activation/Error"
 import ActivationSuccessPage from "@/pages/Activation/Success"
 import AdminPage from "@/pages/Admin/AdminPage"
 import BlockedUserPage from "@/pages/BlockedUserPage"
-import CreateTestPage from "@/pages/CreateTest/CreateTestPage"
 import HomePage from "@/pages/Home/HomePage"
 import LoginPage from "@/pages/Login/LoginPage"
 import SignupPage from "@/pages/Signup/SignupPage"
-import TestInfoPage from "@/pages/TestInfo/TestInfoPage"
-import TestsManagement from "@/pages/TestsManagement/TestsManagement"
+import TestInfoPage from "@/pages/Tests/TestInfo/TestInfoPage"
+import AttemptsManagement from "@/pages/Tests/AttemptsManagement/AttemptsManagement"
+import CreateTestPage from "@/pages/Tests/CreateTest/CreateTestPage"
+import TestsManagement from "@/pages/Tests/TestsManagement/TestsManagement"
 import UserInfoPage from "@/pages/UserInfo/UserInfoPage"
 import UserProfilePage from "@/pages/UserProfilePage"
 import UsersManagement from "@/pages/UsersManagement/UsersManagement"
@@ -18,7 +19,7 @@ import { ComponentType, FC, useEffect, useState } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 
 interface AdminRouteProps {
-    component: ComponentType
+    component: ComponentType<any>
     isAdmin: boolean
 }
 
@@ -85,6 +86,11 @@ const AppRouter = () => {
             key="admin-test"
             path="/admin/test/:testId"
             element={<AdminRoute component={TestInfoPage} isAdmin={isAdmin} />}
+        />,
+        <Route
+            key="admin-test-attempts"
+            path="/admin/test/:testId/attempts"
+            element={<AdminRoute component={AttemptsManagement} isAdmin={isAdmin} />}
         />,
     ]
 

@@ -80,10 +80,15 @@ class AttemptController {
         }
     }
 
-    async getTestAttempts(req: Request, res: Response, next: NextFunction){
+    async getTestAttempts(req: Request, res: Response, next: NextFunction) {
         try {
+            const page = parseInt(req.query.page as string) || 1
+            const limit = parseInt(req.query.limit as string) || 10
+            if (page < 1 || limit < 1) {
+                throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
+            }
             const { testId } = req.params
-            const attempts = await attemptService.getTestAttempts(testId)
+            const attempts = await attemptService.getTestAttempts(testId, page, limit)
             res.json(attempts)
         } catch (error) {
             next(error)

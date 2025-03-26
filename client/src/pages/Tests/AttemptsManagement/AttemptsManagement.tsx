@@ -1,25 +1,34 @@
 import SearchBar from "@/components/shared/SearchBar/SearchBar"
-import TestsList from "@/components/shared/TestList/TestsList"
+import AttemptsTable from "@/components/shared/Tables/AttemptsTable/AttemptsTable"
 import TestsListSkeleton from "@/components/skeletons/TestsListSkeleton/TestsSkeleton"
 import { BackButton, Button, HomeButton } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
-import { useTestsCache } from "@/hooks/useTestsCache"
-import { useTestStore } from "@/store/useTestStore"
-import { TestDTO } from "@/types/testTypes"
+import { useAttemptsCache } from "@/hooks/useAttemptsCache"
+import { useAttemptStore } from "@/store/useAttemptStore"
+import { TestAttemptDTO } from "@/types/testTypes"
 import { formatDate } from "@/utils/formatter"
+import { isValidObjectId } from "@/utils/validator"
 import { useCallback, useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 
-const TestsManagement = () => {
-    const [tests, setTests] = useState<TestDTO[]>([])
-    const { getTests, searchTests, isFetching } = useTestStore()
+const AttemptsManagement = () => {
+    const { testId } = useParams<{ testId: string }>()
+    const { getTestAttempts, isFetching } = useAttemptStore()
+    const [attempts, setAttempts] = useState<TestAttemptDTO[]>([])
     const [total, setTotal] = useState<number>(0)
     const [limit] = useState<number>(10)
     const [page, setPage] = useState<number>(1)
-    const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
     const location = useLocation()
-    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useTestsCache()
+    const [searchQuery, setSearchQuery] = useState<string>("")
+    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useAttemptsCache()
+
+    if (!testId) {
+        return <div>ID теста не указан</div>
+    }
+    if (!isValidObjectId(testId)) {
+        return <div>Невалидный Id</div>
+    }
 
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
@@ -27,45 +36,31 @@ const TestsManagement = () => {
             const cachedData = getCachedData(cacheKey)
 
             if (cachedData) {
-                setTests(cachedData.tests)
+                setAttempts(cachedData.attempts)
                 setTotal(cachedData.total)
                 return
             }
-            let data
-            if (query) {
-                data = await searchTests(query, currentPage, limit)
-            } else {
-                data = await getTests(currentPage, limit)
-            }
+            const data = await getTestAttempts(testId, currentPage, limit)
             if (data) {
-                setTests(data.tests)
+                setAttempts(data.attempts)
                 setTotal(data.total)
                 saveToCache(cacheKey, data)
             }
         },
-        [getCacheKey, getCachedData, saveToCache, searchTests, getTests, limit]
+        [testId, getCacheKey, getCachedData, saveToCache, getTestAttempts, limit]
     )
-
     useEffect(() => {
         const params = new URLSearchParams(location.search)
-        const query = params.get("query") || ""
         const pageParam = parseInt(params.get("page") || "1", 10)
-        setSearchQuery(query)
         setPage(pageParam)
-        fetchData(pageParam, query || undefined)
+        fetchData(pageParam)
     }, [location.search, fetchData, cacheVersion])
 
     const handlePageChange = (newPage: number) => {
         const params = new URLSearchParams(location.search)
         params.set("page", newPage.toString())
-
-        if (searchQuery) {
-            params.set("query", searchQuery)
-        }
-
         navigate({ search: params.toString() })
     }
-
     const handleSearch = () => {
         const trimmedQuery = searchQuery.trim()
         if (trimmedQuery) {
@@ -75,7 +70,6 @@ const TestsManagement = () => {
             navigate({ search: params.toString() })
         }
     }
-
     const handleClearSearchBar = () => {
         const params = new URLSearchParams(location.search)
         params.delete("query")
@@ -89,7 +83,6 @@ const TestsManagement = () => {
         navigate({ search: params.toString() })
         clearCache()
     }
-
     const handleUpdateButton = () => {
         clearCache()
     }
@@ -119,14 +112,13 @@ const TestsManagement = () => {
             <div className="cache-info">
                 <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
             </div>
-
             {isFetching ? (
                 <TestsListSkeleton />
             ) : (
                 <>
-                    {totalPages > 0 && page <= totalPages ? (
+                    {attempts.length > 0 && totalPages > 0 && page <= totalPages ? (
                         <>
-                            <TestsList tests={tests} total={total} />
+                            <AttemptsTable attempts={attempts} total={total} />
                             <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
                         </>
                     ) : (
@@ -138,4 +130,4 @@ const TestsManagement = () => {
     )
 }
 
-export default TestsManagement
+export default AttemptsManagement

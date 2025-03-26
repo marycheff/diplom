@@ -48,6 +48,7 @@ model TestSettings {
   inputFields         Json?    @map("input_fields")
   requiredFields      Json?    @map("required_fields")
   showDetailedResults Boolean  @default(false) @map("show_detailed_results")
+  timeLimit           Int?     @map("time_limit")
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
 

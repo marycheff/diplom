@@ -25,5 +25,6 @@ class TestService {
     getTestById(id: string): Promise<AxiosResponse<TestDTO>> {
         return axiosInstance.get<TestDTO>(`/test/${id}`)
     }
+    
 }
 export const testService = new TestService()

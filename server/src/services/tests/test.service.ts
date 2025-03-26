@@ -65,6 +65,7 @@ class TestService {
                     inputFields: testData.settings?.inputFields ?? [],
                     requiredFields: testData.settings?.requiredFields ?? [],
                     showDetailedResults: testData.settings?.showDetailedResults ?? false,
+                    timeLimit: testData.settings?.timeLimit ?? null,
                 },
             })
             

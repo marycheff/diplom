@@ -1,14 +1,14 @@
 import { TestDTO } from "@/types/testTypes"
 import { FC } from "react"
 import { Link } from "react-router-dom"
-import styles from "./TestList.module.scss"
+import styles from "./TestsTable.module.scss"
 
-interface TestsListProps {
+interface TestsTableProps {
     tests: TestDTO[]
     total: number
 }
 
-const TestsList: FC<TestsListProps> = ({ tests, total }) => {
+const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
     return (
         <>
             {tests && tests.length > 0 && (
@@ -36,13 +36,13 @@ const TestsList: FC<TestsListProps> = ({ tests, total }) => {
                                 {tests.map(test => (
                                     <tr key={test.id}>
                                         <td>
-                                            <Link to={`/admin/test/${test.id}`} className={styles.actionLink}>
+                                            <Link to={`/admin/test/${test.id}`} className="actionLink">
                                                 {test.id}
                                             </Link>
                                         </td>
                                         <td>
                                             {/* {test.author.id} */}
-                                            <Link to={`/admin/user/${test.author.id}`} className={styles.actionLink}>
+                                            <Link to={`/admin/user/${test.author.id}`} className="actionLink">
                                                 {test.author.id}
                                             </Link>
 
@@ -54,7 +54,15 @@ const TestsList: FC<TestsListProps> = ({ tests, total }) => {
                                         <td>{test.questions ? test.questions.length : 0}</td>
                                         <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
                                         <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td>
-                                        <td>{test.totalAttempts}</td>
+                                        <td>
+                                            {test.totalAttempts === 0 ? (
+                                                "0"
+                                            ) : (
+                                                <Link to={`/admin/test/${test.id}/attempts`} className="actionLink">
+                                                    {test.totalAttempts}
+                                                </Link>
+                                            )}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -66,4 +74,4 @@ const TestsList: FC<TestsListProps> = ({ tests, total }) => {
     )
 }
 
-export default TestsList
+export default TestsTable

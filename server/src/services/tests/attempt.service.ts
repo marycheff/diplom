@@ -1,9 +1,10 @@
 import ApiError from "@/exceptions/api-error"
 import { mapToTestAttemptDTO } from "@/services/mappers/test.mappers"
 import { PreTestUserData, PreTestUserDataLabels } from "@/types/inputFields"
-import { TestAttemptDTO } from "@/types/test.types"
+import { AttemptsListDTO, TestAttemptDTO } from "@/types/test.types"
 import { isValidObjectId } from "@/utils/validator"
 import { PrismaClient } from "@prisma/client"
+
 const prisma = new PrismaClient()
 
 class AttemptService {
@@ -202,7 +203,7 @@ class AttemptService {
         return mapToTestAttemptDTO(attempt)
     }
 
-    async getUserAttempts(userId: string): Promise<any[]> {
+    async getUserAttempts(userId: string): Promise<TestAttemptDTO[]> {
         if (!isValidObjectId(userId)) {
             throw ApiError.BadRequest("Некорректный ID пользователя")
         }
@@ -234,8 +235,11 @@ class AttemptService {
         return attempts.map(attempt => mapToTestAttemptDTO(attempt))
     }
 
-    async getTestAttempts(testId: string): Promise<TestAttemptDTO[]> {
+    async getTestAttempts(testId: string, page = 1, limit = 10): Promise<AttemptsListDTO> {
+        const skip = (page - 1) * limit
         const attempts = await prisma.testAttempt.findMany({
+            skip,
+            take: limit,
             where: { testId: testId },
             include: {
                 test: {
@@ -259,7 +263,11 @@ class AttemptService {
             },
             orderBy: { startedAt: "desc" },
         })
-        return attempts.map(attempt => mapToTestAttemptDTO(attempt))
+        const total = await prisma.testAttempt.count({ where: { testId: testId } })
+        return {
+            attempts: attempts.map(attempt => mapToTestAttemptDTO(attempt)),
+            total,
+        }
     }
 }
 export default new AttemptService()
