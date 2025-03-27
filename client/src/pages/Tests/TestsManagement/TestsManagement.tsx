@@ -1,6 +1,6 @@
 import SearchBar from "@/components/shared/SearchBar/SearchBar"
 import TestsTable from "@/components/shared/Tables/TestsTable/TestsTable"
-import TestsListSkeleton from "@/components/skeletons/TestsListSkeleton/TestsSkeleton"
+import TableSkeleton from "@/components/skeletons/TestsListSkeleton/TableSkeleton"
 import { BackButton, Button, HomeButton } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
 import { useTestsCache } from "@/hooks/useTestsCache"
@@ -23,6 +23,7 @@ const TestsManagement = () => {
 
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
+            if (isFetching) return
             const cacheKey = getCacheKey(currentPage, query)
             const cachedData = getCachedData(cacheKey)
 
@@ -50,12 +51,11 @@ const TestsManagement = () => {
         const params = new URLSearchParams(location.search)
         const query = params.get("query") || ""
         const pageParam = parseInt(params.get("page") || "1", 10)
-        if (!tests.length || page !== pageParam || searchQuery !== query) {
-            setSearchQuery(query)
-            setPage(pageParam)
-            fetchData(pageParam, query || undefined)
-        }
-    }, [location.search, fetchData, cacheVersion, tests.length, page, searchQuery])
+
+        setSearchQuery(query)
+        setPage(pageParam)
+        fetchData(pageParam, query || undefined)
+    }, [location.search, fetchData, cacheVersion])
 
     const handlePageChange = (newPage: number) => {
         const params = new URLSearchParams(location.search)
@@ -79,9 +79,7 @@ const TestsManagement = () => {
     }
 
     const handleClearSearchBar = () => {
-        const params = new URLSearchParams(location.search)
-        params.delete("query")
-        navigate({ search: params.toString() })
+        setSearchQuery("")
     }
 
     const handleResetSearch = () => {
@@ -90,14 +88,14 @@ const TestsManagement = () => {
         params.set("page", "1")
         navigate({ search: params.toString() })
         clearCache()
+        fetchData(1)
     }
 
     const handleUpdateButton = () => {
         clearCache()
+        fetchData(page, searchQuery || undefined)
     }
-
     const totalPages = Math.ceil(total / limit)
-
     return (
         <>
             <BackButton />
@@ -111,9 +109,12 @@ const TestsManagement = () => {
                 placeholder="Поиск"
             />
 
-            <Button onClick={handleResetSearch} disabled={isFetching}>
+            <Button
+                onClick={handleResetSearch}
+                disabled={isFetching || !new URLSearchParams(location.search).get("query")}>
                 Сбросить
             </Button>
+
             <Button onClick={handleUpdateButton} disabled={isFetching}>
                 Обновить
             </Button>
@@ -123,7 +124,7 @@ const TestsManagement = () => {
             </div>
 
             {isFetching ? (
-                <TestsListSkeleton />
+                <TableSkeleton />
             ) : (
                 <>
                     {totalPages > 0 && page <= totalPages ? (

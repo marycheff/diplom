@@ -1,6 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
 import { UpdateUserDTO, UserDTO, UsersListDTO } from "@/types/user.types"
+import { redisClient } from "@/utils/redis-client"
 import { PrismaClient, User } from "@prisma/client"
 import bcrypt from "bcryptjs"
 
@@ -15,10 +16,14 @@ class UserService {
         return mapUserToDto(user)
     }
     async getUserById(id: string): Promise<UserDTO> {
+        const cached = await redisClient.get(`user:${id}`)
+        if (cached) return JSON.parse(cached)
+
         const user = await prisma.user.findUnique({ where: { id } })
         if (!user) {
             throw ApiError.BadRequest(`Пользователь с id ${id} не найден`)
         }
+        await redisClient.setEx(`user:${id}`, 3600, JSON.stringify(mapUserToDto(user)))
         return mapUserToDto(user)
     }
     async getUsers(page = 1, limit = 10): Promise<UsersListDTO> {
@@ -81,6 +86,8 @@ class UserService {
                     ...updateData,
                 },
             })
+            const cacheKey = `user:${id}`
+            await redisClient.del(cacheKey)
         } catch (error) {
             throw ApiError.BadRequest("Ошибка при обновлении данных пользователя")
         }
@@ -101,6 +108,8 @@ class UserService {
                     },
                 })
             })
+            const cacheKey = `user:${id}`
+            await redisClient.del(cacheKey)
         } catch (error) {
             console.log(error)
             throw ApiError.BadRequest("Ошибка при удалении пользователя")
@@ -117,6 +126,7 @@ class UserService {
                     isBlocked: true,
                 },
             })
+            await redisClient.del(`user:${id}`)
         } catch (error) {
             throw ApiError.BadRequest("Ошибка при блокировке пользователя")
         }
@@ -131,6 +141,7 @@ class UserService {
                     isBlocked: false,
                 },
             })
+            await redisClient.del(`user:${id}`)
         } catch (error) {
             throw ApiError.BadRequest("Ошибка при разблокировке пользователя")
         }

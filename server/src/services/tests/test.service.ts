@@ -2,6 +2,7 @@ import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
 import { mapToResponseTest } from "@/services/mappers/test.mappers"
 import { TestDTO, TestSettingsDTO, TestsListDTO, UpdateTestDTO } from "@/types/test.types"
+import { redisClient } from "@/utils/redis-client"
 import { isValidObjectId } from "@/utils/validator"
 import { Answer, Prisma, PrismaClient, Question } from "@prisma/client"
 
@@ -27,6 +28,7 @@ class TestService {
                 },
             })
         }
+        await redisClient.del(`test:${testId}`)!
     }
     // Создание теста без вопросов
     async createTest(authorId: string, testData: TestDTO): Promise<TestDTO> {
@@ -68,7 +70,7 @@ class TestService {
                     timeLimit: testData.settings?.timeLimit ?? null,
                 },
             })
-            
+            await redisClient.del(`user_tests:${authorId}`)
 
             return mapToResponseTest({
                 ...createdTest,
@@ -137,6 +139,7 @@ class TestService {
             const validQuestions = createdQuestions.filter(
                 (question): question is Question & { answers: Answer[] } => question !== null
             )
+            await redisClient.del(`test:${testId}`)
 
             return mapToResponseTest({
                 ...existingTest,
@@ -147,6 +150,9 @@ class TestService {
 
     // Получение всех тестов пользователя
     async getUserTests(userId: string): Promise<TestDTO[]> {
+        const cacheKey = `user_tests:${userId}`
+        const cached = await redisClient.get(cacheKey)
+        if (cached) return JSON.parse(cached)
         const tests = await prisma.test.findMany({
             where: { authorId: userId },
             include: {
@@ -168,8 +174,9 @@ class TestService {
                 },
             },
         })
-
-        return tests.map(test => mapToResponseTest(test))
+        const testsDTO = tests.map(test => mapToResponseTest(test))
+        await redisClient.setEx(cacheKey, 3600, JSON.stringify(testsDTO))
+        return testsDTO
     }
 
     async getAllTests(page: number = 1, limit: number = 10): Promise<TestsListDTO> {
@@ -229,9 +236,15 @@ class TestService {
                 where: { id: testId },
             })
         })
+        await redisClient.del(`test:${testId}`)
+        await redisClient.del("tests:all")
     }
 
     async getTestById(testId: string): Promise<TestDTO> {
+        const cacheKey = `test:${testId}`
+        const cachedTest = await redisClient.get(cacheKey)
+        if (cachedTest) return JSON.parse(cachedTest)
+
         const test = await prisma.test.findUnique({
             where: { id: testId },
             include: {
@@ -255,7 +268,10 @@ class TestService {
         })
 
         if (!test) throw ApiError.NotFound("Тест не найден")
-        return mapToResponseTest(test)
+        const testDTO = mapToResponseTest(test)
+        await redisClient.setEx(cacheKey, 3600, JSON.stringify(testDTO))
+
+        return testDTO
     }
 
     async searchTests(query: string, page = 1, limit = 10): Promise<TestsListDTO> {

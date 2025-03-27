@@ -1,6 +1,5 @@
-import SearchBar from "@/components/shared/SearchBar/SearchBar"
 import AttemptsTable from "@/components/shared/Tables/AttemptsTable/AttemptsTable"
-import TestsListSkeleton from "@/components/skeletons/TestsListSkeleton/TestsSkeleton"
+import TableSkeleton from "@/components/skeletons/TestsListSkeleton/TableSkeleton"
 import { BackButton, Button, HomeButton } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
 import { useAttemptsCache } from "@/hooks/useAttemptsCache"
@@ -20,7 +19,6 @@ const AttemptsManagement = () => {
     const [page, setPage] = useState<number>(1)
     const navigate = useNavigate()
     const location = useLocation()
-    const [searchQuery, setSearchQuery] = useState<string>("")
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useAttemptsCache()
 
     if (!testId) {
@@ -32,6 +30,8 @@ const AttemptsManagement = () => {
 
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
+            if (isFetching) return
+
             const cacheKey = getCacheKey(currentPage, query)
             const cachedData = getCachedData(cacheKey)
 
@@ -47,15 +47,14 @@ const AttemptsManagement = () => {
                 saveToCache(cacheKey, data)
             }
         },
-        [testId, getCacheKey, getCachedData, saveToCache, getTestAttempts, limit]
+        [getCacheKey, getCachedData, saveToCache, getTestAttempts, limit]
     )
     useEffect(() => {
         const params = new URLSearchParams(location.search)
         const pageParam = parseInt(params.get("page") || "1", 10)
-        if (!attempts.length || page !== pageParam) {
-            setPage(pageParam)
-            fetchData(pageParam)
-        }
+
+        setPage(pageParam)
+        fetchData(pageParam)
     }, [location.search, fetchData, cacheVersion])
 
     const handlePageChange = (newPage: number) => {
@@ -63,50 +62,18 @@ const AttemptsManagement = () => {
         params.set("page", newPage.toString())
         navigate({ search: params.toString() })
     }
-    const handleSearch = () => {
-        const trimmedQuery = searchQuery.trim()
-        if (trimmedQuery) {
-            const params = new URLSearchParams(location.search)
-            params.set("query", trimmedQuery)
-            params.set("page", "1")
-            navigate({ search: params.toString() })
-        }
-    }
-    const handleClearSearchBar = () => {
-        const params = new URLSearchParams(location.search)
-        params.delete("query")
-        navigate({ search: params.toString() })
-    }
 
-    const handleResetSearch = () => {
-        const params = new URLSearchParams(location.search)
-        params.delete("query")
-        params.set("page", "1")
-        navigate({ search: params.toString() })
-        clearCache()
-    }
     const handleUpdateButton = () => {
         clearCache()
     }
 
     const totalPages = Math.ceil(total / limit)
-
     return (
         <>
             <BackButton />
             <HomeButton />
-            <SearchBar
-                name="search"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                handleSearch={handleSearch}
-                onClearSearch={handleClearSearchBar}
-                placeholder="Поиск"
-            />
-
-            <Button onClick={handleResetSearch} disabled={isFetching}>
-                Сбросить
-            </Button>
+            <br />
+            <br />
             <Button onClick={handleUpdateButton} disabled={isFetching}>
                 Обновить
             </Button>
@@ -115,7 +82,7 @@ const AttemptsManagement = () => {
                 <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
             </div>
             {isFetching ? (
-                <TestsListSkeleton />
+                <TableSkeleton />
             ) : (
                 <>
                     {attempts.length > 0 && totalPages > 0 && page <= totalPages ? (

@@ -21,6 +21,7 @@
         "jsonwebtoken": "^9.0.2",
         "module-alias": "^2.2.3",
         "nodemailer": "^6.10.0",
+        "redis": "^4.7.0",
         "uuid": "^11.1.0",
         "zod": "^3.24.2"
     },

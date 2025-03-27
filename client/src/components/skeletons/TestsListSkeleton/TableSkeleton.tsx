@@ -1,17 +1,16 @@
 import stylesPagination from "@/components/ui/Pagination/Pagination.module.scss"
-import { TestDTO } from "@/types/testTypes"
 import { FC } from "react"
-import "./TestsListSkeleton.scss"
-interface TestsListSkeletonProps {
+import "./TableSkeleton.scss"
+interface TableSkeletonProps {
     rows?: number
 }
-const TestsListSkeleton: FC<TestsListSkeletonProps> = ({ rows = 10 }) => {
-    const skeletonTests: Partial<TestDTO>[] = Array(rows).fill({})
+const TableSkeleton: FC<TableSkeletonProps> = ({ rows = 10 }) => {
+    const skeletonData = Array(rows).fill({})
     const pagesArray = [1, 2, 3]
 
     return (
-        <div className="tests-skeleton">
-            <div className="tests-data">
+        <div className="table-skeleton">
+            <div className="table-data">
                 <div className="tests-count">
                     <h3 className="skeleton skeleton-text">
                         Всего: <span className="skeleton skeleton-box"></span>
@@ -25,18 +24,34 @@ const TestsListSkeleton: FC<TestsListSkeletonProps> = ({ rows = 10 }) => {
                     <table>
                         <thead>
                             <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Автор</th>
-                                <th scope="col">Название</th>
-                                <th scope="col">Описание</th>
-                                <th scope="col">Количество вопросов</th>
-                                <th scope="col">Требуется регистрация</th>
-                                <th scope="col">Показывать детальные результаты</th>
-                                <th scope="col">Количество попыток</th>
+                                <th scope="col">
+                                    <span className="skeleton skeleton-box"></span>
+                                </th>
+                                <th scope="col">
+                                    <span className="skeleton skeleton-box"></span>
+                                </th>
+                                <th scope="col">
+                                    <span className="skeleton skeleton-box"></span>
+                                </th>
+                                <th scope="col">
+                                    <span className="skeleton skeleton-box"></span>
+                                </th>
+                                <th scope="col">
+                                    <span className="skeleton skeleton-box"></span>
+                                </th>
+                                <th scope="col">
+                                    <span className="skeleton skeleton-box"></span>
+                                </th>
+                                <th scope="col">
+                                    <span className="skeleton skeleton-box"></span>
+                                </th>
+                                <th scope="col">
+                                    <span className="skeleton skeleton-box"></span>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {skeletonTests.map((_, index) => (
+                            {skeletonData.map((_, index) => (
                                 <tr key={index}>
                                     <td>
                                         <span className="skeleton skeleton-box"></span>
@@ -82,4 +97,4 @@ const TestsListSkeleton: FC<TestsListSkeletonProps> = ({ rows = 10 }) => {
     )
 }
 
-export default TestsListSkeleton
+export default TableSkeleton

@@ -1,6 +1,6 @@
 import SearchBar from "@/components/shared/SearchBar/SearchBar"
-import UsersTable from "@/components/shared/Tables/UsersTalbe/UsersTable"
-import TestsListSkeleton from "@/components/skeletons/TestsListSkeleton/TestsSkeleton"
+import UsersTable from "@/components/shared/Tables/UsersTable/UsersTable"
+import TableSkeleton from "@/components/skeletons/TestsListSkeleton/TableSkeleton"
 import { BackButton, Button, HomeButton } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
 import { useUsersCache } from "@/hooks/useUsersCache"
@@ -23,6 +23,8 @@ const UsersManagement = () => {
 
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
+            if (isFetching) return
+
             const cacheKey = getCacheKey(currentPage, query)
             const cachedData = getCachedData(cacheKey)
 
@@ -50,7 +52,7 @@ const UsersManagement = () => {
         const params = new URLSearchParams(location.search)
         const query = params.get("query") || ""
         const pageParam = parseInt(params.get("page") || "1", 10)
-        
+
         setSearchQuery(query)
         setPage(pageParam)
         fetchData(pageParam, query || undefined)
@@ -81,6 +83,7 @@ const UsersManagement = () => {
         const params = new URLSearchParams(location.search)
         params.delete("query")
         navigate({ search: params.toString() })
+        setSearchQuery("")
     }
 
     const handleResetSearch = () => {
@@ -89,9 +92,11 @@ const UsersManagement = () => {
         params.set("page", "1")
         navigate({ search: params.toString() })
         clearCache()
+        fetchData(1)
     }
     const handleUpdateButton = () => {
         clearCache()
+        fetchData(page, searchQuery || undefined)
     }
 
     const totalPages = Math.ceil(total / limit)
@@ -109,7 +114,9 @@ const UsersManagement = () => {
                 placeholder="Поиск"
             />
 
-            <Button onClick={handleResetSearch} disabled={isFetching}>
+            <Button
+                onClick={handleResetSearch}
+                disabled={isFetching || !new URLSearchParams(location.search).get("query")}>
                 Сбросить
             </Button>
             <Button onClick={handleUpdateButton} disabled={isFetching}>
@@ -121,7 +128,7 @@ const UsersManagement = () => {
             </div>
 
             {isFetching ? (
-                <TestsListSkeleton />
+                <TableSkeleton />
             ) : (
                 <>
                     {totalPages > 0 && page <= totalPages ? (

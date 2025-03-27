@@ -3,6 +3,7 @@ import authRoutes from "@/routes/auth.routes"
 import chatRoutes from "@/routes/chat.routes"
 import testRoutes from "@/routes/test.routes"
 import userRoutes from "@/routes/user.routes"
+import { connectRedis } from "@/utils/redis-client"
 import { PrismaClient } from "@prisma/client"
 import { parse } from "cookie"
 import cors from "cors"
@@ -10,7 +11,6 @@ import dotenv from "dotenv"
 import express, { NextFunction, Request, Response } from "express"
 import "module-alias/register"
 import envConfig from "./config/envConfig"
-
 dotenv.config()
 
 const PORT = envConfig.PORT
@@ -56,11 +56,13 @@ app.get("/", (req: Request, res: Response) => {
 
 const start = async () => {
     try {
+        await connectRedis()
         await prisma.$connect()
         // app.listen(PORT, () => console.log(`✓ Сервер запущен. Порт ${PORT}`))
         app.listen(PORT, "0.0.0.0", () => console.log(`✓ Сервер запущен. Порт ${PORT}`))
-    } catch {
+    } catch (error) {
         await prisma.$disconnect()
+        console.error("Failed to start the server", error)
         process.exit(1)
     }
 }

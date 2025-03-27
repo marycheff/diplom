@@ -10,7 +10,7 @@ export const useTestStore = create<TestState>(set => {
         isFetching: false,
         cache: {},
         MAX_CACHE_ENTRIES: 50,
-        CACHE_EXPIRATION_TIME: 0.1 * 60 * 1000, //  5min
+        CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
         lastCacheUpdateDate: null,
         setCache: (key: string, data: TestsListDTO) => {
             set(state => ({
