@@ -34,7 +34,11 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                             <tbody>
                                 {attempts.map(attempt => (
                                     <tr key={attempt.id}>
-                                        <td>{attempt.id}</td>
+                                        <td>
+                                            <Link to={`/admin/test/attempts/${attempt.id}`} className="actionLink">
+                                                {attempt.id}
+                                            </Link>
+                                        </td>
                                         <td>{attempt.status}</td>
                                         <td>{formatDate(attempt.startedAt)}</td>
                                         <td>{attempt.completedAt ? formatDate(attempt.completedAt) : "—"}</td>

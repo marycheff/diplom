@@ -7,9 +7,10 @@ import BlockedUserPage from "@/pages/BlockedUserPage"
 import HomePage from "@/pages/Home/HomePage"
 import LoginPage from "@/pages/Login/LoginPage"
 import SignupPage from "@/pages/Signup/SignupPage"
-import TestInfoPage from "@/pages/Tests/TestInfo/TestInfoPage"
+import AttemptInfoPage from "@/pages/Tests/AttemptInfo/AttemptInfoPage"
 import AttemptsManagement from "@/pages/Tests/AttemptsManagement/AttemptsManagement"
 import CreateTestPage from "@/pages/Tests/CreateTest/CreateTestPage"
+import TestInfoPage from "@/pages/Tests/TestInfo/TestInfoPage"
 import TestsManagement from "@/pages/Tests/TestsManagement/TestsManagement"
 import UserInfoPage from "@/pages/UserInfo/UserInfoPage"
 import UserProfilePage from "@/pages/UserProfilePage"
@@ -91,6 +92,11 @@ const AppRouter = () => {
             key="admin-test-attempts"
             path="/admin/test/:testId/attempts"
             element={<AdminRoute component={AttemptsManagement} isAdmin={isAdmin} />}
+        />,
+        <Route
+            key="admin-test-attempt"
+            path="/admin/test/attempts/:attemptId"
+            element={<AdminRoute component={AttemptInfoPage} isAdmin={isAdmin} />}
         />,
     ]
 

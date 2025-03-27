@@ -1,5 +1,6 @@
+
 import axiosInstance from "@/axios"
-import { AttemptsListDTO } from "@/types/testTypes"
+import { AttemptsListDTO, TestAttemptDTO } from "@/types/testTypes"
 import { AxiosResponse } from "axios"
 
 class AttemptService {
@@ -10,6 +11,9 @@ class AttemptService {
                 limit,
             },
         })
+    }
+    getAttemptById(id: string): Promise<AxiosResponse<TestAttemptDTO>>{
+        return axiosInstance.get<TestAttemptDTO>(`/test/attempts/${id}`)
     }
 }
 

@@ -1,12 +1,23 @@
 import { Button } from "@/components/ui/Button"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const BackButton = () => {
     const navigate = useNavigate()
-    const goBack = () => {
-        navigate(-1)
+    const location = useLocation()
+
+    // Функция для проверки, можно ли вернуться назад в рамках вашего приложения
+    const canGoBack = () => {
+        // Проверяем, есть ли предыдущая запись в истории роутера
+        return window.history.length > 1 && location.key !== "default"
     }
-    return <Button onClick={goBack}>Назад</Button>
+
+    const goBack = () => {
+        if (canGoBack()) {
+            navigate(-1) // Переходим назад только внутри приложения
+        }
+    }
+
+    return canGoBack() ? <Button onClick={goBack}>Назад</Button> : null
 }
 
 export default BackButton
