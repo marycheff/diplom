@@ -47,14 +47,15 @@ const TestsManagement = () => {
     )
 
     useEffect(() => {
-        console.log(123)
         const params = new URLSearchParams(location.search)
         const query = params.get("query") || ""
         const pageParam = parseInt(params.get("page") || "1", 10)
-        setSearchQuery(query)
-        setPage(pageParam)
-        fetchData(pageParam, query || undefined)
-    }, [location.search, fetchData, cacheVersion])
+        if (!tests.length || page !== pageParam || searchQuery !== query) {
+            setSearchQuery(query)
+            setPage(pageParam)
+            fetchData(pageParam, query || undefined)
+        }
+    }, [location.search, fetchData, cacheVersion, tests.length, page, searchQuery])
 
     const handlePageChange = (newPage: number) => {
         const params = new URLSearchParams(location.search)

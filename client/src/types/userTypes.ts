@@ -1,5 +1,3 @@
-import { TestsListDTO } from "@/types/testTypes"
-
 export interface UserState {
     isLoading: boolean
     isFetching: boolean
@@ -13,9 +11,9 @@ export interface UserState {
     blockUser: (id: string) => Promise<void>
     unblockUser: (id: string) => Promise<void>
     searchUser: (query: string, page: number, limit: number) => Promise<UsersListDTO | undefined>
-
-    MAX_CACHE_ENTRIES: number
-    cache: Record<string, any>
+    // CACHE
+    CACHE_EXPIRATION_TIME: number 
+    cache: Record<string, { data: UsersListDTO; timestamp: Date }>
     setCache: (key: string, data: UsersListDTO) => void
     clearCache: () => void
     lastCacheUpdateDate: Date | null

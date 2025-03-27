@@ -52,8 +52,10 @@ const AttemptsManagement = () => {
     useEffect(() => {
         const params = new URLSearchParams(location.search)
         const pageParam = parseInt(params.get("page") || "1", 10)
-        setPage(pageParam)
-        fetchData(pageParam)
+        if (!attempts.length || page !== pageParam) {
+            setPage(pageParam)
+            fetchData(pageParam)
+        }
     }, [location.search, fetchData, cacheVersion])
 
     const handlePageChange = (newPage: number) => {

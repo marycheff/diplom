@@ -14,7 +14,7 @@ const UsersManagement = () => {
     const [users, setUsers] = useState<UserDTO[]>([])
     const { getUsers, searchUser, isFetching } = useUserStore()
     const [total, setTotal] = useState<number>(0)
-    const [limit] = useState<number>(10)
+    const [limit] = useState<number>(2)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
@@ -50,6 +50,7 @@ const UsersManagement = () => {
         const params = new URLSearchParams(location.search)
         const query = params.get("query") || ""
         const pageParam = parseInt(params.get("page") || "1", 10)
+        
         setSearchQuery(query)
         setPage(pageParam)
         fetchData(pageParam, query || undefined)

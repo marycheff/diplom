@@ -13,18 +13,20 @@ export const useUserStore = create<UserState>(set => {
         isAuthChecking: false,
         isFetching: false,
         cache: {},
-        MAX_CACHE_ENTRIES: 50,
+        CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
         lastCacheUpdateDate: null,
 
         setCache: (key: string, data: UsersListDTO) => {
-            set(state => {
-                const newCache = { ...state.cache, [key]: data }
-                const keys = Object.keys(newCache)
-                if (keys.length > state.MAX_CACHE_ENTRIES) {
-                    delete newCache[keys[0]]
-                }
-                return { cache: newCache, lastCacheUpdateDate: new Date() }
-            })
+            set(state => ({
+                cache: {
+                    ...state.cache,
+                    [key]: {
+                        data,
+                        timestamp: new Date(),
+                    },
+                },
+                lastCacheUpdateDate: new Date(),
+            }))
         },
 
         clearCache: () => {

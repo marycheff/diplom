@@ -3,7 +3,13 @@ import { AttemptsListDTO } from "@/types/testTypes"
 import { useCallback, useState } from "react"
 
 export const useAttemptsCache = () => {
-    const { cache, setCache, clearCache: clearCacheFromStore, lastCacheUpdateDate } = useAttemptStore()
+    const {
+        cache,
+        setCache,
+        clearCache: clearCacheFromStore,
+        lastCacheUpdateDate,
+        CACHE_EXPIRATION_TIME,
+    } = useAttemptStore()
     const [cacheVersion, setCacheVersion] = useState(0)
 
     const getCacheKey = useCallback(
@@ -11,7 +17,27 @@ export const useAttemptsCache = () => {
         []
     )
 
-    const getCachedData = useCallback((key: string) => cache[key], [cache])
+    const getCachedData = useCallback(
+            (key: string): AttemptsListDTO | undefined => {
+                const cachedEntry = cache[key]
+                if (!cachedEntry) return undefined
+    
+                const now = new Date()
+                const timeElapsed = now.getTime() - cachedEntry.timestamp.getTime()
+                // Если время не вышло
+                if (timeElapsed < CACHE_EXPIRATION_TIME) {
+                    return cachedEntry.data
+                }
+                // Если время вышло
+                useAttemptStore.setState(state => {
+                    const newCache = { ...state.cache }
+                    delete newCache[key]
+                    return { cache: newCache }
+                })
+                return undefined
+            },
+            [cache, CACHE_EXPIRATION_TIME]
+        )
 
     const saveToCache = useCallback(
         (key: string, data: AttemptsListDTO) => {

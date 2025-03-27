@@ -8,18 +8,20 @@ export const useAttemptStore = create<AttemptState>(set => {
     return {
         isFetching: false,
         cache: {},
-        MAX_CACHE_ENTRIES: 50,
-        lastCacheUpdateDate: null,
-        setCache: (key: string, data: AttemptsListDTO) => {
-            set(state => {
-                const newCache = { ...state.cache, [key]: data }
-                const keys = Object.keys(newCache)
-                if (keys.length > state.MAX_CACHE_ENTRIES) {
-                    delete newCache[keys[0]]
-                }
-                return { cache: newCache, lastCacheUpdateDate: new Date() }
-            })
-        },
+        CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
+                lastCacheUpdateDate: null,
+                setCache: (key: string, data: AttemptsListDTO) => {
+                    set(state => ({
+                        cache: {
+                            ...state.cache,
+                            [key]: {
+                                data,
+                                timestamp: new Date(),
+                            },
+                        },
+                        lastCacheUpdateDate: new Date(),
+                    }))
+                },
         clearCache: () => {
             set({ cache: {}, lastCacheUpdateDate: new Date() })
         },

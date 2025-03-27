@@ -7,8 +7,8 @@ export interface TestState {
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     getTestById: (id: string) => Promise<TestDTO | undefined>
     // CACHE
-    MAX_CACHE_ENTRIES: number
-    cache: Record<string, any>
+    CACHE_EXPIRATION_TIME: number
+    cache: Record<string, { data: TestsListDTO; timestamp: Date }>
     setCache: (key: string, data: TestsListDTO) => void
     clearCache: () => void
     lastCacheUpdateDate: Date | null
@@ -18,8 +18,8 @@ export interface AttemptState {
     isFetching: boolean
     getTestAttempts: (testId: string, page?: number, limit?: number) => Promise<AttemptsListDTO | undefined>
     // CACHE
-    MAX_CACHE_ENTRIES: number
-    cache: Record<string, any>
+    CACHE_EXPIRATION_TIME: number
+    cache: Record<string, { data: AttemptsListDTO; timestamp: Date }>
     setCache: (key: string, data: AttemptsListDTO) => void
     clearCache: () => void
     lastCacheUpdateDate: Date | null
