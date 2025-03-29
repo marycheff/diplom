@@ -7,7 +7,7 @@ import {
     TestDTO,
     TestSettingsDTO,
 } from "@/types/test.types"
-import { Answer, Question, Test, TestAttempt, User } from "@prisma/client"
+import { Answer, Question, Test, TestAttempt, User, UserAnswer } from "@prisma/client"
 
 export const mapToResponseAnswer = (answer: Answer): AnswerDTO => {
     return {
@@ -65,9 +65,12 @@ export const mapToResponseTest = (
 }
 export const mapToAttemptQuestionDTO = (
     question: Question & { answers: Answer[] },
-    userAnswers: { questionId: string; answer: Answer }[]
+    userAnswers: UserAnswer[],
+    allAnswers: Answer[]
 ): AttemptQuestionDTO => {
-    const userAnswer = userAnswers.find(a => a.questionId === question.id)?.answer
+    const userAnswer = userAnswers.find(a => a.questionId === question.id)
+    const answer = userAnswer?.answerId ? allAnswers.find(a => a.id === userAnswer.answerId) : null
+
     return {
         question: {
             id: question.id,
@@ -76,10 +79,18 @@ export const mapToAttemptQuestionDTO = (
             type: question.type,
         },
         answers: question.answers.map(mapToResponseAnswer),
-        userAnswer: userAnswer ? mapToResponseAnswer(userAnswer) : null,
+        userAnswer:
+            userAnswer && answer
+                ? {
+                      userAnswerId: userAnswer.id, // ID из UserAnswer
+                      answer: mapToResponseAnswer(answer),
+                      timeSpent: userAnswer.timeSpent,
+                      answeredAt: userAnswer.answeredAt,
+                      createdAt: userAnswer.createdAt,
+                  }
+                : null,
     }
 }
-
 export const mapToTestAttemptDTO = (
     attempt: TestAttempt & {
         test: Test & {
@@ -93,17 +104,19 @@ export const mapToTestAttemptDTO = (
             }
         }
         user: User | null
-        answers: { questionId: string; answer: Answer }[]
+        answers: UserAnswer[]
     }
 ): TestAttemptDTO => {
+    const allAnswers = attempt.test.questions.flatMap(q => q.answers)
+
     return {
         id: attempt.id,
         status: attempt.status,
         startedAt: attempt.startedAt,
-        completedAt: attempt.completedAt,
-        score: attempt.score,
+        completedAt: attempt.completedAt ?? null,
+        score: attempt.score ?? null,
         user: attempt.user ? mapUserToDto(attempt.user) : attempt.userData,
         test: mapToResponseTest(attempt.test),
-        questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers)),
+        questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
     }
 }

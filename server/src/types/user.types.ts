@@ -1,11 +1,9 @@
-import { Role, User } from "@prisma/client"
+import { Role } from "@prisma/client"
 
-
-export interface UsersListDTO{
+export interface UsersListDTO {
     users: UserDTO[]
     total: number
 }
-
 export interface UserDTO {
     id: string
     email: string
@@ -23,9 +21,6 @@ export interface CreateUserDTO {
     activationLink?: string
 }
 export interface UpdateUserDTO {
-    // email?: string
-    // password?: string
-    // isActivated?: boolean
     name?: string
     surname?: string
     patronymic?: string

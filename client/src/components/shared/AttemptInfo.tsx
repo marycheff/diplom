@@ -2,7 +2,7 @@ import Loader from "@/components/ui/Loader/Loader"
 import { useAttemptStore } from "@/store/useAttemptStore"
 import { PreTestUserData, PreTestUserDataLabels } from "@/types/inputFields"
 import { TestAttemptDTO } from "@/types/testTypes"
-import { formatDate } from "@/utils/formatter"
+import { formatDate, formatSeconds } from "@/utils/formatter"
 import { isValidObjectId } from "@/utils/validator"
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
@@ -84,9 +84,9 @@ const AttemptInfo = () => {
                     </div>
                 </div>
 
-                {/* Информация о пользователе */}
+                {/* Информация об авторе теста */}
                 <div className={styles.infoBlock}>
-                    <h1 className={styles.blockTitle}>Информация о пользователе</h1>
+                    <h1 className={styles.blockTitle}>Информация об авторе теста</h1>
                     <div className={styles.blockContent}>
                         {attempt.user ? (
                             "id" in attempt.user ? (
@@ -117,7 +117,7 @@ const AttemptInfo = () => {
                                 ))
                             )
                         ) : (
-                            <div className={styles.emptyBlock}>Информация о пользователе отсутствует</div>
+                            <div className={styles.emptyBlock}>Информация об авторе теста отсутствует</div>
                         )}
                     </div>
                 </div>
@@ -182,19 +182,49 @@ const AttemptInfo = () => {
                                         <div className={styles.answerSection}>
                                             <h3 className={styles.answerTitle}>Ответ пользователя:</h3>
                                             {question.userAnswer ? (
-                                                <div
-                                                    className={`${styles.answerItem} ${
-                                                        question.userAnswer.isCorrect
-                                                            ? styles.correctAnswer
-                                                            : styles.incorrectAnswer
-                                                    }`}>
-                                                    <span className={styles.answerText}>
-                                                        {question.userAnswer.text}
-                                                    </span>
-                                                    <span className={styles.answerStatus}>
-                                                        {question.userAnswer.isCorrect ? "✓ Верно" : "✗ Неверно"}
-                                                    </span>
-                                                </div>
+                                                <>
+                                                    <div
+                                                        className={`${styles.answerItem} ${
+                                                            question.userAnswer.answer.isCorrect
+                                                                ? styles.correctAnswer
+                                                                : styles.incorrectAnswer
+                                                        }`}>
+                                                        <span className={styles.answerText}>
+                                                            {question.userAnswer.answer.text}
+                                                        </span>
+                                                        <span className={styles.answerStatus}>
+                                                            {question.userAnswer.answer.isCorrect
+                                                                ? "✓ Верно"
+                                                                : "✗ Неверно"}
+                                                        </span>
+                                                    </div>
+                                                    <div className={styles.answerMeta}>
+                                                        <div className={styles.metaItem}>
+                                                            <span className={styles.metaLabel}>Затраченное время:</span>
+                                                            <span className={styles.metaValue}>
+                                                                {question.userAnswer.timeSpent ? (
+                                                                    `${formatSeconds(question.userAnswer.timeSpent)}`
+                                                                ) : (
+                                                                    <span className={styles.emptyField}>
+                                                                        не указано
+                                                                    </span>
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                        <div className={styles.metaItem}>
+                                                            <span className={styles.metaLabel}>Дата ответа:</span>
+                                                            <span className={styles.metaValue}>
+                                                                {question.userAnswer.answeredAt ? (
+                                                                    formatDate(question.userAnswer.answeredAt)
+                                                                ) : (
+                                                                    <span className={styles.emptyField}>
+                                                                        не указана
+                                                                    </span>
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </>
                                             ) : (
                                                 <span className={styles.emptyField}>Ответ отсутствует</span>
                                             )}

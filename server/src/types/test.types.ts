@@ -73,5 +73,20 @@ export interface AttemptQuestionDTO {
         type: QuestionType
     }
     answers: AnswerDTO[]
-    userAnswer: AnswerDTO | null
+    userAnswer: {
+        userAnswerId: string
+        answer: AnswerDTO 
+        timeSpent: number | null
+        answeredAt: Date | null
+        createdAt: Date
+    } | null
+}
+export interface UserAnswerDTO {
+    id: string
+    attemptId: string
+    questionId: string
+    answerId: string
+    answeredAt: Date | null
+    timeSpent: number | null
+    createdAt: Date
 }

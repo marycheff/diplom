@@ -29,10 +29,10 @@ const AttemptsManagement = () => {
     }
 
     const fetchData = useCallback(
-        async (currentPage: number, query?: string) => {
+        async (currentPage: number) => {
             if (isFetching) return
 
-            const cacheKey = getCacheKey(currentPage, query)
+            const cacheKey = getCacheKey(currentPage)
             const cachedData = getCachedData(cacheKey)
 
             if (cachedData) {

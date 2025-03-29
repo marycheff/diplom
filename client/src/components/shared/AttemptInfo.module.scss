@@ -260,3 +260,25 @@
     border-radius: 4px;
     font-size: 14px;
 }
+
+.answerMeta {
+    margin-top: 12px;
+    padding: 10px;
+    background-color: color($background, 200);
+    border-radius: 8px;
+}
+.metaItem {
+    display: flex;
+    margin-bottom: 6px;
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+.metaLabel {
+    font-weight: 600;
+    color: color($secondary, 600);
+    min-width: 150px;
+}
+.metaValue {
+    color: color($primary, 600);
+}

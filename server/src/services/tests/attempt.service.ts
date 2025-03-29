@@ -56,7 +56,7 @@ class AttemptService {
         return { attemptId: attempt.id }
     }
     // Сохранение ответа
-    async saveAnswer(attemptId: string, questionId: string, answerId: string): Promise<void> {
+    async saveAnswer(attemptId: string, questionId: string, answerId: string, timeSpent?: number): Promise<void> {
         const attempt = await prisma.testAttempt.findUnique({
             where: { id: attemptId },
             include: { test: true },
@@ -90,7 +90,13 @@ class AttemptService {
 
         // Сохраняем новый ответ
         await prisma.userAnswer.create({
-            data: { attemptId, questionId, answerId },
+            data: {
+                attemptId,
+                questionId,
+                answerId,
+                timeSpent,
+                answeredAt: new Date(),
+            },
         })
     }
 
@@ -166,7 +172,7 @@ class AttemptService {
         return attempts.map(attempt => mapToTestAttemptDTO(attempt))
     }
 
-    async getAttempt(attemptId: string): Promise<any> {
+    async getAttempt(attemptId: string): Promise<TestAttemptDTO> {
         if (!isValidObjectId(attemptId)) {
             throw ApiError.BadRequest("Некорректный ID попытки прохождения теста")
         }
@@ -174,26 +180,32 @@ class AttemptService {
         const attempt = await prisma.testAttempt.findUnique({
             where: { id: attemptId },
             include: {
+                answers: {
+                    // Явно указываем все нужные поля UserAnswer
+                    select: {
+                        id: true,
+                        attemptId: true,
+                        questionId: true,
+                        answerId: true,
+                        answeredAt: true,
+                        timeSpent: true,
+                        createdAt: true,
+                    },
+                },
                 test: {
                     include: {
-                        author: true,
                         questions: {
                             include: {
                                 answers: true,
                             },
-                            orderBy: { order: "asc" },
                         },
+                        author: true,
                     },
                 },
                 user: true,
-                answers: {
-                    include: {
-                        question: true,
-                        answer: true,
-                    },
-                },
             },
         })
+        console.log(attempt)
 
         // Проверка, существует ли попытка
         if (!attempt) {

@@ -97,7 +97,13 @@ export interface AttemptQuestionDTO {
         type: QuestionType
     }
     answers: AnswerDTO[]
-    userAnswer: AnswerDTO | null
+    userAnswer: {
+        userAnswerId: string // ID из UserAnswer (новое поле)
+        answer: AnswerDTO // Данные ответа (бывший userAnswer)
+        timeSpent: number | null
+        answeredAt: Date | null
+        createdAt: Date
+    } | null
 }
 
 export enum QuestionType {
