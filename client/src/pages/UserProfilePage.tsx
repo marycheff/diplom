@@ -82,7 +82,7 @@ const UserProfilePage = () => {
 
     return (
         <div>
-            <BackButton />
+            {/* <BackButton /> */}
             {(isFetching || isLoadingFields) && <Loader delay={300} />}
 
             {Object.keys(userFields).length === 0 && !isLoadingFields ? null : ( // Проверяем, загрузились ли данные

@@ -40,7 +40,7 @@ const UsersTable: FC<UsersTableProps> = ({ users, total }) => {
                                             {user.id === currentUser?.id ? (
                                                 <>{user.id} (Вы) </>
                                             ) : (
-                                                <Link to={`/admin/user/${user.id}`} className="actionLink">
+                                                <Link to={`/admin/users/${user.id}`} className="actionLink">
                                                     {user.id}
                                                 </Link>
                                             )}

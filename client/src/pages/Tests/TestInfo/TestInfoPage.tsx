@@ -39,10 +39,10 @@ const TestInfoPage = () => {
     }
     return (
         <div className={styles.container}>
-            <div className={styles.navigation}>
+            {/* <div className={styles.navigation}>
                 <BackButton />
                 <HomeButton />
-            </div>
+            </div> */}
 
             <div className={styles.topGrid}>
                 {/* Block 1: Basic Test Information */}
@@ -71,7 +71,7 @@ const TestInfoPage = () => {
                                 {test.totalAttempts === 0 ? (
                                     "0"
                                 ) : (
-                                    <Link to={`/admin/test/${test.id}/attempts`} className="actionLink">
+                                    <Link to={`/admin/tests/${test.id}/attempts`} className="actionLink">
                                         {test.totalAttempts}
                                     </Link>
                                 )}
@@ -146,7 +146,7 @@ const TestInfoPage = () => {
                         <div className={styles.infoRow}>
                             <span className={styles.label}>ID:</span>
                             <span className={styles.value}>
-                                <Link to={`/admin/user/${test.author.id}`} className="actionLink">
+                                <Link to={`/admin/users/${test.author.id}`} className="actionLink">
                                     {test.author.id}
                                 </Link>
                             </span>

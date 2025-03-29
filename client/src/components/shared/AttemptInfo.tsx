@@ -75,7 +75,7 @@ const AttemptInfo = () => {
                             <span className={styles.label}>Результат:</span>
                             <span className={styles.value}>
                                 {typeof attempt.score === "number" ? (
-                                    `${attempt.score}%`
+                                    `${attempt.score === 0 ? attempt.score : "0" }%`
                                 ) : (
                                     <span className={styles.emptyField}>—</span>
                                 )}
@@ -94,7 +94,7 @@ const AttemptInfo = () => {
                                     <div className={styles.infoRow}>
                                         <span className={styles.label}>ID:</span>
                                         <span className={styles.value}>
-                                            <Link to={`/admin/user/${attempt.user.id}`} className="actionLink">
+                                            <Link to={`/admin/users/${attempt.user.id}`} className="actionLink">
                                                 {attempt.user.id}
                                             </Link>
                                         </span>
@@ -131,7 +131,7 @@ const AttemptInfo = () => {
                                 <div className={styles.infoRow}>
                                     <span className={styles.label}>ID:</span>
                                     <span className={styles.value}>
-                                        <Link to={`/admin/test/${attempt.test.id}`} className="actionLink">
+                                        <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
                                             {attempt.test.id}
                                         </Link>
                                     </span>

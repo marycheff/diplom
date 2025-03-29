@@ -4,7 +4,7 @@ import { BackButton } from "@/components/ui/Button"
 const UserInfoPage = () => {
     return (
         <div>
-            <BackButton />
+            {/* <BackButton /> */}
             <UserInfo />
         </div>
     )

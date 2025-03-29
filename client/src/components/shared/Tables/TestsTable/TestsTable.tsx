@@ -36,13 +36,13 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                 {tests.map(test => (
                                     <tr key={test.id}>
                                         <td>
-                                            <Link to={`/admin/test/${test.id}`} className="actionLink">
+                                            <Link to={`/admin/tests/${test.id}`} className="actionLink">
                                                 {test.id}
                                             </Link>
                                         </td>
                                         <td>
                                             {/* {test.author.id} */}
-                                            <Link to={`/admin/user/${test.author.id}`} className="actionLink">
+                                            <Link to={`/admin/users/${test.author.id}`} className="actionLink">
                                                 {test.author.id}
                                             </Link>
 
@@ -58,7 +58,7 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                             {test.totalAttempts === 0 ? (
                                                 "0"
                                             ) : (
-                                                <Link to={`/admin/test/${test.id}/attempts`} className="actionLink">
+                                                <Link to={`/admin/tests/${test.id}/attempts`} className="actionLink">
                                                     {test.totalAttempts}
                                                 </Link>
                                             )}

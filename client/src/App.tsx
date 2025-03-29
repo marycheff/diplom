@@ -1,3 +1,4 @@
+import Breadcrumbs from "@/components/shared/Breadcrumbs/Breadcrumbs"
 import ScrollbarWidthManager from "@/components/utils/ScrollbarWidthManager"
 import { Toaster } from "react-hot-toast"
 import { BrowserRouter } from "react-router-dom"
@@ -6,6 +7,7 @@ import "./styles/global.scss"
 const App = () => {
     return (
         <BrowserRouter>
+            <Breadcrumbs />
             <AppRouter />
             <Toaster position="top-right" reverseOrder={true} />
             <ScrollbarWidthManager />

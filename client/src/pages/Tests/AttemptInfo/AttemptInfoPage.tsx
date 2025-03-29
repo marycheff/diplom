@@ -4,8 +4,8 @@ import { BackButton, HomeButton } from "@/components/ui/Button"
 const AttemptInfoPage = () => {
     return (
         <div>
-            <BackButton />
-            <HomeButton />
+            {/* <BackButton />
+            <HomeButton /> */}
             <AttemptInfo />
         </div>
     )

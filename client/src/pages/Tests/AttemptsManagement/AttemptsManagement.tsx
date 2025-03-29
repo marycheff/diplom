@@ -1,6 +1,6 @@
 import AttemptsTable from "@/components/shared/Tables/AttemptsTable/AttemptsTable"
 import TableSkeleton from "@/components/skeletons/TestsListSkeleton/TableSkeleton"
-import { BackButton, Button, HomeButton } from "@/components/ui/Button"
+import { Button } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
 import { useAttemptsCache } from "@/hooks/useAttemptsCache"
 import { useAttemptStore } from "@/store/useAttemptStore"
@@ -51,7 +51,12 @@ const AttemptsManagement = () => {
     )
     useEffect(() => {
         const params = new URLSearchParams(location.search)
-        const pageParam = parseInt(params.get("page") || "1", 10)
+        let pageParam = parseInt(params.get("page") || "1", 10)
+        if (!params.has("page")) {
+            params.set("page", "1")
+            navigate({ search: params.toString() })
+            pageParam = 1
+        }
 
         setPage(pageParam)
         fetchData(pageParam)
@@ -70,8 +75,8 @@ const AttemptsManagement = () => {
     const totalPages = Math.ceil(total / limit)
     return (
         <>
-            <BackButton />
-            <HomeButton />
+            {/* <BackButton />
+            <HomeButton /> */}
             <br />
             <br />
             <Button onClick={handleUpdateButton} disabled={isFetching}>

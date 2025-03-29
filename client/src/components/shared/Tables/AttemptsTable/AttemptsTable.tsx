@@ -35,19 +35,25 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                 {attempts.map(attempt => (
                                     <tr key={attempt.id}>
                                         <td>
-                                            <Link to={`/admin/test/attempts/${attempt.id}`} className="actionLink">
+                                            <Link to={`/admin/attempts/${attempt.id}`} className="actionLink">
                                                 {attempt.id}
                                             </Link>
                                         </td>
                                         <td>{attempt.status}</td>
                                         <td>{formatDate(attempt.startedAt)}</td>
                                         <td>{attempt.completedAt ? formatDate(attempt.completedAt) : "—"}</td>
-                                        <td>{attempt.score || "—"}</td>
+                                        <td>
+                                            {typeof attempt.score === "number" ? (
+                                                `${attempt.score === 0 ? attempt.score : "0"}%`
+                                            ) : (
+                                                <>—</>
+                                            )}
+                                        </td>
                                         <td>
                                             {attempt.user ? (
                                                 "id" in attempt.user ? (
                                                     // UserDTO
-                                                    <Link to={`/admin/user/${attempt.user.id}`} className="actionLink">
+                                                    <Link to={`/admin/users/${attempt.user.id}`} className="actionLink">
                                                         {attempt.user.id}
                                                     </Link>
                                                 ) : (
@@ -67,7 +73,7 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                             )}
                                         </td>
                                         <td>
-                                            <Link to={`/admin/test/${attempt.test.id}`} className="actionLink">
+                                            <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
                                                 {attempt.test.id}
                                             </Link>
                                             <br />

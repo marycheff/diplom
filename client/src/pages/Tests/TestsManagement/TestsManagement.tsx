@@ -50,7 +50,12 @@ const TestsManagement = () => {
     useEffect(() => {
         const params = new URLSearchParams(location.search)
         const query = params.get("query") || ""
-        const pageParam = parseInt(params.get("page") || "1", 10)
+        let pageParam = parseInt(params.get("page") || "1", 10)
+        if (!params.has("page")) {
+            params.set("page", "1")
+            navigate({ search: params.toString() })
+            pageParam = 1
+        }
 
         setSearchQuery(query)
         setPage(pageParam)
@@ -98,8 +103,8 @@ const TestsManagement = () => {
     const totalPages = Math.ceil(total / limit)
     return (
         <>
-            <BackButton />
-            <HomeButton />
+            {/* <BackButton />
+            <HomeButton /> */}
             <SearchBar
                 name="search"
                 value={searchQuery}

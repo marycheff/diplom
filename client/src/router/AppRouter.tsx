@@ -75,7 +75,7 @@ const AppRouter = () => {
         />,
         <Route
             key="admin-user"
-            path="/admin/user/:userId"
+            path="/admin/users/:userId"
             element={<AdminRoute component={UserInfoPage} isAdmin={isAdmin} />}
         />,
         <Route
@@ -85,17 +85,17 @@ const AppRouter = () => {
         />,
         <Route
             key="admin-test"
-            path="/admin/test/:testId"
+            path="/admin/tests/:testId"
             element={<AdminRoute component={TestInfoPage} isAdmin={isAdmin} />}
         />,
         <Route
             key="admin-test-attempts"
-            path="/admin/test/:testId/attempts"
+            path="/admin/tests/:testId/attempts"
             element={<AdminRoute component={AttemptsManagement} isAdmin={isAdmin} />}
         />,
         <Route
             key="admin-test-attempt"
-            path="/admin/test/attempts/:attemptId"
+            path="/admin/attempts/:attemptId"
             element={<AdminRoute component={AttemptInfoPage} isAdmin={isAdmin} />}
         />,
     ]

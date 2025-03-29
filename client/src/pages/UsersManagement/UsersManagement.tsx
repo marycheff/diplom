@@ -1,7 +1,7 @@
 import SearchBar from "@/components/shared/SearchBar/SearchBar"
 import UsersTable from "@/components/shared/Tables/UsersTable/UsersTable"
 import TableSkeleton from "@/components/skeletons/TestsListSkeleton/TableSkeleton"
-import { BackButton, Button, HomeButton } from "@/components/ui/Button"
+import { Button } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
 import { useUsersCache } from "@/hooks/useUsersCache"
 import { useUserStore } from "@/store/useUserStore"
@@ -51,8 +51,13 @@ const UsersManagement = () => {
     useEffect(() => {
         const params = new URLSearchParams(location.search)
         const query = params.get("query") || ""
-        const pageParam = parseInt(params.get("page") || "1", 10)
 
+        let pageParam = parseInt(params.get("page") || "1", 10)
+        if (!params.has("page")) {
+            params.set("page", "1")
+            navigate({ search: params.toString() })
+            pageParam = 1
+        }
         setSearchQuery(query)
         setPage(pageParam)
         fetchData(pageParam, query || undefined)
@@ -103,8 +108,8 @@ const UsersManagement = () => {
 
     return (
         <>
-            <BackButton />
-            <HomeButton />
+            {/* <BackButton />
+            <HomeButton /> */}
             <SearchBar
                 name="search"
                 value={searchQuery}
