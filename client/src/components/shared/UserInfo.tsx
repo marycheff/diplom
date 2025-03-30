@@ -94,7 +94,7 @@ const UserInfo = () => {
                                             {user.isBlocked ? (
                                                 <Button
                                                     onClick={() => handleUnblockUser(user.id)}
-                                                    isLoading={isLoading}>
+                                                    disabled={isLoading}>
                                                     Разблокировать
                                                 </Button>
                                             ) : (

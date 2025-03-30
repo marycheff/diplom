@@ -1,5 +1,5 @@
-import { BackButton, HomeButton } from "@/components/ui/Button"
 import Loader from "@/components/ui/Loader/Loader"
+import { useAuthStore } from "@/store/useAuthStore"
 import { useTestStore } from "@/store/useTestStore"
 import { PreTestUserDataLabels } from "@/types/inputFields"
 import { TestDTO } from "@/types/testTypes"
@@ -13,6 +13,7 @@ const TestInfoPage = () => {
     const { testId } = useParams<{ testId: string }>()
     const { getTestById, isFetching } = useTestStore()
     const [test, setTest] = useState<TestDTO | null>(null)
+    const { user: currentUser } = useAuthStore()
 
     if (!testId) {
         return <div>ID теста не указан</div>
@@ -138,45 +139,46 @@ const TestInfoPage = () => {
                         )}
                     </div>
                 </div>
-
                 {/* Block 3: Author Information */}
-                <div className={styles.infoBlock}>
-                    <h1 className={styles.blockTitle}>Информация об авторе</h1>
-                    <div className={styles.blockContent}>
-                        <div className={styles.infoRow}>
-                            <span className={styles.label}>ID:</span>
-                            <span className={styles.value}>
-                                <Link to={`/admin/users/${test.author.id}`} className="actionLink">
-                                    {test.author.id}
-                                </Link>
-                            </span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.label}>Email:</span>
-                            <span className={styles.value}>
-                                {test.author.email || <span className={styles.emptyField}>не указан</span>}
-                            </span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.label}>Имя:</span>
-                            <span className={styles.value}>
-                                {test.author.name || <span className={styles.emptyField}>не указано</span>}
-                            </span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.label}>Фамилия:</span>
-                            <span className={styles.value}>
-                                {test.author.surname || <span className={styles.emptyField}>не указана</span>}
-                            </span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.label}>Отчество:</span>
-                            <span className={styles.value}>
-                                {test.author.patronymic || <span className={styles.emptyField}>не указано</span>}
-                            </span>
+                {test.author.id !== currentUser?.id && (
+                    <div className={styles.infoBlock}>
+                        <h1 className={styles.blockTitle}>Информация об авторе</h1>
+                        <div className={styles.blockContent}>
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>ID:</span>
+                                <span className={styles.value}>
+                                    <Link to={`/admin/users/${test.author.id}`} className="actionLink">
+                                        {test.author.id}
+                                    </Link>
+                                </span>
+                            </div>
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>Email:</span>
+                                <span className={styles.value}>
+                                    {test.author.email || <span className={styles.emptyField}>не указан</span>}
+                                </span>
+                            </div>
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>Имя:</span>
+                                <span className={styles.value}>
+                                    {test.author.name || <span className={styles.emptyField}>не указано</span>}
+                                </span>
+                            </div>
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>Фамилия:</span>
+                                <span className={styles.value}>
+                                    {test.author.surname || <span className={styles.emptyField}>не указана</span>}
+                                </span>
+                            </div>
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>Отчество:</span>
+                                <span className={styles.value}>
+                                    {test.author.patronymic || <span className={styles.emptyField}>не указано</span>}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
 
             <div className={styles.infoBlock}>

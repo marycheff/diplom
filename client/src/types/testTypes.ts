@@ -3,9 +3,13 @@ import { UserDTO } from "@/types/userTypes"
 
 export interface TestState {
     isFetching: boolean
+    isLoading: boolean
     getTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     getTestById: (id: string) => Promise<TestDTO | undefined>
+    getMyTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
+    createTest: (title: string, description?: string) => Promise<TestDTO | undefined>
+
     // CACHE
     CACHE_EXPIRATION_TIME: number
     cache: Record<string, { data: TestsListDTO; timestamp: Date }>

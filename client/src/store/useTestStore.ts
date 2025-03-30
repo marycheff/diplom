@@ -5,9 +5,11 @@ import { create } from "zustand"
 
 export const useTestStore = create<TestState>(set => {
     const withFetching = createApiHandler(set, "isFetching")
+    const withLoading = createApiHandler(set, "isLoading")
 
     return {
         isFetching: false,
+        isLoading: false,
         cache: {},
         MAX_CACHE_ENTRIES: 50,
         CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
@@ -48,6 +50,21 @@ export const useTestStore = create<TestState>(set => {
                 return response.data
             }
             return withFetching(operation)
+        },
+        getMyTests: async (page = 1, limit = 10) => {
+            const operation = async () => {
+                const response = await testService.getMyTests(page, limit)
+                return response.data
+            }
+            return withFetching(operation)
+        },
+
+        createTest: async (title, description ) => {
+            const operation = async () => {
+                const response = await testService.createTest(title, description)
+                return response.data
+            }
+            return withLoading(operation)
         },
     }
 })

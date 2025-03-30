@@ -11,4 +11,5 @@ export interface InputProps {
     clearable?: boolean
     showToggle?: boolean
     onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
+    floatingLabel?: boolean
 }

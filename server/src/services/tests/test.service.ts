@@ -149,11 +149,14 @@ class TestService {
     }
 
     // Получение всех тестов пользователя
-    async getUserTests(userId: string): Promise<TestDTO[]> {
-        const cacheKey = `user_tests:${userId}`
-        const cached = await redisClient.get(cacheKey)
-        if (cached) return JSON.parse(cached)
+    async getMyTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
+        const skip = (page - 1) * limit
+        // const cacheKey = `user_tests:${userId}`
+        // const cached = await redisClient.get(cacheKey)
+        // if (cached) return JSON.parse(cached)
         const tests = await prisma.test.findMany({
+            skip,
+            take: limit,
             where: { authorId: userId },
             include: {
                 questions: {
@@ -173,13 +176,20 @@ class TestService {
                     },
                 },
             },
+            orderBy: { createdAt: "desc" },
         })
-        const testsDTO = tests.map(test => mapToResponseTest(test))
-        await redisClient.setEx(cacheKey, 3600, JSON.stringify(testsDTO))
-        return testsDTO
+        const total = await prisma.test.count({
+            where: { authorId: userId },
+        })
+
+        // await redisClient.setEx(cacheKey, 3600, JSON.stringify(testsDTO))
+        return {
+            tests: tests.map(test => mapToResponseTest(test)),
+            total,
+        }
     }
 
-    async getAllTests(page: number = 1, limit: number = 10): Promise<TestsListDTO> {
+    async getAllTests(page = 1, limit = 10): Promise<TestsListDTO> {
         const skip = (page - 1) * limit
         const total = await prisma.test.count()
         const tests = await prisma.test.findMany({

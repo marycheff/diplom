@@ -32,7 +32,7 @@ const AnswersList: FC<AnswersListProps> = ({
                         type="text"
                         value={answer.text}
                         onChange={e => handleAnswerChange(index, e.target.value)}
-                        placeholder={`Ответ ${index + 1}`}
+                        placeholder={`Вариант ответа ${index + 1}`}
                     />
                     {/* <input type="checkbox" checked={answer.isCorrect} onChange={() => handleCorrectChange(index)} /> */}
                     <Checkbox

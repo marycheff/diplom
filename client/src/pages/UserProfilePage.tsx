@@ -1,4 +1,4 @@
-import { BackButton, Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/Button"
 import { EditableInput } from "@/components/ui/Input"
 import { useEffect, useState } from "react"
 import Loader from "../components/ui/Loader/Loader"
@@ -18,7 +18,7 @@ const fieldLabels: { [key: string]: string } = {
 
 const UserProfilePage = () => {
     const { user, updateActivationLink, isEmailSending } = useAuthStore()
-    const { getUserById, updateUser, isFetching } = useUserStore()
+    const { getUserById, updateUser, isFetching, isLoading } = useUserStore()
     const [userFields, setUserFields] = useState<UserFields>({})
     const [initialUserFields, setInitialUserFields] = useState<UserFields>({})
     const [isEditingFields, setIsEditingFields] = useState<{ [key: string]: boolean }>({})
@@ -117,7 +117,7 @@ const UserProfilePage = () => {
 
                     <Button
                         onClick={handleSaveClick}
-                        disabled={!isFormChanged || Object.values(isEditingFields).includes(true)}>
+                        disabled={!isFormChanged || Object.values(isEditingFields).includes(true) || isLoading}>
                         Сохранить изменения
                     </Button>
 

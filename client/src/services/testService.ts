@@ -25,6 +25,12 @@ class TestService {
     getTestById(id: string): Promise<AxiosResponse<TestDTO>> {
         return axiosInstance.get<TestDTO>(`/test/${id}`)
     }
-    
+    getMyTests(page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
+        return axiosInstance.get<TestsListDTO>("/test/my-tests")
+    }
+
+    createTest(title: string, description?: string): Promise<AxiosResponse<TestDTO>> {
+        return axiosInstance.post<TestDTO>("/test/create", { title, description })
+    }
 }
 export const testService = new TestService()

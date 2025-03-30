@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button"
+import { Input } from "@/components/ui/Input"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useResetPasswordStore } from "@/store/useResetPasswordStore"
 import { FC, useEffect, useState } from "react"
@@ -48,9 +49,10 @@ const ResetPasswordForm: FC = () => {
             <h2>Сброс пароля</h2>
             {!isCodeSent ? (
                 <div>
-                    <input
+                    <Input
+                        name="email"
                         type="email"
-                        placeholder="Введите email"
+                        placeholder="Email"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                     />

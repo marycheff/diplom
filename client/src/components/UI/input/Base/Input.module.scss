@@ -1,3 +1,5 @@
+@use "@styles/variables" as *;
+
 .inputContainer:has(.clearButton) .input {
     padding-right: 30px;
 }
@@ -23,8 +25,33 @@
     border-radius: 4px;
     font-size: 14px;
     width: 100%;
-    transition: padding-right 0.2s ease;
+    transition: padding-right 0.2s ease, border-color 0.2s ease;
     box-sizing: border-box;
+
+    &:focus {
+        outline: none;
+        border-color: color($secondary, 600);
+    }
+}
+
+.placeholder {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: white;
+    padding: 0 4px;
+    color: #999;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.inputContainer.active .placeholder {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: color($secondary, 600);
 }
 
 .clearButton {

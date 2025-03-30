@@ -40,6 +40,7 @@ const EditableInput = <T extends Record<string, any>>({
                     clearable={isEditing}
                     value={safeValue}
                     onChange={handleInputChange}
+                    floatingLabel={false}
                 />
                 {!isEditing ? (
                     <Button onClick={handleEditClick}>✎</Button>

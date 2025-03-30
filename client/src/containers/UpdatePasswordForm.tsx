@@ -48,7 +48,7 @@ const UpdatePasswordForm = () => {
                     errors={errors.newPassword}
                     placeholder="Новый пароль"
                 />
-                <Button type="submit" isLoading={isLoading}>
+                <Button type="submit" disabled={isLoading}>
                     Обновить пароль
                 </Button>
             </form>

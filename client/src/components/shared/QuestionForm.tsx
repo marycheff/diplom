@@ -59,15 +59,17 @@ const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisable
                 errors={errors?.question}
                 validationRules={questionValidation}
             />
+            <br />
             <ValidatedInput
                 clearable
-                placeholder="Введите правильный ответ"
+                placeholder="Правильный ответ"
                 name="answer"
                 register={register}
                 setValue={setValue}
                 errors={errors?.answer}
                 validationRules={answerValidation}
             />
+
             <Select
                 register={register}
                 label="Количество ответов для генерации"

@@ -27,7 +27,7 @@ export default defineConfig({
     css: {
         preprocessorOptions: {
             scss: {
-                additionalData: `@use "@styles/variables" as *;`, // Автоматически добавляет импорт в каждый SCSS-файл
+                additionalData: `@use "@styles/_variables" as *;`,
             },
         },
     },

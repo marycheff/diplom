@@ -12,6 +12,7 @@ import AllAttemptsPage from "@/pages/Tests/AllAttempts/AllAttemptsPage"
 import AllTestsPage from "@/pages/Tests/AllTests/AllTestsPage"
 import AttemptInfoPage from "@/pages/Tests/AttemptInfo/AttemptInfoPage"
 import CreateTestPage from "@/pages/Tests/CreateTest/CreateTestPage"
+import MyTestsPage from "@/pages/Tests/MyTests/MyTestsPage"
 import TestAttemptsPage from "@/pages/Tests/TestAttempts/TestAttemptsPage"
 import TestInfoPage from "@/pages/Tests/TestInfo/TestInfoPage"
 import UserInfoPage from "@/pages/UserInfo/UserInfoPage"
@@ -64,6 +65,8 @@ const AppRouter = () => {
         <Route key="profile" path="/profile" element={<UserProfilePage />} />,
         <Route key="activationError" path="/activation-error" element={<ActivationErrorPage />} />,
         <Route key="activationSuccess" path="/activation-success" element={<ActivationSuccessPage />} />,
+        <Route key="my-tests" path="/my-tests" element={<MyTestsPage />} />,
+        <Route key="my-test" path="/my-tests/:testId" element={<TestInfoPage />} />,
     ]
 
     // Маршруты для администраторов

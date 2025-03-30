@@ -29,18 +29,20 @@
     /* Responsive grid adjustments */
     @media screen and (max-width: 1100px) {
         grid-template-columns: repeat(2, 1fr);
-
-        & > .infoBlock:nth-child(3) {
-            grid-column: 1 / -1;
-        }
     }
 
     @media screen and (max-width: 768px) {
         grid-template-columns: 1fr;
+    }
 
-        /* Reset the third block width on small screens */
-        & > .infoBlock:nth-child(3) {
-            grid-column: auto;
+    &:has(.infoBlock:nth-child(3):not(:empty)) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    &:not(:has(.infoBlock:nth-child(3):not(:empty))) {
+        grid-template-columns: 1fr 1.5fr;
+        & > .infoBlock {
+            grid-column: span 1;
         }
     }
 }

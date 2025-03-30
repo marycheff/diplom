@@ -57,7 +57,7 @@ const LoginPage = () => {
                     errors={errors.password}
                     noValidation
                 />
-                <Button type="submit" isLoading={isLoading}>
+                <Button type="submit" disabled={isLoading}>
                     Вход
                 </Button>
             </form>

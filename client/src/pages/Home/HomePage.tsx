@@ -27,6 +27,7 @@ const HomePage = () => {
 
                 <Button onClick={() => navigate("/profile")}>Профиль</Button>
                 <Button onClick={() => navigate("/create-test")}>Создать Тест</Button>
+                <Button onClick={() => navigate("/my-tests")}>Мои тесты</Button>
                 <br />
                 <br />
                 <Button onClick={() => logout()}>Выйти</Button>

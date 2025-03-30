@@ -31,7 +31,7 @@ router.get("/search", authMiddleware, testController.searchTests)
 // Создание теста
 router.post("/create", authMiddleware, validateRequest(createTestSchema), testController.createTest)
 // Получение всех тестов пользователя (только свои)
-router.get("/user-tests", authMiddleware, testController.getUserTests)
+router.get("/my-tests", authMiddleware, testController.getMyTests)
 // Получение всех тестов (админ)
 router.get("/all-tests", authMiddleware, adminMiddleware, testController.getAllTests)
 // Удаление теста

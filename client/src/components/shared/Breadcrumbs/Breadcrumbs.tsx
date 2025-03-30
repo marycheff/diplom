@@ -1,7 +1,7 @@
+import BackButton from "@/components/ui/Button/BackButton/BackButton"
 import { isValidObjectId } from "@/utils/validator"
 import { Link, useLocation } from "react-router-dom"
 import styles from "./Breadcrumbs.module.scss"
-import BackButton from "@/components/ui/Button/BackButton/BackButton"
 
 const Breadcrumbs = () => {
     const location = useLocation()
@@ -25,6 +25,7 @@ const Breadcrumbs = () => {
         profile: "Профиль",
         home: "Главная",
         "create-test": "Создание теста",
+        "my-tests": "Мои тесты",
     }
 
     return (

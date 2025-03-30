@@ -50,21 +50,30 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
         ...register(name, {
             ...passwordValidation,
             onChange: handleChange,
+            onBlur: () => {
+                setIsFocused(false)
+            },
         }),
     }
 
     const hasValue = localValue.length > 0
+    const [isFocused, setIsFocused] = useState(false)
+    const isActive = isFocused || hasValue
 
     return (
         <div className={styles.inputWrapper}>
-            <div className={styles.inputContainer}>
+            <div className={`${styles.inputContainer} ${isActive ? styles.active : ""}`}>
                 <input
                     type={isPasswordVisible ? "text" : "password"}
-                    placeholder={placeholder}
                     disabled={disabled}
+                    placeholder=""
                     className={`${styles.input} ${className}`}
+                    onFocus={() => setIsFocused(true)}
                     {...inputProps}
                 />
+                <label htmlFor={name} className={styles.placeholder}>
+                    {placeholder}
+                </label>
                 {clearable && !disabled && hasValue && (
                     <button type="button" onClick={handleClear} className={styles.clearButton}>
                         &times;
@@ -76,7 +85,6 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
                     </button>
                 )}
             </div>
-            {/* Показываем ошибки только если валидация включена */}
             {errors && <p className={styles.error}>{errors.message}</p>}
         </div>
     )
