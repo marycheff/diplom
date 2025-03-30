@@ -18,6 +18,7 @@ export interface AttemptState {
     isFetching: boolean
     getTestAttempts: (testId: string, page?: number, limit?: number) => Promise<AttemptsListDTO | undefined>
     getAttemptById: (id: string) => Promise<TestAttemptDTO | undefined>
+    getAllAttempts: (page: number, limit: number) => Promise<AttemptsListDTO | undefined>
     // CACHE
     CACHE_EXPIRATION_TIME: number
     cache: Record<string, { data: AttemptsListDTO; timestamp: Date }>

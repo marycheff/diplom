@@ -10,11 +10,11 @@ import { formatDate } from "@/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
-const UsersManagement = () => {
+const AllUsersPage = () => {
     const [users, setUsers] = useState<UserDTO[]>([])
     const { getUsers, searchUser, isFetching } = useUserStore()
     const [total, setTotal] = useState<number>(0)
-    const [limit] = useState<number>(2)
+    const [limit] = useState<number>(10)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
@@ -108,8 +108,6 @@ const UsersManagement = () => {
 
     return (
         <>
-            {/* <BackButton />
-            <HomeButton /> */}
             <SearchBar
                 name="search"
                 value={searchQuery}
@@ -150,4 +148,4 @@ const UsersManagement = () => {
     )
 }
 
-export default UsersManagement
+export default AllUsersPage

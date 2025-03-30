@@ -40,5 +40,12 @@ export const useAttemptStore = create<AttemptState>(set => {
             }
             return withFetching(operation)
         },
+        getAllAttempts: async (page = 1, limit = 10) => {
+            const operation = async () => {
+                const response = await attemptService.getAllAttempts(page, limit)
+                return response.data
+            }
+            return withFetching(operation)
+        },
     }
 })

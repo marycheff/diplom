@@ -23,12 +23,12 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                             <thead>
                                 <tr>
                                     <th scope="col">ID</th>
+                                    <th scope="col">Пользователь</th>
+                                    <th scope="col">Тест</th>
                                     <th scope="col">Статус</th>
                                     <th scope="col">Начат</th>
                                     <th scope="col">Завершен</th>
                                     <th scope="col">Баллы</th>
-                                    <th scope="col">Пользователь</th>
-                                    <th scope="col">Тест</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -38,16 +38,6 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                             <Link to={`/admin/attempts/${attempt.id}`} className="actionLink">
                                                 {attempt.id}
                                             </Link>
-                                        </td>
-                                        <td>{attempt.status}</td>
-                                        <td>{formatDate(attempt.startedAt)}</td>
-                                        <td>{attempt.completedAt ? formatDate(attempt.completedAt) : "—"}</td>
-                                        <td>
-                                            {typeof attempt.score === "number" ? (
-                                                `${attempt.score === 0 ? attempt.score : "0"}%`
-                                            ) : (
-                                                <>—</>
-                                            )}
                                         </td>
                                         <td>
                                             {attempt.user ? (
@@ -78,6 +68,16 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                             </Link>
                                             <br />
                                             {attempt.test.title}
+                                        </td>
+                                        <td>{attempt.status}</td>
+                                        <td>{formatDate(attempt.startedAt)}</td>
+                                        <td>{attempt.completedAt ? formatDate(attempt.completedAt) : "—"}</td>
+                                        <td>
+                                            {typeof attempt.score === "number" ? (
+                                                `${attempt.score}%`
+                                            ) : (
+                                                <span className={styles.emptyField}>—</span>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}

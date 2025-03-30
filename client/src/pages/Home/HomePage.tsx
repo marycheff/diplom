@@ -16,6 +16,8 @@ const HomePage = () => {
                         <Button onClick={() => navigate("/admin")}>Админ панель</Button>
                         <Button onClick={() => navigate("/admin/users")}>Пользователи</Button>
                         <Button onClick={() => navigate("/admin/tests")}>Тесты</Button>
+                        <Button onClick={() => navigate("/admin/attempts")}>Попытки прохождения</Button>
+
                         {/* <Link to={"/admin/users"}>Пользователи</Link> */}
                         <br />
                         <br />

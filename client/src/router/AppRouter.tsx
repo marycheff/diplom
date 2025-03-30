@@ -3,18 +3,19 @@ import Loader from "@/components/ui/Loader/Loader"
 import ActivationErrorPage from "@/pages/Activation/Error"
 import ActivationSuccessPage from "@/pages/Activation/Success"
 import AdminPage from "@/pages/Admin/AdminPage"
+import AllUsersPage from "@/pages/AllUsers/AllUsersPage"
 import BlockedUserPage from "@/pages/BlockedUserPage"
 import HomePage from "@/pages/Home/HomePage"
 import LoginPage from "@/pages/Login/LoginPage"
 import SignupPage from "@/pages/Signup/SignupPage"
+import AllAttemptsPage from "@/pages/Tests/AllAttempts/AllAttemptsPage"
+import AllTestsPage from "@/pages/Tests/AllTests/AllTestsPage"
 import AttemptInfoPage from "@/pages/Tests/AttemptInfo/AttemptInfoPage"
-import AttemptsManagement from "@/pages/Tests/AttemptsManagement/AttemptsManagement"
 import CreateTestPage from "@/pages/Tests/CreateTest/CreateTestPage"
+import TestAttemptsPage from "@/pages/Tests/TestAttempts/TestAttemptsPage"
 import TestInfoPage from "@/pages/Tests/TestInfo/TestInfoPage"
-import TestsManagement from "@/pages/Tests/TestsManagement/TestsManagement"
 import UserInfoPage from "@/pages/UserInfo/UserInfoPage"
 import UserProfilePage from "@/pages/UserProfilePage"
-import UsersManagement from "@/pages/UsersManagement/UsersManagement"
 import { useAuthStore } from "@/store/useAuthStore"
 import { ComponentType, FC, useEffect, useState } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
@@ -71,7 +72,7 @@ const AppRouter = () => {
         <Route
             key="admin-users"
             path="/admin/users"
-            element={<AdminRoute component={UsersManagement} isAdmin={isAdmin} />}
+            element={<AdminRoute component={AllUsersPage} isAdmin={isAdmin} />}
         />,
         <Route
             key="admin-user"
@@ -81,7 +82,7 @@ const AppRouter = () => {
         <Route
             key="admin-tests"
             path="/admin/tests"
-            element={<AdminRoute component={TestsManagement} isAdmin={isAdmin} />}
+            element={<AdminRoute component={AllTestsPage} isAdmin={isAdmin} />}
         />,
         <Route
             key="admin-test"
@@ -91,12 +92,17 @@ const AppRouter = () => {
         <Route
             key="admin-test-attempts"
             path="/admin/tests/:testId/attempts"
-            element={<AdminRoute component={AttemptsManagement} isAdmin={isAdmin} />}
+            element={<AdminRoute component={TestAttemptsPage} isAdmin={isAdmin} />}
         />,
         <Route
             key="admin-test-attempt"
             path="/admin/attempts/:attemptId"
             element={<AdminRoute component={AttemptInfoPage} isAdmin={isAdmin} />}
+        />,
+        <Route
+            key="admin-all-attempts"
+            path="/admin/attempts"
+            element={<AdminRoute component={AllAttemptsPage} isAdmin={isAdmin} />}
         />,
     ]
 

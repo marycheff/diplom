@@ -2,6 +2,7 @@ import ApiError from "@/exceptions/api-error"
 import { mapToTestAttemptDTO } from "@/services/mappers/test.mappers"
 import { PreTestUserData, PreTestUserDataLabels } from "@/types/inputFields"
 import { AttemptsListDTO, TestAttemptDTO } from "@/types/test.types"
+import { redisClient } from "@/utils/redis-client"
 import { isValidObjectId } from "@/utils/validator"
 import { PrismaClient } from "@prisma/client"
 
@@ -55,6 +56,7 @@ class AttemptService {
 
         return { attemptId: attempt.id }
     }
+
     // Сохранение ответа
     async saveAnswer(attemptId: string, questionId: string, answerId: string, timeSpent?: number): Promise<void> {
         const attempt = await prisma.testAttempt.findUnique({
@@ -98,6 +100,7 @@ class AttemptService {
                 answeredAt: new Date(),
             },
         })
+        await redisClient.del(`attempt:${attemptId}`)
     }
 
     // Завершение теста и подсчет результатов
@@ -141,11 +144,16 @@ class AttemptService {
                 },
             })
 
+            await redisClient.del(`attempt:${attemptId}`)
             return { score }
         })
     }
-    async getAllAttempts(): Promise<any[]> {
+
+    async getAllAttempts(page = 1, limit = 10): Promise<AttemptsListDTO> {
+        const skip = (page - 1) * limit
         const attempts = await prisma.testAttempt.findMany({
+            skip,
+            take: limit,
             include: {
                 test: {
                     include: {
@@ -168,13 +176,23 @@ class AttemptService {
             },
             orderBy: { startedAt: "desc" },
         })
+        const total = await prisma.testAttempt.count()
 
-        return attempts.map(attempt => mapToTestAttemptDTO(attempt))
+        return {
+            attempts: attempts.map(attempt => mapToTestAttemptDTO(attempt)),
+            total,
+        }
     }
 
     async getAttempt(attemptId: string): Promise<TestAttemptDTO> {
         if (!isValidObjectId(attemptId)) {
             throw ApiError.BadRequest("Некорректный ID попытки прохождения теста")
+        }
+
+        const cacheKey = `attempt:${attemptId}`
+        const cachedData = await redisClient.get(cacheKey)
+        if (cachedData) {
+            return JSON.parse(cachedData)
         }
 
         const attempt = await prisma.testAttempt.findUnique({
@@ -205,20 +223,22 @@ class AttemptService {
                 user: true,
             },
         })
-        console.log(attempt)
 
         // Проверка, существует ли попытка
         if (!attempt) {
             throw ApiError.BadRequest("Попытка не найдена")
         }
 
-        return mapToTestAttemptDTO(attempt)
+        const result = mapToTestAttemptDTO(attempt)
+        await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
+        return result
     }
 
     async getUserAttempts(userId: string): Promise<TestAttemptDTO[]> {
         if (!isValidObjectId(userId)) {
             throw ApiError.BadRequest("Некорректный ID пользователя")
         }
+
         const attempts = await prisma.testAttempt.findMany({
             where: { userId: userId },
             include: {
@@ -276,10 +296,12 @@ class AttemptService {
             orderBy: { startedAt: "desc" },
         })
         const total = await prisma.testAttempt.count({ where: { testId: testId } })
+
         return {
             attempts: attempts.map(attempt => mapToTestAttemptDTO(attempt)),
             total,
         }
     }
 }
+
 export default new AttemptService()

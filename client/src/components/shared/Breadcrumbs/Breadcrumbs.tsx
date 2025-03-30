@@ -1,5 +1,7 @@
+import { isValidObjectId } from "@/utils/validator"
 import { Link, useLocation } from "react-router-dom"
 import styles from "./Breadcrumbs.module.scss"
+import BackButton from "@/components/ui/Button/BackButton/BackButton"
 
 const Breadcrumbs = () => {
     const location = useLocation()
@@ -19,7 +21,6 @@ const Breadcrumbs = () => {
         admin: "Админ-панель",
         tests: "Тесты",
         users: "Пользователи",
-        user: "Пользователь",
         attempts: "Попытки прохождения",
         profile: "Профиль",
         home: "Главная",
@@ -28,6 +29,7 @@ const Breadcrumbs = () => {
 
     return (
         <nav className={styles.breadcrumbs}>
+            <BackButton />
             <span className={styles.item}>
                 <Link to="/" className={`${styles.link} ${styles.home}`}>
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,10 +52,10 @@ const Breadcrumbs = () => {
             </span>
 
             {pathnames.map((value, index) => {
-                const to = `/${pathnames.slice(0, index + 1).join("/")}` // Формируем ссылку
+                const to = `/${pathnames.slice(0, index + 1).join("/")}`
                 const isLast = index === pathnames.length - 1
-                const isId = value.match(/^[0-9a-fA-F]{24}$/) // Проверка на MongoDB ID
-                const label = isId ? "ID: " + value : labels[value] || value // Сокращаем ID
+                const isId = isValidObjectId(value)
+                const label = isId ? "ID: " + value : labels[value] || value
 
                 return (
                     <span key={to} className={styles.item}>

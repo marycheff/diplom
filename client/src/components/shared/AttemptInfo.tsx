@@ -75,7 +75,7 @@ const AttemptInfo = () => {
                             <span className={styles.label}>Результат:</span>
                             <span className={styles.value}>
                                 {typeof attempt.score === "number" ? (
-                                    `${attempt.score === 0 ? attempt.score : "0" }%`
+                                    `${attempt.score}%`
                                 ) : (
                                     <span className={styles.emptyField}>—</span>
                                 )}

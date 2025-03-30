@@ -45,9 +45,12 @@ class AttemptController {
     // Получить все попытки
     async getAllAttempts(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = req.user?.id
-            // if (!userId) throw ApiError.Unauthorized()
-            const attempts = await attemptService.getAllAttempts()
+            const page = parseInt(req.query.page as string) || 1
+            const limit = parseInt(req.query.limit as string) || 10
+            if (page < 1 || limit < 1) {
+                throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
+            }
+            const attempts = await attemptService.getAllAttempts(page, limit)
             res.json(attempts)
         } catch (error) {
             next(error)

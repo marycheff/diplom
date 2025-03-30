@@ -1,7 +1,7 @@
 import SearchBar from "@/components/shared/SearchBar/SearchBar"
 import TestsTable from "@/components/shared/Tables/TestsTable/TestsTable"
 import TableSkeleton from "@/components/skeletons/TestsListSkeleton/TableSkeleton"
-import { BackButton, Button, HomeButton } from "@/components/ui/Button"
+import { Button } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination/Pagination"
 import { useTestsCache } from "@/hooks/useTestsCache"
 import { useTestStore } from "@/store/useTestStore"
@@ -10,7 +10,7 @@ import { formatDate } from "@/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
-const TestsManagement = () => {
+const AllTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
     const { getTests, searchTests, isFetching } = useTestStore()
     const [total, setTotal] = useState<number>(0)
@@ -146,4 +146,4 @@ const TestsManagement = () => {
     )
 }
 
-export default TestsManagement
+export default AllTestsPage

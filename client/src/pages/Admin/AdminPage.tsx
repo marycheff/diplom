@@ -8,6 +8,7 @@ const AdminPage = () => {
         <div>
             <Button onClick={() => navigate("/admin/users")}>Пользователи</Button>
             <Button onClick={() => navigate("/admin/tests")}>Тесты</Button>
+            <Button onClick={() => navigate("/admin/attempts")}>Попытки прохождения</Button>
             <br />
             <br />
             <Button onClick={() => navigate("/profile")}>Профиль</Button>
