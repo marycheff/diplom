@@ -59,19 +59,25 @@ export const useTestStore = create<TestState>(set => {
             return withFetching(operation)
         },
 
-        createTest: async (title, description ) => {
+        createTest: async (title, description) => {
             const operation = async () => {
                 const response = await testService.createTest(title, description)
                 return response.data
             }
             return withLoading(operation)
         },
-         generateAnswers: (data: GenerateAnswerFormData)=> {
-            const operation = async () =>{
+        generateAnswers: (data: GenerateAnswerFormData) => {
+            const operation = async () => {
                 const response = await testService.generateAnswers(data)
                 return response.data
             }
             return withLoading(operation)
-         }
+        },
+        updateTestQuestions: (testId, data) => {
+            const operation = async () => {
+                await testService.updateTestQuestions(testId, data)
+            }
+            return withLoading(operation)
+        },
     }
 })

@@ -24,16 +24,26 @@ class TestController {
     async updateTest(req: Request, res: Response, next: NextFunction) {
         try {
             const { testId } = req.params
-            const userId = req.user?.id
             const updateTestData: UpdateTestDTO = {
                 questions: req.body.questions.map((question: QuestionDTO, index: number) => ({
                     ...question,
                     order: index + 1,
                 })),
             }
-            if (!userId) throw ApiError.Unauthorized()
-            const updatedTest = await testService.addQuestions(testId, userId, updateTestData)
+            const updatedTest = await testService.addQuestions(testId, updateTestData)
             res.json(updatedTest)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async updateTestQuestions(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const questions: QuestionDTO[] = req.body
+
+            await testService.updateTestQuestions(testId, questions)
+
+            res.status(200)
         } catch (error) {
             next(error)
         }

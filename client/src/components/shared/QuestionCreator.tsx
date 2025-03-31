@@ -1,0 +1,265 @@
+import QuestionForm from "@/components/shared/QuestionForm"
+import { Button } from "@/components/ui/Button"
+import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/types/testTypes"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import AnswersList from "./AnswersList"
+import styles from "./QuestionCreator.module.scss"
+
+type QuestionCreatorProps = {
+    onQuestionComplete: (questions: QuestionDTO[]) => void
+    onCancel?: () => void
+}
+
+const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps) => {
+    const [questions, setQuestions] = useState<QuestionDTO[]>([])
+    const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
+    const [expandedQuestionId, setExpandedQuestionId] = useState<string | null>(null)
+    const [isFormVisible, setIsFormVisible] = useState(true)
+    const [editingInAccordion, setEditingInAccordion] = useState<string | null>(null)
+    const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
+        return Array(3)
+            .fill(null)
+            .map((_, index) => ({
+                id: `temp-${Date.now()}-${index}`,
+                text: "",
+                isCorrect: index === 0,
+            }))
+    })
+
+    const { register, handleSubmit, formState, setValue, watch, reset } = useForm<GenerateAnswerFormData>({
+        mode: "onChange",
+        defaultValues: {
+            numOfAnswers: 3,
+        },
+    })
+
+    const currentQuestion = watch("question")
+    const currentAnswer = watch("answer")
+    const isFormValid = currentQuestion && currentAnswer
+
+    useEffect(() => {
+        if (editingQuestion) {
+            setValue("question", editingQuestion.text)
+            setValue("answer", editingQuestion.answers.find(a => a.isCorrect)?.text || "")
+            setValue("numOfAnswers", 3)
+            setCurrentAnswers(editingQuestion.answers)
+        }
+    }, [editingQuestion, setValue])
+
+    const handleCorrectChange = (index: number) => {
+        const newAnswers = currentAnswers.map((answer, i) => ({
+            ...answer,
+            isCorrect: i === index ? !answer.isCorrect : answer.isCorrect,
+        }))
+        setCurrentAnswers(newAnswers)
+    }
+
+    const removeAnswer = (index: number) => {
+        if (currentAnswers.length <= 3) return
+        setCurrentAnswers(prev => prev.filter((_, i) => i !== index))
+    }
+
+    const addAnswer = () => {
+        setCurrentAnswers(prev => [...prev, { id: `temp-${Date.now()}`, text: "", isCorrect: false }])
+    }
+
+    const handleAddQuestion = (data: GenerateAnswerFormData) => {
+        if (currentAnswers.length === 0) {
+            const initialAnswers = Array(3)
+                .fill(null)
+                .map((_, index) => ({
+                    id: `temp-${Date.now()}-${index}`,
+                    text: index === 0 ? data.answer : "",
+                    isCorrect: index === 0,
+                }))
+            setCurrentAnswers(initialAnswers)
+            return
+        }
+
+        const validAnswers = currentAnswers.filter(answer => answer.text.trim() !== "")
+
+        const newQuestion: QuestionDTO = {
+            id: editingQuestion?.id || `temp-${Date.now()}`,
+            text: data.question,
+            type: QuestionType.SINGLE_CHOICE,
+            answers: validAnswers,
+        }
+
+        if (editingQuestion) {
+            setQuestions(prev => prev.map(q => (q.id === editingQuestion.id ? newQuestion : q)))
+        } else {
+            setQuestions(prev => [...prev, newQuestion])
+        }
+
+        // Сбросить форму и подготовить для нового вопроса
+        reset()
+        setEditingQuestion(null)
+        setExpandedQuestionId(null)
+        setEditingInAccordion(null)
+
+        // Инициализировать новые поля для ответов
+        const newAnswers = Array(3)
+            .fill(null)
+            .map((_, index) => ({
+                id: `temp-${Date.now()}-${index}`,
+                text: "",
+                isCorrect: index === 0,
+            }))
+        setCurrentAnswers(newAnswers)
+    }
+
+    useEffect(() => {
+        if (editingQuestion) {
+            setValue("question", editingQuestion.text)
+            const correctAnswer = editingQuestion.answers.find(a => a.isCorrect)?.text || ""
+            setValue("answer", correctAnswer)
+            setCurrentAnswers(editingQuestion.answers)
+        } else {
+            const initialAnswers = Array(3)
+                .fill(null)
+                .map((_, index) => ({
+                    id: `temp-${Date.now()}-${index}`,
+                    text: index === 0 ? watch("answer") || "" : "",
+                    isCorrect: index === 0,
+                }))
+            setCurrentAnswers(initialAnswers)
+        }
+    }, [editingQuestion, setValue, watch])
+
+    const handleAnswerChange = (index: number, value: string) => {
+        const newAnswers = [...currentAnswers]
+        newAnswers[index] = { ...newAnswers[index], text: value }
+        setCurrentAnswers(newAnswers)
+        if (index === 0) {
+            setValue("answer", value)
+        }
+    }
+
+    useEffect(() => {
+        const correctAnswer = watch("answer")
+        if (correctAnswer && currentAnswers.length > 0) {
+            const newAnswers = [...currentAnswers]
+            newAnswers[0] = { ...newAnswers[0], text: correctAnswer }
+            setCurrentAnswers(newAnswers)
+        }
+    }, [watch("answer")])
+
+    const resetForm = () => {
+        reset()
+        setEditingQuestion(null)
+        setExpandedQuestionId(null)
+        setEditingInAccordion(null)
+        setIsFormVisible(true)
+        setCurrentAnswers(
+            Array(3)
+                .fill(null)
+                .map((_, index) => ({
+                    id: `temp-${Date.now()}-${index}`,
+                    text: "",
+                    isCorrect: index === 0,
+                }))
+        )
+    }
+
+    const toggleAccordion = (questionId: string) => {
+        setExpandedQuestionId(prev => (prev === questionId ? null : questionId))
+    }
+
+    const editQuestion = (question: QuestionDTO) => {
+        setEditingQuestion(question)
+        setExpandedQuestionId(question.id)
+        setEditingInAccordion(question.id)
+    }
+
+    const deleteQuestion = (questionId: string) => {
+        setQuestions(prev => prev.filter(q => q.id !== questionId))
+    }
+
+    const handleSubmitQuestions = () => {
+        onQuestionComplete(questions)
+        resetForm()
+    }
+
+    return (
+        <div className={styles.container}>
+            {/* Левая колонка - список вопросов */}
+            <div className={styles.questionsList}>
+                {questions.map(question => (
+                    <div key={question.id} className={styles.questionItem}>
+                        <div className={styles.questionHeader}>
+                            <div className={styles.questionTitle}>
+                                <button
+                                    className={styles.accordionButton}
+                                    onClick={() => {
+                                        toggleAccordion(question.id)
+                                        editQuestion(question)
+                                    }}>
+                                    {question.text}
+                                </button>
+                            </div>
+                            <div className={styles.actions}>
+                                <Button className={styles.deleteButton} onClick={() => deleteQuestion(question.id)}>
+                                    Удалить
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+                <div className={styles.finalActions}>
+                    <Button
+                        onClick={() => {
+                            resetForm()
+                            setIsFormVisible(true)
+                            setEditingQuestion(null)
+                        }}>
+                        Добавить вопрос
+                    </Button>
+                    <Button onClick={handleSubmitQuestions} disabled={questions.length === 0}>
+                        Сохранить все
+                    </Button>
+                </div>
+            </div>
+
+            {/* Правая колонка - форма создания/редактирования вопроса */}
+            <div className={styles.newQuestionForm}>
+                <h3>{editingQuestion ? "Редактирование вопроса" : "Новый вопрос"}</h3>
+                <div>
+                    <QuestionForm
+                        register={register}
+                        setValue={setValue}
+                        errors={formState.errors}
+                        isLoading={false}
+                        isButtonDisabled={!isFormValid}
+                        onSubmit={handleSubmit(handleAddQuestion)}
+                    />
+                    <AnswersList
+                        answers={currentAnswers}
+                        handleAnswerChange={handleAnswerChange}
+                        handleCorrectChange={handleCorrectChange}
+                        removeAnswer={removeAnswer}
+                        addAnswer={addAnswer}
+                        correctAnswer={currentAnswer}
+                    />
+                </div>
+                <div className={styles.formActions}>
+                    <Button onClick={handleSubmit(handleAddQuestion)} disabled={!isFormValid}>
+                        {editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
+                    </Button>
+                    <Button className={styles.cancelButton} onClick={resetForm}>
+                        Отменить
+                    </Button>
+                </div>
+                {onCancel && (
+                    <div className={styles.finalActions}>
+                        <Button className={styles.cancelButton} onClick={onCancel}>
+                            Закрыть
+                        </Button>
+                    </div>
+                )}
+            </div>
+        </div>
+    )
+}
+
+export default QuestionCreator

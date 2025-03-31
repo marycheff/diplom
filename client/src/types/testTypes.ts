@@ -10,6 +10,7 @@ export interface TestState {
     getMyTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     createTest: (title: string, description?: string) => Promise<TestDTO | undefined>
     generateAnswers: (data: GenerateAnswerFormData) => Promise<string[]>
+    updateTestQuestions: (testId: string, data: UpdateTestDTO) => Promise<void>
 
     // CACHE
     CACHE_EXPIRATION_TIME: number

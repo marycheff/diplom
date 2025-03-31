@@ -1,20 +1,24 @@
-import TestForm from "@/components/shared/TestForm"
+import QuestionCreator from "@/components/shared/QuestionCreator"
+import { Button } from "@/components/ui/Button"
 import Loader from "@/components/ui/Loader/Loader"
+import Modal from "@/components/ui/Modal/Modal"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useTestStore } from "@/store/useTestStore"
 import { PreTestUserDataLabels } from "@/types/inputFields"
-import { TestDTO } from "@/types/testTypes"
+import { QuestionDTO, TestDTO, UpdateTestDTO } from "@/types/testTypes"
 import { formatSeconds } from "@/utils/formatter"
 import { isValidObjectId } from "@/utils/validator"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 import { Link, useParams } from "react-router-dom"
 import styles from "./TestInfoPage.module.scss"
 
 const TestInfoPage = () => {
     const { testId } = useParams<{ testId: string }>()
-    const { getTestById, isFetching } = useTestStore()
+    const { getTestById, isFetching, updateTestQuestions, isLoading } = useTestStore()
     const [test, setTest] = useState<TestDTO | null>(null)
     const { user: currentUser } = useAuthStore()
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     if (!testId) {
         return <div>ID теста не указан</div>
@@ -29,9 +33,32 @@ const TestInfoPage = () => {
             setTest(fetchedTest)
         }
     }
+
     useEffect(() => {
         fetchTest()
     }, [testId, getTestById])
+
+    const handleQuestionsUpdate = async (newQuestions: QuestionDTO[]) => {
+        if (!test) return
+
+        const updatedTest = {
+            ...test,
+            questions: [...(test.questions || []), ...newQuestions],
+        }
+
+        try {
+            let data: UpdateTestDTO = {
+                questions: newQuestions,
+            }
+            await updateTestQuestions(test.id, data)
+            toast.success("Вопрос(ы) добавлены")
+            console.log(newQuestions)
+
+            setTest(updatedTest)
+        } catch (error) {
+            console.error("Failed to update test:", error)
+        }
+    }
 
     if (isFetching) {
         return <Loader fullScreen />
@@ -39,13 +66,9 @@ const TestInfoPage = () => {
     if (!test) {
         return <div>Тест не найден</div>
     }
+
     return (
         <div className={styles.container}>
-            {/* <div className={styles.navigation}>
-                <BackButton />
-                <HomeButton />
-            </div> */}
-
             <div className={styles.topGrid}>
                 {/* Block 1: Basic Test Information */}
                 <div className={styles.infoBlock}>
@@ -140,6 +163,7 @@ const TestInfoPage = () => {
                         )}
                     </div>
                 </div>
+
                 {/* Block 3: Author Information */}
                 {test.author.id !== currentUser?.id && (
                     <div className={styles.infoBlock}>
@@ -183,42 +207,60 @@ const TestInfoPage = () => {
             </div>
 
             <div className={styles.infoBlock}>
-                <h1 className={styles.blockTitle}>Вопросы и ответы</h1>
-                <div className={styles.blockContent}>
-                    {test.questions && test.questions.length > 0 ? (
-                        <div className={styles.questionsList}>
-                            {test.questions.map((question, index) => (
-                                <div key={question.id} className={styles.questionBlock}>
-                                    <div className={styles.questionHeader}>
-                                        <span className={styles.questionNumber}>{index + 1}</span>
-                                        <span className={styles.questionText}>{question.text}</span>
-                                        <span className={styles.questionType}>Тип: {question.type}</span>
-                                    </div>
-                                    <div className={styles.answersList}>
-                                        {question.answers.map(answer => (
-                                            <div
-                                                key={answer.id}
-                                                className={`${styles.answerItem} ${
-                                                    answer.isCorrect ? styles.correctAnswer : ""
-                                                }`}>
-                                                <span className={styles.answerText}>{answer.text}</span>
-                                                {answer.isCorrect && (
-                                                    <span className={styles.correctBadge}>Правильный</span>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className={styles.emptyBlock}>Вопросы отсутствуют</div>
-                    )}
+                <div className={styles.blockHeader}>
+                    <h1 className={styles.blockTitle}>Вопросы и ответы</h1>
+                    <div className={styles.buttonContainer}>
+                        <Button onClick={() => setIsModalOpen(true)} className={styles.addQuestionBtn}>
+                            Добавить
+                        </Button>
+                    </div>
                 </div>
+                {isLoading ? (
+                    <Loader />
+                ) : (
+                    <div className={styles.blockContent}>
+                        {test.questions && test.questions.length > 0 ? (
+                            <div className={styles.questionsList}>
+                                {test.questions.map((question, index) => (
+                                    <div key={question.id} className={styles.questionBlock}>
+                                        <div className={styles.questionHeader}>
+                                            <span className={styles.questionNumber}>{index + 1}</span>
+                                            <span className={styles.questionText}>{question.text}</span>
+                                            <span className={styles.questionType}>Тип: {question.type}</span>
+                                        </div>
+                                        <div className={styles.answersList}>
+                                            {question.answers.map(answer => (
+                                                <div
+                                                    key={answer.id}
+                                                    className={`${styles.answerItem} ${
+                                                        answer.isCorrect ? styles.correctAnswer : ""
+                                                    }`}>
+                                                    <span className={styles.answerText}>{answer.text}</span>
+                                                    {answer.isCorrect && (
+                                                        <span className={styles.correctBadge}>Правильный</span>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className={styles.emptyBlock}>Вопросы отсутствуют</div>
+                        )}
+                    </div>
+                )}
             </div>
-            <div className="createTestBlock">
-                <TestForm />
-            </div>
+
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Добавление вопросов">
+                <QuestionCreator
+                    onQuestionComplete={questions => {
+                        handleQuestionsUpdate(questions)
+                        setIsModalOpen(false)
+                    }}
+                    onCancel={() => setIsModalOpen(false)}
+                />
+            </Modal>
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import axiosInstance from "@/axios"
-import { GenerateAnswerFormData, TestDTO, TestsListDTO } from "@/types/testTypes"
+import { GenerateAnswerFormData, QuestionDTO, TestDTO, TestsListDTO, UpdateTestDTO } from "@/types/testTypes"
 import { AxiosResponse } from "axios"
 
 class TestService {
@@ -39,6 +39,12 @@ class TestService {
             answer: data.answer,
             numOfAnswers: data.numOfAnswers,
         })
+    }
+    // updateTestQuestions = (testId: string, questions: QuestionDTO[]) => {
+    //     return axiosInstance.put(`/test/${testId}/questions`, questions)
+    // }
+    updateTestQuestions = (testId: string, data: UpdateTestDTO) => {
+        return axiosInstance.put(`/test/${testId}/questions`, data)
     }
 }
 export const testService = new TestService()

@@ -17,7 +17,6 @@ import {
     saveAnswerSchema,
     startTestAttemptSchema,
     updateQuestionSchema,
-    updateTestSchema,
 } from "@/schemas/test.schema"
 import express from "express"
 
@@ -45,7 +44,9 @@ router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.g
   ================================= */
 
 // Добавление вопросов к тесту
-router.put("/:testId/questions", authMiddleware, validateRequest(updateTestSchema), testController.updateTest)
+// router.put("/:testId/questions", authMiddleware, validateRequest(updateTestSchema), testController.updateTest)
+router.put("/:testId/questions", authMiddleware, testOwnershipMiddleware, testController.updateTest)
+// router.put("/:testId/questions", authMiddleware, testController.updateTestQuestions)
 
 // Получение всех вопросов теста
 router.get("/:testId/questions", authMiddleware, questionController.getTestQuestions)

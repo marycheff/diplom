@@ -240,3 +240,29 @@
     font-size: 12px;
     font-weight: 600;
 }
+
+.blockHeader {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.blockTitle {
+    background-color: color($primary, 400);
+    color: color($background, 100);
+    padding: 15px 20px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%; 
+}
+
+.buttonContainer {
+    position: absolute;
+    right: 20px; 
+    top: 50%;
+    transform: translateY(-50%);
+}
+.addQuestionBtn {
+    background-color: color($primary, 200);
+    color: #3b3b3b
+}

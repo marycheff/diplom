@@ -49,7 +49,6 @@ export const useMyTestsCache = () => {
     const clearCache = useCallback(() => {
         clearCacheFromStore()
         setCacheVersion(prev => prev + 1)
-        console.log("Кэш очищен")
     }, [clearCacheFromStore])
 
     return {

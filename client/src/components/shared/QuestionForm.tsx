@@ -1,24 +1,18 @@
 import { Button } from "@/components/ui/Button"
 import ValidatedInput from "@/components/ui/Input/Validated/ValidatedInput"
-
 import Loader from "@/components/ui/Loader/Loader"
 import Select from "@/components/ui/Select/Select"
+import { GenerateAnswerFormData } from "@/types/testTypes"
 import { FC, FormEvent } from "react"
 import { FieldErrors, RegisterOptions, UseFormRegister, UseFormSetValue } from "react-hook-form"
 
-type QuestionFormFields = {
-    question: string
-    answer: string
-    numOfAnswers: number
-}
-
-type QuestionFormProps = {
-    register: UseFormRegister<QuestionFormFields>
-    errors?: FieldErrors<QuestionFormFields>
+interface QuestionFormProps {
+    register: UseFormRegister<GenerateAnswerFormData>
+    errors?: FieldErrors<GenerateAnswerFormData>
     isLoading: boolean
     onSubmit: (e: FormEvent<HTMLFormElement>) => void
     isButtonDisabled: boolean
-    setValue: UseFormSetValue<QuestionFormFields>
+    setValue: UseFormSetValue<GenerateAnswerFormData>
 }
 
 const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisabled, isLoading, onSubmit, setValue }) => {
@@ -70,16 +64,16 @@ const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisable
                 validationRules={answerValidation}
             />
 
-            <Select
+            {/* <Select
                 register={register}
                 label="Количество ответов для генерации"
                 name="numOfAnswers"
                 options={[{ value: "1" }, { value: "2" }, { value: "3" }, { value: "4" }]}
-                value="1"
+                value="3"
             />
             <Button type="submit" disabled={isButtonDisabled || isLoading}>
                 Генерация
-            </Button>
+            </Button> */}
         </form>
     )
 }

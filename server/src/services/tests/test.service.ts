@@ -1,7 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
 import { mapToResponseTest } from "@/services/mappers/test.mappers"
-import { TestDTO, TestSettingsDTO, TestsListDTO, UpdateTestDTO } from "@/types/test.types"
+import { QuestionDTO, TestDTO, TestSettingsDTO, TestsListDTO, UpdateTestDTO } from "@/types/test.types"
 import { redisClient } from "@/utils/redis-client"
 import { isValidObjectId } from "@/utils/validator"
 import { Answer, Prisma, PrismaClient, Question } from "@prisma/client"
@@ -81,7 +81,7 @@ class TestService {
     }
 
     // Добавление вопросов к существующему тесту
-    async addQuestions(testId: string, userId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
+    async addQuestions(testId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
         return prisma.$transaction(async transaction => {
             if (!isValidObjectId(testId)) {
                 throw ApiError.NotFound("Тест не найден")
@@ -103,10 +103,6 @@ class TestService {
             })
 
             if (!existingTest) throw ApiError.NotFound("Тест не найден")
-            if (existingTest.authorId !== userId) {
-                throw ApiError.Forbidden()
-            }
-
             // Создание новых вопросов с ответами
             const createdQuestions = await Promise.all(
                 updateTestData.questions.map(async (questionData, index) => {
@@ -147,7 +143,100 @@ class TestService {
             })
         })
     }
+    async updateTestQuestions(testId: string, questions: QuestionDTO[]) {
+        const lastOrderQuestion = await prisma.question.findFirst({
+            where: { testId },
+            orderBy: { order: "desc" },
+            select: { order: true },
+        })
 
+        let nextOrder = (lastOrderQuestion?.order || 0) + 1
+
+        return await prisma.$transaction(async tx => {
+            const existingQuestions = questions.filter(q => isValidObjectId(q.id))
+            const newQuestions = questions.filter(q => !isValidObjectId(q.id))
+
+            // Update existing questions
+            await Promise.all(
+                existingQuestions.map(async question => {
+                    // First delete related UserAnswer records
+                    await tx.userAnswer.deleteMany({
+                        where: {
+                            answer: {
+                                questionId: question.id,
+                            },
+                        },
+                    })
+
+                    // Then update the question and its answers
+                    return tx.question.update({
+                        where: { id: question.id },
+                        data: {
+                            text: question.text,
+                            order: question.order,
+                            type: question.type,
+                            answers: {
+                                deleteMany: {},
+                                create: question.answers.map(answer => ({
+                                    text: answer.text,
+                                    isCorrect: answer.isCorrect,
+                                })),
+                            },
+                        },
+                    })
+                })
+            )
+
+            // Rest of the code remains the same...
+            if (newQuestions.length > 0) {
+                await tx.question.createMany({
+                    data: newQuestions.map(question => ({
+                        text: question.text,
+                        order: nextOrder++,
+                        type: question.type,
+                        testId,
+                    })),
+                })
+
+                const createdQuestions = await tx.question.findMany({
+                    where: {
+                        testId,
+                        order: { gte: nextOrder - newQuestions.length },
+                    },
+                    select: { id: true, order: true },
+                })
+
+                await Promise.all(
+                    createdQuestions.map(createdQuestion => {
+                        const question = newQuestions.find(
+                            q => q.order === createdQuestion.order - (nextOrder - newQuestions.length - 1)
+                        )
+                        const answers = question?.answers || []
+
+                        // Only create answers if there are any
+                        if (answers.length > 0) {
+                            return tx.answer.createMany({
+                                data: answers.map(answer => ({
+                                    text: answer.text,
+                                    isCorrect: answer.isCorrect,
+                                    questionId: createdQuestion.id,
+                                })),
+                            })
+                        }
+                        return Promise.resolve()
+                    })
+                )
+            }
+
+            await redisClient.del(`test:${testId}`)
+            return tx.test.findUnique({
+                where: { id: testId },
+                include: { questions: { include: { answers: true } } },
+            })
+        })
+    }
+
+    // ... existing code ...
     // Получение всех тестов пользователя
     async getMyTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
         const skip = (page - 1) * limit
