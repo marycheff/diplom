@@ -47,7 +47,6 @@ const CreateTestPage = () => {
                     Создать тест
                 </Button>
             </form>
-            <TestForm />
         </div>
     )
 }

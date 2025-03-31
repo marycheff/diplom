@@ -9,6 +9,7 @@ export interface TestState {
     getTestById: (id: string) => Promise<TestDTO | undefined>
     getMyTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     createTest: (title: string, description?: string) => Promise<TestDTO | undefined>
+    generateAnswers: (data: GenerateAnswerFormData) => Promise<string[]>
 
     // CACHE
     CACHE_EXPIRATION_TIME: number
@@ -121,3 +122,9 @@ export interface JsonObject {
     [key: string]: JsonValue
 }
 export type JsonArray = JsonValue[]
+
+export interface GenerateAnswerFormData {
+    question: string
+    answer: string
+    numOfAnswers: number
+}

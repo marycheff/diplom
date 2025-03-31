@@ -49,7 +49,7 @@ const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisable
 
     return (
         <form onSubmit={onSubmit}>
-            {isLoading && <Loader />}
+            {isLoading && <Loader delay={300} />}
             <ValidatedInput
                 clearable
                 placeholder="Вопрос"
@@ -78,7 +78,7 @@ const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisable
                 value="1"
             />
             <Button type="submit" disabled={isButtonDisabled || isLoading}>
-                {isLoading ? "Загрузка..." : "Генерация"}
+                Генерация
             </Button>
         </form>
     )

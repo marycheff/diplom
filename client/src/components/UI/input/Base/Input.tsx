@@ -49,7 +49,7 @@ export const Input: FC<InputProps> = ({
                     </label>
                 )}
                 {clearable && !disabled && hasValue && (
-                    <button type="button" onClick={handleClear} className={styles.clearButton}>
+                    <button type="button" onClick={handleClear} className={styles.clearButton} tabIndex={-1}>
                         &times;
                     </button>
                 )}

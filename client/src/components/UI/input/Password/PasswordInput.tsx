@@ -75,12 +75,16 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
                     {placeholder}
                 </label>
                 {clearable && !disabled && hasValue && (
-                    <button type="button" onClick={handleClear} className={styles.clearButton}>
+                    <button type="button" onClick={handleClear} className={styles.clearButton} tabIndex={-1}>
                         &times;
                     </button>
                 )}
                 {!disabled && hasValue && (
-                    <button type="button" onClick={togglePasswordVisibility} className={styles.toggleButton}>
+                    <button
+                        type="button"
+                        onClick={togglePasswordVisibility}
+                        className={styles.toggleButton}
+                        tabIndex={-1}>
                         {isPasswordVisible ? "🙈" : "👁️"}
                     </button>
                 )}

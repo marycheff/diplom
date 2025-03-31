@@ -1,3 +1,4 @@
+import TestForm from "@/components/shared/TestForm"
 import Loader from "@/components/ui/Loader/Loader"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useTestStore } from "@/store/useTestStore"
@@ -214,6 +215,9 @@ const TestInfoPage = () => {
                         <div className={styles.emptyBlock}>Вопросы отсутствуют</div>
                     )}
                 </div>
+            </div>
+            <div className="createTestBlock">
+                <TestForm />
             </div>
         </div>
     )

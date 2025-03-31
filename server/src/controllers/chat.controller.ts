@@ -41,7 +41,7 @@ class ChatController {
                 throw next(ApiError.BadRequest("Некорректный вопрос, попробуйте задать другой."))
             }
             // Если есть валидные ответы, возвращаем их
-            res.status(200).json({ generatedAnswers: parsedAnswers })
+            res.status(200).json(parsedAnswers)
         } catch (e) {
             ApiError.InternalError()
             return

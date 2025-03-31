@@ -1,6 +1,6 @@
 import { createApiHandler } from "@/hooks/userStoreHelpers"
 import { testService } from "@/services/testService"
-import { TestsListDTO, TestState } from "@/types/testTypes"
+import { GenerateAnswerFormData, TestsListDTO, TestState } from "@/types/testTypes"
 import { create } from "zustand"
 
 export const useTestStore = create<TestState>(set => {
@@ -66,5 +66,12 @@ export const useTestStore = create<TestState>(set => {
             }
             return withLoading(operation)
         },
+         generateAnswers: (data: GenerateAnswerFormData)=> {
+            const operation = async () =>{
+                const response = await testService.generateAnswers(data)
+                return response.data
+            }
+            return withLoading(operation)
+         }
     }
 })

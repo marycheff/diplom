@@ -1,5 +1,5 @@
 import axiosInstance from "@/axios"
-import { TestDTO, TestsListDTO } from "@/types/testTypes"
+import { GenerateAnswerFormData, TestDTO, TestsListDTO } from "@/types/testTypes"
 import { AxiosResponse } from "axios"
 
 class TestService {
@@ -31,6 +31,14 @@ class TestService {
 
     createTest(title: string, description?: string): Promise<AxiosResponse<TestDTO>> {
         return axiosInstance.post<TestDTO>("/test/create", { title, description })
+    }
+    // testService.ts
+    generateAnswers = (data: GenerateAnswerFormData): Promise<AxiosResponse<string[]>> => {
+        return axiosInstance.post<string[]>("/chat/generate-answers", {
+            question: data.question,
+            answer: data.answer,
+            numOfAnswers: data.numOfAnswers,
+        })
     }
 }
 export const testService = new TestService()

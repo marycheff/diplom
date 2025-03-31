@@ -1,70 +1,33 @@
-import axiosInstance from "@/axios"
 import AnswersList from "@/components/shared/AnswersList"
 import QuestionForm from "@/components/shared/QuestionForm"
 import { Button } from "@/components/ui/Button"
-
-import { useEffect, useState } from "react"
+import { useTestStore } from "@/store/useTestStore"
+import { GenerateAnswerFormData } from "@/types/testTypes"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 
-type FormData = {
-    question: string
-    answer: string
-    numOfAnswers: number
-}
-
 const TestForm = () => {
-    const [response, setResponse] = useState<string[]>([])
-    const [isLoading, setIsLoading] = useState(false)
-    const [isSubmitted, setIsSubmitted] = useState(false)
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false)
+    const { generateAnswers, isLoading } = useTestStore()
     const [answers, setAnswers] = useState<{ text: string; isCorrect: boolean }[]>([{ text: "", isCorrect: true }])
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-        watch,
         setValue,
-    } = useForm<FormData>({
+    } = useForm<GenerateAnswerFormData>({
         mode: "onChange",
     })
 
-    const watchedQuestion = watch("question")
-    const watchedAnswer = watch("answer")
+    const askQuestion = async (data: GenerateAnswerFormData) => {
+        const response = await generateAnswers(data)
 
-    useEffect(() => {
-        setIsButtonDisabled(!watchedQuestion || !watchedAnswer)
-    }, [watchedQuestion, watchedAnswer])
+        const generatedAnswers = response.map(answer => ({
+            text: answer,
+            isCorrect: false,
+        }))
 
-    const askQuestion = async (data: FormData) => {
-        setIsLoading(true)
-        setIsSubmitted(true)
-        setIsButtonDisabled(true)
-
-        try {
-            const res = await axiosInstance.post("/chat/generate-answers", {
-                question: data.question,
-                answer: data.answer,
-                numOfAnswers: data.numOfAnswers,
-            })
-
-            const generatedAnswers = res.data.generatedAnswers.map((answer: string) => ({
-                text: answer,
-                isCorrect: false,
-            }))
-
-            setAnswers([{ text: data.answer, isCorrect: true }, ...generatedAnswers])
-            setResponse(res.data.generatedAnswers)
-        } catch (error: any) {
-            if (error.response && error.response.status === 400) {
-                setResponse([])
-                console.error(error.response.data.message)
-            } else {
-                console.error("Ошибка на стороне сервера", error)
-            }
-        } finally {
-            setIsLoading(false)
-        }
+        setAnswers([{ text: data.answer, isCorrect: true }, ...generatedAnswers])
     }
 
     const addAnswer = () => {
@@ -93,19 +56,18 @@ const TestForm = () => {
         if (updatedAnswers.filter(answer => answer.isCorrect).length === 0) {
             updatedAnswers[0].isCorrect = true
         }
-
         setAnswers(updatedAnswers)
     }
 
     return (
         <div>
-            <h2>Задать вопрос нейросети</h2>
+            <h2>Добавить вопрос</h2>
             <QuestionForm
                 register={register}
                 setValue={setValue}
                 errors={errors}
                 isLoading={isLoading}
-                isButtonDisabled={isButtonDisabled}
+                isButtonDisabled={}
                 onSubmit={handleSubmit(askQuestion)}
             />
             <AnswersList
@@ -117,10 +79,6 @@ const TestForm = () => {
             />
             <Button>Следующий вопрос</Button>
             <Button>Завершить</Button>
-
-            {!isLoading && isSubmitted && response.length === 0 && (
-                <p>Данный вопрос некорректен, задайте другой вопрос</p>
-            )}
         </div>
     )
 }
