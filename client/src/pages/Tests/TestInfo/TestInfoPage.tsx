@@ -26,7 +26,6 @@ const TestInfoPage = () => {
     if (!isValidObjectId(testId)) {
         return <div>Невалидный Id</div>
     }
-
     const fetchTest = async () => {
         const fetchedTest = await getTestById(testId)
         if (fetchedTest) {
@@ -38,6 +37,13 @@ const TestInfoPage = () => {
         fetchTest()
     }, [testId, getTestById])
 
+    if (isFetching) {
+        return <Loader fullScreen />
+    }
+    if (!test) {
+        return <div>Тест не найден</div>
+    }
+
     const handleQuestionsUpdate = async (newQuestions: QuestionDTO[]) => {
         if (!test) return
 
@@ -46,31 +52,20 @@ const TestInfoPage = () => {
             questions: [...(test.questions || []), ...newQuestions],
         }
 
-        try {
-            let data: UpdateTestDTO = {
-                questions: newQuestions,
-            }
-            await updateTestQuestions(test.id, data)
-            toast.success("Вопрос(ы) добавлены")
-            console.log(newQuestions)
-
-            setTest(updatedTest)
-        } catch (error) {
-            console.error("Failed to update test:", error)
+        const data: UpdateTestDTO = {
+            questions: newQuestions,
         }
-    }
+        await updateTestQuestions(test.id, data)
+        toast.success("Вопрос(ы) добавлены")
+        console.log(newQuestions)
 
-    if (isFetching) {
-        return <Loader fullScreen />
-    }
-    if (!test) {
-        return <div>Тест не найден</div>
+        setTest(updatedTest)
     }
 
     return (
         <div className={styles.container}>
             <div className={styles.topGrid}>
-                {/* Block 1: Basic Test Information */}
+                {/* Блок 1: Информация о тесте */}
                 <div className={styles.infoBlock}>
                     <h1 className={styles.blockTitle}>Информация о тесте</h1>
                     <div className={styles.blockContent}>
@@ -105,7 +100,7 @@ const TestInfoPage = () => {
                     </div>
                 </div>
 
-                {/* Block 2: Test Settings */}
+                {/* Блок 2: Настройки теста */}
                 <div className={styles.infoBlock}>
                     <h1 className={styles.blockTitle}>Настройки теста</h1>
                     <div className={styles.blockContent}>
@@ -164,7 +159,7 @@ const TestInfoPage = () => {
                     </div>
                 </div>
 
-                {/* Block 3: Author Information */}
+                {/* Блок 3: Информация об авторе */}
                 {test.author.id !== currentUser?.id && (
                     <div className={styles.infoBlock}>
                         <h1 className={styles.blockTitle}>Информация об авторе</h1>
@@ -206,6 +201,7 @@ const TestInfoPage = () => {
                 )}
             </div>
 
+                {/* Блок 4: Информация о вопросах */}
             <div className={styles.infoBlock}>
                 <div className={styles.blockHeader}>
                     <h1 className={styles.blockTitle}>Вопросы и ответы</h1>

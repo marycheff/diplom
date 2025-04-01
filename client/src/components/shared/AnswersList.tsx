@@ -37,7 +37,12 @@ const AnswersList: FC<AnswersListProps> = ({
                     <Checkbox
                         id={`answer-${index}`}
                         checked={answer.isCorrect}
-                        onChange={() => handleCorrectChange(index)}
+                        onChange={() => {
+                            // Проверяем, не пытается ли пользователь снять последний отмеченный checkbox
+                            if (!answer.isCorrect || answers.filter(a => a.isCorrect).length > 1) {
+                                handleCorrectChange(index)
+                            }
+                        }}
                     />
                     <Button onClick={() => removeAnswer(index)}>&times;</Button>
                 </div>

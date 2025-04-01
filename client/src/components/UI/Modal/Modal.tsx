@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/Button"
-import { FC, ReactNode } from "react"
+import { FC, ReactNode, useEffect } from "react"
 import styles from "./Modal.module.scss"
 
 interface ModalProps {
@@ -11,6 +11,16 @@ interface ModalProps {
 }
 
 const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
+    // Блокируем прокрутку body при открытии модального окна
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = "hidden"
+        }
+        return () => {
+            document.body.style.overflow = "unset"
+        }
+    }, [isOpen])
+
     if (!isOpen) return null
 
     return (

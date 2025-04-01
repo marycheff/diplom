@@ -1,4 +1,5 @@
 import QuestionForm from "@/components/shared/QuestionForm"
+import QuestionItem from "@/components/shared/QuestionItem"
 import { Button } from "@/components/ui/Button"
 import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/types/testTypes"
 import { useEffect, useState } from "react"
@@ -36,7 +37,9 @@ const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps)
 
     const currentQuestion = watch("question")
     const currentAnswer = watch("answer")
-    const isFormValid = currentQuestion && currentAnswer
+    const hasErrors = Object.keys(formState.errors).length > 0
+    const hasCorrectAnswer = currentAnswers.some(answer => answer.isCorrect)
+    const isFormValid = currentQuestion && currentAnswer && !hasErrors && hasCorrectAnswer
 
     useEffect(() => {
         if (editingQuestion) {
@@ -168,7 +171,6 @@ const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps)
 
     const editQuestion = (question: QuestionDTO) => {
         setEditingQuestion(question)
-        setExpandedQuestionId(question.id)
         setEditingInAccordion(question.id)
     }
 
@@ -185,27 +187,6 @@ const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps)
         <div className={styles.container}>
             {/* Левая колонка - список вопросов */}
             <div className={styles.questionsList}>
-                {questions.map(question => (
-                    <div key={question.id} className={styles.questionItem}>
-                        <div className={styles.questionHeader}>
-                            <div className={styles.questionTitle}>
-                                <button
-                                    className={styles.accordionButton}
-                                    onClick={() => {
-                                        toggleAccordion(question.id)
-                                        editQuestion(question)
-                                    }}>
-                                    {question.text}
-                                </button>
-                            </div>
-                            <div className={styles.actions}>
-                                <Button className={styles.deleteButton} onClick={() => deleteQuestion(question.id)}>
-                                    Удалить
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
                 <div className={styles.finalActions}>
                     <Button
                         onClick={() => {
@@ -218,6 +199,18 @@ const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps)
                     <Button onClick={handleSubmitQuestions} disabled={questions.length === 0}>
                         Сохранить все
                     </Button>
+                </div>
+                <div className={styles.questionsContainer}>
+                    {questions.map(question => (
+                        <QuestionItem
+                            key={question.id}
+                            question={question}
+                            expanded={expandedQuestionId === question.id}
+                            onToggle={() => toggleAccordion(question.id)}
+                            onEdit={() => editQuestion(question)}
+                            onDelete={() => deleteQuestion(question.id)}
+                        />
+                    ))}
                 </div>
             </div>
 
