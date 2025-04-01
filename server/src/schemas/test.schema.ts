@@ -91,3 +91,26 @@ export const testSettingsSchema = z
         }
         return true
     }, "Обязательные поля должны быть включены в inputFields")
+
+
+    // export const testSettingsSchema = z
+//     .object({
+//         requireRegistration: z.boolean().optional(),
+//         inputFields: z.array(z.enum(Object.values(PreTestUserData) as [string, ...string[]])).optional(),
+//         requiredFields: z
+//             .array(z.enum(Object.values(PreTestUserData) as [string, ...string[]]))
+//             .optional()
+//             .refine(fields => {
+//                 if (!fields) return true
+//                 return fields.every(f => Object.values(PreTestUserData).includes(f))
+//             }, "Недопустимое поле в requiredFields"),
+//         showDetailedResults: z.boolean().optional(),
+//         timeLimit: z.number().min(0).nullable().optional(),
+//     })
+//     .refine(data => {
+//         if (data.requiredFields && data.inputFields) {
+//             return data.requiredFields.every(f => data.inputFields!.includes(f))
+//         }
+//         return true
+//     }, "Обязательные поля должны быть включены в inputFields")
+

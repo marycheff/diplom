@@ -26,9 +26,7 @@ const HomePage = () => {
                 {!isAdmin && <h1>Не админ</h1>}
 
                 <Button onClick={() => navigate("/profile")}>Профиль</Button>
-                <Button onClick={() => navigate("/create-test")} tooltip="1321423">
-                    Создать Тест
-                </Button>
+                <Button onClick={() => navigate("/create-test")}>Создать Тест</Button>
                 <Button onClick={() => navigate("/my-tests")}>Мои тесты</Button>
                 <br />
                 <br />
@@ -42,6 +40,7 @@ const HomePage = () => {
                     value="1"
                 /> */}
             </div>
+            
         </>
     )
 }

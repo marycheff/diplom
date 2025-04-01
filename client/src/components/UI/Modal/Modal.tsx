@@ -9,7 +9,7 @@ interface ModalProps {
     fullScreen?: boolean
 }
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
+const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen }) => {
     const [isClosing, setIsClosing] = useState(false)
 
     useEffect(() => {
@@ -33,9 +33,14 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
     if (!isOpen) return null
 
     return (
-        <div className={`${styles.modalOverlay} ${isClosing ? styles.closing : ""}`} onClick={handleClose}>
+        <div
+            className={`${styles.modalOverlay} ${isClosing ? styles.closing : ""}`}
+            // onClick={handleClose}
+        >
             <div
-                className={`${styles.modalContent} ${isClosing ? styles.closing : ""}`}
+                className={`${styles.modalContent} ${isClosing ? styles.closing : ""} ${
+                    fullScreen ? styles.fullScreen : ""
+                }`}
                 onClick={e => e.stopPropagation()}>
                 <button className={styles.closeButton} onClick={handleClose}>
                     {" "}

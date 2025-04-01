@@ -52,7 +52,8 @@ class TestController {
         try {
             const testId = req.test?.id
             const settings: TestSettingsDTO = req.body
-            if (settings.timeLimit !== undefined && settings.timeLimit !== null && settings.timeLimit <= 0) {
+            console.log(settings.timeLimit)
+            if (settings.timeLimit !== undefined && settings.timeLimit !== null && settings.timeLimit < 0) {
                 throw ApiError.BadRequest("Лимит времени должен быть положительным числом или null")
             }
             await testService.updateTestSettings(testId!, settings)

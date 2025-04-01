@@ -1,0 +1,14 @@
+.timeInput {
+    width: 60px;
+}
+.timeInputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkboxGroup {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+}

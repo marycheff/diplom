@@ -13,6 +13,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
     validationRules,
     errors,
     clearable = false,
+    floatingLabel = true,
 }) => {
     const [isFocused, setIsFocused] = useState(false)
     const [inputValue, setInputValue] = useState("")
@@ -47,9 +48,11 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                     onBlur={() => setIsFocused(false)}
                     id={name}
                 />
-                <label htmlFor={name} className={styles.placeholder}>
-                    {placeholder}
-                </label>
+                {floatingLabel && (
+                    <label htmlFor={name} className={styles.placeholder}>
+                        {placeholder}
+                    </label>
+                )}
 
                 {clearable && !disabled && hasValue && (
                     <button type="button" className={styles.clearButton} onClick={handleClear}>

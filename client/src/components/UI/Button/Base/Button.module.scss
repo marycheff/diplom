@@ -1,3 +1,4 @@
+// src/components/ui/Button/Base/Button.module.scss
 .button {
     position: relative;
     padding: 5px 10px;
@@ -17,42 +18,5 @@
 
     &:not(:disabled):hover {
         background-color: color($secondary, 400);
-    }
-
-    &--with-tooltip {
-        &::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 5px 10px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            font-size: 14px;
-            white-space: nowrap;
-            border-radius: 4px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-            transition-delay: 0.2s;
-            pointer-events: none;
-            z-index: 999999;
-            width: max-content;
-        }
-
-        &[data-tooltip-position="top"]::after {
-            bottom: 100%;
-            margin-bottom: 8px;
-        }
-
-        &[data-tooltip-position="bottom"]::after {
-            top: 100%;
-            margin-top: 8px;
-        }
-
-        &:hover::after {
-            opacity: 1;
-            visibility: visible;
-        }
     }
 }

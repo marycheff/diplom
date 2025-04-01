@@ -22,7 +22,7 @@ export const Input: FC<InputProps> = ({
         }
     }
 
-    const hasValue = value.length > 0
+   const hasValue =  value.length > 0
     const isActive = isFocused || hasValue
 
     return (

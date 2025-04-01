@@ -3,7 +3,7 @@ import QuestionForm from "@/components/shared/QuestionForm/QuestionForm"
 import QuestionItem from "@/components/shared/QuestionItem/QuestionItem"
 import { Button } from "@/components/ui/Button"
 import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/types/testTypes"
-import { useEffect, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import styles from "./QuestionCreator.module.scss"
 
@@ -12,7 +12,7 @@ type QuestionCreatorProps = {
     onCancel?: () => void
 }
 
-const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps) => {
+const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCancel }) => {
     const [questions, setQuestions] = useState<QuestionDTO[]>([])
     const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
     const [expandedQuestionId, setExpandedQuestionId] = useState<string | null>(null)
@@ -79,11 +79,12 @@ const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps)
         }
 
         const validAnswers = currentAnswers.filter(answer => answer.text.trim() !== "")
+        const numOfCorrectAnswers = validAnswers.filter(answer => answer.isCorrect).length
 
         const newQuestion: QuestionDTO = {
             id: editingQuestion?.id || `temp-${Date.now()}`,
             text: data.question,
-            type: QuestionType.SINGLE_CHOICE,
+            type: numOfCorrectAnswers === 1 ? QuestionType.SINGLE_CHOICE : QuestionType.MULTIPLE_CHOICE,
             answers: validAnswers,
         }
 

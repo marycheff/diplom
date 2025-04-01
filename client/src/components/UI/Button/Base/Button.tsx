@@ -1,5 +1,7 @@
-import { ButtonProps } from "@/components/ui/Button/Base/Button.props"
-import { FC, MouseEvent, useState } from "react"
+import { FC, useRef, useState } from "react"
+import { ButtonProps } from "./Button.props"
+
+import Tooltip from "@/components/ui/Tooltip/Tooltip"
 import styles from "./Button.module.scss"
 
 export const Button: FC<ButtonProps> = ({
@@ -12,40 +14,41 @@ export const Button: FC<ButtonProps> = ({
     tooltip,
     className,
 }) => {
+    const buttonRef = useRef<HTMLButtonElement>(null)
     const [tooltipPosition, setTooltipPosition] = useState<"top" | "bottom">("top")
 
-    const handleClick = () => {
-        if (onClick) {
-            onClick()
-        }
-    }
+    const handleMouseEnter = () => {
+        if (buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect()
+            const viewportHeight = window.innerHeight
+            const threshold = 50 
 
-    const handleMouseEnter = (event: MouseEvent<HTMLButtonElement>) => {
-        const button = event.currentTarget
-        const rect = button.getBoundingClientRect()
-        if (rect.top < 20) {
-            setTooltipPosition("bottom")
-        } else {
-            setTooltipPosition("top")
+            if (rect.top < threshold) {
+                setTooltipPosition("bottom")
+            } else if (viewportHeight - rect.bottom < threshold) {
+                setTooltipPosition("top")
+            } else {
+                setTooltipPosition("top")
+            }
         }
     }
 
     return (
-        <button
-            type={type}
-            disabled={isLoading || disabled}
-            onClick={handleClick}
-            onMouseEnter={handleMouseEnter}
-            className={`
-                ${styles.button}
-                ${tooltip ? styles["button--with-tooltip"] : ""} 
-                ${isLoading ? styles["button--loading"] : ""}
-                ${className}
-            `}
-            data-tooltip={tooltip}
-            data-tooltip-position={tooltipPosition}>
-            {isLoading ? loadingText : children}
-        </button>
+        <>
+            <button
+                ref={buttonRef}
+                type={type}
+                disabled={isLoading || disabled}
+                onClick={onClick}
+                onMouseEnter={handleMouseEnter}
+                className={`
+                    ${styles.button}
+                    ${className || ""}
+                `}>
+                {isLoading ? loadingText : children}
+            </button>
+            {tooltip && <Tooltip content={tooltip} position={tooltipPosition} targetRef={buttonRef} />}
+        </>
     )
 }
 

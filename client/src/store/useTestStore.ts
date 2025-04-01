@@ -79,5 +79,11 @@ export const useTestStore = create<TestState>(set => {
             }
             return withLoading(operation)
         },
+        updateTestSettings: (testId, updatedSettings) => {
+            const operation = async () => {
+                await testService.updateTestSettings(testId, updatedSettings)
+            }
+            return withLoading(operation)
+        },
     }
 })

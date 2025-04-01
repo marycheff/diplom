@@ -1,11 +1,12 @@
 import QuestionCreator from "@/components/shared/QuestionCreator/QuestionCreator"
+import TestSettingsEditor from "@/components/shared/TestSettingsEditor/TestSettingsEditor"
 import { Button } from "@/components/ui/Button"
 import Loader from "@/components/ui/Loader/Loader"
 import Modal from "@/components/ui/Modal/Modal"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useTestStore } from "@/store/useTestStore"
 import { PreTestUserDataLabels } from "@/types/inputFields"
-import { QuestionDTO, TestDTO, UpdateTestDTO } from "@/types/testTypes"
+import { QuestionDTO, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/testTypes"
 import { formatSeconds } from "@/utils/formatter"
 import { isValidObjectId } from "@/utils/validator"
 import { useEffect, useState } from "react"
@@ -15,12 +16,13 @@ import styles from "./TestInfoPage.module.scss"
 
 const TestInfoPage = () => {
     const { testId } = useParams<{ testId: string }>()
-    const { getTestById, isFetching, updateTestQuestions, isLoading } = useTestStore()
+    const { getTestById, isFetching, updateTestQuestions, isLoading, updateTestSettings } = useTestStore()
     const [test, setTest] = useState<TestDTO | null>(null)
     const { user: currentUser } = useAuthStore()
     const navigate = useNavigate()
     const location = useLocation()
     const [isModalOpen, setIsModalOpen] = useState(location.pathname.endsWith("/add-questions"))
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(location.pathname.endsWith("/edit-settings"))
 
     if (!testId) {
         return <div>ID теста не указан</div>
@@ -61,6 +63,25 @@ const TestInfoPage = () => {
         toast.success("Вопрос(ы) добавлены")
         console.log(newQuestions)
 
+        setTest(updatedTest)
+    }
+    const handleAddQuestionsButton = () => {
+        navigate(`${location.pathname}/add-questions`)
+        setIsModalOpen(true)
+    }
+    const handleEditSettingsButton = () => {
+        // navigate(`${location.pathname}/edit-settings`)
+        setIsSettingsModalOpen(true)
+    }
+    const handleSettingsUpdate = async (updatedSettings: TestSettingsDTO) => {
+        if (!test) return
+        const updatedTest = {
+            ...test,
+            settings: updatedSettings,
+        }
+        // await updateTestQuestions(test.id, updatedSettings)
+        await updateTestSettings(test.id, updatedSettings)
+        toast.success("Настройки теста обновлены")
         setTest(updatedTest)
     }
 
@@ -104,56 +125,71 @@ const TestInfoPage = () => {
 
                 {/* Блок 2: Настройки теста */}
                 <div className={styles.infoBlock}>
-                    <h1 className={styles.blockTitle}>Настройки теста</h1>
+                    <div className={styles.blockHeader}>
+                        <h1 className={styles.blockTitle}>Настройки теста</h1>
+                        <div className={styles.buttonContainer}>
+                            <Button onClick={handleEditSettingsButton} className={styles.addQuestionBtn}>
+                                ✏️
+                            </Button>
+                        </div>
+                    </div>
+
                     <div className={styles.blockContent}>
                         {test.settings ? (
                             <>
-                                <div className={styles.infoRow}>
-                                    <span className={styles.label}>Требуется регистрация:</span>
-                                    <span className={styles.value}>
-                                        {test.settings.requireRegistration ? "Да" : "Нет"}
-                                    </span>
-                                </div>
-                                <div className={styles.infoRow}>
-                                    <span className={styles.label}>Показывать детальные результаты:</span>
-                                    <span className={styles.value}>
-                                        {test.settings.showDetailedResults ? "Да" : "Нет"}
-                                    </span>
-                                </div>
-                                <div className={styles.infoRow}>
-                                    <span className={styles.label}>Поля ввода:</span>
-                                    <span className={styles.value}>
-                                        {test.settings.inputFields && test.settings.inputFields.length > 0 ? (
-                                            test.settings.inputFields
-                                                .map(field => PreTestUserDataLabels[field] || field)
-                                                .join(", ")
-                                        ) : (
-                                            <span className={styles.emptyField}>не указаны</span>
-                                        )}
-                                    </span>
-                                </div>
-                                <div className={styles.infoRow}>
-                                    <span className={styles.label}>Обязательные поля:</span>
-                                    <span className={styles.value}>
-                                        {test.settings.requiredFields && test.settings.requiredFields.length > 0 ? (
-                                            test.settings.requiredFields
-                                                .map(field => PreTestUserDataLabels[field] || field)
-                                                .join(", ")
-                                        ) : (
-                                            <span className={styles.emptyField}>не указаны</span>
-                                        )}
-                                    </span>
-                                </div>
-                                <div className={styles.infoRow}>
-                                    <span className={styles.label}>Лимит времени:</span>
-                                    <span className={styles.value}>
-                                        {test.settings.timeLimit ? (
-                                            formatSeconds(test.settings.timeLimit)
-                                        ) : (
-                                            <span className={styles.emptyField}>не указан</span>
-                                        )}
-                                    </span>
-                                </div>
+                                {isLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <>
+                                        <div className={styles.infoRow}>
+                                            <span className={styles.label}>Требуется регистрация:</span>
+                                            <span className={styles.value}>
+                                                {test.settings.requireRegistration ? "Да" : "Нет"}
+                                            </span>
+                                        </div>
+                                        <div className={styles.infoRow}>
+                                            <span className={styles.label}>Показывать детальные результаты:</span>
+                                            <span className={styles.value}>
+                                                {test.settings.showDetailedResults ? "Да" : "Нет"}
+                                            </span>
+                                        </div>
+                                        <div className={styles.infoRow}>
+                                            <span className={styles.label}>Поля ввода:</span>
+                                            <span className={styles.value}>
+                                                {test.settings.inputFields && test.settings.inputFields.length > 0 ? (
+                                                    test.settings.inputFields
+                                                        .map(field => PreTestUserDataLabels[field] || field)
+                                                        .join(", ")
+                                                ) : (
+                                                    <span className={styles.emptyField}>не указаны</span>
+                                                )}
+                                            </span>
+                                        </div>
+                                        <div className={styles.infoRow}>
+                                            <span className={styles.label}>Обязательные поля:</span>
+                                            <span className={styles.value}>
+                                                {test.settings.requiredFields &&
+                                                test.settings.requiredFields.length > 0 ? (
+                                                    test.settings.requiredFields
+                                                        .map(field => PreTestUserDataLabels[field] || field)
+                                                        .join(", ")
+                                                ) : (
+                                                    <span className={styles.emptyField}>не указаны</span>
+                                                )}
+                                            </span>
+                                        </div>
+                                        <div className={styles.infoRow}>
+                                            <span className={styles.label}>Лимит времени:</span>
+                                            <span className={styles.value}>
+                                                {test.settings.timeLimit ? (
+                                                    formatSeconds(test.settings.timeLimit)
+                                                ) : (
+                                                    <span className={styles.emptyField}>не указан</span>
+                                                )}
+                                            </span>
+                                        </div>
+                                    </>
+                                )}
                             </>
                         ) : (
                             <div className={styles.emptyBlock}>Настройки теста не определены</div>
@@ -208,13 +244,8 @@ const TestInfoPage = () => {
                 <div className={styles.blockHeader}>
                     <h1 className={styles.blockTitle}>Вопросы и ответы</h1>
                     <div className={styles.buttonContainer}>
-                        <Button
-                            onClick={() => {
-                                navigate(`${location.pathname}/add-questions`)
-                                setIsModalOpen(true)
-                            }}
-                            className={styles.addQuestionBtn}>
-                            Добавить
+                        <Button onClick={handleAddQuestionsButton} className={styles.addQuestionBtn}>
+                            ✏️
                         </Button>
                     </div>
                 </div>
@@ -256,6 +287,7 @@ const TestInfoPage = () => {
             </div>
 
             <Modal
+                fullScreen
                 isOpen={isModalOpen}
                 onClose={() => {
                     navigate(-1)
@@ -268,6 +300,24 @@ const TestInfoPage = () => {
                         setIsModalOpen(false)
                     }}
                     onCancel={() => setIsModalOpen(false)}
+                />
+            </Modal>
+
+            <Modal
+                fullScreen
+                isOpen={isSettingsModalOpen}
+                onClose={() => {
+                    // navigate(-1)
+                    setIsSettingsModalOpen(false)
+                }}
+                title="Редактирование настроек теста">
+                <TestSettingsEditor
+                    settings={test.settings || {}}
+                    onSettingsComplete={settings => {
+                        handleSettingsUpdate(settings)
+                        setIsSettingsModalOpen(false)
+                    }}
+                    onCancel={() => setIsSettingsModalOpen(false)}
                 />
             </Modal>
         </div>

@@ -6,4 +6,5 @@ export interface ValidatedInputProps<T extends Record<string, any>> extends Omit
     setValue: UseFormSetValue<T>
     validationRules?: RegisterOptions<T, Path<T>>
     errors?: FieldError | undefined
+    floatingLabel?: boolean
 }

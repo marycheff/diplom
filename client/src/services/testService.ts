@@ -1,5 +1,5 @@
 import axiosInstance from "@/axios"
-import { GenerateAnswerFormData, QuestionDTO, TestDTO, TestsListDTO, UpdateTestDTO } from "@/types/testTypes"
+import { GenerateAnswerFormData, TestDTO, TestSettingsDTO, TestsListDTO, UpdateTestDTO } from "@/types/testTypes"
 import { AxiosResponse } from "axios"
 
 class TestService {
@@ -45,6 +45,9 @@ class TestService {
     // }
     updateTestQuestions = (testId: string, data: UpdateTestDTO) => {
         return axiosInstance.put(`/test/${testId}/questions`, data)
+    }
+    updateTestSettings = (testId: string, updatedSettings: TestSettingsDTO) => {
+        return axiosInstance.put(`/test/${testId}/settings`, updatedSettings)
     }
 }
 export const testService = new TestService()

@@ -50,7 +50,6 @@
     align-items: center;
     z-index: 1000;
     animation: fadeIn 0.2s ease-out;
-
     &.closing {
         animation: fadeOut 0.2s ease-out forwards;
     }
@@ -60,24 +59,30 @@
     background: white;
     padding: 32px;
     border-radius: 12px;
-    width: 90vw;
-    height: 80vh;
+    width: 50vw;
+    height: 50vh;
     margin: 2.5vh 2.5vw;
     overflow-y: auto;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     position: relative;
     animation: scaleIn 0.2s ease-out;
-
     &.closing {
         animation: scaleOut 0.2s ease-out forwards;
     }
+
+    &.fullScreen {
+        width: 90vw;
+        height: 80vh;
+    }
 }
+
 .modalTitle {
     margin-top: 0;
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
 }
+
 .closeButton {
     position: absolute;
     top: 16px;
@@ -90,7 +95,6 @@
     line-height: 1;
     color: #666;
     transition: color 0.2s ease;
-
     &:hover {
         color: #000;
     }

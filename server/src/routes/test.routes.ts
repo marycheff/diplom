@@ -16,6 +16,7 @@ import {
     createTestSchema,
     saveAnswerSchema,
     startTestAttemptSchema,
+    testSettingsSchema,
     updateQuestionSchema,
 } from "@/schemas/test.schema"
 import express from "express"
@@ -35,7 +36,13 @@ router.get("/my-tests", authMiddleware, testController.getMyTests)
 router.get("/all-tests", authMiddleware, adminMiddleware, testController.getAllTests)
 // Удаление теста
 router.delete("/:testId", authMiddleware, testOwnershipMiddleware, testController.deleteTest)
-router.put("/:testId/settings", authMiddleware, testOwnershipMiddleware, testController.updateTestSettings)
+router.put(
+    "/:testId/settings",
+    authMiddleware,
+    testOwnershipMiddleware,
+    // validateRequest(testSettingsSchema),
+    testController.updateTestSettings
+)
 // Получение теста по ID
 router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.getTestById)
 
