@@ -67,6 +67,7 @@ const AppRouter = () => {
         <Route key="activationSuccess" path="/activation-success" element={<ActivationSuccessPage />} />,
         <Route key="my-tests" path="/my-tests" element={<MyTestsPage />} />,
         <Route key="my-test" path="/my-tests/:testId" element={<TestInfoPage />} />,
+        <Route key="my-test-add-questions" path="/my-tests/:testId/add-questions" element={<TestInfoPage />} />,
     ]
 
     // Маршруты для администраторов
@@ -106,6 +107,11 @@ const AppRouter = () => {
             key="admin-all-attempts"
             path="/admin/attempts"
             element={<AdminRoute component={AllAttemptsPage} isAdmin={isAdmin} />}
+        />,
+        <Route
+            key="admin-add-questions"
+            path="/admin/tests/:testId/add-questions"
+            element={<AdminRoute component={TestInfoPage} isAdmin={isAdmin} />}
         />,
     ]
 

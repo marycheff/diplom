@@ -26,6 +26,7 @@ const Breadcrumbs = () => {
         home: "Главная",
         "create-test": "Создание теста",
         "my-tests": "Мои тесты",
+        "add-questions": "Добавление вопросов",
     }
 
     return (

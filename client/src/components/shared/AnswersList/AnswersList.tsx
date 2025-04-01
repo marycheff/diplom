@@ -32,13 +32,13 @@ const AnswersList: FC<AnswersListProps> = ({
                         value={answer.text}
                         onChange={e => handleAnswerChange(index, e.target.value)}
                         placeholder={`Вариант ответа ${index + 1}`}
-                        name={""}
+                        name={`answer_${index}`}
                     />
                     <Checkbox
                         id={`answer-${index}`}
                         checked={answer.isCorrect}
                         onChange={() => {
-                            // Проверяем, не пытается ли пользователь снять последний отмеченный checkbox
+                            //  не пытается ли пользователь снять последний отмеченный checkbox
                             if (!answer.isCorrect || answers.filter(a => a.isCorrect).length > 1) {
                                 handleCorrectChange(index)
                             }

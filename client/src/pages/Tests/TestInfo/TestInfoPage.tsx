@@ -1,4 +1,4 @@
-import QuestionCreator from "@/components/shared/QuestionCreator"
+import QuestionCreator from "@/components/shared/QuestionCreator/QuestionCreator"
 import { Button } from "@/components/ui/Button"
 import Loader from "@/components/ui/Loader/Loader"
 import Modal from "@/components/ui/Modal/Modal"
@@ -10,7 +10,7 @@ import { formatSeconds } from "@/utils/formatter"
 import { isValidObjectId } from "@/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import { Link, useParams } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import styles from "./TestInfoPage.module.scss"
 
 const TestInfoPage = () => {
@@ -18,7 +18,9 @@ const TestInfoPage = () => {
     const { getTestById, isFetching, updateTestQuestions, isLoading } = useTestStore()
     const [test, setTest] = useState<TestDTO | null>(null)
     const { user: currentUser } = useAuthStore()
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const navigate = useNavigate()
+    const location = useLocation()
+    const [isModalOpen, setIsModalOpen] = useState(location.pathname.endsWith("/add-questions"))
 
     if (!testId) {
         return <div>ID теста не указан</div>
@@ -201,12 +203,17 @@ const TestInfoPage = () => {
                 )}
             </div>
 
-                {/* Блок 4: Информация о вопросах */}
+            {/* Блок 4: Информация о вопросах */}
             <div className={styles.infoBlock}>
                 <div className={styles.blockHeader}>
                     <h1 className={styles.blockTitle}>Вопросы и ответы</h1>
                     <div className={styles.buttonContainer}>
-                        <Button onClick={() => setIsModalOpen(true)} className={styles.addQuestionBtn}>
+                        <Button
+                            onClick={() => {
+                                navigate(`${location.pathname}/add-questions`)
+                                setIsModalOpen(true)
+                            }}
+                            className={styles.addQuestionBtn}>
                             Добавить
                         </Button>
                     </div>
@@ -248,7 +255,13 @@ const TestInfoPage = () => {
                 )}
             </div>
 
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Добавление вопросов">
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => {
+                    navigate(-1)
+                    setIsModalOpen(false)
+                }}
+                title="Добавление вопросов">
                 <QuestionCreator
                     onQuestionComplete={questions => {
                         handleQuestionsUpdate(questions)

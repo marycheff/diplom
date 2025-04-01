@@ -18,9 +18,15 @@ const QuestionItem: FC<QuestionItemProps> = ({ question, expanded, onToggle, onE
             <div className={styles.questionHeader}>
                 <p className={styles.questionText}>{question.text}</p>
                 <div className={styles.actions}>
-                    <Button onClick={onEdit}>✏️</Button>
-                    <Button onClick={onDelete}>🗑️</Button>
-                    <Button onClick={onToggle}>{expanded ? "▲" : "▼"}</Button>
+                    <Button onClick={onEdit} tooltip="Редактировать">
+                        ✏️
+                    </Button>
+                    <Button onClick={onDelete} tooltip="Удалить">
+                        🗑️
+                    </Button>
+                    <Button onClick={onToggle} tooltip="Развернуть">
+                        {expanded ? "▲" : "▼"}
+                    </Button>
                 </div>
             </div>
             {

@@ -1,4 +1,4 @@
-import AttemptInfo from "@/components/shared/AttemptInfo"
+import AttemptInfo from "@/components/shared/AttemptInfo/AttemptInfo"
 import { BackButton, HomeButton } from "@/components/ui/Button"
 
 const AttemptInfoPage = () => {

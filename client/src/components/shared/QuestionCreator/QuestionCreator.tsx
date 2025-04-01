@@ -1,10 +1,10 @@
-import QuestionForm from "@/components/shared/QuestionForm"
-import QuestionItem from "@/components/shared/QuestionItem"
+import AnswersList from "@/components/shared/AnswersList/AnswersList"
+import QuestionForm from "@/components/shared/QuestionForm/QuestionForm"
+import QuestionItem from "@/components/shared/QuestionItem/QuestionItem"
 import { Button } from "@/components/ui/Button"
 import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/types/testTypes"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import AnswersList from "./AnswersList"
 import styles from "./QuestionCreator.module.scss"
 
 type QuestionCreatorProps = {
@@ -16,8 +16,6 @@ const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps)
     const [questions, setQuestions] = useState<QuestionDTO[]>([])
     const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
     const [expandedQuestionId, setExpandedQuestionId] = useState<string | null>(null)
-    const [isFormVisible, setIsFormVisible] = useState(true)
-    const [editingInAccordion, setEditingInAccordion] = useState<string | null>(null)
     const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
         return Array(3)
             .fill(null)
@@ -99,7 +97,6 @@ const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps)
         reset()
         setEditingQuestion(null)
         setExpandedQuestionId(null)
-        setEditingInAccordion(null)
 
         // Инициализировать новые поля для ответов
         const newAnswers = Array(3)
@@ -152,8 +149,6 @@ const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps)
         reset()
         setEditingQuestion(null)
         setExpandedQuestionId(null)
-        setEditingInAccordion(null)
-        setIsFormVisible(true)
         setCurrentAnswers(
             Array(3)
                 .fill(null)
@@ -171,7 +166,6 @@ const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps)
 
     const editQuestion = (question: QuestionDTO) => {
         setEditingQuestion(question)
-        setEditingInAccordion(question.id)
     }
 
     const deleteQuestion = (questionId: string) => {
@@ -191,7 +185,6 @@ const QuestionCreator = ({ onQuestionComplete, onCancel }: QuestionCreatorProps)
                     <Button
                         onClick={() => {
                             resetForm()
-                            setIsFormVisible(true)
                             setEditingQuestion(null)
                         }}>
                         Добавить вопрос
