@@ -1,8 +1,8 @@
 import TestsTable from "@/features/tests/components/Tables/TestsTable/TestsTable"
-import { useTestsCache } from "@/features/tests/hooks/useTestsCache"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import { useCache } from "@/shared/hooks/useCache"
 import TableSkeleton from "@/shared/skeletons/TestsListSkeleton/TableSkeleton"
-import { TestDTO } from "@/shared/types/testTypes"
+import { TestDTO, TestsListDTO } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import SearchBar from "@/shared/ui/SearchBar/SearchBar"
@@ -19,7 +19,8 @@ const AllTestsPage = () => {
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
     const location = useLocation()
-    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useTestsCache()
+    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
+        useCache<TestsListDTO>(useTestStore, "tests")
 
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {

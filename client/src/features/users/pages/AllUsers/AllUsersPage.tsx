@@ -1,8 +1,8 @@
 import UsersTable from "@/features/users/components/Tables/UsersTable/UsersTable"
-import { useUsersCache } from "@/features/users/hooks/useUsersCache"
 import { useUserStore } from "@/features/users/store/useUserStore"
+import { useCache } from "@/shared/hooks/useCache"
 import TableSkeleton from "@/shared/skeletons/TestsListSkeleton/TableSkeleton"
-import { UserDTO } from "@/shared/types/userTypes"
+import { UserDTO, UsersListDTO } from "@/shared/types/userTypes"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import SearchBar from "@/shared/ui/SearchBar/SearchBar"
@@ -19,7 +19,8 @@ const AllUsersPage = () => {
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
     const location = useLocation()
-    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useUsersCache()
+    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
+        useCache<UsersListDTO>(useUserStore, "users")
 
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {

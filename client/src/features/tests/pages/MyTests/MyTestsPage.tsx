@@ -1,8 +1,8 @@
 import MyTestsTable from "@/features/tests/components/Tables/MyTestsTable/MyTestsTable"
-import { useMyTestsCache } from "@/features/tests/hooks/useMyTestsCache"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import { useCache } from "@/shared/hooks/useCache"
 import TableSkeleton from "@/shared/skeletons/TestsListSkeleton/TableSkeleton"
-import { TestDTO } from "@/shared/types/testTypes"
+import { TestDTO, TestsListDTO } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import SearchBar from "@/shared/ui/SearchBar/SearchBar"
@@ -14,13 +14,13 @@ const MyTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
     const { getMyTests, searchTests, isFetching } = useTestStore()
     const [total, setTotal] = useState<number>(0)
-    const [limit] = useState<number>(10)
+    const [limit] = useState<number>(2)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
     const location = useLocation()
-    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useMyTestsCache()
-
+    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
+        useCache<TestsListDTO>(useTestStore, "my-tests")
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
             if (isFetching) return

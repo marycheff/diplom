@@ -1,8 +1,8 @@
 import AttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/AttemptsTable"
-import { useAttemptsCache } from "@/features/attempts/hooks/useAttemptsCache"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import { useCache } from "@/shared/hooks/useCache"
 import TableSkeleton from "@/shared/skeletons/TestsListSkeleton/TableSkeleton"
-import { TestAttemptDTO } from "@/shared/types/testTypes"
+import { AttemptsListDTO, TestAttemptDTO } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import { formatDate } from "@/shared/utils/formatter"
@@ -13,11 +13,12 @@ const AllAttemptsPage = () => {
     const { getAllAttempts, isFetching } = useAttemptStore()
     const [attempts, setAttempts] = useState<TestAttemptDTO[]>([])
     const [total, setTotal] = useState<number>(0)
-    const [limit] = useState<number>(10)
+    const [limit] = useState<number>(2)
     const [page, setPage] = useState<number>(1)
     const navigate = useNavigate()
     const location = useLocation()
-    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useAttemptsCache()
+    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
+        useCache<AttemptsListDTO>(useAttemptStore)
 
     const fetchData = useCallback(
         async (currentPage: number) => {
