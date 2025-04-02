@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import testService from "@/services/tests/test.service"
-import { QuestionDTO, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
+import { QuestionDTO, ShortTestInfo, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
 
 import { NextFunction, Request, Response } from "express"
 
@@ -153,6 +153,17 @@ class TestController {
 
             const tests = await testService.searchUserTests(query, userId, page, limit)
             res.json(tests)
+        } catch (e) {
+            next(e)
+        }
+    }
+    async updateShortInfo(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const data: ShortTestInfo = req.body
+            await testService.updateShortInfo(testId, data)
+            res.status(200).json({ message: "Информация о тесте обновлена" })
+
         } catch (e) {
             next(e)
         }

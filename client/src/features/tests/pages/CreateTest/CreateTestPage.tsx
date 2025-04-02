@@ -1,4 +1,5 @@
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import { ShortTestInfo } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -7,20 +8,17 @@ import { useNavigate } from "react-router-dom"
 
 const CreateTestPage = () => {
     const navigate = useNavigate()
-    interface CreateTestData {
-        title: string
-        description?: string
-    }
+
     const { isLoading, createTest } = useTestStore()
     const {
         register,
         handleSubmit,
         formState: { errors },
         setValue,
-    } = useForm<CreateTestData>({
+    } = useForm<ShortTestInfo>({
         mode: "onChange",
     })
-    const onSubmit: SubmitHandler<CreateTestData> = async data => {
+    const onSubmit: SubmitHandler<ShortTestInfo> = async data => {
         const response = await createTest(data.title, data.description)
         toast.success(`Тест создан`)
         navigate(`/my-tests/${response?.id}`)

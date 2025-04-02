@@ -13,6 +13,7 @@ export interface TestState {
     generateAnswers: (data: GenerateAnswerFormData) => Promise<string[]>
     updateTestQuestions: (testId: string, data: UpdateTestDTO) => Promise<void>
     updateTestSettings: (testId: string, updatedSettings: TestSettingsDTO) => Promise<void>
+    updateShortInfo: (testId: string, data: ShortTestInfo) => Promise<void>
 
     // CACHE
     CACHE_EXPIRATION_TIME: number
@@ -130,4 +131,8 @@ export interface GenerateAnswerFormData {
     question: string
     answer: string
     numOfAnswers: number
+}
+export interface ShortTestInfo {
+    title: string
+    description?: string
 }

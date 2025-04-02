@@ -27,7 +27,13 @@ const router = express.Router()
   ================================= */
 router.get("/search", authMiddleware, testController.searchTests)
 router.get("/my-tests/search", authMiddleware, testController.searchMyTests)
-
+router.put(
+    "/:testId/short-info",
+    authMiddleware,
+    testOwnershipMiddleware,
+    // validateRequest(testSettingsSchema),
+    testController.updateShortInfo
+)
 // Создание теста
 router.post("/create", authMiddleware, validateRequest(createTestSchema), testController.createTest)
 // Получение всех тестов пользователя (только свои)

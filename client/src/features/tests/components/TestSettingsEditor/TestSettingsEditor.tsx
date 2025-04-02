@@ -49,7 +49,8 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             inputFields: data.inputFields,
             requireRegistration: data.requireRegistration === "Да",
             showDetailedResults: data.showDetailedResults === "Да",
-            timeLimit: Number(data.hours) * 3600 + Number(data.minutes) * 60 + Number(data.seconds),
+            timeLimit:
+                Number(data.hours.trim()) * 3600 + Number(data.minutes.trim()) * 60 + Number(data.seconds.trim()),
         })
     }
 

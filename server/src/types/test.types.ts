@@ -90,3 +90,7 @@ export interface UserAnswerDTO {
     timeSpent: number | null
     createdAt: Date
 }
+export interface ShortTestInfo {
+    title: string
+    description?: string
+}

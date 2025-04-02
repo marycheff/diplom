@@ -1,9 +1,10 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import QuestionCreator from "@/features/tests/components/QuestionCreator/QuestionCreator"
+import TestInfoEditor from "@/features/tests/components/TestInfoEditor/TestInfoEditor"
 import TestSettingsEditor from "@/features/tests/components/TestSettingsEditor/TestSettingsEditor"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { PreTestUserDataLabels } from "@/shared/types/inputFields"
-import { QuestionDTO, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/shared/types/testTypes"
+import { QuestionDTO, ShortTestInfo, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import Modal from "@/shared/ui/Modal/Modal"
@@ -16,13 +17,15 @@ import styles from "./TestInfoPage.module.scss"
 
 const TestInfoPage = () => {
     const { testId } = useParams<{ testId: string }>()
-    const { getTestById, isFetching, updateTestQuestions, isLoading, updateTestSettings } = useTestStore()
+    const { getTestById, isFetching, updateTestQuestions, isLoading, updateTestSettings, updateShortInfo } =
+        useTestStore()
     const [test, setTest] = useState<TestDTO | null>(null)
     const { user: currentUser } = useAuthStore()
     const navigate = useNavigate()
     const location = useLocation()
     const [isModalOpen, setIsModalOpen] = useState(location.pathname.endsWith("/add-questions"))
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(location.pathname.endsWith("/edit-settings"))
+    const [isTestInfoModalOpen, setIsTestInfModalOpen] = useState(location.pathname.endsWith("/edit-info"))
 
     if (!testId) {
         return <div>ID теста не указан</div>
@@ -71,15 +74,28 @@ const TestInfoPage = () => {
         // navigate(`${location.pathname}/edit-settings`)
         setIsSettingsModalOpen(true)
     }
+    const handleEditTestInfoButton = () => {
+        // navigate(`${location.pathname}/edit-settings`)
+        setIsTestInfModalOpen(true)
+    }
     const handleSettingsUpdate = async (updatedSettings: TestSettingsDTO) => {
         if (!test) return
         const updatedTest = {
             ...test,
             settings: updatedSettings,
         }
-        // await updateTestQuestions(test.id, updatedSettings)
         await updateTestSettings(test.id, updatedSettings)
         toast.success("Настройки теста обновлены")
+        setTest(updatedTest)
+    }
+    const handleShortInfoUpdate = async (updatedShortInfo: ShortTestInfo) => {
+        const updatedTest = {
+            ...test,
+            title: updatedShortInfo.title,
+            description: updatedShortInfo.description,
+        }
+        await updateShortInfo(testId, { title: updatedShortInfo.title, description: updatedShortInfo.description })
+        toast.success("Информация о тесте обновлена")
         setTest(updatedTest)
     }
 
@@ -88,37 +104,48 @@ const TestInfoPage = () => {
             <div className={styles.topGrid}>
                 {/* Блок 1: Информация о тесте */}
                 <div className={styles.infoBlock}>
-                    <h1 className={styles.blockTitle}>Информация о тесте</h1>
-                    <div className={styles.blockContent}>
-                        <div className={styles.infoRow}>
-                            <span className={styles.label}>ID:</span>
-                            <span className={styles.value}>{test.id}</span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.label}>Название:</span>
-                            <span className={styles.value}>
-                                {test.title || <span className={styles.emptyField}>не указано</span>}
-                            </span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.label}>Описание:</span>
-                            <span className={styles.value}>
-                                {test.description || <span className={styles.emptyField}>не указано</span>}
-                            </span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.label}>Всего попыток:</span>
-                            <span className={styles.value}>
-                                {test.totalAttempts === 0 ? (
-                                    "0"
-                                ) : (
-                                    <Link to={`/admin/tests/${test.id}/attempts`} className="actionLink">
-                                        {test.totalAttempts}
-                                    </Link>
-                                )}
-                            </span>
+                    <div className={styles.blockHeader}>
+                        <h1 className={styles.blockTitle}>Информация о тесте</h1>
+                        <div className={styles.buttonContainer}>
+                            <Button onClick={handleEditTestInfoButton} className={styles.addQuestionBtn}>
+                                ✏️
+                            </Button>
                         </div>
                     </div>
+                    {isLoading ? (
+                        <Loader />
+                    ) : (
+                        <div className={styles.blockContent}>
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>ID:</span>
+                                <span className={styles.value}>{test.id}</span>
+                            </div>
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>Название:</span>
+                                <span className={styles.value}>
+                                    {test.title || <span className={styles.emptyField}>не указано</span>}
+                                </span>
+                            </div>
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>Описание:</span>
+                                <span className={styles.value}>
+                                    {test.description || <span className={styles.emptyField}>не указано</span>}
+                                </span>
+                            </div>
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>Всего попыток:</span>
+                                <span className={styles.value}>
+                                    {test.totalAttempts === 0 ? (
+                                        "0"
+                                    ) : (
+                                        <Link to={`/admin/tests/${test.id}/attempts`} className="actionLink">
+                                            {test.totalAttempts}
+                                        </Link>
+                                    )}
+                                </span>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Блок 2: Настройки теста */}
@@ -314,6 +341,22 @@ const TestInfoPage = () => {
                     onSettingsComplete={settings => {
                         handleSettingsUpdate(settings)
                         setIsSettingsModalOpen(false)
+                    }}
+                    onCancel={() => setIsSettingsModalOpen(false)}
+                />
+            </Modal>
+            <Modal
+                isOpen={isTestInfoModalOpen}
+                onClose={() => {
+                    // navigate(-1)
+                    setIsTestInfModalOpen(false)
+                }}
+                title="Редактирование информации о тесте">
+                <TestInfoEditor
+                    data={{ title: test.title, description: test.description }}
+                    onSettingsComplete={data => {
+                        handleShortInfoUpdate(data)
+                        setIsTestInfModalOpen(false)
                     }}
                     onCancel={() => setIsSettingsModalOpen(false)}
                 />

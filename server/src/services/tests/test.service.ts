@@ -1,7 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
 import { mapToResponseTest } from "@/services/mappers/test.mappers"
-import { QuestionDTO, TestDTO, TestSettingsDTO, TestsListDTO, UpdateTestDTO } from "@/types/test.types"
+import { QuestionDTO, ShortTestInfo, TestDTO, TestSettingsDTO, TestsListDTO, UpdateTestDTO } from "@/types/test.types"
 import { redisClient } from "@/utils/redis-client"
 import { isValidObjectId } from "@/utils/validator"
 import { Answer, Prisma, PrismaClient, Question } from "@prisma/client"
@@ -29,6 +29,18 @@ class TestService {
             })
         }
         await redisClient.del(`test:${testId}`)!
+    }
+    async updateShortInfo(testId: string, data: ShortTestInfo) {
+        return prisma.$transaction(async tx => {
+            await tx.test.update({
+                where: { id: testId },
+                data: {
+                    title: data.title,
+                    description: data.description,
+                },
+            })
+            await redisClient.del(`test:${testId}`)
+        })
     }
     // Создание теста без вопросов
     async createTest(authorId: string, testData: TestDTO): Promise<TestDTO> {
@@ -236,7 +248,6 @@ class TestService {
         })
     }
 
-    // ... existing code ...
     // Получение всех тестов пользователя
     async getMyTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
         const skip = (page - 1) * limit

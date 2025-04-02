@@ -92,5 +92,11 @@ export const useTestStore = create<TestState>(set => {
             }
             return withLoading(operation)
         },
+        updateShortInfo: (testId, data) => {
+            const operation = async () => {
+                await testService.updateShortInfo(testId, data)
+            }
+            return withLoading(operation)
+        },
     }
 })
