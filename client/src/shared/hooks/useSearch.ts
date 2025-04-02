@@ -4,18 +4,20 @@ export const useSearch = () => {
     const navigate = useNavigate()
     const location = useLocation()
 
-    const handleSearch = (query: string, page: number) => {
+    const handleSearch = (query: string, page = 1) => {
+        const trimmedQuery = query.trim()
+        if (!trimmedQuery) return
         const params = new URLSearchParams(location.search)
-        params.set("query", query)
+        params.set("query", trimmedQuery)
         params.set("page", page.toString())
         navigate({ search: params.toString() })
     }
 
-    const handleReset = () => {
+    const handleResetSearch = () => {
         const params = new URLSearchParams()
         params.set("page", "1")
         navigate({ search: params.toString() })
     }
 
-    return { handleSearch, handleReset }
+    return { handleSearch,  handleResetSearch }
 }

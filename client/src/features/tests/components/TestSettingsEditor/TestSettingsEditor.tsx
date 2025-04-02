@@ -39,13 +39,11 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
         },
     })
 
-    const watchedHours = watch("hours")
-    const watchedMinutes = watch("minutes")
+    // const watchedHours = watch("hours")
+    // const watchedMinutes = watch("minutes")
     const inputFields = watch("inputFields")
 
     const onSubmit: SubmitHandler<any> = data => {
-        console.log(data.hours * 3600 + data.minutes * 60 + data.seconds)
-
         onSettingsComplete({
             requiredFields: data.inputFields,
             inputFields: data.inputFields,

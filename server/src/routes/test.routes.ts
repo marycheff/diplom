@@ -16,7 +16,6 @@ import {
     createTestSchema,
     saveAnswerSchema,
     startTestAttemptSchema,
-    testSettingsSchema,
     updateQuestionSchema,
 } from "@/schemas/test.schema"
 import express from "express"
@@ -27,6 +26,7 @@ const router = express.Router()
         Управление тестами
   ================================= */
 router.get("/search", authMiddleware, testController.searchTests)
+router.get("/my-tests/search", authMiddleware, testController.searchMyTests)
 
 // Создание теста
 router.post("/create", authMiddleware, validateRequest(createTestSchema), testController.createTest)

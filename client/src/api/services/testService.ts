@@ -21,6 +21,15 @@ class TestService {
             },
         })
     }
+    searchMyTests(query: string, page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
+        return axiosInstance.get<TestsListDTO>("/test/my-tests/search", {
+            params: {
+                query,
+                page,
+                limit,
+            },
+        })
+    }
 
     getTestById(id: string): Promise<AxiosResponse<TestDTO>> {
         return axiosInstance.get<TestDTO>(`/test/${id}`)

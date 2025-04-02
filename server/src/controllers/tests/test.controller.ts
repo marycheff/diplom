@@ -52,7 +52,6 @@ class TestController {
         try {
             const testId = req.test?.id
             const settings: TestSettingsDTO = req.body
-            console.log(settings.timeLimit)
             if (settings.timeLimit !== undefined && settings.timeLimit !== null && settings.timeLimit < 0) {
                 throw ApiError.BadRequest("Лимит времени должен быть положительным числом или null")
             }
@@ -127,8 +126,33 @@ class TestController {
                 throw ApiError.BadRequest("Нет поискового запроса")
             }
 
-            const users = await testService.searchTests(query, page, limit)
-            res.json(users)
+            const tests = await testService.searchTests(query, page, limit)
+            res.json(tests)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async searchMyTests(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.id
+            if (!userId) {
+                throw ApiError.Unauthorized()
+            }
+            const page = parseInt(req.query.page as string) || 1
+            const limit = parseInt(req.query.limit as string) || 10
+            const query = req.query.query as string
+
+            if (page < 1 || limit < 1) {
+                throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
+            }
+
+            if (!query) {
+                throw ApiError.BadRequest("Нет поискового запроса")
+            }
+
+            const tests = await testService.searchUserTests(query, userId, page, limit)
+            res.json(tests)
         } catch (e) {
             next(e)
         }

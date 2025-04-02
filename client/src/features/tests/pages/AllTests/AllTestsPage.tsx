@@ -1,6 +1,7 @@
 import TestsTable from "@/features/tests/components/Tables/TestsTable/TestsTable"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { useCache } from "@/shared/hooks/useCache"
+import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/TestsListSkeleton/TableSkeleton"
 import { TestDTO, TestsListDTO } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
@@ -21,7 +22,7 @@ const AllTestsPage = () => {
     const location = useLocation()
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
         useCache<TestsListDTO>(useTestStore, "tests")
-
+    const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
             if (isFetching) return
@@ -75,13 +76,7 @@ const AllTestsPage = () => {
     }
 
     const handleSearch = () => {
-        const trimmedQuery = searchQuery.trim()
-        if (trimmedQuery) {
-            const params = new URLSearchParams(location.search)
-            params.set("query", trimmedQuery)
-            params.set("page", "1")
-            navigate({ search: params.toString() })
-        }
+        search(searchQuery)
     }
 
     const handleClearSearchBar = () => {
@@ -89,10 +84,7 @@ const AllTestsPage = () => {
     }
 
     const handleResetSearch = () => {
-        const params = new URLSearchParams(location.search)
-        params.delete("query")
-        params.set("page", "1")
-        navigate({ search: params.toString() })
+        resetSearch()
         clearCache()
         fetchData(1)
     }

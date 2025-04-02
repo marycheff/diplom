@@ -270,8 +270,6 @@ class TestService {
         const total = await prisma.test.count({
             where: { authorId: userId },
         })
-
-        // await redisClient.setEx(cacheKey, 3600, JSON.stringify(testsDTO))
         return {
             tests: tests.map(test => mapToResponseTest(test)),
             total,
@@ -442,6 +440,88 @@ class TestService {
 
             const total = await prisma.test.count({
                 where: { OR: orConditions },
+            })
+
+            return {
+                tests: result.map(test => mapToResponseTest(test)),
+                total,
+            }
+        } catch (error) {
+            console.error(error)
+            throw ApiError.BadRequest("Ошибка при поиске тестов")
+        }
+    }
+    async searchUserTests(query: string, userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
+        try {
+            const skip = (page - 1) * limit
+
+            const orConditions: Prisma.TestWhereInput[] = [
+                { title: { contains: query, mode: "insensitive" } },
+                { description: { contains: query, mode: "insensitive" } },
+                {
+                    questions: {
+                        some: {
+                            text: { contains: query, mode: "insensitive" },
+                        },
+                    },
+                },
+                {
+                    questions: {
+                        some: {
+                            answers: {
+                                some: {
+                                    text: { contains: query, mode: "insensitive" },
+                                },
+                            },
+                        },
+                    },
+                },
+                {
+                    author: {
+                        OR: [
+                            { email: { contains: query, mode: "insensitive" } },
+                            { name: { contains: query, mode: "insensitive" } },
+                            { surname: { contains: query, mode: "insensitive" } },
+                            { patronymic: { contains: query, mode: "insensitive" } },
+                        ],
+                    },
+                },
+            ]
+
+            if (isValidObjectId(query)) {
+                orConditions.unshift({ id: { equals: query } })
+            }
+
+            const result = await prisma.test.findMany({
+                skip,
+                take: limit,
+                where: {
+                    authorId: userId,
+                    OR: orConditions,
+                },
+                include: {
+                    questions: {
+                        include: {
+                            answers: true,
+                        },
+                        orderBy: { order: "asc" },
+                    },
+                    settings: true,
+                    author: {
+                        select: {
+                            id: true,
+                            email: true,
+                            name: true,
+                            surname: true,
+                            patronymic: true,
+                        },
+                    },
+                },
+                orderBy: { createdAt: "desc" },
+            })
+
+            const total = await prisma.test.count({
+                where: { authorId: userId, OR: orConditions },
             })
 
             return {

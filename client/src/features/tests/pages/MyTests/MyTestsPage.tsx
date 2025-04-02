@@ -1,6 +1,7 @@
 import MyTestsTable from "@/features/tests/components/Tables/MyTestsTable/MyTestsTable"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { useCache } from "@/shared/hooks/useCache"
+import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/TestsListSkeleton/TableSkeleton"
 import { TestDTO, TestsListDTO } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
@@ -12,7 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 
 const MyTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
-    const { getMyTests, searchTests, isFetching } = useTestStore()
+    const { getMyTests, searchMyTests, isFetching } = useTestStore()
     const [total, setTotal] = useState<number>(0)
     const [limit] = useState<number>(2)
     const [page, setPage] = useState<number>(1)
@@ -21,6 +22,7 @@ const MyTestsPage = () => {
     const location = useLocation()
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
         useCache<TestsListDTO>(useTestStore, "my-tests")
+    const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
             if (isFetching) return
@@ -34,7 +36,7 @@ const MyTestsPage = () => {
             }
             let data
             if (query) {
-                data = await searchTests(query, currentPage, limit)
+                data = await searchMyTests(query, currentPage, limit)
             } else {
                 data = await getMyTests(currentPage, limit)
             }
@@ -44,7 +46,7 @@ const MyTestsPage = () => {
                 saveToCache(cacheKey, data)
             }
         },
-        [getCacheKey, getCachedData, saveToCache, searchTests, getMyTests, limit]
+        [getCacheKey, getCachedData, saveToCache, searchMyTests, getMyTests, limit]
     )
 
     useEffect(() => {
@@ -74,13 +76,7 @@ const MyTestsPage = () => {
     }
 
     const handleSearch = () => {
-        const trimmedQuery = searchQuery.trim()
-        if (trimmedQuery) {
-            const params = new URLSearchParams(location.search)
-            params.set("query", trimmedQuery)
-            params.set("page", "1")
-            navigate({ search: params.toString() })
-        }
+        search(searchQuery)
     }
 
     const handleClearSearchBar = () => {
@@ -88,10 +84,7 @@ const MyTestsPage = () => {
     }
 
     const handleResetSearch = () => {
-        const params = new URLSearchParams(location.search)
-        params.delete("query")
-        params.set("page", "1")
-        navigate({ search: params.toString() })
+        resetSearch()
         clearCache()
         fetchData(1)
     }

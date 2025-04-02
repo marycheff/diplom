@@ -1,6 +1,7 @@
 import UsersTable from "@/features/users/components/Tables/UsersTable/UsersTable"
 import { useUserStore } from "@/features/users/store/useUserStore"
 import { useCache } from "@/shared/hooks/useCache"
+import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/TestsListSkeleton/TableSkeleton"
 import { UserDTO, UsersListDTO } from "@/shared/types/userTypes"
 import { Button } from "@/shared/ui/Button"
@@ -21,6 +22,7 @@ const AllUsersPage = () => {
     const location = useLocation()
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
         useCache<UsersListDTO>(useUserStore, "users")
+    const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
 
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
@@ -76,27 +78,15 @@ const AllUsersPage = () => {
     }
 
     const handleSearch = () => {
-        const trimmedQuery = searchQuery.trim()
-        if (trimmedQuery) {
-            const params = new URLSearchParams(location.search)
-            params.set("query", trimmedQuery)
-            params.set("page", "1")
-            navigate({ search: params.toString() })
-        }
+        search(searchQuery)
     }
 
     const handleClearSearchBar = () => {
-        const params = new URLSearchParams(location.search)
-        params.delete("query")
-        navigate({ search: params.toString() })
         setSearchQuery("")
     }
 
     const handleResetSearch = () => {
-        const params = new URLSearchParams(location.search)
-        params.delete("query")
-        params.set("page", "1")
-        navigate({ search: params.toString() })
+        resetSearch()
         clearCache()
         fetchData(1)
     }

@@ -61,8 +61,6 @@ const TestInfoPage = () => {
         }
         await updateTestQuestions(test.id, data)
         toast.success("Вопрос(ы) добавлены")
-        console.log(newQuestions)
-
         setTest(updatedTest)
     }
     const handleAddQuestionsButton = () => {
