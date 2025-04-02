@@ -1,0 +1,245 @@
+import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import { PreTestUserData, PreTestUserDataLabels } from "@/shared/types/inputFields"
+import { TestAttemptDTO } from "@/shared/types/testTypes"
+import Loader from "@/shared/ui/Loader/Loader"
+import { formatDate, formatSeconds } from "@/shared/utils/formatter"
+import { isValidObjectId } from "@/shared/utils/validator"
+import { useEffect, useState } from "react"
+import { Link, useParams } from "react-router-dom"
+import styles from "./AttemptInfo.module.scss"
+
+const AttemptInfo = () => {
+    const { attemptId } = useParams<{ attemptId: string }>()
+
+    if (!attemptId) {
+        return <div>ID пользователя не указан</div>
+    }
+    if (!isValidObjectId(attemptId)) {
+        return <div>Невалидный Id</div>
+    }
+
+    const { isFetching, getAttemptById } = useAttemptStore()
+    const [attempt, setAttempt] = useState<TestAttemptDTO | null>(null)
+
+    const fetchAttempt = async () => {
+        const fetchedAttempt = await getAttemptById(attemptId)
+        if (fetchedAttempt) {
+            setAttempt(fetchedAttempt)
+        }
+    }
+
+    useEffect(() => {
+        fetchAttempt()
+    }, [attemptId])
+
+    if (isFetching) {
+        return <Loader fullScreen />
+    }
+
+    if (!attempt) {
+        return <div>Тест не найден</div>
+    }
+
+    return (
+        <div className={styles.container}>
+            <div className={styles.topGrid}>
+                {/* Основная информация о попытке */}
+                <div className={styles.infoBlock}>
+                    <h1 className={styles.blockTitle}>Информация о попытке</h1>
+                    <div className={styles.blockContent}>
+                        <div className={styles.infoRow}>
+                            <span className={styles.label}>ID:</span>
+                            <span className={styles.value}>{attempt.id}</span>
+                        </div>
+                        <div className={styles.infoRow}>
+                            <span className={styles.label}>Статус:</span>
+                            <span className={styles.value}>
+                                <span className={styles.statusBadge}>{attempt.status}</span>
+                            </span>
+                        </div>
+                        <div className={styles.infoRow}>
+                            <span className={styles.label}>Дата начала:</span>
+                            <span className={styles.value}>{formatDate(attempt.startedAt)}</span>
+                        </div>
+                        <div className={styles.infoRow}>
+                            <span className={styles.label}>Дата завершения:</span>
+                            <span className={styles.value}>
+                                {attempt.completedAt ? (
+                                    formatDate(attempt.completedAt)
+                                ) : (
+                                    <span className={styles.emptyField}>—</span>
+                                )}
+                            </span>
+                        </div>
+                        <div className={styles.infoRow}>
+                            <span className={styles.label}>Результат:</span>
+                            <span className={styles.value}>
+                                {typeof attempt.score === "number" ? (
+                                    `${attempt.score}%`
+                                ) : (
+                                    <span className={styles.emptyField}>—</span>
+                                )}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Информация об авторе теста */}
+                <div className={styles.infoBlock}>
+                    <h1 className={styles.blockTitle}>Информация об авторе теста</h1>
+                    <div className={styles.blockContent}>
+                        {attempt.user ? (
+                            "id" in attempt.user ? (
+                                <>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.label}>ID:</span>
+                                        <span className={styles.value}>
+                                            <Link to={`/admin/users/${attempt.user.id}`} className="actionLink">
+                                                {attempt.user.id}
+                                            </Link>
+                                        </span>
+                                    </div>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.label}>Email:</span>
+                                        <span className={styles.value}>
+                                            {attempt.user.email || <span className={styles.emptyField}>—</span>}
+                                        </span>
+                                    </div>
+                                </>
+                            ) : (
+                                Object.entries(attempt.user).map(([key, value]) => (
+                                    <div key={key} className={styles.infoRow}>
+                                        <span className={styles.label}>
+                                            {PreTestUserDataLabels[key as PreTestUserData] || key}:
+                                        </span>
+                                        <span className={styles.value}>{value}</span>
+                                    </div>
+                                ))
+                            )
+                        ) : (
+                            <div className={styles.emptyBlock}>Информация об авторе теста отсутствует</div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Информация о тесте */}
+                <div className={styles.infoBlock}>
+                    <h1 className={styles.blockTitle}>Информация о Тесте</h1>
+                    <div className={styles.blockContent}>
+                        {attempt.test ? (
+                            <>
+                                <div className={styles.infoRow}>
+                                    <span className={styles.label}>ID:</span>
+                                    <span className={styles.value}>
+                                        <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
+                                            {attempt.test.id}
+                                        </Link>
+                                    </span>
+                                </div>
+                                <div className={styles.infoRow}>
+                                    <span className={styles.label}>Название:</span>
+                                    <span className={styles.value}>
+                                        {attempt.test.title || <span className={styles.emptyField}>—</span>}
+                                    </span>
+                                </div>
+                            </>
+                        ) : (
+                            <div className={styles.emptyBlock}>Информация о тесте отсутствует</div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Детали выполнения */}
+            <div className={styles.infoBlock}>
+                <h1 className={styles.blockTitle}>Детали выполнения</h1>
+                <div className={styles.blockContent}>
+                    {attempt.questions?.length > 0 ? (
+                        <div className={styles.questionsList}>
+                            {attempt.questions.map((question, index) => (
+                                <div key={question.question.id} className={styles.questionBlock}>
+                                    <div className={styles.questionHeader}>
+                                        <span className={styles.questionNumber}>{index + 1}</span>
+                                        <span className={styles.questionText}>{question.question.text}</span>
+                                        <span className={styles.questionType}>Тип: {question.question.type}</span>
+                                    </div>
+                                    <div className={styles.answersList}>
+                                        <div className={styles.answerSection}>
+                                            <h3 className={styles.answerTitle}>Варианты ответов:</h3>
+                                            {question.answers.map(answer => (
+                                                <div
+                                                    key={answer.id}
+                                                    className={`${styles.answerItem} ${
+                                                        answer.isCorrect ? styles.correctAnswer : ""
+                                                    }`}>
+                                                    <span className={styles.answerText}>{answer.text}</span>
+                                                    {answer.isCorrect && (
+                                                        <span className={styles.correctBadge}>Правильный ответ</span>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className={styles.answerSection}>
+                                            <h3 className={styles.answerTitle}>Ответ пользователя:</h3>
+                                            {question.userAnswer ? (
+                                                <>
+                                                    <div
+                                                        className={`${styles.answerItem} ${
+                                                            question.userAnswer.answer.isCorrect
+                                                                ? styles.correctAnswer
+                                                                : styles.incorrectAnswer
+                                                        }`}>
+                                                        <span className={styles.answerText}>
+                                                            {question.userAnswer.answer.text}
+                                                        </span>
+                                                        <span className={styles.answerStatus}>
+                                                            {question.userAnswer.answer.isCorrect
+                                                                ? "✓ Верно"
+                                                                : "✗ Неверно"}
+                                                        </span>
+                                                    </div>
+                                                    <div className={styles.answerMeta}>
+                                                        <div className={styles.metaItem}>
+                                                            <span className={styles.metaLabel}>Затраченное время:</span>
+                                                            <span className={styles.metaValue}>
+                                                                {question.userAnswer.timeSpent ? (
+                                                                    `${formatSeconds(question.userAnswer.timeSpent)}`
+                                                                ) : (
+                                                                    <span className={styles.emptyField}>
+                                                                        не указано
+                                                                    </span>
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                        <div className={styles.metaItem}>
+                                                            <span className={styles.metaLabel}>Дата ответа:</span>
+                                                            <span className={styles.metaValue}>
+                                                                {question.userAnswer.answeredAt ? (
+                                                                    formatDate(question.userAnswer.answeredAt)
+                                                                ) : (
+                                                                    <span className={styles.emptyField}>
+                                                                        не указана
+                                                                    </span>
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <span className={styles.emptyField}>Ответ отсутствует</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className={styles.emptyBlock}>Данные о вопросах отсутствуют</div>
+                    )}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default AttemptInfo
