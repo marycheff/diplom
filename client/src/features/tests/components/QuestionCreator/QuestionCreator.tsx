@@ -4,6 +4,17 @@ import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
 import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
 import { formatSpaces } from "@/shared/utils/formatter"
+import {
+    DndContext,
+    DragEndEvent,
+    KeyboardSensor,
+    PointerSensor,
+    closestCorners,
+    useSensor,
+    useSensors,
+} from "@dnd-kit/core"
+import { restrictToParentElement } from "@dnd-kit/modifiers"
+import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { FC, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import styles from "./QuestionCreator.module.scss"
@@ -17,7 +28,7 @@ type QuestionCreatorProps = {
 const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCancel, previousQuestionsNumber = 0 }) => {
     const [questions, setQuestions] = useState<QuestionDTO[]>([])
     const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
-    const [expandedQuestionId, setExpandedQuestionId] = useState<string | null>(null)
+    const [expandedQuestionIds, setExpandedQuestionIds] = useState<string[]>([]) // Изменено на массив
     const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
         return Array(3)
             .fill(null)
@@ -99,7 +110,7 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
         // Сбросить форму и подготовить для нового вопроса
         reset()
         setEditingQuestion(null)
-        setExpandedQuestionId(null)
+        // setExpandedQuestionIds([]) 
 
         // Инициализировать новые поля для ответов
         const newAnswers = Array(3)
@@ -151,7 +162,7 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
     const resetForm = () => {
         reset()
         setEditingQuestion(null)
-        setExpandedQuestionId(null)
+        setExpandedQuestionIds([]) // Сбросить развернутые вопросы
         setCurrentAnswers(
             Array(3)
                 .fill(null)
@@ -164,7 +175,13 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
     }
 
     const toggleAccordion = (questionId: string) => {
-        setExpandedQuestionId(prev => (prev === questionId ? null : questionId))
+        setExpandedQuestionIds(prev => {
+            if (prev.includes(questionId)) {
+                return prev.filter(id => id !== questionId) // Удалить из массива, если он уже есть
+            } else {
+                return [...prev, questionId] // Добавить в массив, если его нет
+            }
+        })
     }
 
     const editQuestion = (question: QuestionDTO) => {
@@ -173,11 +190,29 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
 
     const deleteQuestion = (questionId: string) => {
         setQuestions(prev => prev.filter(q => q.id !== questionId))
+        setExpandedQuestionIds(prev => prev.filter(id => id !== questionId)) // Удалить из развернутых, если удаляем вопрос
     }
 
     const handleSubmitQuestions = () => {
         onQuestionComplete(questions)
         resetForm()
+    }
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    )
+    // Обработчик события завершения перетаскивания
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event
+        if (!over || active.id === over.id) return
+        setQuestions(prev => {
+            const oldIndex = prev.findIndex(q => q.id === active.id)
+            const newIndex = prev.findIndex(q => q.id === over.id)
+            return arrayMove(prev, oldIndex, newIndex)
+        })
     }
 
     return (
@@ -198,21 +233,33 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
                     </Button>
                 </div>
                 <div className={styles.questionsContainer}>
-                    {questions.map(question => (
-                        <QuestionItem
-                            key={question.id}
-                            order={
-                                previousQuestionsNumber
-                                    ? previousQuestionsNumber + questions.indexOf(question) + 1
-                                    : questions.indexOf(question) + 1
-                            }
-                            question={question}
-                            expanded={expandedQuestionId === question.id}
-                            onToggle={() => toggleAccordion(question.id)}
-                            onEdit={() => editQuestion(question)}
-                            onDelete={() => deleteQuestion(question.id)}
-                        />
-                    ))}
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCorners}
+                        onDragEnd={handleDragEnd}
+                        modifiers={[restrictToParentElement]} // Ограничиваем перетаскивание внутри контейнера
+                    >
+                        <SortableContext items={questions.map(q => q.id)} strategy={verticalListSortingStrategy}>
+                            <div className={styles.questionsContainer}>
+                                {questions.map(question => (
+                                    <QuestionItem
+                                        key={question.id}
+                                        id={question.id}
+                                        order={
+                                            previousQuestionsNumber
+                                                ? previousQuestionsNumber + questions.indexOf(question) + 1
+                                                : questions.indexOf(question) + 1
+                                        }
+                                        question={question}
+                                        expanded={expandedQuestionIds.includes(question.id)} // Проверяем, содержится ли id в массиве
+                                        onToggle={() => toggleAccordion(question.id)}
+                                        onEdit={() => editQuestion(question)}
+                                        onDelete={() => deleteQuestion(question.id)}
+                                    />
+                                ))}
+                            </div>
+                        </SortableContext>
+                    </DndContext>
                 </div>
             </div>
 
