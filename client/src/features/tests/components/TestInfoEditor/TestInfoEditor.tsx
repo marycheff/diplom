@@ -1,20 +1,21 @@
 import { ShortTestInfo } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
+import { formatSpaces } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 
 interface TestInfoEditorProps {
     data: ShortTestInfo
-    onSettingsComplete: (data: ShortTestInfo) => void
+    onChangingComplete: (data: ShortTestInfo) => void
     onCancel: () => void
 }
 
-const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onSettingsComplete, onCancel }) => {
+const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onChangingComplete, onCancel }) => {
     const onSubmit: SubmitHandler<ShortTestInfo> = data => {
-        onSettingsComplete({
-            title: data.title.trim(),
-            description: data.description?.trim(),
+        onChangingComplete({
+            title: data.title,
+            description: data.description,
         })
     }
 
@@ -36,18 +37,18 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onSettingsComplete, onC
 
     const hasErrors = Object.keys(formState.errors).length > 0
     const hasChanged =
-        currentValues.title.trim() !== data.title || currentValues.description?.trim() !== data.description
+        formatSpaces(currentValues.title) !== data.title || formatSpaces(currentValues.description) !== data.description
     const isFormValid = !hasErrors || !hasChanged
 
     return (
         <div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                *Название
+                Название (обязательно)
                 <ValidatedInput
                     floatingLabel={false}
                     clearable
                     name="title"
-                    placeholder="*Название"
+                    placeholder="Название (обязательно)"
                     register={register}
                     setValue={setValue}
                     errors={errors.title}

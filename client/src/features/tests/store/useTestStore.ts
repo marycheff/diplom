@@ -6,10 +6,14 @@ import { create } from "zustand"
 export const useTestStore = create<TestState>(set => {
     const withFetching = createApiHandler(set, "isFetching")
     const withLoading = createApiHandler(set, "isLoading")
+    const withShortInfoUpdating = createApiHandler(set, "isShortInfoUpdating")
+    const withSettingsUpdating = createApiHandler(set, "isSettingsUpdating")
 
     return {
         isFetching: false,
         isLoading: false,
+        isShortInfoUpdating: false,
+        isSettingsUpdating: false,
         cache: {},
         MAX_CACHE_ENTRIES: 50,
         CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
@@ -90,13 +94,13 @@ export const useTestStore = create<TestState>(set => {
             const operation = async () => {
                 await testService.updateTestSettings(testId, updatedSettings)
             }
-            return withLoading(operation)
+            return withSettingsUpdating(operation)
         },
-        updateShortInfo: (testId, data) => {
+        updateShortInfo: (testId, updatedShortInfo) => {
             const operation = async () => {
-                await testService.updateShortInfo(testId, data)
+                await testService.updateShortInfo(testId, updatedShortInfo)
             }
-            return withLoading(operation)
+            return withShortInfoUpdating(operation)
         },
     }
 })

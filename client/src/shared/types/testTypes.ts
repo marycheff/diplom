@@ -4,6 +4,9 @@ import { UserDTO } from "@/shared/types/userTypes"
 export interface TestState {
     isFetching: boolean
     isLoading: boolean
+    isShortInfoUpdating: boolean
+    isSettingsUpdating: boolean
+
     getTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     searchMyTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
@@ -13,7 +16,7 @@ export interface TestState {
     generateAnswers: (data: GenerateAnswerFormData) => Promise<string[]>
     updateTestQuestions: (testId: string, data: UpdateTestDTO) => Promise<void>
     updateTestSettings: (testId: string, updatedSettings: TestSettingsDTO) => Promise<void>
-    updateShortInfo: (testId: string, data: ShortTestInfo) => Promise<void>
+    updateShortInfo: (testId: string, updatedShortInfo: ShortTestInfo) => Promise<void>
 
     // CACHE
     CACHE_EXPIRATION_TIME: number

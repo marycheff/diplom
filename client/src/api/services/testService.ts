@@ -53,7 +53,7 @@ class TestService {
     createTest(title: string, description?: string): Promise<AxiosResponse<TestDTO>> {
         return axiosInstance.post<TestDTO>("/test/create", { title, description })
     }
-    
+
     generateAnswers = (data: GenerateAnswerFormData): Promise<AxiosResponse<string[]>> => {
         return axiosInstance.post<string[]>("/chat/generate-answers", {
             question: data.question,
@@ -70,8 +70,8 @@ class TestService {
     updateTestSettings = (testId: string, updatedSettings: TestSettingsDTO) => {
         return axiosInstance.put(`/test/${testId}/settings`, updatedSettings)
     }
-    updateShortInfo = (testId: string, data: ShortTestInfo) => {
-        return axiosInstance.put(`/test/${testId}/short-info`, data)
+    updateShortInfo = (testId: string, updatedShortInfo: ShortTestInfo) => {
+        return axiosInstance.put(`/test/${testId}/short-info`, updatedShortInfo)
     }
 }
 export const testService = new TestService()

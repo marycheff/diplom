@@ -160,10 +160,9 @@ class TestController {
     async updateShortInfo(req: Request, res: Response, next: NextFunction) {
         try {
             const { testId } = req.params
-            const data: ShortTestInfo = req.body
-            await testService.updateShortInfo(testId, data)
+            const updatedShortInfo: ShortTestInfo = req.body
+            await testService.updateShortInfo(testId, updatedShortInfo)
             res.status(200).json({ message: "Информация о тесте обновлена" })
-
         } catch (e) {
             next(e)
         }

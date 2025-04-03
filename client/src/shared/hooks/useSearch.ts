@@ -1,3 +1,4 @@
+import { formatSpaces } from "@/shared/utils/formatter"
 import { useLocation, useNavigate } from "react-router-dom"
 
 export const useSearch = () => {
@@ -5,7 +6,7 @@ export const useSearch = () => {
     const location = useLocation()
 
     const handleSearch = (query: string, page = 1) => {
-        const trimmedQuery = query.trim()
+        const trimmedQuery = formatSpaces(query)
         if (!trimmedQuery) return
         const params = new URLSearchParams(location.search)
         params.set("query", trimmedQuery)
@@ -19,5 +20,5 @@ export const useSearch = () => {
         navigate({ search: params.toString() })
     }
 
-    return { handleSearch,  handleResetSearch }
+    return { handleSearch, handleResetSearch }
 }

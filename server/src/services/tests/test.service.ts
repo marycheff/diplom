@@ -30,13 +30,14 @@ class TestService {
         }
         await redisClient.del(`test:${testId}`)!
     }
-    async updateShortInfo(testId: string, data: ShortTestInfo) {
+    // Обновление краткой информации о тесте
+    async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo) {
         return prisma.$transaction(async tx => {
             await tx.test.update({
                 where: { id: testId },
                 data: {
-                    title: data.title,
-                    description: data.description,
+                    title: updatedShortInfo.title,
+                    description: updatedShortInfo.description,
                 },
             })
             await redisClient.del(`test:${testId}`)

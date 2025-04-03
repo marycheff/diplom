@@ -1,11 +1,11 @@
-
+import { QuestionDTO } from "@/shared/types/testTypes"
+import { Button } from "@/shared/ui/Button"
 import clsx from "clsx"
 import { FC } from "react"
 import styles from "./QuestionItem.module.scss"
-import { QuestionDTO } from "@/shared/types/testTypes"
-import { Button } from "@/shared/ui/Button"
 
 interface QuestionItemProps {
+    order: number
     question: QuestionDTO
     expanded: boolean
     onToggle: () => void
@@ -13,11 +13,13 @@ interface QuestionItemProps {
     onDelete: () => void
 }
 
-const QuestionItem: FC<QuestionItemProps> = ({ question, expanded, onToggle, onEdit, onDelete }) => {
+const QuestionItem: FC<QuestionItemProps> = ({ order, question, expanded, onToggle, onEdit, onDelete }) => {
     return (
         <div className={styles.questionItem}>
             <div className={styles.questionHeader}>
-                <p className={styles.questionText}>{question.text}</p>
+                <p className={styles.questionText}>
+                    {order}.{question.text}
+                </p>
                 <div className={styles.actions}>
                     <Button onClick={onEdit} tooltip="Редактировать">
                         ✏️

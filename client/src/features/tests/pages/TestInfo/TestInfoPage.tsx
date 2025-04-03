@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import QuestionCreator from "@/features/tests/components/QuestionCreator/QuestionCreator"
+import QuestionsEditor from "@/features/tests/components/QuestionsEditor/QuestionsEditor"
 import TestInfoEditor from "@/features/tests/components/TestInfoEditor/TestInfoEditor"
 import TestSettingsEditor from "@/features/tests/components/TestSettingsEditor/TestSettingsEditor"
 import { useTestStore } from "@/features/tests/store/useTestStore"
@@ -8,7 +9,7 @@ import { QuestionDTO, ShortTestInfo, TestDTO, TestSettingsDTO, UpdateTestDTO } f
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import Modal from "@/shared/ui/Modal/Modal"
-import { formatSeconds } from "@/shared/utils/formatter"
+import { formatSeconds, formatSpaces } from "@/shared/utils/formatter"
 import { isValidObjectId } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
@@ -17,15 +18,26 @@ import styles from "./TestInfoPage.module.scss"
 
 const TestInfoPage = () => {
     const { testId } = useParams<{ testId: string }>()
-    const { getTestById, isFetching, updateTestQuestions, isLoading, updateTestSettings, updateShortInfo } =
-        useTestStore()
+    const {
+        getTestById,
+        isFetching,
+        updateTestQuestions,
+        isLoading,
+        isShortInfoUpdating,
+        isSettingsUpdating,
+        updateTestSettings,
+        updateShortInfo,
+    } = useTestStore()
     const [test, setTest] = useState<TestDTO | null>(null)
     const { user: currentUser } = useAuthStore()
     const navigate = useNavigate()
     const location = useLocation()
-    const [isModalOpen, setIsModalOpen] = useState(location.pathname.endsWith("/add-questions"))
+    const [isAddQuestionsModalOpen, setIsAddQuestionsModalOpen] = useState(location.pathname.endsWith("/add-questions"))
+    const [isEditQuestionsModalOpen, setIsEditQuestionsModalOpen] = useState(
+        location.pathname.endsWith("/edit-questions")
+    )
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(location.pathname.endsWith("/edit-settings"))
-    const [isTestInfoModalOpen, setIsTestInfModalOpen] = useState(location.pathname.endsWith("/edit-info"))
+    const [isShortInfoModalOpen, setIsShortInfModalOpen] = useState(location.pathname.endsWith("/edit-info"))
 
     if (!testId) {
         return <div>ID теста не указан</div>
@@ -51,7 +63,7 @@ const TestInfoPage = () => {
         return <div>Тест не найден</div>
     }
 
-    const handleQuestionsUpdate = async (newQuestions: QuestionDTO[]) => {
+    const handleAddQuestions = async (newQuestions: QuestionDTO[]) => {
         if (!test) return
 
         const updatedTest = {
@@ -68,15 +80,20 @@ const TestInfoPage = () => {
     }
     const handleAddQuestionsButton = () => {
         navigate(`${location.pathname}/add-questions`)
-        setIsModalOpen(true)
+        setIsAddQuestionsModalOpen(true)
+    }
+
+    const handleEditQuestionsButton = () => {
+        // navigate(`${location.pathname}/edit-questions`)
+        setIsEditQuestionsModalOpen(true)
     }
     const handleEditSettingsButton = () => {
         // navigate(`${location.pathname}/edit-settings`)
         setIsSettingsModalOpen(true)
     }
-    const handleEditTestInfoButton = () => {
+    const handleEditShortInfoButton = () => {
         // navigate(`${location.pathname}/edit-settings`)
-        setIsTestInfModalOpen(true)
+        setIsShortInfModalOpen(true)
     }
     const handleSettingsUpdate = async (updatedSettings: TestSettingsDTO) => {
         if (!test) return
@@ -91,11 +108,28 @@ const TestInfoPage = () => {
     const handleShortInfoUpdate = async (updatedShortInfo: ShortTestInfo) => {
         const updatedTest = {
             ...test,
-            title: updatedShortInfo.title,
-            description: updatedShortInfo.description,
+            title: formatSpaces(updatedShortInfo.title),
+            description: formatSpaces(updatedShortInfo.description),
         }
         await updateShortInfo(testId, { title: updatedShortInfo.title, description: updatedShortInfo.description })
         toast.success("Информация о тесте обновлена")
+        setTest(updatedTest)
+    }
+
+    const handleQuestionsUpdate = async (updatedQuestions: QuestionDTO[]) => {
+        if (!test) return
+
+        const updatedTest = {
+            ...test,
+            questions: updatedQuestions,
+        }
+
+        const data: UpdateTestDTO = {
+            questions: updatedQuestions,
+        }
+
+        // await updateTestQuestions(test.id, data)
+        toast.success("Вопросы обновлены")
         setTest(updatedTest)
     }
 
@@ -107,12 +141,12 @@ const TestInfoPage = () => {
                     <div className={styles.blockHeader}>
                         <h1 className={styles.blockTitle}>Информация о тесте</h1>
                         <div className={styles.buttonContainer}>
-                            <Button onClick={handleEditTestInfoButton} className={styles.addQuestionBtn}>
+                            <Button onClick={handleEditShortInfoButton} className={styles.addQuestionBtn}>
                                 ✏️
                             </Button>
                         </div>
                     </div>
-                    {isLoading ? (
+                    {isShortInfoUpdating ? (
                         <Loader />
                     ) : (
                         <div className={styles.blockContent}>
@@ -162,7 +196,7 @@ const TestInfoPage = () => {
                     <div className={styles.blockContent}>
                         {test.settings ? (
                             <>
-                                {isLoading ? (
+                                {isSettingsUpdating ? (
                                     <Loader />
                                 ) : (
                                     <>
@@ -269,7 +303,16 @@ const TestInfoPage = () => {
                 <div className={styles.blockHeader}>
                     <h1 className={styles.blockTitle}>Вопросы и ответы</h1>
                     <div className={styles.buttonContainer}>
-                        <Button onClick={handleAddQuestionsButton} className={styles.addQuestionBtn}>
+                        <Button
+                            onClick={handleAddQuestionsButton}
+                            className={styles.addQuestionBtn}
+                            tooltip="Добавить вопросы">
+                            ➕
+                        </Button>
+                        <Button
+                            onClick={handleEditQuestionsButton}
+                            className={styles.addQuestionBtn}
+                            tooltip="Редактировать вопросы">
                             ✏️
                         </Button>
                     </div>
@@ -313,18 +356,37 @@ const TestInfoPage = () => {
 
             <Modal
                 fullScreen
-                isOpen={isModalOpen}
+                isOpen={isAddQuestionsModalOpen}
                 onClose={() => {
                     navigate(-1)
-                    setIsModalOpen(false)
+                    setIsAddQuestionsModalOpen(false)
                 }}
                 title="Добавление вопросов">
                 <QuestionCreator
+                    previousQuestionsNumber={test.questions?.length || 0}
+                    onQuestionComplete={questions => {
+                        handleAddQuestions(questions)
+                        setIsAddQuestionsModalOpen(false)
+                    }}
+                    onCancel={() => setIsAddQuestionsModalOpen(false)}
+                />
+            </Modal>
+
+            <Modal
+                fullScreen
+                isOpen={isEditQuestionsModalOpen}
+                onClose={() => {
+                    // navigate(-1)
+                    setIsEditQuestionsModalOpen(false)
+                }}
+                title="Редактирование вопросов">
+                <QuestionsEditor
+                    data={test.questions || []}
                     onQuestionComplete={questions => {
                         handleQuestionsUpdate(questions)
-                        setIsModalOpen(false)
+                        setIsEditQuestionsModalOpen(false)
                     }}
-                    onCancel={() => setIsModalOpen(false)}
+                    onCancel={() => setIsEditQuestionsModalOpen(false)}
                 />
             </Modal>
 
@@ -346,17 +408,17 @@ const TestInfoPage = () => {
                 />
             </Modal>
             <Modal
-                isOpen={isTestInfoModalOpen}
+                isOpen={isShortInfoModalOpen}
                 onClose={() => {
                     // navigate(-1)
-                    setIsTestInfModalOpen(false)
+                    setIsShortInfModalOpen(false)
                 }}
                 title="Редактирование информации о тесте">
                 <TestInfoEditor
-                    data={{ title: test.title, description: test.description }}
-                    onSettingsComplete={data => {
+                    data={{ title: formatSpaces(test.title), description: formatSpaces(test.description) }}
+                    onChangingComplete={data => {
                         handleShortInfoUpdate(data)
-                        setIsTestInfModalOpen(false)
+                        setIsShortInfModalOpen(false)
                     }}
                     onCancel={() => setIsSettingsModalOpen(false)}
                 />

@@ -6,16 +6,16 @@ import { Button } from "@/shared/ui/Button"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { FC, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import styles from "./QuestionCreator.module.scss"
+import styles from "./QuestionsEditor.module.scss"
 
-type QuestionCreatorProps = {
+interface QuestionsEditorProps {
+    data: QuestionDTO[]
     onQuestionComplete: (questions: QuestionDTO[]) => void
     onCancel?: () => void
-    previousQuestionsNumber: number
 }
 
-const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCancel, previousQuestionsNumber = 0 }) => {
-    const [questions, setQuestions] = useState<QuestionDTO[]>([])
+const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, onCancel }) => {
+    const [questions, setQuestions] = useState<QuestionDTO[]>(data)
     const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
     const [expandedQuestionId, setExpandedQuestionId] = useState<string | null>(null)
     const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
@@ -49,6 +49,11 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
             setCurrentAnswers(editingQuestion.answers)
         }
     }, [editingQuestion, setValue])
+
+    // Инициализация при изменении входных данных
+    useEffect(() => {
+        setQuestions(data)
+    }, [data])
 
     const handleCorrectChange = (index: number) => {
         const newAnswers = currentAnswers.map((answer, i) => ({
@@ -184,7 +189,6 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
         <div className={styles.container}>
             {/* Левая колонка - список вопросов */}
             <div className={styles.questionsList}>
-                <div>Вопросов добавлено: {questions.length}</div>
                 <div className={styles.finalActions}>
                     <Button
                         onClick={() => {
@@ -197,15 +201,13 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
                         Сохранить все
                     </Button>
                 </div>
+                <div>Всего вопросов: {questions.length}</div>
+
                 <div className={styles.questionsContainer}>
                     {questions.map(question => (
                         <QuestionItem
+                            order={questions.indexOf(question) + 1}
                             key={question.id}
-                            order={
-                                previousQuestionsNumber
-                                    ? previousQuestionsNumber + questions.indexOf(question) + 1
-                                    : questions.indexOf(question) + 1
-                            }
                             question={question}
                             expanded={expandedQuestionId === question.id}
                             onToggle={() => toggleAccordion(question.id)}
@@ -257,4 +259,4 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
     )
 }
 
-export default QuestionCreator
+export default QuestionsEditor

@@ -12,7 +12,6 @@ export const formatDate = (date: Date | null) => {
     })
 }
 
-
 export const formatSeconds = (seconds: number) => {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
@@ -27,4 +26,8 @@ export const formatSeconds = (seconds: number) => {
         .join(" ")
 
     return formattedTime || "0с"
+}
+
+export const formatSpaces = (str?: string): string => {
+    return (str || "").replace(/\s+/g, " ").trim()
 }

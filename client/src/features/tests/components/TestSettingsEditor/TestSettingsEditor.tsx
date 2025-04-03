@@ -4,6 +4,7 @@ import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
+import { formatSpaces } from "@/shared/utils/formatter"
 import { ChangeEvent, FC } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import styles from "./TestSettingsEditor.module.scss"
@@ -50,7 +51,9 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             requireRegistration: data.requireRegistration === "Да",
             showDetailedResults: data.showDetailedResults === "Да",
             timeLimit:
-                Number(data.hours.trim()) * 3600 + Number(data.minutes.trim()) * 60 + Number(data.seconds.trim()),
+                Number(formatSpaces(data.hours)) * 3600 +
+                Number(formatSpaces(data.minutes)) * 60 +
+                Number(formatSpaces(data.seconds)),
         })
     }
 

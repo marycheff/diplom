@@ -1,6 +1,7 @@
 import { GenerateAnswerFormData } from "@/shared/types/testTypes"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Loader from "@/shared/ui/Loader/Loader"
+import { formatSpaces } from "@/shared/utils/formatter"
 import { FC, FormEvent } from "react"
 import { FieldErrors, RegisterOptions, UseFormRegister, UseFormSetValue } from "react-hook-form"
 
@@ -16,7 +17,7 @@ interface QuestionFormProps {
 const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisabled, isLoading, onSubmit, setValue }) => {
     const hasText = (value: string): boolean => /[a-zA-Zа-яА-Я]/.test(value)
     const isWithinWordCount = (value: string, min: number, max: number): boolean => {
-        const wordCount = value.trim().split(/\s+/).length
+        const wordCount = formatSpaces(value).split(/\s+/).length
         return wordCount >= min && wordCount <= max
     }
     const isWithinCharLimit = (value: string, max: number): boolean => value.length <= max

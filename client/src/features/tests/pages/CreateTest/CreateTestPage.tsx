@@ -31,7 +31,7 @@ const CreateTestPage = () => {
                 <ValidatedInput
                     clearable
                     name="title"
-                    placeholder="*Название"
+                    placeholder="Название (обязательно)"
                     register={register}
                     setValue={setValue}
                     errors={errors.title}
