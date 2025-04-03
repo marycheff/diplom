@@ -108,7 +108,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                     Часы
                     <ValidatedInput
                         className={styles.timeInput}
-                        floatingLabel={false}
+                        // floatingLabel={false}
                         name="hours"
                         placeholder="Часы"
                         register={register}

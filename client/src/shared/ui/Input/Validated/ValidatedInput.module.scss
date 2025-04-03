@@ -4,3 +4,21 @@
 .inputContainer:has(.clearButton) .input {
     padding-right: 30px;
 }
+
+.textarea {
+    resize: vertical;
+    min-height: 100px;
+    width: 100%;
+    font-family: inherit;
+}
+
+.inputContainer.active:has(.textarea) .placeholder {
+    top: 0;
+    transform: translateY(-50%);
+}
+
+/* Стиль для placeholder в textarea в неактивном состоянии */
+.inputContainer:has(.textarea) .placeholder {
+    top: 8px;
+    transform: translateY(0);
+}

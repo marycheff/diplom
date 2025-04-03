@@ -7,4 +7,7 @@ export interface ValidatedInputProps<T extends Record<string, any>> extends Omit
     validationRules?: RegisterOptions<T, Path<T>>
     errors?: FieldError | undefined
     floatingLabel?: boolean
+    defaultValue?: string
+    multiline?: boolean
+    rows?: number
 }

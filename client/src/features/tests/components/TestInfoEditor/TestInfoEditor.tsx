@@ -43,9 +43,9 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
     return (
         <div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                Название (обязательно)
+                {/* Название (обязательно) */}
                 <ValidatedInput
-                    floatingLabel={false}
+                    // floatingLabel={false}
                     clearable
                     name="title"
                     placeholder="Название (обязательно)"
@@ -56,9 +56,12 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
                         required: "Название теста обязательно",
                     }}
                 />
-                Описание
+                <br/>
+                {/* Описание */}
                 <ValidatedInput
-                    floatingLabel={false}
+                    // floatingLabel={false}
+                    multiline
+                    clearable
                     name="description"
                     placeholder="Описание"
                     register={register}
