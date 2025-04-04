@@ -9,8 +9,8 @@
     opacity: 1;
     transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.3s, background-color 0.3s, opacity 0.3s;
     will-change: transform, opacity, box-shadow;
-    touch-action: none; 
-    max-width: 90%; 
+    touch-action: none;
+    max-width: 90%;
     position: relative;
 }
 
@@ -42,9 +42,28 @@
 }
 
 .questionText {
+    position: relative; // Добавляем позиционирование для псевдоэлемента
+    cursor: pointer;
     margin: 0;
     font-size: 1rem;
     color: #333;
+    transition: color 1s ease;
+
+    &::after {
+        content: ''; // Создаем псевдоэлемент
+        position: absolute; // Позиционируем его относительно родителя
+        left: 0;
+        bottom: 0; // Позиционируем его внизу
+        width: 100%; // Ширина равна ширине текста
+        height: 2px; // Высота подчеркивания
+        background-color: #007bff; // Цвет подчеркивания
+        transform: scaleX(0); // Начальное состояние (не видно)
+        transition: transform 0.2s ease; // Плавный переход
+    }
+
+    &:hover::after {
+        transform: scaleX(1); // При наведении подчеркивание становится видимым
+    }
 }
 
 .actions {
@@ -92,7 +111,7 @@
 }
 .dragHandle {
     cursor: grab;
-    padding: 0 10px;
+    padding: 0 10px 0 0;
     display: flex;
     align-items: center;
     user-select: none;
@@ -108,4 +127,8 @@
     &:active {
         cursor: grabbing;
     }
+}
+.leftSection {
+    display: flex;
+    align-items: center;
 }

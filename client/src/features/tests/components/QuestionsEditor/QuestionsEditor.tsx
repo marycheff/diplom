@@ -4,6 +4,17 @@ import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
 import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
 import { formatSpaces } from "@/shared/utils/formatter"
+import {
+    closestCorners,
+    DndContext,
+    DragEndEvent,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from "@dnd-kit/core"
+import { restrictToParentElement } from "@dnd-kit/modifiers"
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { FC, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import styles from "./QuestionsEditor.module.scss"
@@ -17,7 +28,7 @@ interface QuestionsEditorProps {
 const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, onCancel }) => {
     const [questions, setQuestions] = useState<QuestionDTO[]>(data)
     const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
-    const [expandedQuestionId, setExpandedQuestionId] = useState<string | null>(null)
+    const [expandedQuestionIds, setExpandedQuestionIds] = useState<string[]>([])
     const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
         return Array(3)
             .fill(null)
@@ -104,7 +115,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
         // Сбросить форму и подготовить для нового вопроса
         reset()
         setEditingQuestion(null)
-        setExpandedQuestionId(null)
+        // setExpandedQuestionId(null)
 
         // Инициализировать новые поля для ответов
         const newAnswers = Array(3)
@@ -156,7 +167,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     const resetForm = () => {
         reset()
         setEditingQuestion(null)
-        setExpandedQuestionId(null)
+        setExpandedQuestionIds([])
         setCurrentAnswers(
             Array(3)
                 .fill(null)
@@ -169,7 +180,13 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     }
 
     const toggleAccordion = (questionId: string) => {
-        setExpandedQuestionId(prev => (prev === questionId ? null : questionId))
+        setExpandedQuestionIds(prev => {
+            if (prev.includes(questionId)) {
+                return prev.filter(id => id !== questionId) // Удалить из массива, если он уже есть
+            } else {
+                return [...prev, questionId] // Добавить в массив, если его нет
+            }
+        })
     }
 
     const editQuestion = (question: QuestionDTO) => {
@@ -178,11 +195,28 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
 
     const deleteQuestion = (questionId: string) => {
         setQuestions(prev => prev.filter(q => q.id !== questionId))
+        setExpandedQuestionIds(prev => prev.filter(id => id !== questionId))
     }
 
     const handleSubmitQuestions = () => {
         onQuestionComplete(questions)
         resetForm()
+    }
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    )
+    // Обработчик события завершения перетаскивания
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event
+        if (!over || active.id === over.id) return
+        setQuestions(prev => {
+            const oldIndex = prev.findIndex(q => q.id === active.id)
+            const newIndex = prev.findIndex(q => q.id === over.id)
+            return arrayMove(prev, oldIndex, newIndex)
+        })
     }
 
     return (
@@ -204,17 +238,29 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
                 <div>Всего вопросов: {questions.length}</div>
 
                 <div className={styles.questionsContainer}>
-                    {questions.map(question => (
-                        <QuestionItem
-                            order={questions.indexOf(question) + 1}
-                            key={question.id}
-                            question={question}
-                            expanded={expandedQuestionId === question.id}
-                            onToggle={() => toggleAccordion(question.id)}
-                            onEdit={() => editQuestion(question)}
-                            onDelete={() => deleteQuestion(question.id)}
-                        />
-                    ))}
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCorners}
+                        onDragEnd={handleDragEnd}
+                        modifiers={[restrictToParentElement]} // Ограничиваем перетаскивание внутри контейнера
+                    >
+                        <SortableContext items={questions.map(q => q.id)} strategy={verticalListSortingStrategy}>
+                            <div className={styles.questionsContainer}>
+                                {questions.map(question => (
+                                    <QuestionItem
+                                        key={question.id}
+                                        id={question.id}
+                                        order={questions.indexOf(question) + 1}
+                                        question={question}
+                                        expanded={expandedQuestionIds.includes(question.id)}
+                                        onToggle={() => toggleAccordion(question.id)}
+                                        onEdit={() => editQuestion(question)}
+                                        onDelete={() => deleteQuestion(question.id)}
+                                    />
+                                ))}
+                            </div>
+                        </SortableContext>
+                    </DndContext>
                 </div>
             </div>
 

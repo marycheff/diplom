@@ -35,13 +35,14 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
     return (
         <div ref={setNodeRef} style={style} className={styles.questionItem}>
             <div className={styles.questionHeader}>
-                <div className={styles.dragHandle} {...attributes} {...listeners}>
-                    ☰
+                <div className={styles.leftSection}>
+                    <div className={styles.dragHandle} {...attributes} {...listeners}>
+                        ☰
+                    </div>
+                    <p className={styles.questionText} onClick={onEdit}>
+                        {order}. {question.text}
+                    </p>
                 </div>
-                <p className={styles.questionText}>
-                    {order}.{question.text}
-                </p>
-
                 <div className={styles.actions}>
                     <Button onClick={onEdit} tooltip="Редактировать">
                         ✏️
