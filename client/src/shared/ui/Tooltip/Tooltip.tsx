@@ -4,17 +4,34 @@ import styles from "./Tooltip.module.scss"
 
 interface TooltipProps {
     content: string
-    position: "top" | "bottom"
-    targetRef: React.RefObject<HTMLButtonElement | null>
+    position?: "top" | "bottom" | "auto" 
+    targetRef: React.RefObject<HTMLElement | null>
+    delay?: number
 }
 
-const Tooltip: FC<TooltipProps> = ({ content, position, targetRef }) => {
+const Tooltip: FC<TooltipProps> = ({ content, position = "auto", targetRef, delay = 300 }) => {
     const [visible, setVisible] = useState(false)
     const tooltipRef = useRef<HTMLDivElement>(null)
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+    // Управление событиями мыши и задержкой
     useEffect(() => {
-        const handleMouseEnter = () => setVisible(true)
-        const handleMouseLeave = () => setVisible(false)
+        const handleMouseEnter = () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+            }
+            timeoutRef.current = setTimeout(() => {
+                setVisible(true)
+            }, delay)
+        }
+
+        const handleMouseLeave = () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+                timeoutRef.current = null
+            }
+            setVisible(false)
+        }
 
         const target = targetRef.current
         if (target) {
@@ -27,18 +44,41 @@ const Tooltip: FC<TooltipProps> = ({ content, position, targetRef }) => {
                 target.removeEventListener("mouseenter", handleMouseEnter)
                 target.removeEventListener("mouseleave", handleMouseLeave)
             }
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+                timeoutRef.current = null
+            }
         }
-    }, [targetRef])
+    }, [targetRef, delay])
 
+    // Позиционирование тултипа с автоматическим определением позиции
     useEffect(() => {
-        if (tooltipRef.current && targetRef.current) {
+        if (visible && !targetRef.current) {
+            setVisible(false)
+        } else if (tooltipRef.current && targetRef.current) {
             const targetRect = targetRef.current.getBoundingClientRect()
             const tooltipRect = tooltipRef.current.getBoundingClientRect()
+            const viewportHeight = window.innerHeight
+
+            // Определяем позицию
+            let actualPosition: "top" | "bottom" = position === "auto" ? "top" : position
+
+            if (position === "auto") {
+                const spaceAbove = targetRect.top // Место сверху от элемента
+                const spaceBelow = viewportHeight - targetRect.bottom // Место снизу
+
+                // Если сверху недостаточно места, но снизу хватает, переключаем на "bottom"
+                if (spaceAbove < tooltipRect.height + 8 && spaceBelow >= tooltipRect.height + 8) {
+                    actualPosition = "bottom"
+                } else {
+                    actualPosition = "top"
+                }
+            }
 
             let top: number
             let left: number
 
-            if (position === "top") {
+            if (actualPosition === "top") {
                 top = targetRect.top - tooltipRect.height - 8
                 left = targetRect.left + targetRect.width / 2 - tooltipRect.width / 2
             } else {

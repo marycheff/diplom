@@ -1,9 +1,10 @@
 import { QuestionDTO } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
+import Tooltip from "@/shared/ui/Tooltip/Tooltip"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import clsx from "clsx"
-import { FC } from "react"
+import { FC, useRef } from "react"
 import styles from "./QuestionItem.module.scss"
 
 interface QuestionItemProps {
@@ -22,8 +23,10 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
         animateLayoutChanges: () => false,
     })
 
+    const questionTextRef = useRef<HTMLParagraphElement>(null) // Ссылка на элемент <p>
+
     const style: React.CSSProperties = {
-        transform: CSS.Transform.toString(transform),
+        transform: CSS.Translate.toString(transform),
         transition: transition + ", box-shadow 0.2s, background-color 0.2s",
         zIndex: isDragging ? 999 : "auto",
         position: isDragging ? "relative" : "static",
@@ -33,20 +36,21 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
     }
 
     return (
-        <div ref={setNodeRef} style={style} className={styles.questionItem}>
+        <div ref={setNodeRef} style={style} className={styles.questionItem} data-dragging={isDragging}>
             <div className={styles.questionHeader}>
                 <div className={styles.leftSection}>
                     <div className={styles.dragHandle} {...attributes} {...listeners}>
                         ☰
                     </div>
-                    <p className={styles.questionText} onClick={onEdit}>
+                    <p ref={questionTextRef} className={styles.questionText} onClick={onEdit}>
                         {order}. {question.text}
                     </p>
+                    <Tooltip content={question.text} targetRef={questionTextRef} />
                 </div>
                 <div className={styles.actions}>
-                    <Button onClick={onEdit} tooltip="Редактировать">
+                    {/* <Button onClick={onEdit} tooltip="Редактировать">
                         ✏️
-                    </Button>
+                    </Button> */}
                     <Button onClick={onDelete} tooltip="Удалить">
                         🗑️
                     </Button>

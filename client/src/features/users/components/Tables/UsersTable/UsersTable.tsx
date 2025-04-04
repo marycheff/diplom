@@ -1,8 +1,11 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { UserDTO } from "@/shared/types/userTypes"
-import { FC } from "react"
+import Tooltip from "@/shared/ui/Tooltip/Tooltip"
+import { shortenUuid } from "@/shared/utils/formatter"
+import { FC, useRef } from "react"
 import { Link } from "react-router-dom"
 import styles from "./UsersTable.module.scss"
+
 
 interface UsersTableProps {
     users: UserDTO[] | undefined
@@ -11,6 +14,7 @@ interface UsersTableProps {
 
 const UsersTable: FC<UsersTableProps> = ({ users, total }) => {
     const { user: currentUser } = useAuthStore()
+
     return (
         <>
             {users && users.length > 0 && (
@@ -19,7 +23,6 @@ const UsersTable: FC<UsersTableProps> = ({ users, total }) => {
                         <h3>Всего: {total}</h3>
                         <h3>На странице: {users.length}</h3>
                     </div>
-
                     <div className={styles.tableResponsive}>
                         <table>
                             <thead>
@@ -34,25 +37,36 @@ const UsersTable: FC<UsersTableProps> = ({ users, total }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.map(user => (
-                                    <tr key={user.id}>
-                                        <td>
-                                            {user.id === currentUser?.id ? (
-                                                <>{user.id} (Вы) </>
-                                            ) : (
-                                                <Link to={`/admin/users/${user.id}`} className="actionLink">
-                                                    {user.id}
-                                                </Link>
-                                            )}
-                                        </td>
-                                        <td>{user.email}</td>
-                                        <td>{user.name || "—"}</td>
-                                        <td>{user.surname || "—"}</td>
-                                        <td>{user.patronymic || "—"}</td>
-                                        <td>{user.role}</td>
-                                        <td>{user.isBlocked ? "Заблокирован" : "Активен"}</td>
-                                    </tr>
-                                ))}
+                                {users.map(user => {
+                                    const elementRef = useRef<HTMLElement | null>(null)
+                                    const isCurrentUser = user.id === currentUser?.id
+
+                                    return (
+                                        <tr key={user.id}>
+                                            <td>
+                                                {isCurrentUser ? (
+                                                    <span ref={elementRef as React.RefObject<HTMLSpanElement>}>
+                                                        {shortenUuid(user.id)} (Вы)
+                                                    </span>
+                                                ) : (
+                                                    <Link
+                                                        to={`/admin/users/${user.id}`}
+                                                        className="actionLink"
+                                                        ref={elementRef as React.RefObject<HTMLAnchorElement>}>
+                                                        {shortenUuid(user.id)}
+                                                    </Link>
+                                                )}
+                                                <Tooltip content={user.id} targetRef={elementRef} />
+                                            </td>
+                                            <td>{user.email}</td>
+                                            <td>{user.name || "—"}</td>
+                                            <td>{user.surname || "—"}</td>
+                                            <td>{user.patronymic || "—"}</td>
+                                            <td>{user.role}</td>
+                                            <td>{user.isBlocked ? "Заблокирован" : "Активен"}</td>
+                                        </tr>
+                                    )
+                                })}
                             </tbody>
                         </table>
                     </div>

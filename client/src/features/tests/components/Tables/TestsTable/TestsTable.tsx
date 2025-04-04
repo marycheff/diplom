@@ -1,8 +1,9 @@
-
-import { FC } from "react"
+import { TestDTO } from "@/shared/types/testTypes"
+import Tooltip from "@/shared/ui/Tooltip/Tooltip"
+import { shortenUuid } from "@/shared/utils/formatter"
+import { FC, useRef } from "react"
 import { Link } from "react-router-dom"
 import styles from "./TestsTable.module.scss"
-import { TestDTO } from "@/shared/types/testTypes"
 
 interface TestsTableProps {
     tests: TestDTO[]
@@ -34,38 +35,55 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {tests.map(test => (
-                                    <tr key={test.id}>
-                                        <td>
-                                            <Link to={`/admin/tests/${test.id}`} className="actionLink">
-                                                {test.id}
-                                            </Link>
-                                        </td>
-                                        <td>
-                                            {/* {test.author.id} */}
-                                            <Link to={`/admin/users/${test.author.id}`} className="actionLink">
-                                                {test.author.id}
-                                            </Link>
+                                {tests.map(test => {
+                                    const testIdRef = useRef<HTMLElement | null>(null)
+                                    const authorIdRef = useRef<HTMLElement | null>(null)
 
-                                            <br />
-                                            {test.author.email}
-                                        </td>
-                                        <td>{test.title}</td>
-                                        <td>{test.description || "–"}</td>
-                                        <td>{test.questions ? test.questions.length : 0}</td>
-                                        <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
-                                        <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td>
-                                        <td>
-                                            {test.totalAttempts === 0 ? (
-                                                "0"
-                                            ) : (
-                                                <Link to={`/admin/tests/${test.id}/attempts`} className="actionLink">
-                                                    {test.totalAttempts}
+                                    return (
+                                        <tr key={test.id}>
+                                            <td>
+                                                <Link
+                                                    to={`/admin/tests/${test.id}`}
+                                                    className="actionLink"
+                                                    ref={testIdRef as React.RefObject<HTMLAnchorElement>}>
+                                                    {shortenUuid(test.id)}
                                                 </Link>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
+                                            </td>
+                                            <td>
+                                                <Link
+                                                    to={`/admin/users/${test.author.id}`}
+                                                    className="actionLink"
+                                                    ref={authorIdRef as React.RefObject<HTMLAnchorElement>}>
+                                                    {shortenUuid(test.author.id)}
+                                                </Link>
+                                                <Tooltip content={test.id} targetRef={testIdRef} />
+                                                <Tooltip
+                                                    content={test.author.id}
+                                                    
+                                                    targetRef={authorIdRef}
+                                                />
+                                                <br />
+                                                {test.author.email}
+                                            </td>
+                                            <td>{test.title}</td>
+                                            <td>{test.description || "–"}</td>
+                                            <td>{test.questions ? test.questions.length : 0}</td>
+                                            <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
+                                            <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td>
+                                            <td>
+                                                {test.totalAttempts === 0 ? (
+                                                    "0"
+                                                ) : (
+                                                    <Link
+                                                        to={`/admin/tests/${test.id}/attempts`}
+                                                        className="actionLink">
+                                                        {test.totalAttempts}
+                                                    </Link>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
                             </tbody>
                         </table>
                     </div>

@@ -58,7 +58,7 @@ const Breadcrumbs = () => {
                 const to = `/${pathnames.slice(0, index + 1).join("/")}`
                 const isLast = index === pathnames.length - 1
                 const isId = isValidObjectId(value)
-                const label = isId ? "ID: " + value : labels[value] || value
+                const label = isId ? value : labels[value] || value
 
                 return (
                     <span key={to} className={styles.item}>

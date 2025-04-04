@@ -3,144 +3,144 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  email          String        @unique @map("email")
-  name           String?       @map("name")
-  surname        String?       @map("surname")
-  patronymic     String?       @map("patronymic")
-  password       String        @map("password")
-  isActivated    Boolean       @default(false) @map("is_activated")
-  role           Role          @default(USER) @map("role")
-  activationLink String?       @map("activation_link")
-  resetCode      String?       @map("reset_code")
-  isBlocked      Boolean       @default(false) @map("is_blocked")
-  refreshToken   Token?        @relation("UserToken")
+  id             String        @id @default(uuid())
+  email          String        @unique
+  name           String?
+  surname        String?
+  patronymic     String?
+  password       String
+  isActivated    Boolean       @default(false)
+  role           Role          @default(USER)
+  activationLink String?
+  resetCode      String?
+  isBlocked      Boolean       @default(false)
+  refreshToken   Token?
   testsCreated   Test[]        @relation("TestAuthor")
   testAttempts   TestAttempt[] @relation("TestAttemptUser")
   badWordsAdded  BadWord[]     @relation("AddedByUser")
-  createdAt      DateTime      @default(now()) @map("created_at")
-  updatedAt      DateTime      @updatedAt @map("updated_at")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   @@map("users")
 }
 
 model Token {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String   @unique @map("user_id") @db.ObjectId
-  user         User     @relation("UserToken", fields: [userId], references: [id])
-  refreshToken String   @unique @map("refresh_token")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshToken String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("tokens")
 }
 
 model TestSettings {
-  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
-  testId              String   @unique @map("test_id") @db.ObjectId
-  test                Test     @relation(fields: [testId], references: [id])
-  requireRegistration Boolean  @default(false) @map("require_registration")
-  inputFields         Json?    @map("input_fields")
-  requiredFields      Json?    @map("required_fields")
-  showDetailedResults Boolean  @default(false) @map("show_detailed_results")
-  timeLimit           Int?     @map("time_limit")
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
+  id                  String   @id @default(uuid())
+  testId              String   @unique
+  test                Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  requireRegistration Boolean  @default(false)
+  inputFields         Json?
+  requiredFields      Json?
+  showDetailedResults Boolean  @default(false)
+  timeLimit           Int?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   @@map("test_settings")
 }
 
 model Test {
-  id            String           @id @default(auto()) @map("_id") @db.ObjectId
-  authorId      String           @map("author_id") @db.ObjectId
-  author        User             @relation("TestAuthor", fields: [authorId], references: [id])
-  title         String           @map("title")
-  description   String?          @map("description")
-  status        ModerationStatus @default(PENDING) @map("status")
-  totalAttempts Int              @default(0) @map("total_attempts")
+  id            String           @id @default(uuid())
+  authorId      String
+  author        User             @relation("TestAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  title         String
+  description   String?
+  status        ModerationStatus @default(PENDING)
+  totalAttempts Int              @default(0)
   questions     Question[]
   settings      TestSettings?
   testAttempts  TestAttempt[]
-  createdAt     DateTime         @default(now()) @map("created_at")
-  updatedAt     DateTime         @updatedAt @map("updated_at")
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
   @@map("tests")
 }
 
 model Question {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  testId      String       @map("test_id") @db.ObjectId
-  test        Test         @relation(fields: [testId], references: [id])
-  text        String       @map("text")
-  order       Int          @map("order")
-  type        QuestionType @default(SINGLE_CHOICE) @map("type")
+  id          String       @id @default(uuid())
+  testId      String
+  test        Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
+  text        String
+  order       Int
+  type        QuestionType @default(SINGLE_CHOICE)
   answers     Answer[]
   userAnswers UserAnswer[]
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   @@map("questions")
 }
 
 model Answer {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  questionId  String       @map("question_id") @db.ObjectId
-  question    Question     @relation(fields: [questionId], references: [id])
-  text        String       @map("text")
-  isCorrect   Boolean      @default(false) @map("is_correct")
-  isGenerated Boolean      @default(false) @map("is_generated")
+  id          String       @id @default(uuid())
+  questionId  String
+  question    Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text        String
+  isCorrect   Boolean      @default(false)
+  isGenerated Boolean      @default(false)
   userAnswers UserAnswer[]
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   @@map("answers")
 }
 
 model TestAttempt {
-  id          String            @id @default(auto()) @map("_id") @db.ObjectId
-  testId      String            @map("test_id") @db.ObjectId
-  test        Test              @relation(fields: [testId], references: [id])
-  userId      String?           @map("user_id") @db.ObjectId
-  user        User?             @relation("TestAttemptUser", fields: [userId], references: [id])
-  userData    Json?             @map("user_data")
-  score       Float?            @map("score")
-  startedAt   DateTime          @default(now()) @map("started_at")
-  completedAt DateTime?         @map("completed_at")
-  status      TestAttemptStatus @map("status")
+  id          String            @id @default(uuid())
+  testId      String
+  test        Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?             @relation("TestAttemptUser", fields: [userId], references: [id], onDelete: SetNull)
+  userData    Json?
+  score       Float?
+  startedAt   DateTime          @default(now())
+  completedAt DateTime?
+  status      TestAttemptStatus
   answers     UserAnswer[]
-  createdAt   DateTime          @default(now()) @map("created_at")
-  updatedAt   DateTime          @updatedAt @map("updated_at")
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 
   @@map("test_attempts")
 }
 
 model UserAnswer {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  attemptId  String      @map("attempt_id") @db.ObjectId
-  attempt    TestAttempt @relation(fields: [attemptId], references: [id])
-  questionId String      @map("question_id") @db.ObjectId
-  question   Question    @relation(fields: [questionId], references: [id])
-  answerId   String      @map("answer_id") @db.ObjectId
-  answer     Answer      @relation(fields: [answerId], references: [id])
-  answeredAt DateTime?   @map("answered_at")
-  timeSpent  Int?        @map("time_spent")
-  createdAt  DateTime    @default(now()) @map("created_at")
+  id         String      @id @default(uuid())
+  attemptId  String
+  attempt    TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answerId   String
+  answer     Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  answeredAt DateTime?
+  timeSpent  Int?
+  createdAt  DateTime    @default(now())
 
   @@map("user_answers")
 }
 
 model BadWord {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  word      String   @unique @map("word")
-  addedById String   @map("added_by_id") @db.ObjectId
-  addedBy   User     @relation("AddedByUser", fields: [addedById], references: [id])
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(uuid())
+  word      String   @unique
+  addedById String
+  addedBy   User     @relation("AddedByUser", fields: [addedById], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("bad_words")
 }

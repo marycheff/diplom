@@ -4,7 +4,7 @@
     background: #f3f3f3;
     border: 1px solid #b8b8b8;
     border-radius: 8px;
-    margin-bottom: 1rem;
+    margin-bottom: 15px;
     overflow: hidden;
     opacity: 1;
     transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.3s, background-color 0.3s, opacity 0.3s;
@@ -12,16 +12,22 @@
     touch-action: none;
     max-width: 90%;
     position: relative;
+
+    &[data-dragging="true"] {
+        pointer-events: none;
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 }
 
-.dragging {
-    opacity: 0.85;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    z-index: 999 !important;
-    background-color: #f8f8f8;
-    transform: scale(1.02);
-    pointer-events: none;
-}
+// .dragging {
+//     opacity: 0.85;
+//     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+//     z-index: 999 !important;
+//     background-color: #f8f8f8;
+//     transform: scale(2.02);
+//     pointer-events: none;
+// }
 
 @keyframes slideIn {
     from {
@@ -45,12 +51,20 @@
     position: relative; // Добавляем позиционирование для псевдоэлемента
     cursor: pointer;
     margin: 0;
-    font-size: 1rem;
+    font-size: 15px;
     color: #333;
     transition: color 1s ease;
+    display: -webkit-box; /* Поддержка многострочного текста */
+    -webkit-line-clamp: 2; /* Ограничение до двух строк */
+    line-clamp: 2; /* Ограничение до двух строк */
+    -webkit-box-orient: vertical; /* Вертикальная ориентация */
+    overflow: hidden; /* Скрытие текста за пределами двух строк */
+    text-overflow: ellipsis; /* Добавление многоточия (...) */
+    white-space: normal; /* Разрешение переноса текста на новую строку */
+    cursor: pointer;
 
     &::after {
-        content: ''; // Создаем псевдоэлемент
+        content: ""; // Создаем псевдоэлемент
         position: absolute; // Позиционируем его относительно родителя
         left: 0;
         bottom: 0; // Позиционируем его внизу

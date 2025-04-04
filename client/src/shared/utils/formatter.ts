@@ -31,3 +31,7 @@ export const formatSeconds = (seconds: number) => {
 export const formatSpaces = (str?: string): string => {
     return (str || "").replace(/\s+/g, " ").trim()
 }
+export const shortenUuid = (uuid: string, length: number = 8): string => {
+    if (!uuid) return ""
+    return `${uuid.substring(0, length)}...`
+}
