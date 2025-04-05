@@ -17,11 +17,7 @@ class UserService {
     }
     async getUserById(id: string): Promise<UserDTO> {
         const cached = await redisClient.get(`user:${id}`)
-        console.log("redis используется")
         if (cached) return JSON.parse(cached)
-
-        console.log("redis используется")
-
         const user = await prisma.user.findUnique({ where: { id } })
         if (!user) {
             throw ApiError.BadRequest(`Пользователь с id ${id} не найден`)

@@ -1,14 +1,60 @@
+# Зависимости
 node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+.pnpm-store
+
+# Docker файлы
 Dockerfile*
 docker-compose*
 .dockerignore
+
+# Системные файлы
 .git
 .gitignore
+.github
+
+# IDE и текстовые редакторы
+.vscode
+.idea
+.editorconfig
+*.swp
+*.swo
+*.sublime*
+.DS_Store
+
+# Документация
 README.md
 LICENSE
-.vscode
-Makefile
+docs
 helm-charts
-.editorconfig
-.idea
+Makefile
+
+# Тесты и отчеты
 coverage*
+jest.config.*
+tests
+test
+__tests__
+*.spec.*
+*.test.*
+
+# Временные файлы
+.tmp
+tmp
+.cache
+dist
+build
+
+# Логи
+logs
+*.log
+
+# # Окружение и секреты
+# .env
+# .env.*
+# !.env.example
+# *.pem
+# *.key

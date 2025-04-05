@@ -11,6 +11,8 @@ import dotenv from "dotenv"
 import express, { NextFunction, Request, Response } from "express"
 import "module-alias/register"
 import envConfig from "./config/envConfig"
+
+
 dotenv.config()
 
 const PORT = envConfig.PORT
@@ -24,24 +26,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 })
 
 app.use(cors({ credentials: true, origin: envConfig.CLIENT_URL }))
-// const allowedOrigins = [
-//     "http://192.168.0.110:3000",
-//     "http://localhost:3000"
-// ]
-
-// app.use(
-//     cors({
-//         credentials: true,
-//         origin: (origin, callback) => {
-//             if (!origin || allowedOrigins.includes(origin)) {
-//                 callback(null, true)
-//             } else {
-//                 callback(new Error("Not allowed by CORS"))
-//             }
-//         },
-//     })
-// )
-
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/chat", chatRoutes)
