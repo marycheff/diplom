@@ -53,6 +53,4 @@ const connectRedis = async () => {
     }
 }
 
-
-
 export { connectRedis, redisClient }

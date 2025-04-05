@@ -4,7 +4,7 @@ import { PreTestUserData, PreTestUserDataLabels } from "@/types/inputFields"
 import { AttemptsListDTO, TestAttemptDTO } from "@/types/test.types"
 import { redisClient } from "@/utils/redis-client"
 import { isValidObjectId } from "@/utils/validator"
-import { PrismaClient } from "@prisma/client"
+import { Prisma, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
@@ -45,7 +45,7 @@ class AttemptService {
             data: {
                 testId,
                 userId,
-                userData: test.settings?.requireRegistration ? null : userData,
+                userData: test.settings?.requireRegistration ? Prisma.JsonNull : userData,
                 status: "IN_PROGRESS",
             },
         })

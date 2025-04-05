@@ -19,12 +19,12 @@ model User {
   activationLink String?
   resetCode      String?
   isBlocked      Boolean       @default(false)
-  refreshToken   Token?
-  testsCreated   Test[]        @relation("TestAuthor")
-  testAttempts   TestAttempt[] @relation("TestAttemptUser")
-  badWordsAdded  BadWord[]     @relation("AddedByUser")
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+  badWordsAdded  BadWord[]     @relation("AddedByUser")
+  testAttempts   TestAttempt[] @relation("TestAttemptUser")
+  testsCreated   Test[]        @relation("TestAuthor")
+  refreshToken   Token?
 
   @@map("users")
 }
@@ -32,10 +32,10 @@ model User {
 model Token {
   id           String   @id @default(uuid())
   userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   refreshToken String   @unique
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("tokens")
 }
@@ -43,7 +43,6 @@ model Token {
 model TestSettings {
   id                  String   @id @default(uuid())
   testId              String   @unique
-  test                Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
   requireRegistration Boolean  @default(false)
   inputFields         Json?
   requiredFields      Json?
@@ -51,6 +50,7 @@ model TestSettings {
   timeLimit           Int?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+  test                Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@map("test_settings")
 }
@@ -58,16 +58,16 @@ model TestSettings {
 model Test {
   id            String           @id @default(uuid())
   authorId      String
-  author        User             @relation("TestAuthor", fields: [authorId], references: [id], onDelete: Cascade)
   title         String
   description   String?
   status        ModerationStatus @default(PENDING)
   totalAttempts Int              @default(0)
-  questions     Question[]
-  settings      TestSettings?
-  testAttempts  TestAttempt[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
+  questions     Question[]
+  testAttempts  TestAttempt[]
+  settings      TestSettings?
+  author        User             @relation("TestAuthor", fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("tests")
 }
@@ -75,14 +75,14 @@ model Test {
 model Question {
   id          String       @id @default(uuid())
   testId      String
-  test        Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
   text        String
   order       Int
   type        QuestionType @default(SINGLE_CHOICE)
-  answers     Answer[]
-  userAnswers UserAnswer[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  answers     Answer[]
+  test        Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
+  userAnswers UserAnswer[]
 
   @@map("questions")
 }
@@ -90,13 +90,13 @@ model Question {
 model Answer {
   id          String       @id @default(uuid())
   questionId  String
-  question    Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
   text        String
   isCorrect   Boolean      @default(false)
   isGenerated Boolean      @default(false)
-  userAnswers UserAnswer[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  question    Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userAnswers UserAnswer[]
 
   @@map("answers")
 }
@@ -104,17 +104,17 @@ model Answer {
 model TestAttempt {
   id          String            @id @default(uuid())
   testId      String
-  test        Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
   userId      String?
-  user        User?             @relation("TestAttemptUser", fields: [userId], references: [id], onDelete: SetNull)
   userData    Json?
   score       Float?
   startedAt   DateTime          @default(now())
   completedAt DateTime?
   status      TestAttemptStatus
-  answers     UserAnswer[]
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+  test        Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
+  user        User?             @relation("TestAttemptUser", fields: [userId], references: [id])
+  answers     UserAnswer[]
 
   @@map("test_attempts")
 }
@@ -122,14 +122,14 @@ model TestAttempt {
 model UserAnswer {
   id         String      @id @default(uuid())
   attemptId  String
-  attempt    TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
   questionId String
-  question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
   answerId   String
-  answer     Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
   answeredAt DateTime?
   timeSpent  Int?
   createdAt  DateTime    @default(now())
+  answer     Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  attempt    TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@map("user_answers")
 }
@@ -138,9 +138,9 @@ model BadWord {
   id        String   @id @default(uuid())
   word      String   @unique
   addedById String
-  addedBy   User     @relation("AddedByUser", fields: [addedById], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  addedBy   User     @relation("AddedByUser", fields: [addedById], references: [id], onDelete: Cascade)
 
   @@map("bad_words")
 }

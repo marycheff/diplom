@@ -6,21 +6,17 @@
         "dev": "tsx watch src/index.ts",
         "build": "prisma generate && tsc",
         "start": "node -r module-alias/register ./dist/src/index.js",
-        "postbuild": "node -e \"require('os').platform() === 'win32' ? require('fs').copyFileSync('package.json', 'dist/package.json') : require('fs').copyFileSync('package.json', 'dist/package.json')\"",
+        "postbuild": "node -e \"const fs = require('fs'); if (!fs.existsSync('dist')) fs.mkdirSync('dist'); const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8')); fs.writeFileSync('dist/package.json', JSON.stringify(pkg, null, 4));\"",
         "postinstall": "prisma generate"
     },
     "dependencies": {
-        "@dnd-kit/core": "^6.3.1",
-        "@dnd-kit/modifiers": "^9.0.0",
-        "@dnd-kit/sortable": "^10.0.0",
-        "@dnd-kit/utilities": "^3.2.2",
         "@prisma/client": "^6.5.0",
-        "axios": "^1.8.3",
+        "axios": "^1.8.4",
         "bcryptjs": "^3.0.2",
         "cookie": "^1.0.2",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
-        "express": "^4.21.2",
+        "express": "^5.1.0",
         "follow-redirects": "^1.15.9",
         "jsonwebtoken": "^9.0.2",
         "module-alias": "^2.2.3",
@@ -32,17 +28,29 @@
     "devDependencies": {
         "@types/axios": "^0.14.4",
         "@types/bcrypt": "^5.0.2",
-        "@types/bun": "latest",
+        "@types/bun": "^1.2.8",
         "@types/cookie": "^1.0.0",
         "@types/cors": "^2.8.17",
-        "@types/express": "^5.0.0",
+        "@types/express": "^5.0.1",
         "@types/follow-redirects": "^1.14.4",
         "@types/jsonwebtoken": "^9.0.9",
-        "@types/node": "^22.13.10",
+        "@types/node": "^22.14.0",
         "@types/nodemailer": "^6.4.17",
         "@types/uuid": "^10.0.0",
         "prisma": "^6.5.0",
         "tsx": "^4.19.3",
-        "typescript": "^5.8.2"
+        "typescript": "^5.8.3"
+    },
+    "_moduleAliases": {
+        "@": "./dist/src",
+        "@/dtos": "./dist/src/dtos",
+        "@/services": "./dist/src/services",
+        "@/controllers": "./dist/src/controllers",
+        "@/middleware": "./dist/src/middleware",
+        "@/modules": "./dist/src/modules",
+        "@/utils": "./dist/src/utils",
+        "@/types": "./dist/src/types",
+        "@/exceptions": "./dist/src/exceptions",
+        "@/routes": "./dist/src/routes"
     }
 }

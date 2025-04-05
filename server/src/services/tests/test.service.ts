@@ -18,13 +18,19 @@ class TestService {
         if (existingSettings) {
             await prisma.testSettings.update({
                 where: { testId },
-                data: testSettings,
+                data: {
+                    ...testSettings,
+                    inputFields: testSettings.inputFields as Prisma.InputJsonValue,
+                    requiredFields: testSettings.requiredFields as Prisma.InputJsonValue
+                },
             })
         } else {
             await prisma.testSettings.create({
                 data: {
                     ...testSettings,
                     testId,
+                    inputFields: testSettings.inputFields as Prisma.InputJsonValue,
+                    requiredFields: testSettings.requiredFields as Prisma.InputJsonValue
                 },
             })
         }
