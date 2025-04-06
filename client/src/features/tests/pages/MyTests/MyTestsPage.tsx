@@ -2,7 +2,7 @@ import MyTestsTable from "@/features/tests/components/Tables/MyTestsTable/MyTest
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { useCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
-import TableSkeleton from "@/shared/skeletons/TestsListSkeleton/TableSkeleton"
+import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { TestDTO, TestsListDTO } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"

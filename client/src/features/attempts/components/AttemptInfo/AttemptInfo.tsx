@@ -3,7 +3,7 @@ import { PreTestUserData, PreTestUserDataLabels } from "@/shared/types/inputFiel
 import { TestAttemptDTO } from "@/shared/types/testTypes"
 import Loader from "@/shared/ui/Loader/Loader"
 import { formatDate, formatSeconds } from "@/shared/utils/formatter"
-import { isValidObjectId } from "@/shared/utils/validator"
+import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import styles from "./AttemptInfo.module.scss"
@@ -14,7 +14,7 @@ const AttemptInfo = () => {
     if (!attemptId) {
         return <div>ID пользователя не указан</div>
     }
-    if (!isValidObjectId(attemptId)) {
+    if (!isValidUUID(attemptId)) {
         return <div>Невалидный Id</div>
     }
 

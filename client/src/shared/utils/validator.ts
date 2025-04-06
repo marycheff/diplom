@@ -1,12 +1,4 @@
-// export const isValidObjectId = (id: string): boolean => {
-//     if (typeof id !== "string" || id.length !== 24) {
-//         return false
-//     }
-//     const hexRegex = /^[0-9a-fA-F]{24}$/
-//     return hexRegex.test(id)
-// }
-// isValidUUID
-export const isValidObjectId = (id: string): boolean => {
+export const isValidUUID = (id: string): boolean => {
     if (typeof id !== "string") {
         return false
     }

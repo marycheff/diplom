@@ -1,12 +1,12 @@
 import AttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/AttemptsTable"
 import { useAttemptsCache } from "@/features/attempts/hooks/useAttemptsCache"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
-import TableSkeleton from "@/shared/skeletons/TestsListSkeleton/TableSkeleton"
+import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { TestAttemptDTO } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import { formatDate } from "@/shared/utils/formatter"
-import { isValidObjectId } from "@/shared/utils/validator"
+import { isValidUUID } from "@/shared/utils/validator"
 import { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 
@@ -24,7 +24,7 @@ const TestAttemptsPage = () => {
     if (!testId) {
         return <div>ID теста не указан</div>
     }
-    if (!isValidObjectId(testId)) {
+    if (!isValidUUID(testId)) {
         return <div>Невалидный Id</div>
     }
 

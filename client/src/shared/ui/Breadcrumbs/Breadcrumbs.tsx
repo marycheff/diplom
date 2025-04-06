@@ -1,5 +1,5 @@
 import BackButton from "@/shared/ui/Button/BackButton/BackButton"
-import { isValidObjectId } from "@/shared/utils/validator"
+import { isValidUUID } from "@/shared/utils/validator"
 import { Link, useLocation } from "react-router-dom"
 import styles from "./Breadcrumbs.module.scss"
 
@@ -57,7 +57,7 @@ const Breadcrumbs = () => {
             {pathnames.map((value, index) => {
                 const to = `/${pathnames.slice(0, index + 1).join("/")}`
                 const isLast = index === pathnames.length - 1
-                const isId = isValidObjectId(value)
+                const isId = isValidUUID(value)
                 const label = isId ? value : labels[value] || value
 
                 return (

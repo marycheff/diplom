@@ -2,7 +2,7 @@ import UsersTable from "@/features/users/components/Tables/UsersTable/UsersTable
 import { useUserStore } from "@/features/users/store/useUserStore"
 import { useCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
-import TableSkeleton from "@/shared/skeletons/TestsListSkeleton/TableSkeleton"
+import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { UserDTO, UsersListDTO } from "@/shared/types/userTypes"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"

@@ -17,7 +17,7 @@ redisClient.on("error", err => {
         console.error("Redis connection error:", err.message)
         errorLogged = true
 
-        // Сбрасываем флаг через 5 секунд для новых попыток
+        // Сброс флага через 5 секунд для новых попыток
         setTimeout(() => {
             errorLogged = false
         }, 5000)

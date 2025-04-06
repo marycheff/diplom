@@ -1,3 +1,4 @@
+// Форматирование даты
 export const formatDate = (date: Date | null) => {
     if (!date) return "Никогда"
 
@@ -11,7 +12,7 @@ export const formatDate = (date: Date | null) => {
         second: "2-digit",
     })
 }
-
+// Форматирование времени
 export const formatSeconds = (seconds: number) => {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
@@ -28,9 +29,11 @@ export const formatSeconds = (seconds: number) => {
     return formattedTime || "0с"
 }
 
+// Убрать все лишние пробелы
 export const formatSpaces = (str?: string): string => {
     return (str || "").replace(/\s+/g, " ").trim()
 }
+// Сокращение UUID
 export const shortenUuid = (uuid: string, length: number = 8): string => {
     if (!uuid) return ""
     return `${uuid.substring(0, length)}...`

@@ -3,7 +3,7 @@ import { useUserStore } from "@/features/users/store/useUserStore"
 import { UserDTO } from "@/shared/types/userTypes"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
-import { isValidObjectId } from "@/shared/utils/validator"
+import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useNavigate, useParams } from "react-router-dom"
@@ -14,7 +14,7 @@ const UserInfo = () => {
     if (!userId) {
         return <div>ID пользователя не указан</div>
     }
-    if (!isValidObjectId(userId)) {
+    if (!isValidUUID(userId)) {
         return <div>Невалидный Id</div>
     }
 

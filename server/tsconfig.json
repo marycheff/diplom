@@ -15,18 +15,10 @@
         "outDir": "dist/src",
         "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"],
-            "@routes/*": ["src/routes/*"],
-            "@controllers/*": ["src/controllers/*"],
-            "@services/*": ["src/services/*"],
-            "@middleware/*": ["src/middleware/*"],
-            "@utils/*": ["src/utils/*"],
-            "@types/*": ["src/types/*"],
-            "@dtos/*": ["src/dtos/*"],
-            "@exceptions/*": ["src/exceptions/*"]
+            "@/*": ["./src/*"]
         }
     },
-    "include": ["src/**/*", "./*.ts", "./api/*.ts"],
+    "include": ["src/**/*"],
     "files": ["src/types/express.d.ts"],
     "exclude": ["node_modules", "**/*.test.ts"]
 }

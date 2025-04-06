@@ -3,7 +3,7 @@ import { testSettingsSchema } from "@/schemas/test.schema"
 import { mapToResponseTest } from "@/services/mappers/test.mappers"
 import { QuestionDTO, ShortTestInfo, TestDTO, TestSettingsDTO, TestsListDTO, UpdateTestDTO } from "@/types/test.types"
 import { redisClient } from "@/utils/redis-client"
-import { isValidObjectId } from "@/utils/validator"
+import { isValidUUID } from "@/utils/validator"
 import { Answer, Prisma, PrismaClient, Question } from "@prisma/client"
 
 const prisma = new PrismaClient()
@@ -21,7 +21,7 @@ class TestService {
                 data: {
                     ...testSettings,
                     inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-                    requiredFields: testSettings.requiredFields as Prisma.InputJsonValue
+                    requiredFields: testSettings.requiredFields as Prisma.InputJsonValue,
                 },
             })
         } else {
@@ -30,7 +30,7 @@ class TestService {
                     ...testSettings,
                     testId,
                     inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-                    requiredFields: testSettings.requiredFields as Prisma.InputJsonValue
+                    requiredFields: testSettings.requiredFields as Prisma.InputJsonValue,
                 },
             })
         }
@@ -102,7 +102,7 @@ class TestService {
     // Добавление вопросов к существующему тесту
     async addQuestions(testId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
         return prisma.$transaction(async transaction => {
-            if (!isValidObjectId(testId)) {
+            if (!isValidUUID(testId)) {
                 throw ApiError.NotFound("Тест не найден")
             }
 
@@ -172,8 +172,8 @@ class TestService {
         let nextOrder = (lastOrderQuestion?.order || 0) + 1
 
         return await prisma.$transaction(async tx => {
-            const existingQuestions = questions.filter(q => isValidObjectId(q.id))
-            const newQuestions = questions.filter(q => !isValidObjectId(q.id))
+            const existingQuestions = questions.filter(q => isValidUUID(q.id))
+            const newQuestions = questions.filter(q => !isValidUUID(q.id))
 
             // Update existing questions
             await Promise.all(
@@ -427,7 +427,7 @@ class TestService {
                 },
             ]
 
-            if (isValidObjectId(query)) {
+            if (isValidUUID(query)) {
                 orConditions.unshift({ id: { equals: query } })
             }
 
@@ -506,7 +506,7 @@ class TestService {
                 },
             ]
 
-            if (isValidObjectId(query)) {
+            if (isValidUUID(query)) {
                 orConditions.unshift({ id: { equals: query } })
             }
 

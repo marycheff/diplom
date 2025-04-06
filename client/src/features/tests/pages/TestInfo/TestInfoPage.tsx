@@ -10,7 +10,7 @@ import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import Modal from "@/shared/ui/Modal/Modal"
 import { formatSeconds, formatSpaces } from "@/shared/utils/formatter"
-import { isValidObjectId } from "@/shared/utils/validator"
+import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
@@ -42,7 +42,7 @@ const TestInfoPage = () => {
     if (!testId) {
         return <div>ID теста не указан</div>
     }
-    if (!isValidObjectId(testId)) {
+    if (!isValidUUID(testId)) {
         return <div>Невалидный Id</div>
     }
     const fetchTest = async () => {

@@ -1,62 +1,58 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:alpine
-    container_name: postgres-container
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: diplom
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - app-network
+    postgres:
+        image: postgres:alpine
+        container_name: postgres-container
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: root
+            POSTGRES_DB: diplom
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        networks:
+            - diplom-app
 
-  redis:
-    image: redis:alpine
-    container_name: redis-container
-    ports:
-      - "6379:6379"
-    networks:
-      - app-network
+    redis:
+        image: redis:alpine
+        container_name: redis-container
+        ports:
+            - "6379:6379"
+        networks:
+            - diplom-app
 
-  server:
-    build:
-      context: ./server
-    container_name: server-container
-    env_file:
-      - ./server/.env
-    ports:
-      - "5000:5000"
-    depends_on:
-      - postgres
-      - redis
-    networks:
-      - app-network
-    environment:
-      - DATABASE_URL=postgresql://postgres:root@postgres:5432/diplom
-      - REDIS_URL=redis://redis:6379
-    restart: unless-stopped
+    server:
+        build:
+            context: ./server
+        container_name: server-container
+        env_file:
+            - ./server/.env
+        ports:
+            - "5000:5000"
+        depends_on:
+            - postgres
+            - redis
+        networks:
+            - diplom-app
+        environment:
+            - DATABASE_URL=postgresql://postgres:root@postgres:5432/diplom # вынести в .env
+            - REDIS_URL=redis://redis:6379
+        restart: unless-stopped
 
-  client:
-    build:
-      context: ./client  # путь к директории, где находится Dockerfile клиента
-    container_name: client-container
-    env_file:
-      - ./client/.env  # путь к файлу .env для клиента
-    ports:
-      - "3000:3000"
-    depends_on:
-      - server
-    networks:
-      - app-network
-
+    client:
+        build:
+            context: ./client
+        container_name: client-container
+        env_file:
+            - ./client/.env
+        ports:
+            - "3000:3000"
+        depends_on:
+            - server
+        networks:
+            - diplom-app
 networks:
-  app-network:
-    driver: bridge
-
+    diplom-app:
+        driver: bridge
 volumes:
-  postgres-data:
+    postgres-data:

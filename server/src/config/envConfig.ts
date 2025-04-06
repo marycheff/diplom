@@ -12,6 +12,7 @@ const requiredEnvVars = [
     "API_URL",
     "CLIENT_URL",
     "AUTH_DATA",
+    "ALLOWED_ORIGINS",
 ]
 
 for (const envVar of requiredEnvVars) {
@@ -20,7 +21,7 @@ for (const envVar of requiredEnvVars) {
     }
 }
 
-export default  {
+export default {
     DATABASE_URL: process.env.DATABASE_URL,
     JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
@@ -33,4 +34,5 @@ export default  {
     AUTH_DATA: process.env.AUTH_DATA,
     NODE_ENV: process.env.NODE_ENV || "development",
     PORT: process.env.PORT ? parseInt(process.env.PORT, 10) : 5000,
+    ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
 }

@@ -13,8 +13,8 @@ import {
 import { validateRequest } from "@/middleware/validate-request.middleware"
 import {
     completeTestAttemptSchema,
-    createTestSchema,
     saveAnswerSchema,
+    shortInfoSchema,
     startTestAttemptSchema,
     updateQuestionSchema,
 } from "@/schemas/test.schema"
@@ -25,23 +25,20 @@ const router = express.Router()
 /* =================================
         Управление тестами
   ================================= */
-router.get("/search", authMiddleware, testController.searchTests)
-router.get("/my-tests/search", authMiddleware, testController.searchMyTests)
-router.put(
-    "/:testId/short-info",
-    authMiddleware,
-    testOwnershipMiddleware,
-    // validateRequest(testSettingsSchema),
-    testController.updateShortInfo
-)
+
 // Создание теста
-router.post("/create", authMiddleware, validateRequest(createTestSchema), testController.createTest)
+router.post("/create", authMiddleware, validateRequest(shortInfoSchema), testController.createTest)
+
 // Получение всех тестов пользователя (только свои)
 router.get("/my-tests", authMiddleware, testController.getMyTests)
+
 // Получение всех тестов (админ)
 router.get("/all-tests", authMiddleware, adminMiddleware, testController.getAllTests)
+
 // Удаление теста
 router.delete("/:testId", authMiddleware, testOwnershipMiddleware, testController.deleteTest)
+
+// Изменение настроек теста
 router.put(
     "/:testId/settings",
     authMiddleware,
@@ -49,6 +46,22 @@ router.put(
     // validateRequest(testSettingsSchema),
     testController.updateTestSettings
 )
+
+// Поиск теста
+router.get("/search", authMiddleware, testController.searchTests)
+
+// Поиск тестов пользователя
+router.get("/my-tests/search", authMiddleware, testController.searchMyTests)
+
+// Изменение короткой информацией о тесте
+router.put(
+    "/:testId/short-info",
+    authMiddleware,
+    testOwnershipMiddleware,
+    validateRequest(shortInfoSchema),
+    testController.updateShortInfo
+)
+
 // Получение теста по ID
 router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.getTestById)
 

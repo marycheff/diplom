@@ -11,7 +11,7 @@ import { AxiosResponse } from "axios"
 
 class TestService {
     getTests(page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
-        return axiosInstance.get<TestsListDTO>("/test/all-tests", {
+        return axiosInstance.get<TestsListDTO>("/tests/all-tests", {
             params: {
                 page,
                 limit,
@@ -20,7 +20,7 @@ class TestService {
     }
 
     searchTests(query: string, page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
-        return axiosInstance.get<TestsListDTO>("/test/search", {
+        return axiosInstance.get<TestsListDTO>("/tests/search", {
             params: {
                 query,
                 page,
@@ -29,7 +29,7 @@ class TestService {
         })
     }
     searchMyTests(query: string, page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
-        return axiosInstance.get<TestsListDTO>("/test/my-tests/search", {
+        return axiosInstance.get<TestsListDTO>("/tests/my-tests/search", {
             params: {
                 query,
                 page,
@@ -39,10 +39,10 @@ class TestService {
     }
 
     getTestById(id: string): Promise<AxiosResponse<TestDTO>> {
-        return axiosInstance.get<TestDTO>(`/test/${id}`)
+        return axiosInstance.get<TestDTO>(`/tests/${id}`)
     }
     getMyTests(page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
-        return axiosInstance.get<TestsListDTO>("/test/my-tests", {
+        return axiosInstance.get<TestsListDTO>("/tests/my-tests", {
             params: {
                 page,
                 limit,
@@ -51,7 +51,7 @@ class TestService {
     }
 
     createTest(title: string, description?: string): Promise<AxiosResponse<TestDTO>> {
-        return axiosInstance.post<TestDTO>("/test/create", { title, description })
+        return axiosInstance.post<TestDTO>("/tests/create", { title, description })
     }
 
     generateAnswers = (data: GenerateAnswerFormData): Promise<AxiosResponse<string[]>> => {
@@ -62,16 +62,16 @@ class TestService {
         })
     }
     // updateTestQuestions = (testId: string, questions: QuestionDTO[]) => {
-    //     return axiosInstance.put(`/test/${testId}/questions`, questions)
+    //     return axiosInstance.put(`/tests/${testId}/questions`, questions)
     // }
     updateTestQuestions = (testId: string, data: UpdateTestDTO) => {
-        return axiosInstance.put(`/test/${testId}/questions`, data)
+        return axiosInstance.put(`/tests/${testId}/questions`, data)
     }
     updateTestSettings = (testId: string, updatedSettings: TestSettingsDTO) => {
-        return axiosInstance.put(`/test/${testId}/settings`, updatedSettings)
+        return axiosInstance.put(`/tests/${testId}/settings`, updatedSettings)
     }
     updateShortInfo = (testId: string, updatedShortInfo: ShortTestInfo) => {
-        return axiosInstance.put(`/test/${testId}/short-info`, updatedShortInfo)
+        return axiosInstance.put(`/tests/${testId}/short-info`, updatedShortInfo)
     }
 }
 export const testService = new TestService()

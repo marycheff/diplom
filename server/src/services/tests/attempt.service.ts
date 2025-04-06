@@ -3,7 +3,7 @@ import { mapToTestAttemptDTO } from "@/services/mappers/test.mappers"
 import { PreTestUserData, PreTestUserDataLabels } from "@/types/inputFields"
 import { AttemptsListDTO, TestAttemptDTO } from "@/types/test.types"
 import { redisClient } from "@/utils/redis-client"
-import { isValidObjectId } from "@/utils/validator"
+import { isValidUUID } from "@/utils/validator"
 import { Prisma, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
@@ -185,7 +185,7 @@ class AttemptService {
     }
 
     async getAttempt(attemptId: string): Promise<TestAttemptDTO> {
-        if (!isValidObjectId(attemptId)) {
+        if (!isValidUUID(attemptId)) {
             throw ApiError.BadRequest("Некорректный ID попытки прохождения теста")
         }
 
@@ -235,7 +235,7 @@ class AttemptService {
     }
 
     async getUserAttempts(userId: string): Promise<TestAttemptDTO[]> {
-        if (!isValidObjectId(userId)) {
+        if (!isValidUUID(userId)) {
             throw ApiError.BadRequest("Некорректный ID пользователя")
         }
 

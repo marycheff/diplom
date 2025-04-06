@@ -1,7 +1,7 @@
 import { PreTestUserData } from "@/types/inputFields"
 import { z } from "zod"
 
-export const createTestSchema = z.object({
+export const shortInfoSchema = z.object({
     body: z.object({
         title: z.string().min(1, "Название теста обязательно").max(255, "Максимальная длина 255 символов"),
         description: z.string().max(1000, "Максимальная длина 1000 символов").optional(),
@@ -23,7 +23,7 @@ export const questionSchema = z.object({
 
 export const updateTestSchema = z.object({
     body: z.object({
-        questions: z.array(questionSchema).min(1),
+        questions: z.array(questionSchema).min(1, "Должен быть введен хотя бы 1 вопрос"),
     }),
 })
 
@@ -92,8 +92,7 @@ export const testSettingsSchema = z
         return true
     }, "Обязательные поля должны быть включены в inputFields")
 
-
-    // export const testSettingsSchema = z
+// export const testSettingsSchema = z
 //     .object({
 //         requireRegistration: z.boolean().optional(),
 //         inputFields: z.array(z.enum(Object.values(PreTestUserData) as [string, ...string[]])).optional(),
@@ -113,4 +112,3 @@ export const testSettingsSchema = z
 //         }
 //         return true
 //     }, "Обязательные поля должны быть включены в inputFields")
-

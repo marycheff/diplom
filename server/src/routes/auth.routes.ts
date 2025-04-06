@@ -52,7 +52,7 @@ router.post("/verify-reset-code", validateRequest(verifyResetCodeSchema), passwo
 // Сброс пароля
 router.post("/reset-password", validateRequest(resetPasswordSchema), passwordResetController.resetPassword)
 
-// Обновление пароля пользователем
+// Обновление пароля 
 router.post("/update-password", authMiddleware, validateRequest(updatePasswordSchema), userController.updatePassword)
 
 export default router

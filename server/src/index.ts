@@ -12,7 +12,6 @@ import express, { NextFunction, Request, Response } from "express"
 import "module-alias/register"
 import envConfig from "./config/envConfig"
 
-
 dotenv.config()
 
 const PORT = envConfig.PORT
@@ -25,11 +24,17 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next()
 })
 
-app.use(cors({ credentials: true, origin: envConfig.CLIENT_URL }))
+app.use(
+    cors({
+        credentials: true,
+        // origin: envConfig.CLIENT_URL
+        origin: envConfig.ALLOWED_ORIGINS!.split(","),
+    })
+)
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/chat", chatRoutes)
-app.use("/api/test", testRoutes)
+app.use("/api/tests", testRoutes)
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     errorMiddleware(err, req, res, next)
@@ -42,7 +47,6 @@ const start = async () => {
     try {
         await connectRedis()
         await prisma.$connect()
-        // app.listen(PORT, () => console.log(`✓ Сервер запущен. Порт ${PORT}`))
         app.listen(PORT, "0.0.0.0", () => console.log(`✓ Сервер запущен. Порт ${PORT}`))
     } catch (error) {
         await prisma.$disconnect()
