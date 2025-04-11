@@ -167,6 +167,16 @@ class TestController {
             next(e)
         }
     }
+
+    async getTestSnapshot(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { snapshotId } = req.params
+            const snapshot = await testService.getTestSnapshot(snapshotId)
+            res.json(snapshot)
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 export default new TestController()

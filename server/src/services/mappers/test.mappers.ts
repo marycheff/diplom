@@ -116,6 +116,7 @@ export const mapToTestAttemptDTO = (
         startedAt: attempt.startedAt,
         completedAt: attempt.completedAt ?? null,
         score: attempt.score ?? null,
+        snapshotId: attempt.snapshotId ?? "",
         user: attempt.user ? mapUserToDto(attempt.user) : attempt.userData,
         test: mapToResponseTest(attempt.test),
         questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),

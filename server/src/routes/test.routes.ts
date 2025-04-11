@@ -141,4 +141,7 @@ router.get("/attempts/:attemptId/", authMiddleware, adminMiddleware, attemptCont
 
 router.get("/:testId/attempts", authMiddleware, testOwnershipMiddleware, attemptController.getTestAttempts)
 
+// Получение снимка теста по ID
+router.get("/snapshot/:snapshotId", authMiddleware, testController.getTestSnapshot)
+
 export default router

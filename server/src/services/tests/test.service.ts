@@ -1,10 +1,28 @@
 import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
 import { mapToResponseTest } from "@/services/mappers/test.mappers"
-import { QuestionDTO, ShortTestInfo, TestDTO, TestSettingsDTO, TestsListDTO, UpdateTestDTO } from "@/types/test.types"
+import {
+    QuestionDTO,
+    ShortTestInfo,
+    SnapshotWithOriginalTestDTO,
+    TestDTO,
+    TestSettingsDTO,
+    TestsListDTO,
+    TestSnapshotDTO,
+    UpdateTestDTO,
+} from "@/types/test.types"
 import { redisClient } from "@/utils/redis-client"
 import { isValidUUID } from "@/utils/validator"
-import { Answer, Prisma, PrismaClient, Question } from "@prisma/client"
+import {
+    Answer,
+    AnswerSnapshot,
+    Prisma,
+    PrismaClient,
+    Question,
+    QuestionSnapshot,
+    TestSettingsSnapshot,
+    TestSnapshot,
+} from "@prisma/client"
 
 const prisma = new PrismaClient()
 
@@ -21,7 +39,6 @@ class TestService {
                 data: {
                     ...testSettings,
                     inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-                   
                 },
             })
         } else {
@@ -30,7 +47,6 @@ class TestService {
                     ...testSettings,
                     testId,
                     inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-                   
                 },
             })
         }
@@ -329,6 +345,37 @@ class TestService {
     // Удаление теста
     async deleteTest(testId: string): Promise<void> {
         await prisma.$transaction(async transaction => {
+            // Удаляем все связанные снимки теста
+            await transaction.answerSnapshot.deleteMany({
+                where: {
+                    question: {
+                        snapshot: {
+                            testId: testId,
+                        },
+                    },
+                },
+            })
+
+            await transaction.questionSnapshot.deleteMany({
+                where: {
+                    snapshot: {
+                        testId: testId,
+                    },
+                },
+            })
+
+            await transaction.testSettingsSnapshot.deleteMany({
+                where: {
+                    snapshot: {
+                        testId: testId,
+                    },
+                },
+            })
+
+            await transaction.testSnapshot.deleteMany({
+                where: { testId: testId },
+            })
+
             await transaction.answer.deleteMany({
                 where: {
                     question: {
@@ -380,6 +427,16 @@ class TestService {
                     },
                 },
                 settings: true,
+                // snapshots: {
+                //     include: {
+                //         questions: {
+                //             include: {
+                //                 answers: true,
+                //             },
+                //         },
+                //         settings: true,
+                //     },
+                // },
             },
         })
 
@@ -470,6 +527,95 @@ class TestService {
             throw ApiError.BadRequest("Ошибка при поиске тестов")
         }
     }
+    async getTestSnapshot(snapshotId: string): Promise<SnapshotWithOriginalTestDTO> {
+        if (!isValidUUID(snapshotId)) {
+            throw ApiError.BadRequest("Некорректный ID снимка теста")
+        }
+
+        const snapshot = await prisma.testSnapshot.findUnique({
+            where: { id: snapshotId },
+            include: {
+                originalTest: {
+                    include: {
+                        author: {
+                            select: {
+                                id: true,
+                                email: true,
+                                name: true,
+                                surname: true,
+                                patronymic: true,
+                            },
+                        },
+                        questions: {
+                            include: { answers: true },
+                            orderBy: { order: "asc" },
+                        },
+                        settings: true,
+                    },
+                },
+                questions: {
+                    include: { answers: true },
+                    orderBy: { order: "asc" },
+                },
+                settings: true,
+            },
+        })
+
+        if (!snapshot) {
+            throw ApiError.NotFound("Снимок теста не найден")
+        }
+
+        return {
+            snapshot: this.mapToTestSnapshotDTO(snapshot),
+            originalTest: mapToResponseTest(snapshot.originalTest),
+        }
+    }
+    private mapToTestSnapshotDTO(
+        snapshot: TestSnapshot & {
+            questions: (QuestionSnapshot & { answers: AnswerSnapshot[] })[]
+            settings?: TestSettingsSnapshot | null
+        }
+    ): TestSnapshotDTO {
+        return {
+            id: snapshot.id,
+            testId: snapshot.testId,
+            title: snapshot.title,
+            description: snapshot.description ?? "",
+            status: snapshot.status,
+            createdAt: snapshot.createdAt,
+            questions: snapshot.questions.map(q => ({
+                id: q.id,
+                snapshotId: q.snapshotId,
+                originalId: q.originalId,
+                text: q.text,
+                order: q.order,
+                type: q.type,
+                createdAt: q.createdAt,
+                answers: q.answers.map(a => ({
+                    id: a.id,
+                    questionId: a.questionId,
+                    originalId: a.originalId,
+                    text: a.text,
+                    isCorrect: a.isCorrect,
+                    createdAt: a.createdAt,
+                })),
+            })),
+            settings: snapshot.settings
+                ? {
+                      id: snapshot.settings.id,
+                      snapshotId: snapshot.settings.snapshotId,
+                      requireRegistration: snapshot.settings.requireRegistration,
+                      inputFields: snapshot.settings.inputFields,
+                      showDetailedResults: snapshot.settings.showDetailedResults,
+                      shuffleQuestions: snapshot.settings.shuffleQuestions,
+                      shuffleAnswers: snapshot.settings.shuffleAnswers,
+                      timeLimit: snapshot.settings.timeLimit,
+                      createdAt: snapshot.settings.createdAt,
+                  }
+                : undefined,
+        }
+    }
+
     async searchUserTests(query: string, userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
         try {
             const skip = (page - 1) * limit

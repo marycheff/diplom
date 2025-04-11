@@ -68,6 +68,7 @@ model Test {
   questions     Question[]
   testAttempts  TestAttempt[]
   settings      TestSettings?
+  snapshots     TestSnapshot[]
   author        User             @relation("TestAuthor", fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("tests")
@@ -105,6 +106,7 @@ model Answer {
 model TestAttempt {
   id          String            @id @default(uuid())
   testId      String
+  snapshotId  String?
   userId      String?
   userData    Json?
   score       Float?
@@ -114,6 +116,7 @@ model TestAttempt {
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
   test        Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
+  snapshot    TestSnapshot?     @relation(fields: [snapshotId], references: [id])
   user        User?             @relation("TestAttemptUser", fields: [userId], references: [id])
   answers     UserAnswer[]
 
@@ -144,6 +147,62 @@ model BadWord {
   addedBy   User     @relation("AddedByUser", fields: [addedById], references: [id], onDelete: Cascade)
 
   @@map("bad_words")
+}
+
+model TestSnapshot {
+  id           String                @id @default(uuid())
+  testId       String
+  originalTest Test                  @relation(fields: [testId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?
+  status       ModerationStatus
+  createdAt    DateTime              @default(now())
+  questions    QuestionSnapshot[]
+  settings     TestSettingsSnapshot?
+  attempts     TestAttempt[]
+
+  @@map("test_snapshots")
+}
+
+model QuestionSnapshot {
+  id         String           @id @default(uuid())
+  snapshotId String
+  snapshot   TestSnapshot     @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  originalId String
+  text       String
+  order      Int
+  type       QuestionType
+  createdAt  DateTime         @default(now())
+  answers    AnswerSnapshot[]
+
+  @@map("question_snapshots")
+}
+
+model AnswerSnapshot {
+  id         String           @id @default(uuid())
+  questionId String
+  question   QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  originalId String
+  text       String
+  isCorrect  Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+
+  @@map("answer_snapshots")
+}
+
+model TestSettingsSnapshot {
+  id                  String       @id @default(uuid())
+  snapshotId          String       @unique
+  snapshot            TestSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  requireRegistration Boolean      @default(false)
+  inputFields         Json?
+  showDetailedResults Boolean      @default(false)
+  shuffleQuestions    Boolean      @default(false)
+  shuffleAnswers      Boolean      @default(false)
+  timeLimit           Int?         @default(0)
+  createdAt           DateTime     @default(now())
+
+  @@map("test_settings_snapshots")
 }
 
 enum Role {

@@ -97,6 +97,7 @@ export interface TestAttemptDTO {
     user: UserDTO | Record<PreTestUserData, string> | null
     test: TestDTO
     questions: AttemptQuestionDTO[]
+    snapshotId: string
 }
 
 export interface AttemptsListDTO {
@@ -139,4 +140,47 @@ export interface GenerateAnswerFormData {
 export interface ShortTestInfo {
     title: string
     description?: string
+}
+
+export interface TestSnapshotDTO {
+    id: string
+    testId: string
+    title: string
+    description?: string
+    status: string
+    createdAt: Date
+    questions: QuestionSnapshotDTO[]
+    settings?: TestSettingsSnapshotDTO
+}
+
+export interface QuestionSnapshotDTO {
+    id: string
+    snapshotId: string
+    originalId: string
+    text: string
+    order: number
+    type: QuestionType
+    createdAt: Date
+    answers: AnswerSnapshotDTO[]
+}
+
+export interface AnswerSnapshotDTO {
+    id: string
+    questionId: string
+    originalId: string
+    text: string
+    isCorrect: boolean
+    createdAt: Date
+}
+
+export interface TestSettingsSnapshotDTO {
+    id: string
+    snapshotId: string
+    requireRegistration: boolean
+    inputFields?: PreTestUserData[]
+    showDetailedResults: boolean
+    shuffleQuestions: boolean
+    shuffleAnswers: boolean
+    timeLimit?: number | null
+    createdAt: Date
 }

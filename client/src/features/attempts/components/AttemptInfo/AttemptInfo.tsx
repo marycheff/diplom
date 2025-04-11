@@ -137,6 +137,10 @@ const AttemptInfo = () => {
                                     </span>
                                 </div>
                                 <div className={styles.infoRow}>
+                                    <span className={styles.label}>ID снимка:</span>
+                                    <span className={styles.value}>{attempt.snapshotId}</span>
+                                </div>
+                                <div className={styles.infoRow}>
                                     <span className={styles.label}>Название:</span>
                                     <span className={styles.value}>
                                         {attempt.test.title || <span className={styles.emptyField}>—</span>}

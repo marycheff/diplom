@@ -16,7 +16,14 @@ class AttemptService {
     ): Promise<{ attemptId: string }> {
         const test = await prisma.test.findUnique({
             where: { id: testId },
-            include: { settings: true, questions: true },
+            include: {
+                settings: true,
+                questions: {
+                    include: {
+                        answers: true,
+                    },
+                },
+            },
         })
 
         if (!test) throw ApiError.NotFound("Тест не найден")
@@ -28,7 +35,7 @@ class AttemptService {
             throw ApiError.BadRequest("Для прохождения этого теста необходимо зарегистрироваться")
         }
 
-        if (settings?.inputFields) {
+        if (settings?.inputFields && Array.isArray(settings.inputFields) && settings.inputFields.length > 0) {
             const inputFields = settings.inputFields as PreTestUserData[]
             if (!userData || inputFields.some(field => userData[field] == null)) {
                 const missingLabels = inputFields.filter(field => userData?.[field] == null)
@@ -41,9 +48,64 @@ class AttemptService {
             }
         }
 
+        const snapshot = await prisma.$transaction(async tx => {
+            // Создаем снимок теста
+            const testSnapshot = await tx.testSnapshot.create({
+                data: {
+                    testId: test.id,
+                    title: test.title,
+                    description: test.description,
+                    status: test.status,
+                },
+            })
+
+            // Создаем снимки вопросов
+            await Promise.all(
+                test.questions.map(async question => {
+                    const questionSnapshot = await tx.questionSnapshot.create({
+                        data: {
+                            snapshotId: testSnapshot.id,
+                            originalId: question.id,
+                            text: question.text,
+                            order: question.order,
+                            type: question.type,
+                        },
+                    })
+
+                    // Создаем снимки ответов
+                    await tx.answerSnapshot.createMany({
+                        data: question.answers.map((answer: { id: string; text: string; isCorrect: boolean }) => ({
+                            questionId: questionSnapshot.id,
+                            originalId: answer.id,
+                            text: answer.text,
+                            isCorrect: answer.isCorrect,
+                        })),
+                    })
+                })
+            )
+
+            // Создаем снимок настроек теста, если они есть
+            if (test.settings) {
+                await tx.testSettingsSnapshot.create({
+                    data: {
+                        snapshotId: testSnapshot.id,
+                        requireRegistration: test.settings.requireRegistration,
+                        inputFields: test.settings.inputFields as Prisma.InputJsonValue,
+                        showDetailedResults: test.settings.showDetailedResults,
+                        shuffleQuestions: test.settings.shuffleQuestions,
+                        shuffleAnswers: test.settings.shuffleAnswers,
+                        timeLimit: test.settings.timeLimit,
+                    },
+                })
+            }
+
+            return testSnapshot
+        })
+
         const attempt = await prisma.testAttempt.create({
             data: {
                 testId,
+                snapshotId: snapshot.id,
                 userId,
                 userData: test.settings?.requireRegistration ? Prisma.JsonNull : userData,
                 status: "IN_PROGRESS",
@@ -221,6 +283,16 @@ class AttemptService {
                     },
                 },
                 user: true,
+                snapshot: {
+                    include: {
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                        },
+                        settings: true,
+                    },
+                },
             },
         })
 
@@ -260,6 +332,16 @@ class AttemptService {
                         answer: true,
                     },
                 },
+                snapshot: {
+                    include: {
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                        },
+                        settings: true,
+                    },
+                },
             },
             orderBy: { startedAt: "desc" },
         })
@@ -290,6 +372,16 @@ class AttemptService {
                     include: {
                         question: true,
                         answer: true,
+                    },
+                },
+                snapshot: {
+                    include: {
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                        },
+                        settings: true,
                     },
                 },
             },

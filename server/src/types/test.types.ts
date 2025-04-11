@@ -12,6 +12,10 @@ export interface TestsListDTO {
     total: number
 }
 
+export interface SnapshotWithOriginalTestDTO {
+    snapshot: TestSnapshotDTO
+    originalTest: TestDTO
+}
 export interface QuestionDTO {
     id: string
     text: string
@@ -34,6 +38,7 @@ export interface TestDTO {
     questions?: QuestionDTO[]
     settings?: TestSettingsDTO
     totalAttempts: number
+    
 }
 export interface TestSettingsDTO {
     requireRegistration?: boolean
@@ -60,6 +65,7 @@ export interface TestAttemptDTO {
     user: UserDTO | JsonValue | null
     test: TestDTO
     questions: AttemptQuestionDTO[]
+    snapshotId: string
 }
 export interface AttemptsListDTO {
     attempts: TestAttemptDTO[]
@@ -94,4 +100,47 @@ export interface UserAnswerDTO {
 export interface ShortTestInfo {
     title: string
     description?: string
+}
+
+export interface TestSnapshotDTO {
+    id: string
+    testId: string
+    title: string
+    description?: string
+    status: string
+    createdAt: Date
+    questions: QuestionSnapshotDTO[]
+    settings?: TestSettingsSnapshotDTO
+}
+
+export interface QuestionSnapshotDTO {
+    id: string
+    snapshotId: string
+    originalId: string
+    text: string
+    order: number
+    type: QuestionType
+    createdAt: Date
+    answers: AnswerSnapshotDTO[]
+}
+
+export interface AnswerSnapshotDTO {
+    id: string
+    questionId: string
+    originalId: string
+    text: string
+    isCorrect: boolean
+    createdAt: Date
+}
+
+export interface TestSettingsSnapshotDTO {
+    id: string
+    snapshotId: string
+    requireRegistration: boolean
+    inputFields?: JsonValue
+    showDetailedResults: boolean
+    shuffleQuestions: boolean
+    shuffleAnswers: boolean
+    timeLimit?: number | null
+    createdAt: Date
 }

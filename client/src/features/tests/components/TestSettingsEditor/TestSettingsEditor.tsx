@@ -16,11 +16,6 @@ interface TestSettingsEditorProps {
 }
 
 const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, onCancel, settings }) => {
-    console.log(
-        `Часы: ${Math.floor((settings.timeLimit ?? 0) / 3600)}, Минуты: ${Math.floor(
-            ((settings.timeLimit ?? 0) % 3600) / 60
-        )}, Секунды: ${(settings.timeLimit ?? 0) % 60}`
-    )
     const {
         register,
         handleSubmit,
@@ -42,33 +37,33 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
         },
     })
 
-    const watchedValues = watch()
+    // const watchedValues = watch()
     const inputFields = watch("inputFields")
 
     // Проверяем, изменились ли данные формы
-    const hasChanged = () => {
-        // Проверка основных настроек
-        if ((settings.requireRegistration ? "Да" : "Нет") !== watchedValues.requireRegistration) return true
-        if ((settings.showDetailedResults ? "Да" : "Нет") !== watchedValues.showDetailedResults) return true
-        if ((settings.shuffleQuestions ? "Да" : "Нет") !== watchedValues.shuffleQuestions) return true
-        if ((settings.shuffleAnswers ? "Да" : "Нет") !== watchedValues.shuffleAnswers) return true
+    // const hasChanged = () => {
+    //     // Проверка основных настроек
+    //     if ((settings.requireRegistration ? "Да" : "Нет") !== watchedValues.requireRegistration) return true
+    //     if ((settings.showDetailedResults ? "Да" : "Нет") !== watchedValues.showDetailedResults) return true
+    //     if ((settings.shuffleQuestions ? "Да" : "Нет") !== watchedValues.shuffleQuestions) return true
+    //     if ((settings.shuffleAnswers ? "Да" : "Нет") !== watchedValues.shuffleAnswers) return true
 
-        // Проверка полей ввода
-        const originalInputFields = settings.inputFields || []
-        if (originalInputFields.length !== inputFields.length) return true
-        for (const field of originalInputFields) {
-            if (!inputFields.includes(field)) return true
-        }
+    //     // Проверка полей ввода
+    //     const originalInputFields = settings.inputFields || []
+    //     if (originalInputFields.length !== inputFields.length) return true
+    //     for (const field of originalInputFields) {
+    //         if (!inputFields.includes(field)) return true
+    //     }
 
-        // Проверка лимита времени
-        const originalTimeInSeconds = settings.timeLimit ?? 0
-        const currentTimeInSeconds =
-            Number(watchedValues.hours) * 3600 + Number(watchedValues.minutes) * 60 + Number(watchedValues.seconds)
+    //     // Проверка лимита времени
+    //     const originalTimeInSeconds = settings.timeLimit ?? 0
+    //     const currentTimeInSeconds =
+    //         Number(watchedValues.hours) * 3600 + Number(watchedValues.minutes) * 60 + Number(watchedValues.seconds)
 
-        if (originalTimeInSeconds !== currentTimeInSeconds) return true
+    //     if (originalTimeInSeconds !== currentTimeInSeconds) return true
 
-        return false
-    }
+    //     return false
+    // }
 
     const onSubmit: SubmitHandler<any> = data => {
         onSettingsComplete({
@@ -78,9 +73,9 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             shuffleQuestions: data.shuffleQuestions === "Да",
             shuffleAnswers: data.shuffleAnswers === "Да",
             timeLimit:
-                Number(formatSpaces(data.hours)) * 3600 +
-                Number(formatSpaces(data.minutes)) * 60 +
-                Number(formatSpaces(data.seconds)),
+                Number(data.hours) * 3600 +
+                Number(data.minutes) * 60 +
+                Number(data.seconds),
         })
     }
 
@@ -208,7 +203,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             </div>
             <br />
             <br />
-            <Button type="submit" disabled={!hasChanged()}>
+            <Button type="submit">
                 Сохранить
             </Button>
         </form>
