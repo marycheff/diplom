@@ -21,7 +21,7 @@ class TestService {
                 data: {
                     ...testSettings,
                     inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-                    requiredFields: testSettings.requiredFields as Prisma.InputJsonValue,
+                   
                 },
             })
         } else {
@@ -30,7 +30,7 @@ class TestService {
                     ...testSettings,
                     testId,
                     inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-                    requiredFields: testSettings.requiredFields as Prisma.InputJsonValue,
+                   
                 },
             })
         }
@@ -84,7 +84,7 @@ class TestService {
                     testId: createdTest.id,
                     requireRegistration: testData.settings?.requireRegistration ?? false,
                     inputFields: testData.settings?.inputFields ?? [],
-                    requiredFields: testData.settings?.requiredFields ?? [],
+                   
                     showDetailedResults: testData.settings?.showDetailedResults ?? false,
                     timeLimit: testData.settings?.timeLimit ?? null,
                 },

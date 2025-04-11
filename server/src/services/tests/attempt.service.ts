@@ -28,11 +28,11 @@ class AttemptService {
             throw ApiError.BadRequest("Для прохождения этого теста необходимо зарегистрироваться")
         }
 
-        if (settings?.requiredFields) {
-            const requiredFields = settings.requiredFields as PreTestUserData[]
-            if (!userData || requiredFields.some(field => userData[field] == null)) {
-                const missingLabels = requiredFields.filter(field => userData?.[field] == null)
-                const missingLabelsRu = requiredFields
+        if (settings?.inputFields) {
+            const inputFields = settings.inputFields as PreTestUserData[]
+            if (!userData || inputFields.some(field => userData[field] == null)) {
+                const missingLabels = inputFields.filter(field => userData?.[field] == null)
+                const missingLabelsRu = inputFields
                     .filter(field => userData?.[field] == null)
                     .map(f => PreTestUserDataLabels[f])
                 throw ApiError.BadRequest(

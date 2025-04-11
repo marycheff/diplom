@@ -225,19 +225,6 @@ const TestInfoPage = () => {
                                             </span>
                                         </div>
                                         <div className={styles.infoRow}>
-                                            <span className={styles.label}>Обязательные поля:</span>
-                                            <span className={styles.value}>
-                                                {test.settings.requiredFields &&
-                                                test.settings.requiredFields.length > 0 ? (
-                                                    test.settings.requiredFields
-                                                        .map(field => PreTestUserDataLabels[field] || field)
-                                                        .join(", ")
-                                                ) : (
-                                                    <span className={styles.emptyField}>не указаны</span>
-                                                )}
-                                            </span>
-                                        </div>
-                                        <div className={styles.infoRow}>
                                             <span className={styles.label}>Лимит времени:</span>
                                             <span className={styles.value}>
                                                 {test.settings.timeLimit ? (

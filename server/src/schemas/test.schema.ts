@@ -72,25 +72,18 @@ export const completeTestAttemptSchema = z.object({
     }),
 })
 
-export const testSettingsSchema = z
-    .object({
-        requireRegistration: z.boolean().optional(),
-        inputFields: z.array(z.nativeEnum(PreTestUserData)).optional(),
-        requiredFields: z
-            .array(z.nativeEnum(PreTestUserData))
-            .optional()
-            .refine(fields => {
-                if (!fields) return true
-                return fields.every(f => Object.values(PreTestUserData).includes(f))
-            }, "Недопустимое поле в requiredFields"),
-        showDetailedResults: z.boolean().optional(),
-    })
-    .refine(data => {
-        if (data.requiredFields && data.inputFields) {
-            return data.requiredFields.every(f => data.inputFields!.includes(f))
-        }
-        return true
-    }, "Обязательные поля должны быть включены в inputFields")
+export const testSettingsSchema = z.object({
+    requireRegistration: z.boolean().optional(),
+    // inputFields: z.array(z.nativeEnum(PreTestUserData)).optional(),
+    inputFields: z
+        .array(z.nativeEnum(PreTestUserData))
+        .optional()
+        .refine(fields => {
+            if (!fields) return true
+            return fields.every(f => Object.values(PreTestUserData).includes(f))
+        }, "Недопустимое поле в requiredFields"),
+    showDetailedResults: z.boolean().optional(),
+})
 
 // export const testSettingsSchema = z
 //     .object({

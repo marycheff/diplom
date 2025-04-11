@@ -38,7 +38,7 @@ export interface TestDTO {
 export interface TestSettingsDTO {
     requireRegistration?: boolean
     inputFields?: JsonValue
-    requiredFields?: JsonValue
+
     showDetailedResults?: boolean
     timeLimit?: number | null
 }
@@ -75,7 +75,7 @@ export interface AttemptQuestionDTO {
     answers: AnswerDTO[]
     userAnswer: {
         userAnswerId: string
-        answer: AnswerDTO 
+        answer: AnswerDTO
         timeSpent: number | null
         answeredAt: Date | null
         createdAt: Date

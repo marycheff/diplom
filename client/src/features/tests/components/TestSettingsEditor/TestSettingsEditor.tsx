@@ -46,7 +46,6 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 
     const onSubmit: SubmitHandler<any> = data => {
         onSettingsComplete({
-            requiredFields: data.inputFields,
             inputFields: data.inputFields,
             requireRegistration: data.requireRegistration === "Да",
             showDetailedResults: data.showDetailedResults === "Да",

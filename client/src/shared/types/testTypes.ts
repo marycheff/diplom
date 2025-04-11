@@ -75,7 +75,6 @@ export interface TestDTO {
 export interface TestSettingsDTO {
     requireRegistration?: boolean
     inputFields?: PreTestUserData[]
-    requiredFields?: PreTestUserData[]
     showDetailedResults?: boolean
     timeLimit?: number | null
 }
