@@ -1,7 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import axios from "axios"
 import qs from "querystring"
-import { https } from "follow-redirects"
+import https from "follow-redirects/https" 
 
 const httpsAgent = new https.Agent({ rejectUnauthorized: false })
 
@@ -11,7 +11,7 @@ const generateUUID = (): string =>
     "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
         const r = getRandomInt(0, 15)
         const v = c === "x" ? r : (r & 0x3) | 0x8
-        return v.toString(16)
+        return v.toString(16) 
     })
 
 export const getAccessToken = async (authData: string): Promise<string> => {

@@ -10,7 +10,7 @@ const App = () => {
             <Breadcrumbs />
             <AppRouter />
             <Toaster position="top-right" reverseOrder={true} />
-            <ScrollbarWidthManager />
+            {/* <ScrollbarWidthManager /> */}
         </BrowserRouter>
     )
 }

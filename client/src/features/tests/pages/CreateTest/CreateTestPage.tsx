@@ -39,7 +39,14 @@ const CreateTestPage = () => {
                         required: "Название теста обязательно",
                     }}
                 />
-                <ValidatedInput name="description" placeholder="Описание" register={register} setValue={setValue} />
+                <ValidatedInput
+                    name="description"
+                    multiline
+                    clearable
+                    placeholder="Описание"
+                    register={register}
+                    setValue={setValue}
+                />
                 <Button type="submit" disabled={isLoading}>
                     Создать тест
                 </Button>
