@@ -84,7 +84,8 @@ class TestService {
                     testId: createdTest.id,
                     requireRegistration: testData.settings?.requireRegistration ?? false,
                     inputFields: testData.settings?.inputFields ?? [],
-                   
+                    shuffleAnswers: testData.settings?.shuffleAnswers,
+                    shuffleQuestions: testData.settings?.shuffleQuestions,
                     showDetailedResults: testData.settings?.showDetailedResults ?? false,
                     timeLimit: testData.settings?.timeLimit ?? null,
                 },

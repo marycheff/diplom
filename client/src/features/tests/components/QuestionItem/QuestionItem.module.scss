@@ -13,21 +13,13 @@
     max-width: 90%;
     position: relative;
 
-    &[data-dragging="true"] {
+    &.dragging {
+        cursor: not-allowed;
         pointer-events: none;
         opacity: 0.5;
-        cursor: not-allowed;
+        cursor: grab;
     }
 }
-
-// .dragging {
-//     opacity: 0.85;
-//     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-//     z-index: 999 !important;
-//     background-color: #f8f8f8;
-//     transform: scale(2.02);
-//     pointer-events: none;
-// }
 
 @keyframes slideIn {
     from {

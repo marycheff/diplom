@@ -36,7 +36,7 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
     }
 
     return (
-        <div ref={setNodeRef} style={style} className={styles.questionItem} data-dragging={isDragging}>
+        <div ref={setNodeRef} style={style} className={`${styles.questionItem} ${isDragging ? styles.dragging : ""}`}>
             <div className={styles.questionHeader}>
                 <div className={styles.leftSection}>
                     <div className={styles.dragHandle} {...attributes} {...listeners}>

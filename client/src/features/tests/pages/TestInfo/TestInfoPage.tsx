@@ -213,6 +213,18 @@ const TestInfoPage = () => {
                                             </span>
                                         </div>
                                         <div className={styles.infoRow}>
+                                            <span className={styles.label}>Перемешивать вопросы:</span>
+                                            <span className={styles.value}>
+                                                {test.settings.shuffleQuestions ? "Да" : "Нет"}
+                                            </span>
+                                        </div>
+                                        <div className={styles.infoRow}>
+                                            <span className={styles.label}>Перемешивать варианты ответов:</span>
+                                            <span className={styles.value}>
+                                                {test.settings.shuffleAnswers ? "Да" : "Нет"}
+                                            </span>
+                                        </div>
+                                        <div className={styles.infoRow}>
                                             <span className={styles.label}>Поля ввода:</span>
                                             <span className={styles.value}>
                                                 {test.settings.inputFields && test.settings.inputFields.length > 0 ? (

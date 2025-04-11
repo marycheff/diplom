@@ -14,11 +14,23 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen })
 
     useEffect(() => {
         if (isOpen) {
+            // Сохраняем ширину скроллбара перед блокировкой прокрутки
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+
+            // Блокируем прокрутку, но сохраняем оригинальную ширину страницы
             document.body.style.overflow = "hidden"
+            document.body.style.paddingRight = `${scrollbarWidth}px`
+
             setIsClosing(false)
+        } else {
+            // Восстанавливаем нормальное состояние
+            document.body.style.overflow = ""
+            document.body.style.paddingRight = ""
         }
+
         return () => {
-            document.body.style.overflow = "unset"
+            document.body.style.overflow = ""
+            document.body.style.paddingRight = ""
         }
     }, [isOpen])
 

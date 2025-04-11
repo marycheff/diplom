@@ -38,7 +38,8 @@ export interface TestDTO {
 export interface TestSettingsDTO {
     requireRegistration?: boolean
     inputFields?: JsonValue
-
+    shuffleQuestions?: boolean
+    shuffleAnswers?: boolean
     showDetailedResults?: boolean
     timeLimit?: number | null
 }

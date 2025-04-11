@@ -55,7 +55,8 @@ export const mapToResponseTest = (
             ? {
                   requireRegistration: test.settings.requireRegistration,
                   inputFields: test.settings.inputFields,
-                  
+                  shuffleAnswers: test.settings.shuffleAnswers,
+                  shuffleQuestions: test.settings.shuffleQuestions,
                   showDetailedResults: test.settings.showDetailedResults,
                   timeLimit: test.settings.timeLimit,
               }

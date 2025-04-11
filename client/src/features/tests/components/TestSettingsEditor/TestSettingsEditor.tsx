@@ -32,6 +32,8 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
         defaultValues: {
             requireRegistration: settings.requireRegistration ? "Да" : "Нет",
             showDetailedResults: settings.showDetailedResults ? "Да" : "Нет",
+            shuffleQuestions: settings.shuffleQuestions ? "Да" : "Нет",
+            shuffleAnswers: settings.shuffleAnswers ? "Да" : "Нет",
             inputFields: settings.inputFields || [],
             hours: Math.floor((settings.timeLimit ?? 0) / 3600),
             minutes: Math.floor(((settings.timeLimit ?? 0) % 3600) / 60),
@@ -40,15 +42,41 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
         },
     })
 
-    // const watchedHours = watch("hours")
-    // const watchedMinutes = watch("minutes")
+    const watchedValues = watch()
     const inputFields = watch("inputFields")
+
+    // Проверяем, изменились ли данные формы
+    const hasChanged = () => {
+        // Проверка основных настроек
+        if ((settings.requireRegistration ? "Да" : "Нет") !== watchedValues.requireRegistration) return true
+        if ((settings.showDetailedResults ? "Да" : "Нет") !== watchedValues.showDetailedResults) return true
+        if ((settings.shuffleQuestions ? "Да" : "Нет") !== watchedValues.shuffleQuestions) return true
+        if ((settings.shuffleAnswers ? "Да" : "Нет") !== watchedValues.shuffleAnswers) return true
+
+        // Проверка полей ввода
+        const originalInputFields = settings.inputFields || []
+        if (originalInputFields.length !== inputFields.length) return true
+        for (const field of originalInputFields) {
+            if (!inputFields.includes(field)) return true
+        }
+
+        // Проверка лимита времени
+        const originalTimeInSeconds = settings.timeLimit ?? 0
+        const currentTimeInSeconds =
+            Number(watchedValues.hours) * 3600 + Number(watchedValues.minutes) * 60 + Number(watchedValues.seconds)
+
+        if (originalTimeInSeconds !== currentTimeInSeconds) return true
+
+        return false
+    }
 
     const onSubmit: SubmitHandler<any> = data => {
         onSettingsComplete({
             inputFields: data.inputFields,
             requireRegistration: data.requireRegistration === "Да",
             showDetailedResults: data.showDetailedResults === "Да",
+            shuffleQuestions: data.shuffleQuestions === "Да",
+            shuffleAnswers: data.shuffleAnswers === "Да",
             timeLimit:
                 Number(formatSpaces(data.hours)) * 3600 +
                 Number(formatSpaces(data.minutes)) * 60 +
@@ -85,6 +113,30 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                         { value: "Нет", label: "Нет" },
                     ]}
                     value={settings.showDetailedResults ? "Да" : "Нет"}
+                />
+            </div>
+            <div>
+                <Select
+                    register={register}
+                    label="Перемешивать вопросы: "
+                    name="shuffleQuestions"
+                    options={[
+                        { value: "Да", label: "Да" },
+                        { value: "Нет", label: "Нет" },
+                    ]}
+                    value={settings.shuffleQuestions ? "Да" : "Нет"}
+                />
+            </div>
+            <div>
+                <Select
+                    register={register}
+                    label="Перемешивать варианты ответов: "
+                    name="shuffleAnswers"
+                    options={[
+                        { value: "Да", label: "Да" },
+                        { value: "Нет", label: "Нет" },
+                    ]}
+                    value={settings.shuffleAnswers ? "Да" : "Нет"}
                 />
             </div>
             <div>
@@ -156,7 +208,9 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             </div>
             <br />
             <br />
-            <Button type="submit">Сохранить</Button>
+            <Button type="submit" disabled={!hasChanged()}>
+                Сохранить
+            </Button>
         </form>
     )
 }
