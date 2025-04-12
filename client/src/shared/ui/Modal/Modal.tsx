@@ -45,10 +45,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen })
     if (!isOpen) return null
 
     return (
-        <div
-            className={`${styles.modalOverlay} ${isClosing ? styles.closing : ""}`}
-            // onClick={handleClose}
-        >
+        <div className={`${styles.modalOverlay} ${isClosing ? styles.closing : ""}`} onClick={handleClose}>
             <div
                 className={`${styles.modalContent} ${isClosing ? styles.closing : ""} ${
                     fullScreen ? styles.fullScreen : ""

@@ -7,6 +7,7 @@ import ActivationSuccessPage from "@/features/auth/pages/ActivationSuccess"
 import LoginPage from "@/features/auth/pages/Login/LoginPage"
 import SignupPage from "@/features/auth/pages/Signup/SignupPage"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
 import AllTestsPage from "@/features/tests/pages/AllTests/AllTestsPage"
 import CreateTestPage from "@/features/tests/pages/CreateTest/CreateTestPage"
 import MyTestsPage from "@/features/tests/pages/MyTests/MyTestsPage"
@@ -119,6 +120,11 @@ const AppRouter = () => {
             path="/admin/tests/:testId/edit-settings"
             element={<AdminRoute component={TestInfoPage} isAdmin={isAdmin} />}
         />,
+        // <Route
+        //     key="admin-snapshot-info"
+        //     path="/admin/tests/:testId/snapshots/:snapshotId"
+        //     element={<AdminRoute component={Snapshot} isAdmin={isAdmin} />}
+        // />,
     ]
 
     // Маршруты для заблокированных пользователей

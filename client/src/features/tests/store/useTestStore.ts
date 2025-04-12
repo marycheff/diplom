@@ -77,30 +77,37 @@ export const useTestStore = create<TestState>(set => {
             }
             return withLoading(operation)
         },
-        generateAnswers: (data: GenerateAnswerFormData) => {
+        generateAnswers: async (data: GenerateAnswerFormData) => {
             const operation = async () => {
                 const response = await testService.generateAnswers(data)
                 return response.data
             }
             return withLoading(operation)
         },
-        updateTestQuestions: (testId, data) => {
+        updateTestQuestions: async (testId, data) => {
             const operation = async () => {
                 await testService.updateTestQuestions(testId, data)
             }
             return withLoading(operation)
         },
-        updateTestSettings: (testId, updatedSettings) => {
+        updateTestSettings: async (testId, updatedSettings) => {
             const operation = async () => {
                 await testService.updateTestSettings(testId, updatedSettings)
             }
             return withSettingsUpdating(operation)
         },
-        updateShortInfo: (testId, updatedShortInfo) => {
+        updateShortInfo: async (testId, updatedShortInfo) => {
             const operation = async () => {
                 await testService.updateShortInfo(testId, updatedShortInfo)
             }
             return withShortInfoUpdating(operation)
+        },
+        getSnapshotById: async snapshotId => {
+            const operation = async () => {
+                const response = await testService.getSnapshotById(snapshotId)
+                return response.data
+            }
+            return withFetching(operation)
         },
     }
 })

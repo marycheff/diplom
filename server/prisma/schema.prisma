@@ -63,6 +63,7 @@ model Test {
   description   String?
   status        ModerationStatus @default(PENDING)
   totalAttempts Int              @default(0)
+  version       Int              @default(1)
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
   questions     Question[]
@@ -152,6 +153,7 @@ model BadWord {
 model TestSnapshot {
   id           String                @id @default(uuid())
   testId       String
+  version      Int                   @default(1)
   originalTest Test                  @relation(fields: [testId], references: [id], onDelete: Cascade)
   title        String
   description  String?

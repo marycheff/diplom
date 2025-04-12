@@ -6,8 +6,9 @@ import {
     TestAttemptDTO,
     TestDTO,
     TestSettingsDTO,
+    TestSnapshotDTO,
 } from "@/types/test.types"
-import { Answer, Question, Test, TestAttempt, User, UserAnswer } from "@prisma/client"
+import { Answer, AnswerSnapshot, Question, QuestionSnapshot, Test, TestAttempt, TestSettingsSnapshot, TestSnapshot, User, UserAnswer } from "@prisma/client"
 
 export const mapToResponseAnswer = (answer: Answer): AnswerDTO => {
     return {
@@ -122,3 +123,49 @@ export const mapToTestAttemptDTO = (
         questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
     }
 }
+
+export const mapToTestSnapshotDTO =(
+        snapshot: TestSnapshot & {
+            questions: (QuestionSnapshot & { answers: AnswerSnapshot[] })[]
+            settings?: TestSettingsSnapshot | null
+        }
+    ): TestSnapshotDTO => {
+        return {
+            id: snapshot.id,
+            testId: snapshot.testId,
+            title: snapshot.title,
+            description: snapshot.description ?? "",
+            status: snapshot.status,
+            createdAt: snapshot.createdAt,
+            settings: snapshot.settings
+                ? {
+                      id: snapshot.settings.id,
+                      //   snapshotId: snapshot.settings.snapshotId,
+                      requireRegistration: snapshot.settings.requireRegistration,
+                      inputFields: snapshot.settings.inputFields,
+                      showDetailedResults: snapshot.settings.showDetailedResults,
+                      shuffleQuestions: snapshot.settings.shuffleQuestions,
+                      shuffleAnswers: snapshot.settings.shuffleAnswers,
+                      timeLimit: snapshot.settings.timeLimit,
+                      createdAt: snapshot.settings.createdAt,
+                  }
+                : undefined,
+            questions: snapshot.questions.map(q => ({
+                id: q.id,
+                // snapshotId: q.snapshotId,
+                originalId: q.originalId,
+                text: q.text,
+                order: q.order,
+                type: q.type,
+                createdAt: q.createdAt,
+                answers: q.answers.map(a => ({
+                    id: a.id,
+                    questionId: a.questionId,
+                    originalId: a.originalId,
+                    text: a.text,
+                    isCorrect: a.isCorrect,
+                    createdAt: a.createdAt,
+                })),
+            })),
+        }
+    }

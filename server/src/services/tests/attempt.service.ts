@@ -48,64 +48,19 @@ class AttemptService {
             }
         }
 
-        const snapshot = await prisma.$transaction(async tx => {
-            // Создаем снимок теста
-            const testSnapshot = await tx.testSnapshot.create({
-                data: {
-                    testId: test.id,
-                    title: test.title,
-                    description: test.description,
-                    status: test.status,
-                },
-            })
-
-            // Создаем снимки вопросов
-            await Promise.all(
-                test.questions.map(async question => {
-                    const questionSnapshot = await tx.questionSnapshot.create({
-                        data: {
-                            snapshotId: testSnapshot.id,
-                            originalId: question.id,
-                            text: question.text,
-                            order: question.order,
-                            type: question.type,
-                        },
-                    })
-
-                    // Создаем снимки ответов
-                    await tx.answerSnapshot.createMany({
-                        data: question.answers.map((answer: { id: string; text: string; isCorrect: boolean }) => ({
-                            questionId: questionSnapshot.id,
-                            originalId: answer.id,
-                            text: answer.text,
-                            isCorrect: answer.isCorrect,
-                        })),
-                    })
-                })
-            )
-
-            // Создаем снимок настроек теста, если они есть
-            if (test.settings) {
-                await tx.testSettingsSnapshot.create({
-                    data: {
-                        snapshotId: testSnapshot.id,
-                        requireRegistration: test.settings.requireRegistration,
-                        inputFields: test.settings.inputFields as Prisma.InputJsonValue,
-                        showDetailedResults: test.settings.showDetailedResults,
-                        shuffleQuestions: test.settings.shuffleQuestions,
-                        shuffleAnswers: test.settings.shuffleAnswers,
-                        timeLimit: test.settings.timeLimit,
-                    },
-                })
-            }
-
-            return testSnapshot
+        const latestSnapshot = await prisma.testSnapshot.findFirst({
+            where: { testId: test.id },
+            orderBy: { version: "desc" },
         })
+
+        if (!latestSnapshot) {
+            throw ApiError.NotFound("Не найден актуальный снапшот теста")
+        }
 
         const attempt = await prisma.testAttempt.create({
             data: {
                 testId,
-                snapshotId: snapshot.id,
+                snapshotId: latestSnapshot.id,
                 userId,
                 userData: test.settings?.requireRegistration ? Prisma.JsonNull : userData,
                 status: "IN_PROGRESS",

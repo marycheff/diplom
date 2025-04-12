@@ -3,6 +3,7 @@ import QuestionCreator from "@/features/tests/components/QuestionCreator/Questio
 import QuestionsEditor from "@/features/tests/components/QuestionsEditor/QuestionsEditor"
 import TestInfoEditor from "@/features/tests/components/TestInfoEditor/TestInfoEditor"
 import TestSettingsEditor from "@/features/tests/components/TestSettingsEditor/TestSettingsEditor"
+import InfoRowSkeleton from "@/features/tests/components/TestSettingsSkeleton/TestSettingsSkeleton"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { PreTestUserDataLabels } from "@/shared/types/inputFields"
 import { QuestionDTO, ShortTestInfo, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/shared/types/testTypes"
@@ -147,7 +148,7 @@ const TestInfoPage = () => {
                         </div>
                     </div>
                     {isShortInfoUpdating ? (
-                        <Loader />
+                        <InfoRowSkeleton rows={4} />
                     ) : (
                         <div className={styles.blockContent}>
                             <div className={styles.infoRow}>
@@ -197,7 +198,7 @@ const TestInfoPage = () => {
                         {test.settings ? (
                             <>
                                 {isSettingsUpdating ? (
-                                    <Loader />
+                                    <InfoRowSkeleton />
                                 ) : (
                                     <>
                                         <div className={styles.infoRow}>

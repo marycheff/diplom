@@ -1,7 +1,10 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
 import { PreTestUserData, PreTestUserDataLabels } from "@/shared/types/inputFields"
 import { TestAttemptDTO } from "@/shared/types/testTypes"
+import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
+import Modal from "@/shared/ui/Modal/Modal"
 import { formatDate, formatSeconds } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -20,7 +23,7 @@ const AttemptInfo = () => {
 
     const { isFetching, getAttemptById } = useAttemptStore()
     const [attempt, setAttempt] = useState<TestAttemptDTO | null>(null)
-
+    const [isSnapshotModalOpen, setIsSnapshotModalOpen] = useState(false)
     const fetchAttempt = async () => {
         const fetchedAttempt = await getAttemptById(attemptId)
         if (fetchedAttempt) {
@@ -137,8 +140,21 @@ const AttemptInfo = () => {
                                     </span>
                                 </div>
                                 <div className={styles.infoRow}>
-                                    <span className={styles.label}>ID снимка:</span>
-                                    <span className={styles.value}>{attempt.snapshotId}</span>
+                                    <span className={styles.label}>Тест на момент прохождения:</span>
+                                    <span className={styles.value}>
+                                        {/* {attempt.snapshotId} */}
+                                        {/* <Link
+                                            to={`/admin/tests/${attempt.test.id}/snapshots/${attempt.snapshotId}`}
+                                            className="actionLink">
+                                            {attempt.snapshotId}
+                                        </Link> */}
+                                        <Button
+                                            onClick={() => {
+                                                setIsSnapshotModalOpen(true)
+                                            }}>
+                                            Посмотреть
+                                        </Button>
+                                    </span>
                                 </div>
                                 <div className={styles.infoRow}>
                                     <span className={styles.label}>Название:</span>
@@ -242,6 +258,17 @@ const AttemptInfo = () => {
                     )}
                 </div>
             </div>
+            <Modal
+                fullScreen
+                isOpen={isSnapshotModalOpen}
+                onClose={() => {
+                    // navigate(-1)
+                    // setIsEditQuestionsModalOpen(false)
+                    setIsSnapshotModalOpen(false)
+                }}
+                title="Тест на момент прохождения">
+                <Snapshot snapshotId={attempt.snapshotId} />
+            </Modal>
         </div>
     )
 }

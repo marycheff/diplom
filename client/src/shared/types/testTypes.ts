@@ -17,6 +17,7 @@ export interface TestState {
     updateTestQuestions: (testId: string, data: UpdateTestDTO) => Promise<void>
     updateTestSettings: (testId: string, updatedSettings: TestSettingsDTO) => Promise<void>
     updateShortInfo: (testId: string, updatedShortInfo: ShortTestInfo) => Promise<void>
+    getSnapshotById: (snapshotId: string) => Promise<SnapshotWithOriginalTestDTO | undefined>
 
     // CACHE
     CACHE_EXPIRATION_TIME: number
@@ -142,6 +143,11 @@ export interface ShortTestInfo {
     description?: string
 }
 
+export interface SnapshotWithOriginalTestDTO {
+    snapshot: TestSnapshotDTO
+    originalTest: TestDTO
+}
+
 export interface TestSnapshotDTO {
     id: string
     testId: string
@@ -155,7 +161,7 @@ export interface TestSnapshotDTO {
 
 export interface QuestionSnapshotDTO {
     id: string
-    snapshotId: string
+    // snapshotId: string
     originalId: string
     text: string
     order: number
@@ -175,9 +181,9 @@ export interface AnswerSnapshotDTO {
 
 export interface TestSettingsSnapshotDTO {
     id: string
-    snapshotId: string
+    // snapshotId: string
     requireRegistration: boolean
-    inputFields?: PreTestUserData[]
+    inputFields?: JsonValue
     showDetailedResults: boolean
     shuffleQuestions: boolean
     shuffleAnswers: boolean

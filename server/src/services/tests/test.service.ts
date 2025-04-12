@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import { testSettingsSchema } from "@/schemas/test.schema"
-import { mapToResponseTest } from "@/services/mappers/test.mappers"
+import { mapToResponseTest, mapToTestSnapshotDTO } from "@/services/mappers/test.mappers"
 import {
     QuestionDTO,
     ShortTestInfo,
@@ -8,53 +8,122 @@ import {
     TestDTO,
     TestSettingsDTO,
     TestsListDTO,
-    TestSnapshotDTO,
     UpdateTestDTO,
 } from "@/types/test.types"
 import { redisClient } from "@/utils/redis-client"
 import { isValidUUID } from "@/utils/validator"
-import {
-    Answer,
-    AnswerSnapshot,
-    Prisma,
-    PrismaClient,
-    Question,
-    QuestionSnapshot,
-    TestSettingsSnapshot,
-    TestSnapshot,
-} from "@prisma/client"
+import { Answer, Prisma, PrismaClient, Question, Test, TestSettings } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
 class TestService {
     // Обновление настроек теста
     async updateTestSettings(testId: string, testSettings: TestSettingsDTO) {
-        const existingSettings = await prisma.testSettings.findUnique({
-            where: { testId },
-        })
+        return prisma.$transaction(async tx => {
+            const test = await tx.test.findUnique({
+                where: { id: testId },
+                include: {
+                    questions: { include: { answers: true } },
+                    settings: true,
+                },
+            })
 
-        if (existingSettings) {
-            await prisma.testSettings.update({
+            if (!test) throw ApiError.NotFound("Тест не найден")
+
+            // Обновление настроек
+            const existingSettings = await tx.testSettings.findUnique({
                 where: { testId },
+            })
+
+            if (existingSettings) {
+                await tx.testSettings.update({
+                    where: { testId },
+                    data: {
+                        ...testSettings,
+                        inputFields: testSettings.inputFields as Prisma.InputJsonValue,
+                    },
+                })
+            } else {
+                await tx.testSettings.create({
+                    data: {
+                        ...testSettings,
+                        testId,
+                        inputFields: testSettings.inputFields as Prisma.InputJsonValue,
+                    },
+                })
+            }
+
+            // Создание нового снапшота
+            const newSnapshot = await tx.testSnapshot.create({
                 data: {
-                    ...testSettings,
-                    inputFields: testSettings.inputFields as Prisma.InputJsonValue,
+                    testId: test.id,
+                    version: test.version,
+                    title: test.title,
+                    description: test.description,
+                    status: test.status,
                 },
             })
-        } else {
-            await prisma.testSettings.create({
-                data: {
-                    ...testSettings,
-                    testId,
-                    inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-                },
+
+            // Создание снапшотов вопросов
+            for (const question of test.questions) {
+                const questionSnapshot = await tx.questionSnapshot.create({
+                    data: {
+                        snapshotId: newSnapshot.id,
+                        originalId: question.id,
+                        text: question.text,
+                        order: question.order,
+                        type: question.type,
+                    },
+                })
+
+                // Создание снапшотов ответов
+                await tx.answerSnapshot.createMany({
+                    data: question.answers.map(answer => ({
+                        questionId: questionSnapshot.id,
+                        originalId: answer.id,
+                        text: answer.text,
+                        isCorrect: answer.isCorrect,
+                    })),
+                })
+            }
+
+            // Создание снапшота настроек
+            if (test.settings) {
+                await tx.testSettingsSnapshot.create({
+                    data: {
+                        snapshotId: newSnapshot.id,
+                        requireRegistration: test.settings.requireRegistration,
+                        inputFields: test.settings.inputFields ?? [],
+                        showDetailedResults: test.settings.showDetailedResults,
+                        shuffleQuestions: test.settings.shuffleQuestions,
+                        shuffleAnswers: test.settings.shuffleAnswers,
+                        timeLimit: test.settings.timeLimit,
+                    },
+                })
+            }
+
+            // Инкремент версии теста
+            await tx.test.update({
+                where: { id: testId },
+                data: { version: test.version + 1 },
             })
-        }
-        await redisClient.del(`test:${testId}`)!
+
+            await redisClient.del(`test:${testId}`)
+        })
     }
     // Обновление краткой информации о тесте
     async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo) {
         return prisma.$transaction(async tx => {
+            const test = await tx.test.findUnique({
+                where: { id: testId },
+                include: {
+                    questions: { include: { answers: true } },
+                    settings: true,
+                },
+            })
+
+            if (!test) throw ApiError.NotFound("Тест не найден")
+
             await tx.test.update({
                 where: { id: testId },
                 data: {
@@ -62,8 +131,71 @@ class TestService {
                     description: updatedShortInfo.description,
                 },
             })
+
+            // Новый снапшот
+            await this.createTestSnapshot(tx, test)
+            await tx.test.update({
+                where: { id: testId },
+                data: { version: test.version + 1 },
+            })
+
             await redisClient.del(`test:${testId}`)
         })
+    }
+
+    async createTestSnapshot(
+        tx: Prisma.TransactionClient,
+        test: Test & {
+            questions: (Question & { answers: Answer[] })[]
+            settings: TestSettings | null
+        }
+    ) {
+        const newSnapshot = await tx.testSnapshot.create({
+            data: {
+                testId: test.id,
+                version: test.version,
+                title: test.title,
+                description: test.description,
+                status: test.status,
+            },
+        })
+
+        for (const question of test.questions) {
+            const questionSnapshot = await tx.questionSnapshot.create({
+                data: {
+                    snapshotId: newSnapshot.id,
+                    originalId: question.id,
+                    text: question.text,
+                    order: question.order,
+                    type: question.type,
+                },
+            })
+
+            await tx.answerSnapshot.createMany({
+                data: question.answers.map(answer => ({
+                    questionId: questionSnapshot.id,
+                    originalId: answer.id,
+                    text: answer.text,
+                    isCorrect: answer.isCorrect,
+                })),
+            })
+        }
+
+        if (test.settings) {
+            await tx.testSettingsSnapshot.create({
+                data: {
+                    snapshotId: newSnapshot.id,
+                    requireRegistration: test.settings.requireRegistration,
+                    inputFields: test.settings.inputFields ?? [],
+                    showDetailedResults: test.settings.showDetailedResults,
+                    shuffleQuestions: test.settings.shuffleQuestions,
+                    shuffleAnswers: test.settings.shuffleAnswers,
+                    timeLimit: test.settings.timeLimit,
+                },
+            })
+        }
+
+        return newSnapshot
     }
     // Создание теста без вопросов
     async createTest(authorId: string, testData: TestDTO): Promise<TestDTO> {
@@ -108,6 +240,18 @@ class TestService {
             })
             await redisClient.del(`user_tests:${authorId}`)
 
+            // Создаем начальный снапшот
+            const newSnapshot = await this.createTestSnapshot(tx, {
+                ...createdTest,
+                settings,
+                questions: [],
+            })
+
+            await tx.test.update({
+                where: { id: createdTest.id },
+                data: { version: 1 },
+            })
+
             return mapToResponseTest({
                 ...createdTest,
                 settings,
@@ -119,13 +263,11 @@ class TestService {
     // Добавление вопросов к существующему тесту
     async addQuestions(testId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
         return prisma.$transaction(async transaction => {
-            if (!isValidUUID(testId)) {
-                throw ApiError.NotFound("Тест не найден")
-            }
-
-            const existingTest = await transaction.test.findUnique({
+            const test = await transaction.test.findUnique({
                 where: { id: testId },
                 include: {
+                    questions: { include: { answers: true } },
+                    settings: true,
                     author: {
                         select: {
                             id: true,
@@ -138,7 +280,7 @@ class TestService {
                 },
             })
 
-            if (!existingTest) throw ApiError.NotFound("Тест не найден")
+            if (!test) throw ApiError.NotFound("Тест не найден")
             // Создание новых вопросов с ответами
             const createdQuestions = await Promise.all(
                 updateTestData.questions.map(async (questionData, index) => {
@@ -171,10 +313,16 @@ class TestService {
             const validQuestions = createdQuestions.filter(
                 (question): question is Question & { answers: Answer[] } => question !== null
             )
+            const newSnapshot = await this.createTestSnapshot(transaction, test)
+            await transaction.test.update({
+                where: { id: testId },
+                data: { version: test.version + 1 },
+            })
+
             await redisClient.del(`test:${testId}`)
 
             return mapToResponseTest({
-                ...existingTest,
+                ...test,
                 questions: validQuestions,
             })
         })
@@ -532,6 +680,12 @@ class TestService {
             throw ApiError.BadRequest("Некорректный ID снимка теста")
         }
 
+        const cacheKey = `test_snapshot:${snapshotId}`
+        const cachedSnapshot = await redisClient.get(cacheKey)
+        if (cachedSnapshot) {
+            return JSON.parse(cachedSnapshot)
+        }
+
         const snapshot = await prisma.testSnapshot.findUnique({
             where: { id: snapshotId },
             include: {
@@ -565,55 +719,14 @@ class TestService {
             throw ApiError.NotFound("Снимок теста не найден")
         }
 
-        return {
-            snapshot: this.mapToTestSnapshotDTO(snapshot),
+        const result = {
+            snapshot: mapToTestSnapshotDTO(snapshot),
             originalTest: mapToResponseTest(snapshot.originalTest),
         }
-    }
-    private mapToTestSnapshotDTO(
-        snapshot: TestSnapshot & {
-            questions: (QuestionSnapshot & { answers: AnswerSnapshot[] })[]
-            settings?: TestSettingsSnapshot | null
-        }
-    ): TestSnapshotDTO {
-        return {
-            id: snapshot.id,
-            testId: snapshot.testId,
-            title: snapshot.title,
-            description: snapshot.description ?? "",
-            status: snapshot.status,
-            createdAt: snapshot.createdAt,
-            questions: snapshot.questions.map(q => ({
-                id: q.id,
-                snapshotId: q.snapshotId,
-                originalId: q.originalId,
-                text: q.text,
-                order: q.order,
-                type: q.type,
-                createdAt: q.createdAt,
-                answers: q.answers.map(a => ({
-                    id: a.id,
-                    questionId: a.questionId,
-                    originalId: a.originalId,
-                    text: a.text,
-                    isCorrect: a.isCorrect,
-                    createdAt: a.createdAt,
-                })),
-            })),
-            settings: snapshot.settings
-                ? {
-                      id: snapshot.settings.id,
-                      snapshotId: snapshot.settings.snapshotId,
-                      requireRegistration: snapshot.settings.requireRegistration,
-                      inputFields: snapshot.settings.inputFields,
-                      showDetailedResults: snapshot.settings.showDetailedResults,
-                      shuffleQuestions: snapshot.settings.shuffleQuestions,
-                      shuffleAnswers: snapshot.settings.shuffleAnswers,
-                      timeLimit: snapshot.settings.timeLimit,
-                      createdAt: snapshot.settings.createdAt,
-                  }
-                : undefined,
-        }
+
+        await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
+
+        return result
     }
 
     async searchUserTests(query: string, userId: string, page = 1, limit = 10): Promise<TestsListDTO> {

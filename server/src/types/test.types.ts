@@ -12,10 +12,7 @@ export interface TestsListDTO {
     total: number
 }
 
-export interface SnapshotWithOriginalTestDTO {
-    snapshot: TestSnapshotDTO
-    originalTest: TestDTO
-}
+
 export interface QuestionDTO {
     id: string
     text: string
@@ -102,6 +99,15 @@ export interface ShortTestInfo {
     description?: string
 }
 
+
+
+
+
+export interface SnapshotWithOriginalTestDTO {
+    snapshot: TestSnapshotDTO
+    originalTest: TestDTO
+}
+
 export interface TestSnapshotDTO {
     id: string
     testId: string
@@ -115,7 +121,7 @@ export interface TestSnapshotDTO {
 
 export interface QuestionSnapshotDTO {
     id: string
-    snapshotId: string
+    // snapshotId: string
     originalId: string
     text: string
     order: number
@@ -135,7 +141,7 @@ export interface AnswerSnapshotDTO {
 
 export interface TestSettingsSnapshotDTO {
     id: string
-    snapshotId: string
+    // snapshotId: string
     requireRegistration: boolean
     inputFields?: JsonValue
     showDetailedResults: boolean
