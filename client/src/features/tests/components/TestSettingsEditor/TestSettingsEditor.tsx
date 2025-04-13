@@ -5,7 +5,7 @@ import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
-import { ChangeEvent, FC } from "react"
+import { ChangeEvent, FC, useMemo } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import styles from "./TestSettingsEditor.module.scss"
 
@@ -16,6 +16,16 @@ interface TestSettingsEditorProps {
 }
 
 const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, onCancel, settings }) => {
+    const initialValues = {
+        requireRegistration: settings.requireRegistration ? "Да" : "Нет",
+        showDetailedResults: settings.showDetailedResults ? "Да" : "Нет",
+        shuffleQuestions: settings.shuffleQuestions ? "Да" : "Нет",
+        shuffleAnswers: settings.shuffleAnswers ? "Да" : "Нет",
+        inputFields: settings.inputFields || [],
+        hours: String(Math.floor((settings.timeLimit ?? 0) / 3600)),
+        minutes: String(Math.floor(((settings.timeLimit ?? 0) % 3600) / 60)),
+        seconds: String((settings.timeLimit ?? 0) % 60),
+    }
     const {
         register,
         handleSubmit,
@@ -24,46 +34,45 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
         formState: { errors },
     } = useForm({
         mode: "onChange",
-        defaultValues: {
-            requireRegistration: settings.requireRegistration ? "Да" : "Нет",
-            showDetailedResults: settings.showDetailedResults ? "Да" : "Нет",
-            shuffleQuestions: settings.shuffleQuestions ? "Да" : "Нет",
-            shuffleAnswers: settings.shuffleAnswers ? "Да" : "Нет",
-            inputFields: settings.inputFields || [],
-            hours: Math.floor((settings.timeLimit ?? 0) / 3600),
-            minutes: Math.floor(((settings.timeLimit ?? 0) % 3600) / 60),
-            seconds: (settings.timeLimit ?? 0) % 60,
-            timeLimit: settings.timeLimit ?? 0,
-        },
+        defaultValues: initialValues,
     })
 
-    // const watchedValues = watch()
-    const inputFields = watch("inputFields")
+    const watchedValues = watch()
+    const { inputFields } = watch()
 
-    // Проверяем, изменились ли данные формы
-    // const hasChanged = () => {
-    //     // Проверка основных настроек
-    //     if ((settings.requireRegistration ? "Да" : "Нет") !== watchedValues.requireRegistration) return true
-    //     if ((settings.showDetailedResults ? "Да" : "Нет") !== watchedValues.showDetailedResults) return true
-    //     if ((settings.shuffleQuestions ? "Да" : "Нет") !== watchedValues.shuffleQuestions) return true
-    //     if ((settings.shuffleAnswers ? "Да" : "Нет") !== watchedValues.shuffleAnswers) return true
+    // Функция для сравнения массивов (например, для inputFields)
+    const arraysEqual = (a: any[], b: any[]) => {
+        if (a.length !== b.length) return false
+        return a.every(item => b.includes(item))
+    }
 
-    //     // Проверка полей ввода
-    //     const originalInputFields = settings.inputFields || []
-    //     if (originalInputFields.length !== inputFields.length) return true
-    //     for (const field of originalInputFields) {
-    //         if (!inputFields.includes(field)) return true
-    //     }
+    const isChanged = useMemo(() => {
+        // Проверка для строковых полей с форматированием пробелов
+        if (
+            formatSpaces(watchedValues.requireRegistration) !== formatSpaces(initialValues.requireRegistration) ||
+            formatSpaces(watchedValues.showDetailedResults) !== formatSpaces(initialValues.showDetailedResults) ||
+            formatSpaces(watchedValues.shuffleQuestions) !== formatSpaces(initialValues.shuffleQuestions) ||
+            formatSpaces(watchedValues.shuffleAnswers) !== formatSpaces(initialValues.shuffleAnswers)
+        ) {
+            return true
+        }
 
-    //     // Проверка лимита времени
-    //     const originalTimeInSeconds = settings.timeLimit ?? 0
-    //     const currentTimeInSeconds =
-    //         Number(watchedValues.hours) * 3600 + Number(watchedValues.minutes) * 60 + Number(watchedValues.seconds)
+        // Проверка для массива inputFields
+        if (!arraysEqual(watchedValues.inputFields, initialValues.inputFields)) {
+            return true
+        }
 
-    //     if (originalTimeInSeconds !== currentTimeInSeconds) return true
+        // Проверка для временных полей (приводим к строке, чтобы сравнение было корректным)
+        if (
+            formatSpaces(String(watchedValues.hours)) !== formatSpaces(initialValues.hours) ||
+            formatSpaces(String(watchedValues.minutes)) !== formatSpaces(initialValues.minutes) ||
+            formatSpaces(String(watchedValues.seconds)) !== formatSpaces(initialValues.seconds)
+        ) {
+            return true
+        }
 
-    //     return false
-    // }
+        return false
+    }, [watchedValues, initialValues])
 
     const onSubmit: SubmitHandler<any> = data => {
         onSettingsComplete({
@@ -72,10 +81,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             showDetailedResults: data.showDetailedResults === "Да",
             shuffleQuestions: data.shuffleQuestions === "Да",
             shuffleAnswers: data.shuffleAnswers === "Да",
-            timeLimit:
-                Number(data.hours) * 3600 +
-                Number(data.minutes) * 60 +
-                Number(data.seconds),
+            timeLimit: Number(data.hours) * 3600 + Number(data.minutes) * 60 + Number(data.seconds),
         })
     }
 
@@ -203,7 +209,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             </div>
             <br />
             <br />
-            <Button type="submit">
+            <Button type="submit" disabled={!isChanged}>
                 Сохранить
             </Button>
         </form>
