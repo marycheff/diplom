@@ -23,9 +23,9 @@ class AttemptController {
     async saveAnswer(req: Request, res: Response, next: NextFunction) {
         try {
             const { attemptId } = req.params
-            const { questionId, answerId } = req.body
+            const { questionId, answersIds, timeSpent } = req.body
 
-            await attemptService.saveAnswer(attemptId, questionId, answerId)
+            await attemptService.saveAnswer(attemptId, questionId, answersIds, timeSpent)
             res.status(204).send()
         } catch (e) {
             next(e)

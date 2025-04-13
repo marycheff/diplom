@@ -75,7 +75,7 @@ class AttemptService {
     }
 
     // Сохранение ответа
-    async saveAnswer(attemptId: string, questionId: string, answerId: string, timeSpent?: number): Promise<void> {
+    async saveAnswer(attemptId: string, questionId: string, answersIds: string[], timeSpent = 0): Promise<void> {
         const attempt = await prisma.testAttempt.findUnique({
             where: { id: attemptId },
             include: { test: true },
@@ -91,33 +91,63 @@ class AttemptService {
         // Проверка принадлежности вопроса тесту
         const question = await prisma.question.findUnique({
             where: { id: questionId, testId: attempt.testId },
+            include: { answers: true }, // Получаем все возможные ответы для вопроса
         })
 
         if (!question) throw ApiError.BadRequest("Вопрос не принадлежит тесту")
 
-        // Проверка принадлежности ответа вопросу
-        const answer = await prisma.answer.findUnique({
-            where: { id: answerId, questionId },
-        })
+        // Проверка типа вопроса и количества ответов
+        if (question.type === "SINGLE_CHOICE" && answersIds.length > 1) {
+            throw ApiError.BadRequest("Для вопроса с одиночным выбором можно указать только один ответ")
+        }
 
-        if (!answer) throw ApiError.BadRequest("Ответ не принадлежит вопросу")
+        // Проверка принадлежности всех ответов вопросу
+        if (answersIds.length > 0) {
+            const validAnswerIds = question.answers.map(a => a.id)
+            const allAnswersValid = answersIds.every(id => validAnswerIds.includes(id))
 
-        // Удаляем предыдущий ответ на этот вопрос (если есть)
-        await prisma.userAnswer.deleteMany({
-            where: { attemptId, questionId },
-        })
+            if (!allAnswersValid) {
+                if (question.type == "MULTIPLE_CHOICE")
+                    throw ApiError.BadRequest("Один или несколько ответов не принадлежат вопросу")
+                throw ApiError.BadRequest("Ответ не принадлежат вопросу")
+            }
+            // } else if (question.type !== "TEXT") {
+            //     // Если это не текстовый вопрос
+            //     throw ApiError.BadRequest("Необходимо указать хотя бы один ответ")
+            // }
 
-        // Сохраняем новый ответ
-        await prisma.userAnswer.create({
-            data: {
-                attemptId,
-                questionId,
-                answerId,
-                timeSpent,
-                answeredAt: new Date(),
-            },
-        })
-        await redisClient.del(`attempt:${attemptId}`)
+            // Удаляем предыдущие ответы на этот вопрос (если есть)
+            await prisma.userAnswer.deleteMany({
+                where: { attemptId, questionId },
+            })
+
+            // Сохраняем новые ответы
+            if (answersIds.length > 0) {
+                await prisma.userAnswer.createMany({
+                    data: answersIds.map(answerId => ({
+                        attemptId,
+                        questionId,
+                        answerId,
+                        timeSpent,
+                        answeredAt: new Date(),
+                    })),
+                })
+                // } else {
+                //     // Для текстового ответа (если будет добавлен в будущем)
+                //     // Предполагаем, что в этом случае answersIds[0] содержит текст ответа
+                //     await prisma.userAnswer.create({
+                //         data: {
+                //             attemptId,
+                //             questionId,
+                //             textAnswer: answersIds[0], // Текстовый ответ
+                //             timeSpent,
+                //             answeredAt: new Date(),
+                //         },
+                //     })
+            }
+
+            await redisClient.del(`attempt:${attemptId}`)
+        }
     }
 
     // Завершение теста и подсчет результатов

@@ -1,4 +1,5 @@
 import { PreTestUserData } from "@/types/inputFields"
+import { isValidUUID } from "@/utils/validator"
 import { z } from "zod"
 
 export const shortInfoSchema = z.object({
@@ -42,7 +43,9 @@ export const updateQuestionSchema = z.object({
 // Начало попытки
 export const startTestAttemptSchema = z.object({
     params: z.object({
-        testId: z.string().min(1, "ID теста обязательно"),
+        testId: z.string().min(1, "ID теста обязательно").refine(isValidUUID, {
+            message: "ID теста должен быть корректным UUID",
+        }),
     }),
     body: z.object({
         userData: z
@@ -57,18 +60,45 @@ export const startTestAttemptSchema = z.object({
 // Сохранение ответа
 export const saveAnswerSchema = z.object({
     params: z.object({
-        attemptId: z.string().min(1, "ID попытки обязательно"),
+        attemptId: z.string().min(1, "ID попытки обязательно").refine(isValidUUID, {
+            message: "ID попытки должен быть корректным UUID",
+        }),
     }),
     body: z.object({
-        questionId: z.string().min(1, "ID вопроса обязательно"),
-        answerId: z.string().min(1, "ID ответа обязательно"),
+        questionId: z.string().min(1, "ID вопроса обязательно").refine(isValidUUID, {
+            message: "ID вопроса должен быть корректным UUID",
+        }),
+        answersIds: z
+            .array(
+                z.string().min(1, "ID ответа не может быть пустым").refine(isValidUUID, {
+                    message: "ID ответа должен быть корректным UUID",
+                })
+            )
+            .nonempty("Должен быть указан хотя бы один ответ")
+            .or(
+                z
+                    .string()
+                    .min(1, "ID ответа обязательно")
+                    .refine(isValidUUID, {
+                        message: "ID ответа должен быть корректным UUID",
+                    })
+                    .transform(val => [val])
+            )
+            .refine(val => Array.isArray(val), {
+                message: "Параметр answersIds должен быть массивом идентификаторов",
+            })
+            .refine(val => new Set(val).size === val.length, {
+                message: "Массив answersIds содержит дублирующиеся идентификаторы",
+            }),
+        timeSpent: z.number().optional().default(0),
     }),
 })
-
 // Завершение попытки
 export const completeTestAttemptSchema = z.object({
     params: z.object({
-        attemptId: z.string().min(1, "ID попытки обязательно"),
+        attemptId: z.string().min(1, "ID попытки обязательно").refine(isValidUUID, {
+            message: "ID попытки должен быть корректным UUID",
+        }),
     }),
 })
 
