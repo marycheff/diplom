@@ -36,18 +36,18 @@ class TestController {
             next(error)
         }
     }
-    async updateTestQuestions(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { testId } = req.params
-            const questions: QuestionDTO[] = req.body
+    // async updateTestQuestions(req: Request, res: Response, next: NextFunction) {
+    //     try {
+    //         const { testId } = req.params
+    //         const questions: QuestionDTO[] = req.body
 
-            await testService.updateTestQuestions(testId, questions)
+    //         await testService.updateTestQuestions(testId, questions)
 
-            res.status(200)
-        } catch (error) {
-            next(error)
-        }
-    }
+    //         res.status(200)
+    //     } catch (error) {
+    //         next(error)
+    //     }
+    // }
     async updateTestSettings(req: Request, res: Response, next: NextFunction) {
         try {
             const testId = req.test?.id

@@ -13,6 +13,9 @@ import {
 import { validateRequest } from "@/middleware/validate-request.middleware"
 import {
     completeTestAttemptSchema,
+    getAttemptSchema,
+    getTestSnapshotSchema,
+    getUserAttemptsSchema,
     saveAnswerSchema,
     shortInfoSchema,
     startTestAttemptSchema,
@@ -137,11 +140,30 @@ router.post(
     attemptController.completeTestAttempt
 )
 
-router.get("/attempts/:attemptId/", authMiddleware, adminMiddleware, attemptController.getAttempt)
+router.get(
+    "/attempts/:attemptId/",
+    authMiddleware,
+    adminMiddleware,
+    validateRequest(getAttemptSchema),
+    attemptController.getAttempt
+)
 
 router.get("/:testId/attempts", authMiddleware, testOwnershipMiddleware, attemptController.getTestAttempts)
 
+// router.get(
+//     "/user-attempts/:userId",
+//     authMiddleware,
+//     testOwnershipMiddleware,
+//     validateRequest(getUserAttemptsSchema),
+//     attemptController.getUserAttempts
+// )
+
 // Получение снимка теста по ID
-router.get("/snapshot/:snapshotId", authMiddleware, testController.getTestSnapshot)
+router.get(
+    "/snapshot/:snapshotId",
+    authMiddleware,
+    validateRequest(getTestSnapshotSchema),
+    testController.getTestSnapshot
+)
 
 export default router

@@ -115,6 +115,27 @@ export const testSettingsSchema = z.object({
     showDetailedResults: z.boolean().optional(),
 })
 
+export const getTestSnapshotSchema = z.object({
+    params: z.object({
+        snapshotId: z.string().min(1, "ID снимка обязательно").refine(isValidUUID, {
+            message: "ID снимка должен быть корректным UUID",
+        }),
+    }),
+})
+export const getAttemptSchema = z.object({
+    params: z.object({
+        attemptId: z.string().min(1, "ID попытки обязательно").refine(isValidUUID, {
+            message: "ID попытки должен быть корректным UUID",
+        }),
+    }),
+})
+export const getUserAttemptsSchema = z.object({
+    params: z.object({
+        userId: z.string().min(1, "ID пользователя обязательно").refine(isValidUUID, {
+            message: "ID пользователя должен быть корректным UUID",
+        }),
+    }),
+})
 // export const testSettingsSchema = z
 //     .object({
 //         requireRegistration: z.boolean().optional(),

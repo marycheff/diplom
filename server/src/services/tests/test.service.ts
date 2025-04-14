@@ -327,98 +327,98 @@ class TestService {
             })
         })
     }
-    async updateTestQuestions(testId: string, questions: QuestionDTO[]) {
-        const lastOrderQuestion = await prisma.question.findFirst({
-            where: { testId },
-            orderBy: { order: "desc" },
-            select: { order: true },
-        })
+    // async updateTestQuestions(testId: string, questions: QuestionDTO[]) {
+    //     const lastOrderQuestion = await prisma.question.findFirst({
+    //         where: { testId },
+    //         orderBy: { order: "desc" },
+    //         select: { order: true },
+    //     })
 
-        let nextOrder = (lastOrderQuestion?.order || 0) + 1
+    //     let nextOrder = (lastOrderQuestion?.order || 0) + 1
 
-        return await prisma.$transaction(async tx => {
-            const existingQuestions = questions.filter(q => isValidUUID(q.id))
-            const newQuestions = questions.filter(q => !isValidUUID(q.id))
+    //     return await prisma.$transaction(async tx => {
+    //         const existingQuestions = questions.filter(q => isValidUUID(q.id))
+    //         const newQuestions = questions.filter(q => !isValidUUID(q.id))
 
-            // Update existing questions
-            await Promise.all(
-                existingQuestions.map(async question => {
-                    // First delete related UserAnswer records
-                    await tx.userAnswer.deleteMany({
-                        where: {
-                            answer: {
-                                questionId: question.id,
-                            },
-                        },
-                    })
+    //         // Update existing questions
+    //         await Promise.all(
+    //             existingQuestions.map(async question => {
+    //                 // First delete related UserAnswer records
+    //                 await tx.userAnswer.deleteMany({
+    //                     where: {
+    //                         answer: {
+    //                             questionId: question.id,
+    //                         },
+    //                     },
+    //                 })
 
-                    // Then update the question and its answers
-                    return tx.question.update({
-                        where: { id: question.id },
-                        data: {
-                            text: question.text,
-                            order: question.order,
-                            type: question.type,
-                            answers: {
-                                deleteMany: {},
-                                create: question.answers.map(answer => ({
-                                    text: answer.text,
-                                    isCorrect: answer.isCorrect,
-                                })),
-                            },
-                        },
-                    })
-                })
-            )
+    //                 // Then update the question and its answers
+    //                 return tx.question.update({
+    //                     where: { id: question.id },
+    //                     data: {
+    //                         text: question.text,
+    //                         order: question.order,
+    //                         type: question.type,
+    //                         answers: {
+    //                             deleteMany: {},
+    //                             create: question.answers.map(answer => ({
+    //                                 text: answer.text,
+    //                                 isCorrect: answer.isCorrect,
+    //                             })),
+    //                         },
+    //                     },
+    //                 })
+    //             })
+    //         )
 
-            // Rest of the code remains the same...
-            if (newQuestions.length > 0) {
-                await tx.question.createMany({
-                    data: newQuestions.map(question => ({
-                        text: question.text,
-                        order: nextOrder++,
-                        type: question.type,
-                        testId,
-                    })),
-                })
+    //         // Rest of the code remains the same...
+    //         if (newQuestions.length > 0) {
+    //             await tx.question.createMany({
+    //                 data: newQuestions.map(question => ({
+    //                     text: question.text,
+    //                     order: nextOrder++,
+    //                     type: question.type,
+    //                     testId,
+    //                 })),
+    //             })
 
-                const createdQuestions = await tx.question.findMany({
-                    where: {
-                        testId,
-                        order: { gte: nextOrder - newQuestions.length },
-                    },
-                    select: { id: true, order: true },
-                })
+    //             const createdQuestions = await tx.question.findMany({
+    //                 where: {
+    //                     testId,
+    //                     order: { gte: nextOrder - newQuestions.length },
+    //                 },
+    //                 select: { id: true, order: true },
+    //             })
 
-                await Promise.all(
-                    createdQuestions.map(createdQuestion => {
-                        const question = newQuestions.find(
-                            q => q.order === createdQuestion.order - (nextOrder - newQuestions.length - 1)
-                        )
-                        const answers = question?.answers || []
+    //             await Promise.all(
+    //                 createdQuestions.map(createdQuestion => {
+    //                     const question = newQuestions.find(
+    //                         q => q.order === createdQuestion.order - (nextOrder - newQuestions.length - 1)
+    //                     )
+    //                     const answers = question?.answers || []
 
-                        // Only create answers if there are any
-                        if (answers.length > 0) {
-                            return tx.answer.createMany({
-                                data: answers.map(answer => ({
-                                    text: answer.text,
-                                    isCorrect: answer.isCorrect,
-                                    questionId: createdQuestion.id,
-                                })),
-                            })
-                        }
-                        return Promise.resolve()
-                    })
-                )
-            }
+    //                     // Only create answers if there are any
+    //                     if (answers.length > 0) {
+    //                         return tx.answer.createMany({
+    //                             data: answers.map(answer => ({
+    //                                 text: answer.text,
+    //                                 isCorrect: answer.isCorrect,
+    //                                 questionId: createdQuestion.id,
+    //                             })),
+    //                         })
+    //                     }
+    //                     return Promise.resolve()
+    //                 })
+    //             )
+    //         }
 
-            await redisClient.del(`test:${testId}`)
-            return tx.test.findUnique({
-                where: { id: testId },
-                include: { questions: { include: { answers: true } } },
-            })
-        })
-    }
+    //         await redisClient.del(`test:${testId}`)
+    //         return tx.test.findUnique({
+    //             where: { id: testId },
+    //             include: { questions: { include: { answers: true } } },
+    //         })
+    //     })
+    // }
 
     // Получение всех тестов пользователя
     async getMyTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
@@ -676,10 +676,6 @@ class TestService {
         }
     }
     async getTestSnapshot(snapshotId: string): Promise<SnapshotWithOriginalTestDTO> {
-        if (!isValidUUID(snapshotId)) {
-            throw ApiError.BadRequest("Некорректный ID снимка теста")
-        }
-
         const cacheKey = `test_snapshot:${snapshotId}`
         const cachedSnapshot = await redisClient.get(cacheKey)
         if (cachedSnapshot) {

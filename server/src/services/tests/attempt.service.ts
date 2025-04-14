@@ -3,7 +3,6 @@ import { mapToTestAttemptDTO } from "@/services/mappers/test.mappers"
 import { PreTestUserData, PreTestUserDataLabels } from "@/types/inputFields"
 import { AttemptsListDTO, TestAttemptDTO } from "@/types/test.types"
 import { redisClient } from "@/utils/redis-client"
-import { isValidUUID } from "@/utils/validator"
 import { Prisma, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
@@ -116,14 +115,43 @@ class AttemptService {
             //     throw ApiError.BadRequest("Необходимо указать хотя бы один ответ")
             // }
 
-            // Удаляем предыдущие ответы на этот вопрос (если есть)
-            await prisma.userAnswer.deleteMany({
-                where: { attemptId, questionId },
-            })
+            // // Удаляем предыдущие ответы на этот вопрос (если есть)
+            // await prisma.userAnswer.deleteMany({
+            //     where: { attemptId, questionId },
+            // })
 
-            // Сохраняем новые ответы
-            if (answersIds.length > 0) {
-                await prisma.userAnswer.createMany({
+            // // Сохраняем новые ответы
+            // if (answersIds.length > 0) {
+            //     await prisma.userAnswer.createMany({
+            //         data: answersIds.map(answerId => ({
+            //             attemptId,
+            //             questionId,
+            //             answerId,
+            //             timeSpent,
+            //             answeredAt: new Date(),
+            //         })),
+            //     })
+            //     // } else {
+            //     //     // Для текстового ответа (если будет добавлен в будущем)
+            //     //     // Предполагаем, что в этом случае answersIds[0] содержит текст ответа
+            //     //     await prisma.userAnswer.create({
+            //     //         data: {
+            //     //             attemptId,
+            //     //             questionId,
+            //     //             textAnswer: answersIds[0], // Текстовый ответ
+            //     //             timeSpent,
+            //     //             answeredAt: new Date(),
+            //     //         },
+            //     //     })
+            // }
+            await prisma.$transaction(async tx => {
+                // Удаляем предыдущие ответы
+                await tx.userAnswer.deleteMany({
+                    where: { attemptId, questionId },
+                })
+
+                // Создаем новые
+                await tx.userAnswer.createMany({
                     data: answersIds.map(answerId => ({
                         attemptId,
                         questionId,
@@ -132,19 +160,7 @@ class AttemptService {
                         answeredAt: new Date(),
                     })),
                 })
-                // } else {
-                //     // Для текстового ответа (если будет добавлен в будущем)
-                //     // Предполагаем, что в этом случае answersIds[0] содержит текст ответа
-                //     await prisma.userAnswer.create({
-                //         data: {
-                //             attemptId,
-                //             questionId,
-                //             textAnswer: answersIds[0], // Текстовый ответ
-                //             timeSpent,
-                //             answeredAt: new Date(),
-                //         },
-                //     })
-            }
+            })
 
             await redisClient.del(`attempt:${attemptId}`)
         }
@@ -176,18 +192,50 @@ class AttemptService {
             if (!attempt) throw ApiError.BadRequest("Попытка не найдена")
             if (attempt.completedAt) throw ApiError.BadRequest("Тест уже завершен")
 
-            // Подсчет правильных ответов
-            const totalQuestions = attempt.test.questions.length
-            const correctAnswers = attempt.answers.filter(a => a.answer.isCorrect).length
-            const score = (correctAnswers / totalQuestions) * 100
+            // Получаем список всех вопросов теста с их правильными ответами
+            const questionsWithAnswers = await tx.question.findMany({
+                where: { testId: attempt.testId },
+                include: {
+                    answers: {
+                        where: { isCorrect: true },
+                        select: { id: true },
+                    },
+                },
+            })
+
+            // Для каждого вопроса проверяем, правильно ли на него ответил пользователь
+            let correctQuestionsCount = 0
+
+            for (const question of questionsWithAnswers) {
+                // Получаем ответы пользователя на этот вопрос
+                const userAnswersForQuestion = attempt.answers.filter(a => a.questionId === question.id)
+
+                // Получаем ID правильных ответов для этого вопроса
+                const correctAnswerIds = question.answers.map(a => a.id)
+
+                // Получаем ID ответов пользователя
+                const userAnswerIds = userAnswersForQuestion.map(a => a.answerId)
+
+                // Проверяем, совпадают ли множества правильных ответов и ответов пользователя
+                if (
+                    correctAnswerIds.length === userAnswerIds.length &&
+                    correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
+                    userAnswerIds.every(id => correctAnswerIds.includes(id))
+                ) {
+                    correctQuestionsCount++
+                }
+            }
+
+            const totalQuestions = questionsWithAnswers.length
+            const score = (correctQuestionsCount / totalQuestions) * 100
 
             // Обновление попытки
             await tx.testAttempt.update({
                 where: { id: attemptId },
                 data: {
                     score: Math.round(score * 100) / 100,
-                    status: "COMPLETED",
-                    completedAt: new Date(),
+                    // status: "COMPLETED",
+                    // completedAt: new Date(),
                 },
             })
 
@@ -232,10 +280,6 @@ class AttemptService {
     }
 
     async getAttempt(attemptId: string): Promise<TestAttemptDTO> {
-        if (!isValidUUID(attemptId)) {
-            throw ApiError.BadRequest("Некорректный ID попытки прохождения теста")
-        }
-
         const cacheKey = `attempt:${attemptId}`
         const cachedData = await redisClient.get(cacheKey)
         if (cachedData) {
@@ -292,10 +336,6 @@ class AttemptService {
     }
 
     async getUserAttempts(userId: string): Promise<TestAttemptDTO[]> {
-        if (!isValidUUID(userId)) {
-            throw ApiError.BadRequest("Некорректный ID пользователя")
-        }
-
         const attempts = await prisma.testAttempt.findMany({
             where: { userId: userId },
             include: {

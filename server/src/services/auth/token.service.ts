@@ -1,9 +1,8 @@
 import envConfig from "@/config/envConfig"
 import ApiError from "@/exceptions/api-error"
-import { PrismaClient, Token } from "@prisma/client"
+import { Token } from "@prisma/client"
 import jwt from "jsonwebtoken"
-
-const prisma = new PrismaClient()
+import tokenRepository from "@/repositories/token.repository"
 
 class TokenService {
     generateTokens(payload: object): { accessToken: string; refreshToken: string } {
@@ -15,39 +14,15 @@ class TokenService {
             // expiresIn: "30s",
             expiresIn: "30d",
         })
-
         return { accessToken, refreshToken }
     }
 
     async saveToken(userId: string, refreshToken: string): Promise<Token> {
-        try {
-            const existingToken = await prisma.token.findUnique({
-                where: { userId },
-            })
-            if (existingToken) {
-                return await prisma.token.update({
-                    where: { userId },
-                    data: { refreshToken },
-                })
-            }
-            return await prisma.token.create({
-                data: { userId, refreshToken },
-            })
-        } catch (error) {
-            throw ApiError.InternalError()
-        }
+        return tokenRepository.saveToken(userId, refreshToken)
     }
+
     async removeToken(refreshToken: string): Promise<Token> {
-        const tokenData = await prisma.token.findUnique({
-            where: { refreshToken },
-        })
-        if (!tokenData) {
-            throw new Error("Token not found")
-        }
-        await prisma.token.delete({
-            where: { refreshToken },
-        })
-        return tokenData
+        return tokenRepository.removeByRefreshToken(refreshToken)
     }
 
     validateAccessToken(token: string) {
@@ -57,6 +32,7 @@ class TokenService {
             return null
         }
     }
+
     validateRefreshToken(token: string) {
         try {
             return jwt.verify(token, envConfig.JWT_REFRESH_SECRET as string)
@@ -66,12 +42,7 @@ class TokenService {
     }
 
     async findToken(refreshToken: string): Promise<Token | null> {
-        const tokenData = await prisma.token.findUnique({
-            where: {
-                refreshToken,
-            },
-        })
-        return tokenData
+        return tokenRepository.findByRefreshToken(refreshToken)
     }
 }
 
