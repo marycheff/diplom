@@ -1,15 +1,23 @@
-import ApiError from "@/exceptions/api-error"
 import { ShortTestInfo, TestSettingsDTO } from "@/types/test.types"
 import { isValidUUID } from "@/utils/validator"
 import { Answer, Prisma, PrismaClient, Question, QuestionType, Test, TestSettings } from "@prisma/client"
 
 const prisma = new PrismaClient()
-
+type TestWithQuestionsAndSettings = Test & {
+    questions: (Question & { answers: Answer[] })[]
+    settings: TestSettings | null
+}
+type TestWithAuthor = TestWithQuestionsAndSettings & {
+    author: {
+        id: string
+        email: string
+        name: string | null
+        surname: string | null
+        patronymic: string | null
+    }
+}
 class TestRepository {
-    async findById(
-        testId: string,
-        tx?: Prisma.TransactionClient
-    ): Promise<(Test & { questions: (Question & { answers: Answer[] })[]; settings: TestSettings | null }) | null> {
+    async findById(testId: string, tx?: Prisma.TransactionClient): Promise<TestWithQuestionsAndSettings | null> {
         const client = tx || prisma
         return client.test.findUnique({
             where: { id: testId },
@@ -49,10 +57,7 @@ class TestRepository {
         })
     }
 
-    async createSnapshot(
-        test: Test & { questions: (Question & { answers: Answer[] })[]; settings: TestSettings | null },
-        tx?: Prisma.TransactionClient
-    ) {
+    async createSnapshot(test: TestWithQuestionsAndSettings, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
 
         const newSnapshot = await client.testSnapshot.create({
@@ -127,11 +132,8 @@ class TestRepository {
         return prisma.$transaction(callback)
     }
 
-    async updateSettingsWithSnapshot(testId: string, testSettings: TestSettingsDTO) {
+    async updateSettingsWithSnapshot(testId: string, testSettings: TestSettingsDTO, test: TestWithQuestionsAndSettings) {
         return this.executeTransaction(async tx => {
-            const test = await this.findById(testId, tx)
-            if (!test) throw ApiError.NotFound("Тест не найден")
-
             const existingSettings = await this.findSettingsById(testId, tx)
 
             if (existingSettings) {
@@ -147,11 +149,8 @@ class TestRepository {
         })
     }
 
-    async updateShortInfoWithSnapshot(testId: string, updatedShortInfo: ShortTestInfo) {
+    async updateShortInfoWithSnapshot(testId: string, updatedShortInfo: ShortTestInfo, test: TestWithQuestionsAndSettings) {
         return this.executeTransaction(async tx => {
-            const test = await this.findById(testId, tx)
-            if (!test) throw ApiError.NotFound("Тест не найден")
-
             await this.updateShortInfo(testId, updatedShortInfo, tx)
             await this.createSnapshot(test, tx)
             await this.incrementTestVersion(testId, test.version, tx)
@@ -311,12 +310,10 @@ class TestRepository {
                 text: string
                 isCorrect: boolean
             }[]
-        }[]
+        }[],
+        test: TestWithAuthor
     ) {
         return this.executeTransaction(async tx => {
-            const test = await this.findWithQuestionsAndAuthor(testId, tx)
-            if (!test) throw ApiError.NotFound("Тест не найден")
-
             const createdQuestions = await Promise.all(
                 questionsData.map(async (questionData, index) => {
                     const createdQuestion = await this.createQuestion(

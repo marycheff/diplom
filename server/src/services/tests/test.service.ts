@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import testRepository from "@/repositories/test.repository"
-import { mapToResponseTest, mapToTestSnapshotDTO } from "@/services/mappers/test.mappers"
+import { mapTest, mapToTestSnapshotDTO } from "@/services/mappers/test.mappers"
 import {
     ShortTestInfo,
     SnapshotWithOriginalTestDTO,
@@ -15,7 +15,10 @@ class TestService {
     // Обновление настроек теста
     async updateTestSettings(testId: string, testSettings: TestSettingsDTO) {
         try {
-            await testRepository.updateSettingsWithSnapshot(testId, testSettings)
+            const test = await testRepository.findById(testId)
+            if (!test) throw ApiError.NotFound("Тест не найден")
+
+            await testRepository.updateSettingsWithSnapshot(testId, testSettings, test)
             await redisClient.del(`test:${testId}`)
             return { success: true }
         } catch (error) {
@@ -29,7 +32,10 @@ class TestService {
     // Обновление краткой информации о тесте
     async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo) {
         try {
-            await testRepository.updateShortInfoWithSnapshot(testId, updatedShortInfo)
+            const test = await testRepository.findById(testId)
+            if (!test) throw ApiError.NotFound("Тест не найден")
+
+            await testRepository.updateShortInfoWithSnapshot(testId, updatedShortInfo, test)
             await redisClient.del(`test:${testId}`)
             return { success: true }
         } catch (error) {
@@ -54,7 +60,7 @@ class TestService {
 
             await redisClient.del(`user_tests:${authorId}`)
 
-            return mapToResponseTest({
+            return mapTest({
                 ...createdTest,
                 settings,
                 questions: [],
@@ -65,12 +71,18 @@ class TestService {
     }
     async addQuestions(testId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
         try {
-            const { test, questions } = await testRepository.addQuestionsToTest(testId, updateTestData.questions)
+            const test = await testRepository.findWithQuestionsAndAuthor(testId)
+            if (!test) throw ApiError.NotFound("Тест не найден")
 
+            const { test: updatedTest, questions } = await testRepository.addQuestionsToTest(
+                testId,
+                updateTestData.questions,
+                test
+            )
             await redisClient.del(`test:${testId}`)
 
-            return mapToResponseTest({
-                ...test,
+            return mapTest({
+                ...updatedTest,
                 questions,
             })
         } catch (error) {
@@ -82,8 +94,6 @@ class TestService {
         }
     }
 
-    // ......
-
     // Получение всех тестов пользователя
     async getMyTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
         try {
@@ -92,7 +102,7 @@ class TestService {
             const total = await testRepository.countByAuthor(userId)
 
             return {
-                tests: tests.map(test => mapToResponseTest(test)),
+                tests: tests.map(test => mapTest(test)),
                 total,
             }
         } catch (error) {
@@ -108,7 +118,7 @@ class TestService {
             const total = await testRepository.count()
 
             return {
-                tests: tests.map(test => mapToResponseTest(test)),
+                tests: tests.map(test => mapTest(test)),
                 total,
             }
         } catch (error) {
@@ -137,7 +147,7 @@ class TestService {
             const test = await testRepository.findDetailedTestById(testId)
 
             if (!test) throw ApiError.NotFound("Тест не найден")
-            const testDTO = mapToResponseTest(test)
+            const testDTO = mapTest(test)
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(testDTO))
 
             return testDTO
@@ -153,7 +163,7 @@ class TestService {
             const { result, total } = await testRepository.search(query, skip, limit)
 
             return {
-                tests: result.map(test => mapToResponseTest(test)),
+                tests: result.map(test => mapTest(test)),
                 total,
             }
         } catch (error) {
@@ -178,7 +188,7 @@ class TestService {
 
             const result = {
                 snapshot: mapToTestSnapshotDTO(snapshot),
-                originalTest: mapToResponseTest(snapshot.originalTest),
+                originalTest: mapTest(snapshot.originalTest),
             }
 
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
@@ -196,7 +206,7 @@ class TestService {
             const { result, total } = await testRepository.searchUserTests(query, userId, skip, limit)
 
             return {
-                tests: result.map(test => mapToResponseTest(test)),
+                tests: result.map(test => mapTest(test)),
                 total,
             }
         } catch (error) {

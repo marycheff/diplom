@@ -8,26 +8,37 @@ import {
     TestSettingsDTO,
     TestSnapshotDTO,
 } from "@/types/test.types"
-import { Answer, AnswerSnapshot, Question, QuestionSnapshot, Test, TestAttempt, TestSettingsSnapshot, TestSnapshot, User, UserAnswer } from "@prisma/client"
+import {
+    Answer,
+    AnswerSnapshot,
+    Question,
+    QuestionSnapshot,
+    Test,
+    TestAttempt,
+    TestSettingsSnapshot,
+    TestSnapshot,
+    User,
+    UserAnswer,
+} from "@prisma/client"
 
-export const mapToResponseAnswer = (answer: Answer): AnswerDTO => {
+export const mapAnswer = (answer: Answer): AnswerDTO => {
     return {
         id: answer.id,
         text: answer.text,
         isCorrect: answer.isCorrect,
     }
 }
-export const mapToResponseQuestion = (question: Question & { answers?: Answer[] }): QuestionDTO => {
+export const mapQuestion = (question: Question & { answers?: Answer[] }): QuestionDTO => {
     return {
         id: question.id,
         text: question.text,
         order: question.order,
         type: question.type,
-        answers: question.answers?.map(answer => mapToResponseAnswer(answer)) || [],
+        answers: question.answers?.map(answer => mapAnswer(answer)) || [],
     }
 }
 
-export const mapToResponseTest = (
+export const mapTest = (
     test: Test & {
         settings?: TestSettingsDTO | null
         questions?: (Question & { answers: Answer[] })[]
@@ -62,7 +73,7 @@ export const mapToResponseTest = (
                   timeLimit: test.settings.timeLimit,
               }
             : {},
-        questions: test.questions?.map(question => mapToResponseQuestion(question)) || [],
+        questions: test.questions?.map(question => mapQuestion(question)) || [],
     }
 }
 export const mapToAttemptQuestionDTO = (
@@ -80,12 +91,12 @@ export const mapToAttemptQuestionDTO = (
             order: question.order,
             type: question.type,
         },
-        answers: question.answers.map(mapToResponseAnswer),
+        answers: question.answers.map(mapAnswer),
         userAnswer:
             userAnswer && answer
                 ? {
                       userAnswerId: userAnswer.id, // ID из UserAnswer
-                      answer: mapToResponseAnswer(answer),
+                      answer: mapAnswer(answer),
                       timeSpent: userAnswer.timeSpent,
                       answeredAt: userAnswer.answeredAt,
                       createdAt: userAnswer.createdAt,
@@ -119,53 +130,53 @@ export const mapToTestAttemptDTO = (
         score: attempt.score ?? null,
         snapshotId: attempt.snapshotId ?? "",
         user: attempt.user ? mapUserToDto(attempt.user) : attempt.userData,
-        test: mapToResponseTest(attempt.test),
+        test: mapTest(attempt.test),
         questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
     }
 }
 
-export const mapToTestSnapshotDTO =(
-        snapshot: TestSnapshot & {
-            questions: (QuestionSnapshot & { answers: AnswerSnapshot[] })[]
-            settings?: TestSettingsSnapshot | null
-        }
-    ): TestSnapshotDTO => {
-        return {
-            id: snapshot.id,
-            testId: snapshot.testId,
-            title: snapshot.title,
-            description: snapshot.description ?? "",
-            status: snapshot.status,
-            createdAt: snapshot.createdAt,
-            settings: snapshot.settings
-                ? {
-                      id: snapshot.settings.id,
-                      //   snapshotId: snapshot.settings.snapshotId,
-                      requireRegistration: snapshot.settings.requireRegistration,
-                      inputFields: snapshot.settings.inputFields,
-                      showDetailedResults: snapshot.settings.showDetailedResults,
-                      shuffleQuestions: snapshot.settings.shuffleQuestions,
-                      shuffleAnswers: snapshot.settings.shuffleAnswers,
-                      timeLimit: snapshot.settings.timeLimit,
-                      createdAt: snapshot.settings.createdAt,
-                  }
-                : undefined,
-            questions: snapshot.questions.map(q => ({
-                id: q.id,
-                // snapshotId: q.snapshotId,
-                originalId: q.originalId,
-                text: q.text,
-                order: q.order,
-                type: q.type,
-                createdAt: q.createdAt,
-                answers: q.answers.map(a => ({
-                    id: a.id,
-                    questionId: a.questionId,
-                    originalId: a.originalId,
-                    text: a.text,
-                    isCorrect: a.isCorrect,
-                    createdAt: a.createdAt,
-                })),
-            })),
-        }
+export const mapToTestSnapshotDTO = (
+    snapshot: TestSnapshot & {
+        questions: (QuestionSnapshot & { answers: AnswerSnapshot[] })[]
+        settings?: TestSettingsSnapshot | null
     }
+): TestSnapshotDTO => {
+    return {
+        id: snapshot.id,
+        testId: snapshot.testId,
+        title: snapshot.title,
+        description: snapshot.description ?? "",
+        status: snapshot.status,
+        createdAt: snapshot.createdAt,
+        settings: snapshot.settings
+            ? {
+                  id: snapshot.settings.id,
+                  //   snapshotId: snapshot.settings.snapshotId,
+                  requireRegistration: snapshot.settings.requireRegistration,
+                  inputFields: snapshot.settings.inputFields,
+                  showDetailedResults: snapshot.settings.showDetailedResults,
+                  shuffleQuestions: snapshot.settings.shuffleQuestions,
+                  shuffleAnswers: snapshot.settings.shuffleAnswers,
+                  timeLimit: snapshot.settings.timeLimit,
+                  createdAt: snapshot.settings.createdAt,
+              }
+            : undefined,
+        questions: snapshot.questions.map(q => ({
+            id: q.id,
+            // snapshotId: q.snapshotId,
+            originalId: q.originalId,
+            text: q.text,
+            order: q.order,
+            type: q.type,
+            createdAt: q.createdAt,
+            answers: q.answers.map(a => ({
+                id: a.id,
+                questionId: a.questionId,
+                originalId: a.originalId,
+                text: a.text,
+                isCorrect: a.isCorrect,
+                createdAt: a.createdAt,
+            })),
+        })),
+    }
+}

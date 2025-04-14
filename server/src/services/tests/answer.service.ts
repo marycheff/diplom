@@ -1,5 +1,6 @@
 import ApiError from "@/exceptions/api-error"
-import { mapToResponseAnswer, mapToResponseQuestion, mapToResponseTest } from "@/services/mappers/test.mappers"
+import answerRepository from "@/repositories/answer.repository"
+import { mapAnswer, mapQuestion, mapTest } from "@/services/mappers/test.mappers"
 import { AnswerDTO, QuestionDTO, TestDTO } from "@/types/test.types"
 import { Answer, PrismaClient } from "@prisma/client"
 
@@ -7,14 +8,19 @@ const prisma = new PrismaClient()
 
 class AnswerService {
     async getQuestionAnswers(questionId: string): Promise<AnswerDTO[]> {
-        const question = await prisma.question.findUnique({
-            where: { id: questionId },
-            include: { answers: true },
-        })
-
-        if (!question) throw ApiError.NotFound("Вопрос не найден")
-
-        return question.answers.map(mapToResponseAnswer)
+        try {
+            const question = await answerRepository.findAnswersByQuestionId(questionId)
+            if (!question) {
+                throw ApiError.NotFound("Вопрос не найден")
+            }
+            return question.answers.map(mapAnswer)
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении ответов")
+        }
     }
     async isAnswerBelongsToAnyTest(answerId: string): Promise<{
         answer: AnswerDTO | null
@@ -22,88 +28,65 @@ class AnswerService {
         test: TestDTO | null
         belongsToTest: boolean
     }> {
-        const answer = await prisma.answer.findUnique({
-            where: { id: answerId },
-            include: {
-                question: {
-                    include: {
-                        test: {
-                            include: {
-                                questions: {
-                                    include: {
-                                        answers: true,
-                                    },
-                                    orderBy: { order: "asc" },
-                                },
-                                author: {
-                                    select: {
-                                        id: true,
-                                        email: true,
-                                        name: true,
-                                        surname: true,
-                                        patronymic: true,
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        })
+        try {
+            const answer = await answerRepository.findAnswerWithDetails(answerId)
 
-        if (!answer) {
-            return { answer: null, question: null, test: null, belongsToTest: false }
-        }
-        // Если ответ найден, но не принадлежит вопросу или тесту
-        if (!answer.question || !answer.question.test) {
+            if (!answer) {
+                return { answer: null, question: null, test: null, belongsToTest: false }
+            }
+
+            if (!answer.question || !answer.question.test) {
+                return {
+                    answer,
+                    question: answer.question ? mapQuestion(answer.question) : null,
+                    test: null,
+                    belongsToTest: false,
+                }
+            }
+
             return {
                 answer,
-                question: answer.question ? mapToResponseQuestion(answer.question) : null,
-                test: null,
-                belongsToTest: false,
+                question: mapQuestion(answer.question),
+                test: mapTest(answer.question.test),
+                belongsToTest: true,
             }
-        }
-        return {
-            answer,
-            question: mapToResponseQuestion(answer.question),
-            test: mapToResponseTest(answer.question.test),
-            belongsToTest: true,
+        } catch (error) {
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при проверке принадлежности ответа к тесту")
         }
     }
 
     // Удаление ответа
     async deleteAnswer(answer: Answer): Promise<void> {
-        const answerId = answer.id
-        const correctAnswers = await prisma.answer.findMany({
-            where: {
-                questionId: answer.questionId,
-                isCorrect: true,
-            },
-        })
+        try {
+            const correctAnswers = await answerRepository.findCorrectAnswers(answer.questionId)
 
-        if (correctAnswers.length === 1 && correctAnswers[0].id === answerId) {
-            const otherAnswers = await prisma.answer.findMany({
-                where: {
-                    questionId: answer.questionId,
-                    id: { not: answerId },
-                },
-            })
+            if (correctAnswers.length === 1 && correctAnswers[0].id === answer.id) {
+                const otherAnswers = await answerRepository.findOtherAnswers(answer.questionId, answer.id)
 
-            if (otherAnswers.length > 0 && otherAnswers.every(a => !a.isCorrect)) {
-                throw ApiError.BadRequest("Нельзя удалить единственный правильный ответ")
+                if (otherAnswers.length > 0 && otherAnswers.every(a => !a.isCorrect)) {
+                    throw ApiError.BadRequest("Нельзя удалить единственный правильный ответ")
+                }
             }
-        }
 
-        await prisma.answer.delete({ where: { id: answerId } })
+            await answerRepository.deleteAnswer(answer.id)
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.BadRequest("Ошибка при удалении ответа")
+        }
     }
 
     // Удаление всех ответов к вопросу
     async deleteAllAnswers(questionId: string): Promise<void> {
-        await prisma.answer.deleteMany({
-            where: {
-                questionId: questionId,
-            },
-        })
+        try {
+            await answerRepository.deleteAllByQuestionId(questionId)
+        } catch (error) {
+            console.error(error)
+            throw ApiError.BadRequest("Ошибка при удалении ответов")
+        }
     }
 }
 export default new AnswerService()
