@@ -515,7 +515,6 @@ class TestRepository {
         })
     }
 
-    // Предполагаю, что метод getSearchConditions может быть полезен для переиспользования
     getSearchConditions(query: string): Prisma.TestWhereInput {
         const orConditions: Prisma.TestWhereInput[] = [
             { title: { contains: query, mode: "insensitive" } },

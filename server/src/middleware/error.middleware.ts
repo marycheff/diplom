@@ -5,5 +5,6 @@ export const errorMiddleware = (err: Error, req: Request, res: Response, next: N
     if (err instanceof ApiError) {
         return res.status(err.status).json({ message: err.message, errors: err.errors })
     }
+    console.error(err)
     return res.status(500).json({ message: "Непредвиденная ошибка", errors: err.message })
 }

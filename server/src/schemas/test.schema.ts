@@ -47,14 +47,35 @@ export const startTestAttemptSchema = z.object({
             message: "ID теста должен быть корректным UUID",
         }),
     }),
-    body: z.object({
-        userData: z
-            .object({
-                name: z.string().optional(),
-                email: z.string().email().optional(),
-            })
-            .optional(),
-    }),
+    body: z
+        .object({
+            userData: z
+                .object({
+                    [PreTestUserData.LastName]: z.string().min(1, "Фамилия не может быть пустой").optional(),
+                    [PreTestUserData.FirstName]: z.string().min(1, "Имя не может быть пустым").optional(),
+                    [PreTestUserData.Patronymic]: z.string().min(1, "Отчество не может быть пустым").optional(),
+                    [PreTestUserData.Gender]: z.enum(["male", "female"], {
+                        errorMap: () => ({ message: "Пол должен быть указан как 'male' или 'female'" }),
+                    }).optional(),
+                    [PreTestUserData.BirthDate]: z.string().datetime({
+                        message: "Дата рождения должна быть в формате ISO",
+                    }).optional(),
+                    [PreTestUserData.Age]: z.number({
+                        required_error: "Возраст должен быть числом",
+                        invalid_type_error: "Возраст должен быть числом",
+                    }).min(0, "Возраст не может быть отрицательным").max(150, "Возраст не может быть больше 150").optional(),
+                    [PreTestUserData.City]: z.string().min(1, "Город не может быть пустым").optional(),
+                    [PreTestUserData.Country]: z.string().min(1, "Страна не может быть пустой").optional(),
+                    [PreTestUserData.Phone]: z.string().min(1, "Телефон не может быть пустым").optional(),
+                    [PreTestUserData.Email]: z.string().email("Неверный формат email").optional(),
+                    [PreTestUserData.School]: z.string().min(1, "Название школы не может быть пустым").optional(),
+                    [PreTestUserData.Grade]: z.string().min(1, "Класс не может быть пустым").optional(),
+                    [PreTestUserData.Group]: z.string().min(1, "Группа не может быть пустой").optional(),
+                })
+                .strict("Обнаружены недопустимые поля в userData")
+                .optional(),
+        })
+        .optional(),
 })
 
 // Сохранение ответа

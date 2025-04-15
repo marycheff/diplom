@@ -9,9 +9,9 @@ class AttemptController {
         try {
             const { testId } = req.params
             const userId = req.user?.id
-            const userData = req.body.userData
+            const userData = req.body?.userData ?? null
 
-            const result = await attemptService.startTestAttempt(testId, userData, userId)
+            const result = await attemptService.startAttempt(testId, userData, userId)
 
             res.status(201).json(result)
         } catch (e) {
@@ -36,7 +36,7 @@ class AttemptController {
     async completeTestAttempt(req: Request, res: Response, next: NextFunction) {
         try {
             const { attemptId } = req.params
-            const result = await attemptService.completeTestAttempt(attemptId)
+            const result = await attemptService.completeAttempt(attemptId)
             res.json(result)
         } catch (e) {
             next(e)
@@ -50,7 +50,7 @@ class AttemptController {
             if (page < 1 || limit < 1) {
                 throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
             }
-            const attempts = await attemptService.getAllAttempts(page, limit)
+            const attempts = await attemptService.getAll(page, limit)
             res.json(attempts)
         } catch (error) {
             next(error)
@@ -61,7 +61,7 @@ class AttemptController {
     async getAttempt(req: Request, res: Response, next: NextFunction) {
         try {
             const { attemptId } = req.params
-            const attempt = await attemptService.getAttempt(attemptId)
+            const attempt = await attemptService.get(attemptId)
             res.json(attempt)
         } catch (error) {
             next(error)

@@ -1,5 +1,5 @@
 import { CreateUserDTO } from "@/types/user.types"
-import { PrismaClient, User } from "@prisma/client"
+import { Prisma, PrismaClient, User } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
@@ -99,7 +99,7 @@ class UserRepository {
         })
     }
 
-    async search(query: string, skip: number, take: number): Promise<{ data: User[]; total: number }> {
+    async search(query: string, skip: number, take: number): Promise<User[]> {
         const where = {
             OR: [
                 { email: { contains: query } },
@@ -108,18 +108,12 @@ class UserRepository {
                 { patronymic: { contains: query } },
             ],
         }
-
-        const [data, total] = await prisma.$transaction([
-            prisma.user.findMany({
-                skip,
-                take,
-                where,
-                orderBy: { createdAt: "desc" },
-            }),
-            prisma.user.count({ where }),
-        ])
-
-        return { data, total }
+        return prisma.user.findMany({
+            skip,
+            take,
+            where,
+            orderBy: { createdAt: "desc" },
+        })
     }
 
     async saveResetCode(email: string, hashedCode: string): Promise<User> {
@@ -139,8 +133,8 @@ class UserRepository {
         })
     }
 
-    async count(): Promise<number> {
-        return prisma.user.count()
+    async count(where?: Prisma.UserWhereInput): Promise<number> {
+        return prisma.user.count({ where })
     }
 }
 
