@@ -31,8 +31,8 @@ class UserService {
 
     async getUsers(page = 1, limit = 10): Promise<UsersListDTO> {
         const skip = (page - 1) * limit
-        const total = await userRepository.count()
         const users = await userRepository.findMany(skip, limit)
+        const total = await userRepository.count()
 
         return {
             users: users.map(user => mapUserToDto(user)),
@@ -105,7 +105,17 @@ class UserService {
     async searchUsers(query: string, page = 1, limit = 10): Promise<UsersListDTO> {
         try {
             const skip = (page - 1) * limit
-            const { data, total } = await userRepository.search(query, skip, limit)
+            const where = {
+                OR: [
+                    { email: { contains: query } },
+                    { name: { contains: query } },
+                    { surname: { contains: query } },
+                    { patronymic: { contains: query } },
+                ],
+            }
+
+            const data = await userRepository.search(query, skip, limit)
+            const total = await userRepository.count(where)
 
             return {
                 users: data.map(user => mapUserToDto(user)),

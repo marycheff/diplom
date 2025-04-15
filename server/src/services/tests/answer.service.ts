@@ -68,8 +68,9 @@ class AnswerService {
                     throw ApiError.BadRequest("Нельзя удалить единственный правильный ответ")
                 }
             }
-
             await answerRepository.deleteAnswer(answer.id)
+
+            
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error
@@ -83,6 +84,7 @@ class AnswerService {
     async deleteAllAnswers(questionId: string): Promise<void> {
         try {
             await answerRepository.deleteAllByQuestionId(questionId)
+            
         } catch (error) {
             console.error(error)
             throw ApiError.BadRequest("Ошибка при удалении ответов")

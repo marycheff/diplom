@@ -132,7 +132,11 @@ class TestRepository {
         return prisma.$transaction(callback)
     }
 
-    async updateSettingsWithSnapshot(testId: string, testSettings: TestSettingsDTO, test: TestWithQuestionsAndSettings) {
+    async updateSettingsWithSnapshot(
+        testId: string,
+        testSettings: TestSettingsDTO,
+        test: TestWithQuestionsAndSettings
+    ) {
         return this.executeTransaction(async tx => {
             const existingSettings = await this.findSettingsById(testId, tx)
 
@@ -149,7 +153,11 @@ class TestRepository {
         })
     }
 
-    async updateShortInfoWithSnapshot(testId: string, updatedShortInfo: ShortTestInfo, test: TestWithQuestionsAndSettings) {
+    async updateShortInfoWithSnapshot(
+        testId: string,
+        updatedShortInfo: ShortTestInfo,
+        test: TestWithQuestionsAndSettings
+    ) {
         return this.executeTransaction(async tx => {
             await this.updateShortInfo(testId, updatedShortInfo, tx)
             await this.createSnapshot(test, tx)
@@ -397,10 +405,6 @@ class TestRepository {
         })
     }
 
-    async count() {
-        return prisma.test.count()
-    }
-
     async deleteById(testId: string) {
         return prisma.$transaction(async transaction => {
             await transaction.answerSnapshot.deleteMany({
@@ -482,7 +486,37 @@ class TestRepository {
             },
         })
     }
-    async search(query: string, skip: number, limit: number) {
+    async search(query: string, skip: number, limit: number): Promise<TestWithAuthor[]> {
+        const whereCondition = this.getSearchConditions(query)
+
+        return prisma.test.findMany({
+            skip,
+            take: limit,
+            where: whereCondition,
+            include: {
+                questions: {
+                    include: {
+                        answers: true,
+                    },
+                    orderBy: { order: "asc" },
+                },
+                settings: true,
+                author: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        surname: true,
+                        patronymic: true,
+                    },
+                },
+            },
+            orderBy: { createdAt: "desc" },
+        })
+    }
+
+    // Предполагаю, что метод getSearchConditions может быть полезен для переиспользования
+    getSearchConditions(query: string): Prisma.TestWhereInput {
         const orConditions: Prisma.TestWhereInput[] = [
             { title: { contains: query, mode: "insensitive" } },
             { description: { contains: query, mode: "insensitive" } },
@@ -520,110 +554,36 @@ class TestRepository {
             orConditions.unshift({ id: { equals: query } })
         }
 
-        const [result, total] = await Promise.all([
-            prisma.test.findMany({
-                skip,
-                take: limit,
-                where: { OR: orConditions },
-                include: {
-                    questions: {
-                        include: {
-                            answers: true,
-                        },
-                        orderBy: { order: "asc" },
-                    },
-                    settings: true,
-                    author: {
-                        select: {
-                            id: true,
-                            email: true,
-                            name: true,
-                            surname: true,
-                            patronymic: true,
-                        },
-                    },
-                },
-                orderBy: { createdAt: "desc" },
-            }),
-            prisma.test.count({
-                where: { OR: orConditions },
-            }),
-        ])
-
-        return { result, total }
+        return { OR: orConditions }
     }
     async searchUserTests(query: string, userId: string, skip: number, limit: number) {
-        const orConditions: Prisma.TestWhereInput[] = [
-            { title: { contains: query, mode: "insensitive" } },
-            { description: { contains: query, mode: "insensitive" } },
-            {
-                questions: {
-                    some: {
-                        text: { contains: query, mode: "insensitive" },
-                    },
-                },
-            },
-            {
-                questions: {
-                    some: {
-                        answers: {
-                            some: {
-                                text: { contains: query, mode: "insensitive" },
-                            },
-                        },
-                    },
-                },
-            },
-            {
-                author: {
-                    OR: [
-                        { email: { contains: query, mode: "insensitive" } },
-                        { name: { contains: query, mode: "insensitive" } },
-                        { surname: { contains: query, mode: "insensitive" } },
-                        { patronymic: { contains: query, mode: "insensitive" } },
-                    ],
-                },
-            },
-        ]
-
-        if (isValidUUID(query)) {
-            orConditions.unshift({ id: { equals: query } })
+        const whereCondition = {
+            authorId: userId,
+            OR: this.getSearchConditions(query).OR,
         }
 
-        const [result, total] = await Promise.all([
-            prisma.test.findMany({
-                skip,
-                take: limit,
-                where: {
-                    authorId: userId,
-                    OR: orConditions,
+        return prisma.test.findMany({
+            skip,
+            take: limit,
+            where: whereCondition,
+            include: {
+                questions: {
+                    include: { answers: true },
+                    orderBy: { order: "asc" },
                 },
-                include: {
-                    questions: {
-                        include: {
-                            answers: true,
-                        },
-                        orderBy: { order: "asc" },
-                    },
-                    settings: true,
-                    author: {
-                        select: {
-                            id: true,
-                            email: true,
-                            name: true,
-                            surname: true,
-                            patronymic: true,
-                        },
+                settings: true,
+                author: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        surname: true,
+                        patronymic: true,
                     },
                 },
-                orderBy: { createdAt: "desc" },
-            }),
-            prisma.test.count({
-                where: { authorId: userId, OR: orConditions },
-            }),
-        ])
-
-        return { result, total }
+            },
+            orderBy: { createdAt: "desc" },
+        })
     }
 
     async findSnapshot(snapshotId: string) {
@@ -655,6 +615,15 @@ class TestRepository {
                 settings: true,
             },
         })
+    }
+    async findLatestSnapshot(testId: string) {
+        return prisma.testSnapshot.findFirst({
+            where: { testId },
+            orderBy: { version: "desc" },
+        })
+    }
+    async count(where?: Prisma.TestWhereInput): Promise<number> {
+        return prisma.test.count({ where })
     }
 }
 

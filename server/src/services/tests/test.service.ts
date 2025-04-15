@@ -13,14 +13,13 @@ import { redisClient } from "@/utils/redis-client"
 
 class TestService {
     // Обновление настроек теста
-    async updateTestSettings(testId: string, testSettings: TestSettingsDTO) {
+    async updateTestSettings(testId: string, testSettings: TestSettingsDTO): Promise<void> {
         try {
             const test = await testRepository.findById(testId)
             if (!test) throw ApiError.NotFound("Тест не найден")
 
             await testRepository.updateSettingsWithSnapshot(testId, testSettings, test)
             await redisClient.del(`test:${testId}`)
-            return { success: true }
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error
@@ -30,14 +29,13 @@ class TestService {
     }
 
     // Обновление краткой информации о тесте
-    async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo) {
+    async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo): Promise<void> {
         try {
             const test = await testRepository.findById(testId)
             if (!test) throw ApiError.NotFound("Тест не найден")
 
             await testRepository.updateShortInfoWithSnapshot(testId, updatedShortInfo, test)
             await redisClient.del(`test:${testId}`)
-            return { success: true }
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error
@@ -45,11 +43,8 @@ class TestService {
             throw ApiError.InternalError("Ошибка при обновлении настроек теста")
         }
     }
-    // дальше есть другие методы, но я их пока не писал
 
-    // --------------
     // Создание теста без вопросов
-
     async createTest(authorId: string, testData: TestDTO): Promise<TestDTO> {
         try {
             const { createdTest, settings } = await testRepository.createWithSnapshot(authorId, {
@@ -147,6 +142,7 @@ class TestService {
             const test = await testRepository.findDetailedTestById(testId)
 
             if (!test) throw ApiError.NotFound("Тест не найден")
+            console.log(test)
             const testDTO = mapTest(test)
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(testDTO))
 
@@ -160,15 +156,38 @@ class TestService {
     async searchTests(query: string, page = 1, limit = 10): Promise<TestsListDTO> {
         try {
             const skip = (page - 1) * limit
-            const { result, total } = await testRepository.search(query, skip, limit)
+            const whereCondition = testRepository.getSearchConditions(query)
+
+            const tests = await testRepository.search(query, skip, limit)
+            const total = await testRepository.count(whereCondition)
 
             return {
-                tests: result.map(test => mapTest(test)),
+                tests: tests.map(test => mapTest(test)),
                 total,
             }
         } catch (error) {
             console.error(error)
             throw ApiError.InternalError("Ошибка при поиске тестов")
+        }
+    }
+    async searchUserTests(query: string, userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
+        try {
+            const skip = (page - 1) * limit
+            const whereCondition = {
+                authorId: userId,
+                OR: testRepository.getSearchConditions(query).OR,
+            }
+
+            const tests = await testRepository.searchUserTests(query, userId, skip, limit)
+            const total = await testRepository.count(whereCondition)
+
+            return {
+                tests: tests.map(test => mapTest(test)),
+                total,
+            }
+        } catch (error) {
+            console.error(error)
+            throw ApiError.BadRequest("Ошибка при поиске тестов")
         }
     }
 
@@ -197,21 +216,6 @@ class TestService {
         } catch (error) {
             console.error(error)
             throw ApiError.InternalError("Ошибка при получении снимка")
-        }
-    }
-
-    async searchUserTests(query: string, userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
-        try {
-            const skip = (page - 1) * limit
-            const { result, total } = await testRepository.searchUserTests(query, userId, skip, limit)
-
-            return {
-                tests: result.map(test => mapTest(test)),
-                total,
-            }
-        } catch (error) {
-            console.error(error)
-            throw ApiError.BadRequest("Ошибка при поиске тестов")
         }
     }
 }
