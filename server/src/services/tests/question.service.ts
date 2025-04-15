@@ -1,5 +1,5 @@
 import ApiError from "@/exceptions/api-error"
-import questionRepository from "@/repositories/question.repository"
+import questionRepository from "@/repositories/tests/question.repository"
 import { mapQuestion, mapTest } from "@/services/mappers/test.mappers"
 import { QuestionDTO, TestDTO } from "@/types/test.types"
 

@@ -1,5 +1,5 @@
 import ApiError from "@/exceptions/api-error"
-import userRepository from "@/repositories/user.repository"
+import userRepository from "@/repositories/auth/user.repository"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
 import { UpdateUserDTO, UserDTO, UsersListDTO } from "@/types/user.types"
 import { redisClient } from "@/utils/redis-client"

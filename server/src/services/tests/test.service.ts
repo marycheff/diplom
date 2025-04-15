@@ -1,5 +1,5 @@
 import ApiError from "@/exceptions/api-error"
-import testRepository from "@/repositories/test.repository"
+import testRepository from "@/repositories/tests/test.repository"
 import { mapTest, mapToTestSnapshotDTO } from "@/services/mappers/test.mappers"
 import {
     ShortTestInfo,

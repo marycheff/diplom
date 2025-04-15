@@ -1,5 +1,5 @@
 import ApiError from "@/exceptions/api-error"
-import userRepository from "@/repositories/user.repository"
+import userRepository from "@/repositories/auth/user.repository"
 import bcrypt from "bcryptjs"
 
 class PasswordResetService {

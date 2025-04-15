@@ -1,8 +1,7 @@
-import envConfig from "@/config/envConfig"
-import ApiError from "@/exceptions/api-error"
+import envConfig from "@/config/env-сonfig"
+import tokenRepository from "@/repositories/auth/token.repository"
 import { Token } from "@prisma/client"
 import jwt from "jsonwebtoken"
-import tokenRepository from "@/repositories/token.repository"
 
 class TokenService {
     generateTokens(payload: object): { accessToken: string; refreshToken: string } {

@@ -1,5 +1,5 @@
 import ApiError from "@/exceptions/api-error"
-import answerRepository from "@/repositories/answer.repository"
+import answerRepository from "@/repositories/tests/answer.repository"
 import { mapAnswer, mapQuestion, mapTest } from "@/services/mappers/test.mappers"
 import { AnswerDTO, QuestionDTO, TestDTO } from "@/types/test.types"
 import { Answer, PrismaClient } from "@prisma/client"
@@ -69,8 +69,6 @@ class AnswerService {
                 }
             }
             await answerRepository.deleteAnswer(answer.id)
-
-            
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error
@@ -84,7 +82,6 @@ class AnswerService {
     async deleteAllAnswers(questionId: string): Promise<void> {
         try {
             await answerRepository.deleteAllByQuestionId(questionId)
-            
         } catch (error) {
             console.error(error)
             throw ApiError.BadRequest("Ошибка при удалении ответов")

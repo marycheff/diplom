@@ -1,4 +1,4 @@
-import envConfig from "@/config/envConfig"
+import envConfig from "@/config/env-сonfig"
 import ApiError from "@/exceptions/api-error"
 import { getAccessToken } from "@/services/gigachat/gigachat-token.service"
 import { getChatContent } from "@/services/gigachat/gigachat.service"

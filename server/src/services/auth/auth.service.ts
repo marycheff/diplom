@@ -1,6 +1,6 @@
-import envConfig from "@/config/envConfig"
+import envConfig from "@/config/env-сonfig"
 import ApiError from "@/exceptions/api-error"
-import userRepository from "@/repositories/user.repository"
+import userRepository from "@/repositories/auth/user.repository"
 import tokenService from "@/services/auth/token.service"
 import mailService from "@/services/mail.service"
 import { mapUserToDto } from "@/services/mappers/user.mappers"

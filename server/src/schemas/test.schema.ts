@@ -1,4 +1,4 @@
-import { PreTestUserData } from "@/types/inputFields"
+import { PreTestUserData } from "@/types/input-fields"
 import { isValidUUID } from "@/utils/validator"
 import { z } from "zod"
 
@@ -54,16 +54,25 @@ export const startTestAttemptSchema = z.object({
                     [PreTestUserData.LastName]: z.string().min(1, "Фамилия не может быть пустой").optional(),
                     [PreTestUserData.FirstName]: z.string().min(1, "Имя не может быть пустым").optional(),
                     [PreTestUserData.Patronymic]: z.string().min(1, "Отчество не может быть пустым").optional(),
-                    [PreTestUserData.Gender]: z.enum(["male", "female"], {
-                        errorMap: () => ({ message: "Пол должен быть указан как 'male' или 'female'" }),
-                    }).optional(),
-                    [PreTestUserData.BirthDate]: z.string().datetime({
-                        message: "Дата рождения должна быть в формате ISO",
-                    }).optional(),
-                    [PreTestUserData.Age]: z.number({
-                        required_error: "Возраст должен быть числом",
-                        invalid_type_error: "Возраст должен быть числом",
-                    }).min(0, "Возраст не может быть отрицательным").max(150, "Возраст не может быть больше 150").optional(),
+                    [PreTestUserData.Gender]: z
+                        .enum(["male", "female"], {
+                            errorMap: () => ({ message: "Пол должен быть указан как 'male' или 'female'" }),
+                        })
+                        .optional(),
+                    [PreTestUserData.BirthDate]: z
+                        .string()
+                        .datetime({
+                            message: "Дата рождения должна быть в формате ISO",
+                        })
+                        .optional(),
+                    [PreTestUserData.Age]: z
+                        .number({
+                            required_error: "Возраст должен быть числом",
+                            invalid_type_error: "Возраст должен быть числом",
+                        })
+                        .min(0, "Возраст не может быть отрицательным")
+                        .max(150, "Возраст не может быть больше 150")
+                        .optional(),
                     [PreTestUserData.City]: z.string().min(1, "Город не может быть пустым").optional(),
                     [PreTestUserData.Country]: z.string().min(1, "Страна не может быть пустой").optional(),
                     [PreTestUserData.Phone]: z.string().min(1, "Телефон не может быть пустым").optional(),
