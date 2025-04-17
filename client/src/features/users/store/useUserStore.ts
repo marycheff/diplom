@@ -4,17 +4,20 @@ import { UserState, UsersListDTO } from "@/shared/types/userTypes"
 import toast from "react-hot-toast"
 import { create } from "zustand"
 
+const initialState = {
+    isLoading: false,
+    isAuthChecking: false,
+    isFetching: false,
+    cache: {},
+    CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
+    lastCacheUpdateDate: null,
+}
 export const useUserStore = create<UserState>(set => {
     const withLoading = createApiHandler(set, "isLoading")
     const withFetching = createApiHandler(set, "isFetching")
 
     return {
-        isLoading: false,
-        isAuthChecking: false,
-        isFetching: false,
-        cache: {},
-        CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
-        lastCacheUpdateDate: null,
+        ...initialState,
 
         setCache: (key: string, data: UsersListDTO) => {
             set(state => ({

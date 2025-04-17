@@ -3,6 +3,16 @@ import { createApiHandler } from "@/shared/hooks/useStoreHelpers"
 import { GenerateAnswerFormData, TestState, TestsListDTO } from "@/shared/types/testTypes"
 import { create } from "zustand"
 
+const initialState = {
+    isFetching: false,
+    isLoading: false,
+    isShortInfoUpdating: false,
+    isSettingsUpdating: false,
+    cache: {},
+    MAX_CACHE_ENTRIES: 50,
+    CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
+    lastCacheUpdateDate: null,
+}
 export const useTestStore = create<TestState>(set => {
     const withFetching = createApiHandler(set, "isFetching")
     const withLoading = createApiHandler(set, "isLoading")
@@ -10,14 +20,7 @@ export const useTestStore = create<TestState>(set => {
     const withSettingsUpdating = createApiHandler(set, "isSettingsUpdating")
 
     return {
-        isFetching: false,
-        isLoading: false,
-        isShortInfoUpdating: false,
-        isSettingsUpdating: false,
-        cache: {},
-        MAX_CACHE_ENTRIES: 50,
-        CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
-        lastCacheUpdateDate: null,
+        ...initialState,
         setCache: (key: string, data: TestsListDTO) => {
             set(state => ({
                 cache: {

@@ -5,6 +5,14 @@ import { AxiosError } from "axios"
 import toast from "react-hot-toast"
 import { create } from "zustand"
 
+const initialState = {
+    user: null,
+    isAuth: false,
+    isLoading: false,
+    isAdmin: false,
+    isAuthChecking: false,
+    isEmailSending: false,
+}
 export const useAuthStore = create<AuthState>(set => {
     // Обработчики для разных состояний загрузки
     const withLoading = createApiHandler(set, "isLoading")
@@ -12,12 +20,7 @@ export const useAuthStore = create<AuthState>(set => {
     const withEmailSending = createApiHandler(set, "isEmailSending")
 
     return {
-        user: null,
-        isAuth: false,
-        isLoading: false,
-        isAdmin: false,
-        isAuthChecking: false,
-        isEmailSending: false,
+        ...initialState,
 
         login: async (email, password) => {
             const operation = async () => {

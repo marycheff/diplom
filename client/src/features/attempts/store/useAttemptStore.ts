@@ -3,13 +3,17 @@ import { createApiHandler } from "@/shared/hooks/useStoreHelpers"
 import { AttemptState, AttemptsListDTO } from "@/shared/types/testTypes"
 import { create } from "zustand"
 
+const initialState = {
+    isFetching: false,
+    cache: {},
+    CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
+    lastCacheUpdateDate: null,
+}
+
 export const useAttemptStore = create<AttemptState>(set => {
     const withFetching = createApiHandler(set, "isFetching")
     return {
-        isFetching: false,
-        cache: {},
-        CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
-        lastCacheUpdateDate: null,
+        ...initialState,
         setCache: (key: string, data: AttemptsListDTO) => {
             set(state => ({
                 cache: {

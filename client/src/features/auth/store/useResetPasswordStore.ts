@@ -4,10 +4,15 @@ import axios, { AxiosError } from "axios"
 import toast from "react-hot-toast"
 import { create } from "zustand"
 
-export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
+const initialState = {
     resetCodeTimestamp: null,
     isLoading: false,
+}
 
+export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
+
+    ...initialState,
+    
     requestResetCode: async email => {
         set({ isLoading: true })
         try {
