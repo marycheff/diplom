@@ -54,28 +54,14 @@ class QuestionRepository {
     }
 
     async delete(questionId: string) {
-        return prisma.$transaction(async transaction => {
-            await transaction.answer.deleteMany({
-                where: { questionId },
-            })
-            await transaction.question.delete({
-                where: { id: questionId },
-            })
+        return await prisma.question.delete({
+            where: { id: questionId },
         })
     }
 
     async deleteAllByTestId(testId: string) {
-        return prisma.$transaction(async transaction => {
-            await transaction.answer.deleteMany({
-                where: {
-                    question: {
-                        testId: testId,
-                    },
-                },
-            })
-            await transaction.question.deleteMany({
-                where: { testId },
-            })
+        return await prisma.question.deleteMany({
+            where: { testId },
         })
     }
 

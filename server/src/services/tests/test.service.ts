@@ -61,6 +61,9 @@ class TestService {
                 questions: [],
             })
         } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
             throw ApiError.InternalError("Ошибка при создании теста")
         }
     }
@@ -101,6 +104,9 @@ class TestService {
                 total,
             }
         } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
             console.error(error)
             throw ApiError.InternalError("Ошибка при получении тестов")
         }
@@ -117,6 +123,9 @@ class TestService {
                 total,
             }
         } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
             console.error(error)
             throw ApiError.InternalError("Ошибка при получении тестов")
         }
@@ -126,8 +135,10 @@ class TestService {
         try {
             await testRepository.deleteById(testId)
             await redisClient.del(`test:${testId}`)
-            await redisClient.del("tests:all")
         } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
             console.error(error)
             throw ApiError.InternalError("Ошибка при удалении теста")
         }
@@ -148,6 +159,9 @@ class TestService {
 
             return testDTO
         } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
             console.error(error)
             throw ApiError.InternalError("Ошибка при получении теста")
         }
@@ -166,6 +180,9 @@ class TestService {
                 total,
             }
         } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
             console.error(error)
             throw ApiError.InternalError("Ошибка при поиске тестов")
         }
@@ -186,6 +203,9 @@ class TestService {
                 total,
             }
         } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
             console.error(error)
             throw ApiError.BadRequest("Ошибка при поиске тестов")
         }
@@ -214,6 +234,9 @@ class TestService {
 
             return result
         } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
             console.error(error)
             throw ApiError.InternalError("Ошибка при получении снимка")
         }

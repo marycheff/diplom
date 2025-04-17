@@ -1,5 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import questionRepository from "@/repositories/tests/question.repository"
+import testRepository from "@/repositories/tests/test.repository"
 import { mapQuestion, mapTest } from "@/services/mappers/test.mappers"
 import { QuestionDTO, TestDTO } from "@/types/test.types"
 
@@ -91,10 +92,17 @@ class QuestionService {
 
     async deleteAllQuestions(testId: string): Promise<void> {
         try {
+            const test = testRepository.findById(testId)
+            if (!test) {
+                throw ApiError.BadRequest("Тест не найден")
+            }
             await questionRepository.deleteAllByTestId(testId)
         } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
             console.error(error)
-            throw ApiError.BadRequest("Ошибка при удалении вопросов")
+            throw ApiError.InternalError("Ошибка при получении снимка")
         }
     }
 

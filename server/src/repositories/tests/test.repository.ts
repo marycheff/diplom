@@ -406,60 +406,8 @@ class TestRepository {
     }
 
     async deleteById(testId: string) {
-        return prisma.$transaction(async transaction => {
-            await transaction.answerSnapshot.deleteMany({
-                where: {
-                    question: {
-                        snapshot: {
-                            testId: testId,
-                        },
-                    },
-                },
-            })
-
-            await transaction.questionSnapshot.deleteMany({
-                where: {
-                    snapshot: {
-                        testId: testId,
-                    },
-                },
-            })
-
-            await transaction.testSettingsSnapshot.deleteMany({
-                where: {
-                    snapshot: {
-                        testId: testId,
-                    },
-                },
-            })
-
-            await transaction.testSnapshot.deleteMany({
-                where: { testId: testId },
-            })
-
-            await transaction.answer.deleteMany({
-                where: {
-                    question: {
-                        testId: testId,
-                    },
-                },
-            })
-
-            await transaction.question.deleteMany({
-                where: {
-                    testId: testId,
-                },
-            })
-
-            await transaction.testSettings.deleteMany({
-                where: {
-                    testId: testId,
-                },
-            })
-
-            await transaction.test.delete({
-                where: { id: testId },
-            })
+        return prisma.test.delete({
+            where: { id: testId },
         })
     }
 

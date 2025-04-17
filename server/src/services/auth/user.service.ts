@@ -8,59 +8,99 @@ import bcrypt from "bcryptjs"
 
 class UserService {
     async getUserByEmail(email: string): Promise<UserDTO> {
-        const user = await userRepository.findByEmail(email)
-        if (!user) {
-            throw ApiError.BadRequest(`Пользователь c email ${email} не найден`)
+        try {
+            const user = await userRepository.findByEmail(email)
+            if (!user) {
+                throw ApiError.BadRequest(`Пользователь c email ${email} не найден`)
+            }
+            return mapUserToDto(user)
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении снимка")
         }
-        return mapUserToDto(user)
     }
 
     async getUserById(id: string): Promise<UserDTO> {
-        const cached = await redisClient.get(`user:${id}`)
-        if (cached) return JSON.parse(cached)
+        try {
+            const cached = await redisClient.get(`user:${id}`)
+            if (cached) return JSON.parse(cached)
 
-        const user = await userRepository.findById(id)
-        if (!user) {
-            throw ApiError.BadRequest(`Пользователь с id ${id} не найден`)
+            const user = await userRepository.findById(id)
+            if (!user) {
+                throw ApiError.BadRequest(`Пользователь с id ${id} не найден`)
+            }
+
+            const userDto = mapUserToDto(user)
+            await redisClient.setEx(`user:${id}`, 3600, JSON.stringify(userDto))
+            return userDto
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении снимка")
         }
-
-        const userDto = mapUserToDto(user)
-        await redisClient.setEx(`user:${id}`, 3600, JSON.stringify(userDto))
-        return userDto
     }
 
     async getUsers(page = 1, limit = 10): Promise<UsersListDTO> {
-        const skip = (page - 1) * limit
-        const users = await userRepository.findMany(skip, limit)
-        const total = await userRepository.count()
+        try {
+            const skip = (page - 1) * limit
+            const users = await userRepository.findMany(skip, limit)
+            const total = await userRepository.count()
 
-        return {
-            users: users.map(user => mapUserToDto(user)),
-            total,
+            return {
+                users: users.map(user => mapUserToDto(user)),
+                total,
+            }
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении снимка")
         }
     }
 
     private async checkPassword(email: string, password: string): Promise<boolean> {
-        const user = await userRepository.findByEmail(email)
-        if (!user) {
-            throw ApiError.BadRequest("Пользователь с таким email не найден")
-        }
+        try {
+            const user = await userRepository.findByEmail(email)
+            if (!user) {
+                throw ApiError.BadRequest("Пользователь с таким email не найден")
+            }
 
-        return bcrypt.compare(password, user.password)
+            return bcrypt.compare(password, user.password)
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении снимка")
+        }
     }
 
     async updatePassword(email: string, oldPassword: string, newPassword: string): Promise<User> {
-        const isOldPasswordValid = await this.checkPassword(email, oldPassword)
-        if (!isOldPasswordValid) {
-            throw ApiError.BadRequest("Неверный старый пароль")
-        }
+        try {
+            const isOldPasswordValid = await this.checkPassword(email, oldPassword)
+            if (!isOldPasswordValid) {
+                throw ApiError.BadRequest("Неверный старый пароль")
+            }
 
-        if (oldPassword === newPassword) {
-            throw ApiError.BadRequest("Новый пароль не может совпадать со старым")
-        }
+            if (oldPassword === newPassword) {
+                throw ApiError.BadRequest("Новый пароль не может совпадать со старым")
+            }
 
-        const hashedNewPassword = await bcrypt.hash(newPassword, 10)
-        return userRepository.updatePassword(email, hashedNewPassword)
+            const hashedNewPassword = await bcrypt.hash(newPassword, 10)
+            return userRepository.updatePassword(email, hashedNewPassword)
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении снимка")
+        }
     }
 
     async updateUser(id: string, updateData: UpdateUserDTO): Promise<void> {
@@ -69,7 +109,11 @@ class UserService {
             const cacheKey = `user:${id}`
             await redisClient.del(cacheKey)
         } catch (error) {
-            throw ApiError.BadRequest("Ошибка при обновлении данных пользователя")
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении снимка")
         }
     }
 
@@ -79,8 +123,11 @@ class UserService {
             const cacheKey = `user:${id}`
             await redisClient.del(cacheKey)
         } catch (error) {
-            console.log(error)
-            throw ApiError.BadRequest("Ошибка при удалении пользователя")
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении снимка")
         }
     }
 
@@ -89,7 +136,11 @@ class UserService {
             await userRepository.update(id, { isBlocked: true })
             await redisClient.del(`user:${id}`)
         } catch (error) {
-            throw ApiError.BadRequest("Ошибка при блокировке пользователя")
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении снимка")
         }
     }
 
@@ -98,7 +149,11 @@ class UserService {
             await userRepository.update(id, { isBlocked: false })
             await redisClient.del(`user:${id}`)
         } catch (error) {
-            throw ApiError.BadRequest("Ошибка при разблокировке пользователя")
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении снимка")
         }
     }
 
@@ -122,7 +177,11 @@ class UserService {
                 total,
             }
         } catch (error) {
-            throw ApiError.BadRequest("Ошибка при поиске пользователей")
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении снимка")
         }
     }
 }

@@ -21,7 +21,7 @@ class ApiError extends Error {
     }
     static InternalError(message?: string) {
         if (message) {
-            return new ApiError(500, `"Ошибка сервера ${message}`)
+            return new ApiError(500, `Ошибка сервера: ${message}`)
         }
         return new ApiError(500, "Ошибка сервера")
     }
