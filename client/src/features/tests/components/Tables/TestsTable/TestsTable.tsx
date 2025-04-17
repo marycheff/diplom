@@ -1,7 +1,6 @@
 import { TestDTO } from "@/shared/types/testTypes"
-import Tooltip from "@/shared/ui/Tooltip/Tooltip"
 import { shortenUuid } from "@/shared/utils/formatter"
-import { FC, useRef } from "react"
+import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./TestsTable.module.scss"
 
@@ -36,32 +35,18 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                             </thead>
                             <tbody>
                                 {tests.map(test => {
-                                    const testIdRef = useRef<HTMLElement | null>(null)
-                                    const authorIdRef = useRef<HTMLElement | null>(null)
-
                                     return (
                                         <tr key={test.id}>
                                             <td>
-                                                <Link
-                                                    to={`/admin/tests/${test.id}`}
-                                                    className="actionLink"
-                                                    ref={testIdRef as React.RefObject<HTMLAnchorElement>}>
+                                                <Link to={`/admin/tests/${test.id}`} className="actionLink">
                                                     {shortenUuid(test.id)}
                                                 </Link>
                                             </td>
                                             <td>
-                                                <Link
-                                                    to={`/admin/users/${test.author.id}`}
-                                                    className="actionLink"
-                                                    ref={authorIdRef as React.RefObject<HTMLAnchorElement>}>
+                                                <Link to={`/admin/users/${test.author.id}`} className="actionLink">
                                                     {shortenUuid(test.author.id)}
                                                 </Link>
-                                                <Tooltip content={test.id} targetRef={testIdRef} />
-                                                <Tooltip
-                                                    content={test.author.id}
-                                                    
-                                                    targetRef={authorIdRef}
-                                                />
+
                                                 <br />
                                                 {test.author.email}
                                             </td>

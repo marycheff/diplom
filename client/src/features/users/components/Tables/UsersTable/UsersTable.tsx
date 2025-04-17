@@ -1,11 +1,9 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { UserDTO } from "@/shared/types/userTypes"
-import Tooltip from "@/shared/ui/Tooltip/Tooltip"
 import { shortenUuid } from "@/shared/utils/formatter"
-import { FC, useRef } from "react"
+import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./UsersTable.module.scss"
-
 
 interface UsersTableProps {
     users: UserDTO[] | undefined
@@ -14,6 +12,30 @@ interface UsersTableProps {
 
 const UsersTable: FC<UsersTableProps> = ({ users, total }) => {
     const { user: currentUser } = useAuthStore()
+
+    const renderUserRow = (user: UserDTO) => {
+        const isCurrentUser = user.id === currentUser?.id
+
+        return (
+            <tr key={user.id}>
+                <td>
+                    {isCurrentUser ? (
+                        <span>{shortenUuid(user.id)} (Вы)</span>
+                    ) : (
+                        <Link to={`/admin/users/${user.id}`} className="actionLink">
+                            {shortenUuid(user.id)}
+                        </Link>
+                    )}
+                </td>
+                <td>{user.email}</td>
+                <td>{user.name || "—"}</td>
+                <td>{user.surname || "—"}</td>
+                <td>{user.patronymic || "—"}</td>
+                <td>{user.role}</td>
+                <td>{user.isBlocked ? "Заблокирован" : "Активен"}</td>
+            </tr>
+        )
+    }
 
     return (
         <>
@@ -36,38 +58,7 @@ const UsersTable: FC<UsersTableProps> = ({ users, total }) => {
                                     <th scope="col">Статус</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {users.map(user => {
-                                    const elementRef = useRef<HTMLElement | null>(null)
-                                    const isCurrentUser = user.id === currentUser?.id
-
-                                    return (
-                                        <tr key={user.id}>
-                                            <td>
-                                                {isCurrentUser ? (
-                                                    <span ref={elementRef as React.RefObject<HTMLSpanElement>}>
-                                                        {shortenUuid(user.id)} (Вы)
-                                                    </span>
-                                                ) : (
-                                                    <Link
-                                                        to={`/admin/users/${user.id}`}
-                                                        className="actionLink"
-                                                        ref={elementRef as React.RefObject<HTMLAnchorElement>}>
-                                                        {shortenUuid(user.id)}
-                                                    </Link>
-                                                )}
-                                                <Tooltip content={user.id} targetRef={elementRef} />
-                                            </td>
-                                            <td>{user.email}</td>
-                                            <td>{user.name || "—"}</td>
-                                            <td>{user.surname || "—"}</td>
-                                            <td>{user.patronymic || "—"}</td>
-                                            <td>{user.role}</td>
-                                            <td>{user.isBlocked ? "Заблокирован" : "Активен"}</td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
+                            <tbody>{users.map(renderUserRow)}</tbody>
                         </table>
                     </div>
                 </div>

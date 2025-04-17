@@ -61,19 +61,17 @@ const AllUsersPage = () => {
             navigate({ search: params.toString() })
             pageParam = 1
         }
+        fetchData(pageParam, query || undefined)
         setSearchQuery(query)
         setPage(pageParam)
-        fetchData(pageParam, query || undefined)
     }, [location.search, fetchData, cacheVersion])
 
     const handlePageChange = (newPage: number) => {
         const params = new URLSearchParams(location.search)
         params.set("page", newPage.toString())
-
         if (searchQuery) {
             params.set("query", searchQuery)
         }
-
         navigate({ search: params.toString() })
     }
 
@@ -87,8 +85,8 @@ const AllUsersPage = () => {
 
     const handleResetSearch = () => {
         resetSearch()
-        clearCache()
-        fetchData(1)
+        // clearCache()
+        // fetchData(1)
     }
     const handleUpdateButton = () => {
         clearCache()

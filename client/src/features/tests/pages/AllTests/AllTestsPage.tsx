@@ -15,7 +15,7 @@ const AllTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
     const { getTests, searchTests, isFetching } = useTestStore()
     const [total, setTotal] = useState<number>(0)
-    const [limit] = useState<number>(10)
+    const [limit] = useState<number>(2)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()
@@ -23,6 +23,7 @@ const AllTestsPage = () => {
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
         useCache<TestsListDTO>(useTestStore, "tests")
     const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
+
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
             if (isFetching) return
@@ -58,7 +59,6 @@ const AllTestsPage = () => {
             navigate({ search: params.toString() })
             pageParam = 1
         }
-
         setSearchQuery(query)
         setPage(pageParam)
         fetchData(pageParam, query || undefined)
@@ -84,9 +84,9 @@ const AllTestsPage = () => {
     }
 
     const handleResetSearch = () => {
+        // clearCache()
         resetSearch()
-        clearCache()
-        fetchData(1)
+        // fetchData(1)
     }
 
     const handleUpdateButton = () => {
