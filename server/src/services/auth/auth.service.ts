@@ -60,9 +60,15 @@ class AuthService {
         user: UserDTO
     }> {
         const user = await userRepository.findByActivationLink(activationLink)
-
-        if (!user) throw ApiError.BadRequest("Некорректная ссылка активации")
-        if (user.isActivated) throw ApiError.BadRequest("Аккаунт уже активирован")
+        if (!user) {
+            throw ApiError.BadRequest("Некорректная ссылка активации")
+        }
+        if (user.isActivated) {
+            throw ApiError.BadRequest("Аккаунт уже активирован")
+        }
+        if (user.activationLinkExp && user.activationLinkExp < new Date()) {
+            throw ApiError.BadRequest("Срок действия ссылки активации истек")
+        }
 
         await userRepository.activate(user.id)
 

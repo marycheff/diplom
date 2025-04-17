@@ -13,6 +13,8 @@ const requiredEnvVars = [
     "CLIENT_URL",
     "AUTH_DATA",
     "ALLOWED_ORIGINS",
+    "ACTIVATION_LINK_LIFETIME_HOURS",
+    "RESET_CODE_LIFETIME_MINUTES",
 ]
 
 for (const envVar of requiredEnvVars) {
@@ -35,4 +37,6 @@ export default {
     NODE_ENV: process.env.NODE_ENV || "development",
     PORT: process.env.PORT ? parseInt(process.env.PORT, 10) : 5000,
     ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
+    ACTIVATION_LINK_LIFETIME_HOURS: process.env.ACTIVATION_LINK_LIFETIME_HOURS,
+    RESET_CODE_LIFETIME_MINUTES: process.env.RESET_CODE_LIFETIME_MINUTES,
 }

@@ -1,4 +1,5 @@
 import { CreateUserDTO } from "@/types/user.types"
+import { getActivationLinkExpDate, getResetCodeExpDate } from "@/utils/math"
 import { Prisma, PrismaClient, User } from "@prisma/client"
 
 const prisma = new PrismaClient()
@@ -28,6 +29,7 @@ class UserRepository {
                 ...userData,
                 password: hashedPassword,
                 activationLink,
+                activationLinkExp: getActivationLinkExpDate(),
                 role,
             },
         })
@@ -36,7 +38,7 @@ class UserRepository {
     async updateActivationLink(email: string, activationLink: string): Promise<User> {
         return prisma.user.update({
             where: { email },
-            data: { activationLink },
+            data: { activationLink, activationLinkExp: getActivationLinkExpDate() },
         })
     }
 
@@ -46,6 +48,7 @@ class UserRepository {
             data: {
                 isActivated: true,
                 activationLink: null,
+                activationLinkExp: null,
             },
         })
     }
@@ -119,7 +122,7 @@ class UserRepository {
     async saveResetCode(email: string, hashedCode: string): Promise<User> {
         return prisma.user.update({
             where: { email },
-            data: { resetCode: hashedCode },
+            data: { resetCode: hashedCode, resetCodeExp: getResetCodeExpDate() },
         })
     }
 
@@ -129,6 +132,7 @@ class UserRepository {
             data: {
                 password: hashedPassword,
                 resetCode: null,
+                resetCodeExp: null,
             },
         })
     }

@@ -15,7 +15,9 @@ class PasswordResetService {
         if (!user.resetCode) {
             return false
         }
-
+        if (user.resetCodeExp && user.resetCodeExp < new Date()) {
+            throw ApiError.BadRequest("Срок действия кода сброса истек, запросите новый")
+        }
         return bcrypt.compare(code, user.resetCode)
     }
 

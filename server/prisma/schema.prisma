@@ -8,23 +8,25 @@ datasource db {
 }
 
 model User {
-  id             String        @id @default(uuid())
-  email          String        @unique
-  name           String?
-  surname        String?
-  patronymic     String?
-  password       String
-  isActivated    Boolean       @default(false)
-  role           Role          @default(USER)
-  activationLink String?
-  resetCode      String?
-  isBlocked      Boolean       @default(false)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  badWordsAdded  BadWord[]     @relation("AddedByUser")
-  testAttempts   TestAttempt[] @relation("TestAttemptUser")
-  testsCreated   Test[]        @relation("TestAuthor")
-  refreshToken   Token?
+  id                String        @id @default(uuid())
+  email             String        @unique
+  name              String?
+  surname           String?
+  patronymic        String?
+  password          String
+  isActivated       Boolean       @default(false)
+  role              Role          @default(USER)
+  activationLink    String?
+  activationLinkExp DateTime?
+  resetCode         String?
+  resetCodeExp      DateTime?
+  isBlocked         Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  badWordsAdded     BadWord[]     @relation("AddedByUser")
+  testAttempts      TestAttempt[] @relation("TestAttemptUser")
+  testsCreated      Test[]        @relation("TestAuthor")
+  refreshToken      Token?
 
   @@map("users")
 }
