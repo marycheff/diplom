@@ -4,16 +4,29 @@
     gap: 8px; // Расстояние между кнопками
     align-items: center;
 }
-
+.dots {
+    margin: 0 8px;
+    cursor: default;
+}
+.buttonText {
+    font-size: 14px;
+    white-space: nowrap; // Запрещает перенос текста
+}
+.navigationButtons {
+    display: flex;
+    gap: 8px;
+}
 // .navigationButtons {
 //     // margin: 0 5px;
 // }
 .navigationButton {
-    font-weight: bold;
-    padding: 7px 15px;
-    
-    // border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    gap: 10px;
     cursor: pointer;
+    border: 1px solid #ccc;
     transition: all 0.3s ease;
 }
 .page {
@@ -23,7 +36,10 @@
     transition: all 0.3s ease;
     background-color: color($secondary, 200);
 }
-
+.buttonSymbol {
+    // font-size: 13px;
+    font-weight: bold;
+}
 .pageCurrent {
     background-color: color($secondary, 600);
     color: white;

@@ -1,6 +1,7 @@
 import AttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/AttemptsTable"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useCache } from "@/shared/hooks/useCache"
+import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { AttemptsListDTO, TestAttemptDTO } from "@/shared/types/testTypes"
 import { Button } from "@/shared/ui/Button"
@@ -19,6 +20,7 @@ const AllAttemptsPage = () => {
     const location = useLocation()
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
         useCache<AttemptsListDTO>(useAttemptStore)
+    const { handleResetSearch: resetSearch } = useSearch()
 
     const fetchData = useCallback(
         async (currentPage: number) => {
@@ -64,6 +66,11 @@ const AllAttemptsPage = () => {
     const handleUpdateButton = () => {
         clearCache()
     }
+    const handleResetSearch = () => {
+        // clearCache()
+        resetSearch()
+        // fetchData(1)
+    }
     const totalPages = Math.ceil(total / limit)
 
     return (
@@ -73,6 +80,11 @@ const AllAttemptsPage = () => {
             <Button onClick={handleUpdateButton} disabled={isFetching}>
                 Обновить
             </Button>
+            {page > totalPages && (
+                <Button onClick={handleResetSearch} disabled={isFetching}>
+                    Сбросить
+                </Button>
+            )}
 
             <div className="cache-info">
                 <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>

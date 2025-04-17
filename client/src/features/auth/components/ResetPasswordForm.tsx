@@ -67,7 +67,7 @@ const ResetPasswordForm: FC = () => {
 
     const onEmailSubmit: SubmitHandler<EmailFormData> = async data => {
         setEmail(data.email)
-        // await requestResetCode(data.email)
+        await requestResetCode(data.email)
         setIsCodeSent(true)
         setSecondsLeft(60) // Запуск таймера на 1 минуту
         toast.success("Код отправлен на ваш email")

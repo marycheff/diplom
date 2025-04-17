@@ -1,12 +1,26 @@
 import { useMemo } from "react"
 
-export const usePagination = (totalPages: number) => {
+const range = (start: number, end: number) => {
+    const length = end - start + 1
+    return Array.from({ length }, (_, idx) => idx + start)
+}
+
+export const usePagination = (totalPages: number, currentPage: number) => {
     const pagesArray = useMemo(() => {
-        let pages = []
-        for (let i = 0; i < totalPages; i++) {
-            pages.push(i + 1)
+        if (totalPages <= 5) {
+            return range(1, totalPages)
         }
-        return pages
-    }, [totalPages])
+
+        if (currentPage <= 3) {
+            return [...range(1, 4), "...", totalPages]
+        }
+
+        if (currentPage >= totalPages - 2) {
+            return [...range(totalPages - 3, totalPages)]
+        }
+
+        return [...range(currentPage - 1, currentPage + 1), "...", totalPages]
+    }, [totalPages, currentPage])
+
     return pagesArray
 }
