@@ -44,15 +44,22 @@ class AttemptService {
             if (!latestSnapshot) {
                 throw ApiError.NotFound("Не найден актуальный снапшот теста")
             }
-
-            const attempt = await attemptRepository.createAttempt({
+            if (userId) {
+                const attemptInProgress = await attemptRepository.findInProgressByUserId(userId)
+                if (attemptInProgress) {
+                    throw ApiError.BadRequest(
+                        "У вас уже есть незавершенная попытка прохождения теста. Завершите текущую попытку прежде чем начинать новую."
+                    )
+                }
+            }
+            const newAttempt = await attemptRepository.createAttempt({
                 testId,
                 snapshotId: latestSnapshot.id,
                 userId,
                 userData: settings?.requireRegistration ? null : userData,
             })
 
-            return { attemptId: attempt.id }
+            return { attemptId: newAttempt.id }
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error
@@ -211,7 +218,7 @@ class AttemptService {
 
     async getTestAttempts(testId: string, page = 1, limit = 10): Promise<AttemptsListDTO> {
         try {
-            const attempts = await attemptRepository.findByTestId(testId, page, limit)
+            const attempts = await attemptRepository.findManyByTestId(testId, page, limit)
             const total = await attemptRepository.count({ testId })
 
             return {

@@ -21,6 +21,7 @@ class TestService {
 
             await testRepository.updateSettingsWithSnapshot(testId, testSettings, test)
             await redisClient.del(`test:${testId}`)
+            await redisClient.del(`user-test:${testId}`)
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error
@@ -37,6 +38,7 @@ class TestService {
 
             await testRepository.updateShortInfoWithSnapshot(testId, updatedShortInfo, test)
             await redisClient.del(`test:${testId}`)
+            await redisClient.del(`user-test:${testId}`)
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error
@@ -79,6 +81,7 @@ class TestService {
                 test
             )
             await redisClient.del(`test:${testId}`)
+            await redisClient.del(`user-test:${testId}`)
 
             return mapTest({
                 ...updatedTest,
@@ -136,6 +139,7 @@ class TestService {
         try {
             await testRepository.deleteById(testId)
             await redisClient.del(`test:${testId}`)
+            await redisClient.del(`user-test:${testId}`)
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error
@@ -168,10 +172,16 @@ class TestService {
     }
     async getTestForUserById(testId: string): Promise<UserTestDTO> {
         try {
-            // TODO: добавить кэширование
+            const cacheKey = `user-test:${testId}`
+            const cachedTest = await redisClient.get(cacheKey)
+
+            if (cachedTest) return JSON.parse(cachedTest)
+
             const test = await testRepository.findDetailedTestById(testId)
             if (!test) throw ApiError.NotFound("Тест не найден")
+
             const testDTO = mapUserTest(test)
+            await redisClient.setEx(cacheKey, 3600, JSON.stringify(testDTO))
 
             return testDTO
         } catch (error) {
