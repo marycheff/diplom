@@ -112,6 +112,15 @@ class TestController {
             next(error)
         }
     }
+    async getTestByIdForUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const test = await testService.getTestForUserById(testId)
+            res.status(200).json(test)
+        } catch (error) {
+            next(error)
+        }
+    }
     async searchTests(req: Request, res: Response, next: NextFunction) {
         try {
             const page = parseInt(req.query.page as string) || 1

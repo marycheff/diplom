@@ -7,6 +7,7 @@ import {
     TestSettingsDTO,
     TestsListDTO,
     UpdateTestDTO,
+    UserTestDTO,
 } from "@/shared/types/testTypes"
 import { AxiosResponse } from "axios"
 
@@ -41,6 +42,9 @@ class TestService {
 
     getTestById(id: string): Promise<AxiosResponse<TestDTO>> {
         return axiosInstance.get<TestDTO>(`/tests/${id}`)
+    }
+    getTestForUserById(id: string): Promise<AxiosResponse<UserTestDTO>> {
+        return axiosInstance.get<UserTestDTO>(`/tests/${id}/for-user`)
     }
     getMyTests(page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
         return axiosInstance.get<TestsListDTO>("/tests/my-tests", {

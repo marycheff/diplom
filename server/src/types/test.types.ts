@@ -12,7 +12,6 @@ export interface TestsListDTO {
     total: number
 }
 
-
 export interface QuestionDTO {
     id: string
     text: string
@@ -35,7 +34,6 @@ export interface TestDTO {
     questions?: QuestionDTO[]
     settings?: TestSettingsDTO
     totalAttempts: number
-    
 }
 export interface TestSettingsDTO {
     requireRegistration?: boolean
@@ -98,16 +96,44 @@ export interface ShortTestInfo {
     title: string
     description?: string
 }
+// ИНТЕРФЕЙСЫ ДЛЯ ПОЛЬЗОВАТЕЛЯ, ПРОХОДЯЩЕГО ТЕСТ
+export interface UserTestDTO {
+    id: string
+    title: string
+    description?: string
+    questions?: UserQuestionDTO[]
+    settings?: UserTestSettingsDTO
+}
+
+export interface UserQuestionDTO {
+    id: string
+    text: string
+    type: QuestionType
+    answers: AnswerUserDTO[]
+}
+
+export interface AnswerUserDTO {
+    id: string
+    text: string
+    // Здесь нет поля isCorrect
+}
+
+export interface UserTestSettingsDTO {
+    
+    timeLimit?: number | null
+    shuffleQuestions?: boolean
+    shuffleAnswers?: boolean
+    requireRegistration?: boolean
+    inputFields?: JsonValue
+}
 
 
 
-
-
+// СНАПШОТЫ
 export interface SnapshotWithOriginalTestDTO {
     snapshot: TestSnapshotDTO
     originalTest: TestDTO
 }
-
 export interface TestSnapshotDTO {
     id: string
     testId: string

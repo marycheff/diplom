@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import testRepository from "@/repositories/tests/test.repository"
-import { mapTest, mapToTestSnapshotDTO } from "@/services/mappers/test.mappers"
+import { mapTest, mapToTestSnapshotDTO, mapUserTest } from "@/services/mappers/test.mappers"
 import {
     ShortTestInfo,
     SnapshotWithOriginalTestDTO,
@@ -8,6 +8,7 @@ import {
     TestSettingsDTO,
     TestsListDTO,
     UpdateTestDTO,
+    UserTestDTO,
 } from "@/types/test.types"
 import { redisClient } from "@/utils/redis-client"
 
@@ -153,9 +154,24 @@ class TestService {
             const test = await testRepository.findDetailedTestById(testId)
 
             if (!test) throw ApiError.NotFound("Тест не найден")
-            console.log(test)
             const testDTO = mapTest(test)
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(testDTO))
+
+            return testDTO
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении теста")
+        }
+    }
+    async getTestForUserById(testId: string): Promise<UserTestDTO> {
+        try {
+            // TODO: добавить кэширование
+            const test = await testRepository.findDetailedTestById(testId)
+            if (!test) throw ApiError.NotFound("Тест не найден")
+            const testDTO = mapUserTest(test)
 
             return testDTO
         } catch (error) {

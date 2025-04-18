@@ -7,12 +7,17 @@ import {
     TestDTO,
     TestSettingsDTO,
     TestSnapshotDTO,
+    UserTestDTO,
+    UserQuestionDTO,
+    UserAnswerDTO,
+    AnswerUserDTO
 } from "@/types/test.types"
 import {
     Answer,
     AnswerSnapshot,
     Question,
     QuestionSnapshot,
+    QuestionType,
     Test,
     TestAttempt,
     TestSettingsSnapshot,
@@ -178,5 +183,53 @@ export const mapToTestSnapshotDTO = (
                 createdAt: a.createdAt,
             })),
         })),
+    }
+}
+
+export const mapUserTest = (
+    test: Test & {
+        settings?: TestSettingsDTO | null
+        questions?: (Question & { answers: Answer[] })[]
+        author: {
+            id: string
+            email: string
+            name?: string | null
+            surname?: string | null
+            patronymic?: string | null
+        }
+    }
+): UserTestDTO => {
+    return {
+        id: test.id,
+        title: test.title,
+        description: test.description || "",
+        settings: test.settings
+            ? {
+                  requireRegistration: test.settings.requireRegistration,
+                  inputFields: test.settings.inputFields,
+                  shuffleAnswers: test.settings.shuffleAnswers,
+                  shuffleQuestions: test.settings.shuffleQuestions,
+                  timeLimit: test.settings.timeLimit,
+              }
+            : {},
+        questions: test.questions?.map(question => mapUserQuestion(question)) || [],
+    }
+}
+
+// Вспомогательная функция для маппинга вопросов без информации о правильных ответах
+export const mapUserQuestion = (question: Question & { answers: Answer[] }): UserQuestionDTO => {
+    return {
+        id: question.id,
+        text: question.text,
+        type: question.type as QuestionType,
+        answers: question.answers.map(answer => mapUserAnswer(answer)),
+    }
+}
+
+// Вспомогательная функция для маппинга ответов без информации о правильности
+export const mapUserAnswer = (answer: Answer): AnswerUserDTO => {
+    return {
+        id: answer.id,
+        text: answer.text,
     }
 }

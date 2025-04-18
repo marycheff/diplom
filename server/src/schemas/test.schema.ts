@@ -2,6 +2,14 @@ import { PreTestUserData } from "@/types/input-fields"
 import { isValidUUID } from "@/utils/validator"
 import { z } from "zod"
 
+export const testIdSchema = z.object({
+    params: z.object({
+        testId: z.string().min(1, "ID теста обязательно").refine(isValidUUID, {
+            message: "Некорректный ID теста",
+        }),
+    }),
+})
+
 export const shortInfoSchema = z.object({
     body: z.object({
         title: z.string().min(1, "Название теста обязательно").max(255, "Максимальная длина 255 символов"),

@@ -11,6 +11,7 @@ export interface TestState {
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     searchMyTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     getTestById: (id: string) => Promise<TestDTO | undefined>
+    getTestForUserById: (id: string) => Promise<UserTestDTO | undefined>
     getMyTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     createTest: (title: string, description?: string) => Promise<TestDTO | undefined>
     generateAnswers: (data: GenerateAnswerFormData) => Promise<string[]>
@@ -29,9 +30,12 @@ export interface TestState {
 
 export interface AttemptState {
     isFetching: boolean
+    isLoading: boolean
     getTestAttempts: (testId: string, page?: number, limit?: number) => Promise<AttemptsListDTO | undefined>
     getAttemptById: (id: string) => Promise<TestAttemptDTO | undefined>
     getAllAttempts: (page: number, limit: number) => Promise<AttemptsListDTO | undefined>
+    // TODO: исправить any
+    startAttempt: (testId: string, userData?: any) => Promise<StartAttempt | undefined>
     // CACHE
     CACHE_EXPIRATION_TIME: number
     cache: Record<string, { data: AttemptsListDTO; timestamp: Date }>
@@ -39,23 +43,20 @@ export interface AttemptState {
     clearCache: () => void
     lastCacheUpdateDate: Date | null
 }
-
-export interface AnswerDTO {
-    id: string
-    text: string
-    isCorrect: boolean
+export interface StartAttempt {
+    attemptId: string
 }
 
+export interface TestsListDTO {
+    tests: TestDTO[]
+    total: number
+}
 export interface QuestionDTO {
     id: string
     text: string
     order?: number
     answers: AnswerDTO[]
     type: QuestionType
-}
-export interface TestsListDTO {
-    tests: TestDTO[]
-    total: number
 }
 
 export interface TestDTO {
@@ -73,6 +74,11 @@ export interface TestDTO {
     settings?: TestSettingsDTO
     totalAttempts: number
 }
+export interface AnswerDTO {
+    id: string
+    text: string
+    isCorrect: boolean
+}
 export interface TestSettingsDTO {
     requireRegistration?: boolean
     inputFields?: PreTestUserData[]
@@ -80,6 +86,36 @@ export interface TestSettingsDTO {
     shuffleAnswers?: boolean
     showDetailedResults?: boolean
     timeLimit?: number | null
+}
+
+// ИНТЕРФЕЙСЫ ДЛЯ ПОЛЬЗОВАТЕЛЯ, ПРОХОДЯЩЕГО ТЕСТ
+export interface UserTestDTO {
+    id: string
+    title: string
+    description?: string
+    questions?: UserQuestionDTO[]
+    settings?: UserTestSettingsDTO
+}
+
+export interface UserQuestionDTO {
+    id: string
+    text: string
+    type: QuestionType
+    answers: AnswerUserDTO[]
+}
+
+export interface AnswerUserDTO {
+    id: string
+    text: string
+    // Здесь нет поля isCorrect
+}
+
+export interface UserTestSettingsDTO {
+    timeLimit?: number | null
+    shuffleQuestions?: boolean
+    shuffleAnswers?: boolean
+    requireRegistration?: boolean
+    inputFields?: PreTestUserData[]
 }
 
 export interface UpdateTestDTO {

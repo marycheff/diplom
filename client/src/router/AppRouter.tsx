@@ -2,12 +2,12 @@ import AdminPage from "@/features/admin/pages/AdminPage"
 import AllAttemptsPage from "@/features/attempts/pages/AllAttempts/AllAttemptsPage"
 import AttemptInfoPage from "@/features/attempts/pages/AttemptInfo/AttemptInfoPage"
 import TestAttemptsPage from "@/features/attempts/pages/TestAttempts/TestAttemptsPage"
+import StartTest from "@/features/attempts/Start/StartTest"
 import ActivationErrorPage from "@/features/auth/pages/ActivationError"
 import ActivationSuccessPage from "@/features/auth/pages/ActivationSuccess"
 import LoginPage from "@/features/auth/pages/Login/LoginPage"
 import SignupPage from "@/features/auth/pages/Signup/SignupPage"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
-import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
 import AllTestsPage from "@/features/tests/pages/AllTests/AllTestsPage"
 import CreateTestPage from "@/features/tests/pages/CreateTest/CreateTestPage"
 import MyTestsPage from "@/features/tests/pages/MyTests/MyTestsPage"
@@ -57,6 +57,7 @@ const AppRouter = () => {
         <Route key="signup" path="/signup" element={<SignupPage />} />,
         <Route key="activationError" path="/activation-error" element={<ActivationErrorPage />} />,
         <Route key="activationSuccess" path="/activation-success" element={<ActivationSuccessPage />} />,
+        <Route key="startAttempt" path="/:testId/start" element={<StartTest />} />,
     ]
 
     // Список защищенных маршрутов для авторизованных пользователей
@@ -70,6 +71,7 @@ const AppRouter = () => {
         <Route key="my-test" path="/my-tests/:testId" element={<TestInfoPage />} />,
         <Route key="my-test-add-questions" path="/my-tests/:testId/add-questions" element={<TestInfoPage />} />,
         <Route key="my-test-edit-settings" path="/my-tests/:testId/edit-settings" element={<TestInfoPage />} />,
+        <Route key="startAttempt" path="/:testId/start" element={<StartTest />} />,
     ]
 
     // Маршруты для администраторов

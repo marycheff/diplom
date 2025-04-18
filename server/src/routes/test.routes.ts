@@ -15,10 +15,10 @@ import {
     completeTestAttemptSchema,
     getAttemptSchema,
     getTestSnapshotSchema,
-    getUserAttemptsSchema,
     saveAnswerSchema,
     shortInfoSchema,
     startTestAttemptSchema,
+    testIdSchema,
     updateQuestionSchema,
 } from "@/schemas/test.schema"
 import express from "express"
@@ -67,6 +67,7 @@ router.put(
 
 // Получение теста по ID
 router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.getTestById)
+router.get("/:testId/for-user", validateRequest(testIdSchema), testController.getTestByIdForUser)
 
 /* =================================
     Управление вопросами теста

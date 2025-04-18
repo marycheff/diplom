@@ -40,7 +40,7 @@ const AttemptInfo = () => {
     }
 
     if (!attempt) {
-        return <div>Тест не найден</div>
+        return <div>Попытка не найдена</div>
     }
 
     return (

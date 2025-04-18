@@ -5,6 +5,7 @@ import { create } from "zustand"
 
 const initialState = {
     isFetching: false,
+    isLoading: false,
     cache: {},
     CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
     lastCacheUpdateDate: null,
@@ -12,6 +13,7 @@ const initialState = {
 
 export const useAttemptStore = create<AttemptState>(set => {
     const withFetching = createApiHandler(set, "isFetching")
+    const withLoading = createApiHandler(set, "isLoading")
     return {
         ...initialState,
         setCache: (key: string, data: AttemptsListDTO) => {
@@ -50,6 +52,13 @@ export const useAttemptStore = create<AttemptState>(set => {
                 return response.data
             }
             return withFetching(operation)
+        },
+        startAttempt: async (testId, userData) => {
+            const operation = async () => {
+                const response = await attemptService.startTestAttempt(testId, userData)
+                return response.data
+            }
+            return withLoading(operation)
         },
     }
 })
