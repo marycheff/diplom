@@ -1,5 +1,4 @@
-import { PreTestUserData, PreTestUserDataLabels } from "@/shared/types/inputFields"
-import { TestSettingsDTO } from "@/shared/types/testTypes"
+import { PreTestUserData, PreTestUserDataLabels, TestSettingsDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import { ValidatedInput } from "@/shared/ui/Input"

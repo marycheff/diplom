@@ -1,6 +1,6 @@
 import { testService } from "@/api/services/testService"
 import { createApiHandler } from "@/shared/hooks/useStoreHelpers"
-import { GenerateAnswerFormData, TestState, TestsListDTO } from "@/shared/types/testTypes"
+import { GenerateAnswerFormData, TestState, TestsListDTO } from "@/shared/types"
 import { create } from "zustand"
 
 const initialState = {

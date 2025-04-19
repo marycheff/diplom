@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useUserStore } from "@/features/users/store/useUserStore"
-import { UserDTO } from "@/shared/types/userTypes"
+import { UserDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"

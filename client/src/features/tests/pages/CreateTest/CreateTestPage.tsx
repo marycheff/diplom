@@ -1,5 +1,5 @@
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { ShortTestInfo } from "@/shared/types/testTypes"
+import { ShortTestInfo } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
 import { SubmitHandler, useForm } from "react-hook-form"

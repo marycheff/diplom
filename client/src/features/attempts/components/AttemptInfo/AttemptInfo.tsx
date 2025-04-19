@@ -1,7 +1,7 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
-import { PreTestUserData, PreTestUserDataLabels } from "@/shared/types/inputFields"
-import { TestAttemptDTO } from "@/shared/types/testTypes"
+
+import { PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import Modal from "@/shared/ui/Modal/Modal"

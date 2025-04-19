@@ -1,4 +1,4 @@
-import { ShortTestInfo } from "@/shared/types/testTypes"
+import { ShortTestInfo } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
 import { formatSpaces } from "@/shared/utils/formatter"
@@ -56,7 +56,7 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
                         required: "Название теста обязательно",
                     }}
                 />
-                <br/>
+                <br />
                 {/* Описание */}
                 <ValidatedInput
                     // floatingLabel={false}

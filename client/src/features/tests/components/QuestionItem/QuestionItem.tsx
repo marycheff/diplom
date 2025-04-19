@@ -1,4 +1,4 @@
-import { QuestionDTO } from "@/shared/types/testTypes"
+import { QuestionDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Tooltip from "@/shared/ui/Tooltip/Tooltip"
 import { useSortable } from "@dnd-kit/sortable"

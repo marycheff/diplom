@@ -1,6 +1,6 @@
 import { userService } from "@/api/services/userService"
 import { createApiHandler } from "@/shared/hooks/useStoreHelpers"
-import { UserState, UsersListDTO } from "@/shared/types/userTypes"
+import { UserState, UsersListDTO } from "@/shared/types"
 import toast from "react-hot-toast"
 import { create } from "zustand"
 

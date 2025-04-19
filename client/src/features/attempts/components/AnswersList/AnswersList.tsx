@@ -1,4 +1,4 @@
-import { AnswerDTO } from "@/shared/types/testTypes"
+import { AnswerDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import { Input } from "@/shared/ui/Input"

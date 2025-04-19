@@ -1,7 +1,7 @@
 import AnswersList from "@/features/attempts/components/AnswersList/AnswersList"
 import QuestionForm from "@/features/tests/components/QuestionForm/QuestionForm"
 import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
-import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types/testTypes"
+import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import { formatSpaces } from "@/shared/utils/formatter"
 import {
@@ -110,7 +110,7 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
         // Сбросить форму и подготовить для нового вопроса
         reset()
         setEditingQuestion(null)
-        // setExpandedQuestionIds([]) 
+        // setExpandedQuestionIds([])
 
         // Инициализировать новые поля для ответов
         const newAnswers = Array(3)

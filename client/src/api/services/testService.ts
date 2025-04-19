@@ -8,7 +8,7 @@ import {
     TestsListDTO,
     UpdateTestDTO,
     UserTestDTO,
-} from "@/shared/types/testTypes"
+} from "@/shared/types"
 import { AxiosResponse } from "axios"
 
 class TestService {

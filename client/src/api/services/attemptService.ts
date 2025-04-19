@@ -1,5 +1,5 @@
 import axiosInstance from "@/api"
-import { AttemptsListDTO, StartAttempt, TestAttemptDTO } from "@/shared/types/testTypes"
+import { AttemptsListDTO, StartAttempt, TestAttemptDTO } from "@/shared/types"
 import { AxiosResponse } from "axios"
 
 class AttemptService {

@@ -1,6 +1,6 @@
 import { attemptService } from "@/api/services/attemptService"
 import { createApiHandler } from "@/shared/hooks/useStoreHelpers"
-import { AttemptState, AttemptsListDTO } from "@/shared/types/testTypes"
+import { AttemptState, AttemptsListDTO } from "@/shared/types"
 import { create } from "zustand"
 
 const initialState = {

@@ -1,4 +1,4 @@
-import { GenerateAnswerFormData } from "@/shared/types/testTypes"
+import { GenerateAnswerFormData } from "@/shared/types"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Loader from "@/shared/ui/Loader/Loader"
 import { formatSpaces } from "@/shared/utils/formatter"

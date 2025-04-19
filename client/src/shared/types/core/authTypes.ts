@@ -1,4 +1,4 @@
-import { UserDTO } from "@/shared/types/userTypes"
+import { UserDTO } from "@/shared/types"
 
 export interface AuthState {
     user: UserDTO | null

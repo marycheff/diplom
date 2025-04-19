@@ -1,4 +1,4 @@
-import { TestDTO } from "@/shared/types/testTypes"
+import { TestDTO } from "@/shared/types"
 import { shortenUuid } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"

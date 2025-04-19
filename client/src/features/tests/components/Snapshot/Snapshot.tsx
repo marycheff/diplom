@@ -1,5 +1,5 @@
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { TestSnapshotDTO } from "@/shared/types/testTypes"
+import { TestSnapshotDTO } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"
 import { FC, useEffect, useState } from "react"

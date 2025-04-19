@@ -5,8 +5,14 @@ import TestInfoEditor from "@/features/tests/components/TestInfoEditor/TestInfoE
 import TestSettingsEditor from "@/features/tests/components/TestSettingsEditor/TestSettingsEditor"
 import InfoRowSkeleton from "@/features/tests/components/TestSettingsSkeleton/TestSettingsSkeleton"
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { PreTestUserDataLabels } from "@/shared/types/inputFields"
-import { QuestionDTO, ShortTestInfo, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/shared/types/testTypes"
+import {
+    PreTestUserDataLabels,
+    QuestionDTO,
+    ShortTestInfo,
+    TestDTO,
+    TestSettingsDTO,
+    UpdateTestDTO,
+} from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import Modal from "@/shared/ui/Modal/Modal"

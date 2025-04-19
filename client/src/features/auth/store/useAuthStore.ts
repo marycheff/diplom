@@ -1,6 +1,6 @@
 import { authService } from "@/api/services/authService"
 import { createApiHandler } from "@/shared/hooks/useStoreHelpers"
-import { AuthState } from "@/shared/types/authTypes"
+import { AuthState } from "@/shared/types"
 import { AxiosError } from "axios"
 import toast from "react-hot-toast"
 import { create } from "zustand"

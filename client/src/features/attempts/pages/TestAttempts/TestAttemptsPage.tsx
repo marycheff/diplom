@@ -2,7 +2,7 @@ import AttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/A
 import { useAttemptsCache } from "@/features/attempts/hooks/useAttemptsCache"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
-import { TestAttemptDTO } from "@/shared/types/testTypes"
+import { TestAttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import { formatDate } from "@/shared/utils/formatter"

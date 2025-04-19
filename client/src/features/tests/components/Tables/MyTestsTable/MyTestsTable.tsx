@@ -1,8 +1,7 @@
-
+import { TestDTO } from "@/shared/types"
 import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./MyTestsTable.module.scss"
-import { TestDTO } from "@/shared/types/testTypes"
 
 interface MyTestsTableProps {
     tests: TestDTO[]

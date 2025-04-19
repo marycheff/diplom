@@ -1,7 +1,7 @@
 import AnswersList from "@/features/attempts/components/AnswersList/AnswersList"
 import QuestionForm from "@/features/tests/components/QuestionForm/QuestionForm"
 import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
-import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types/testTypes"
+import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import { formatSpaces } from "@/shared/utils/formatter"
 import {

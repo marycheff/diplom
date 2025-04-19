@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
-import { UserDTO } from "@/shared/types/userTypes"
+import { UserDTO } from "@/shared/types"
 import { shortenUuid } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"

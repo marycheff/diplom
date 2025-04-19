@@ -1,4 +1,4 @@
-import { AuthResponse } from "@/shared/types/authTypes"
+import { AuthResponse } from "@/shared/types"
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios"
 
 export const API_URL = import.meta.env.VITE_API_URL

@@ -1,5 +1,5 @@
 import axiosInstance from "@/api"
-import { AuthResponse } from "@/shared/types/authTypes"
+import { AuthResponse } from "@/shared/types"
 import { AxiosResponse } from "axios"
 
 class AuthService {

@@ -1,5 +1,5 @@
 import { API_URL } from "@/api"
-import { ResetPasswordState } from "@/shared/types/authTypes"
+import { ResetPasswordState } from "@/shared/types"
 import axios, { AxiosError } from "axios"
 import toast from "react-hot-toast"
 import { create } from "zustand"
@@ -10,9 +10,8 @@ const initialState = {
 }
 
 export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
-
     ...initialState,
-    
+
     requestResetCode: async email => {
         set({ isLoading: true })
         try {

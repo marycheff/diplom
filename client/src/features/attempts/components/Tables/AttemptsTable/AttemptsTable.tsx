@@ -1,5 +1,4 @@
-import { PreTestUserData, PreTestUserDataLabels } from "@/shared/types/inputFields"
-import { TestAttemptDTO } from "@/shared/types/testTypes"
+import { PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
 import { formatDate } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"

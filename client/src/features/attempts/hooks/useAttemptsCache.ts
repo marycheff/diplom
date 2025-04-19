@@ -1,5 +1,5 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
-import { AttemptsListDTO } from "@/shared/types/testTypes"
+import { AttemptsListDTO } from "@/shared/types"
 import { useCallback, useState } from "react"
 import { useLocation } from "react-router-dom"
 
