@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import testService from "@/services/tests/test.service"
-import { QuestionDTO, ShortTestInfo, TestDTO, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
+import { CreateTest, QuestionDTO, ShortTestInfo, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
 
 import { NextFunction, Request, Response } from "express"
 
@@ -9,7 +9,7 @@ class TestController {
     async createTest(req: Request, res: Response, next: NextFunction) {
         try {
             const authorId = req.user?.id
-            const testData: TestDTO = req.body
+            const testData: CreateTest = req.body
             if (!authorId) {
                 throw ApiError.Unauthorized()
             }

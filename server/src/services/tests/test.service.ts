@@ -2,6 +2,7 @@ import ApiError from "@/exceptions/api-error"
 import testRepository from "@/repositories/tests/test.repository"
 import { mapTest, mapToTestSnapshotDTO, mapUserTest } from "@/services/mappers/test.mappers"
 import {
+    CreateTest,
     ShortTestInfo,
     SnapshotWithOriginalTestDTO,
     TestDTO,
@@ -19,7 +20,23 @@ class TestService {
             const test = await testRepository.findById(testId)
             if (!test) throw ApiError.NotFound("Тест не найден")
 
-            await testRepository.updateSettingsWithSnapshot(testId, testSettings, test)
+            await testRepository.executeTransaction(async tx => {
+                const existingSettings = await testRepository.findSettingsById(testId, tx)
+                if (existingSettings) {
+                    await testRepository.updateSettings(testId, testSettings, tx)
+                } else {
+                    await testRepository.createSettings(testId, testSettings, tx)
+                }
+                await testRepository.incrementTestVersion(testId, test.version, tx)
+                await testRepository.cleanupUnusedSnapshots(testId, tx)
+
+                const updatedTest = await testRepository.findDetailedTestById(testId)
+                if (!updatedTest) {
+                    throw ApiError.InternalError("Не удалось получить обновленный тест")
+                }
+                await testRepository.createSnapshot(updatedTest, tx)
+            })
+
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
         } catch (error) {
@@ -36,7 +53,14 @@ class TestService {
             const test = await testRepository.findById(testId)
             if (!test) throw ApiError.NotFound("Тест не найден")
 
-            await testRepository.updateShortInfoWithSnapshot(testId, updatedShortInfo, test)
+            await testRepository.executeTransaction(async tx => {
+                const updatedTest = await testRepository.updateShortInfo(testId, updatedShortInfo, tx)
+                await testRepository.incrementTestVersion(testId, test.version, tx)
+                await testRepository.cleanupUnusedSnapshots(testId, tx)
+                await testRepository.createSnapshot(updatedTest, tx)
+                return true
+            })
+
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
         } catch (error) {
@@ -46,24 +70,40 @@ class TestService {
             throw ApiError.InternalError("Ошибка при обновлении настроек теста")
         }
     }
-
     // Создание теста без вопросов
-    async createTest(authorId: string, testData: TestDTO): Promise<TestDTO> {
+    async createTest(authorId: string, testData: CreateTest): Promise<TestDTO> {
         try {
-            const { createdTest, settings } = await testRepository.createWithSnapshot(authorId, {
-                title: testData.title,
-                description: testData.description || null,
-                settings: testData.settings || null,
+            const result = await testRepository.executeTransaction(async tx => {
+                // Создание теста
+                const { createdTest, settings } = await testRepository.create(authorId, testData, tx)
+
+                // Создание снапшота
+                await testRepository.createSnapshot(
+                    {
+                        ...createdTest,
+                        settings,
+                        questions: [],
+                    },
+                    tx
+                )
+
+                // Обновление версии
+                await testRepository.updateVersion(createdTest.id, 1, tx)
+
+                return { createdTest, settings }
             })
 
+            // Обновление кэша
             await redisClient.del(`user_tests:${authorId}`)
 
+            // Формирование ответа
             return mapTest({
-                ...createdTest,
-                settings,
+                ...result.createdTest,
+                settings: result.settings,
                 questions: [],
             })
         } catch (error) {
+            console.error(error)
             if (error instanceof ApiError) {
                 throw error
             }
@@ -75,11 +115,41 @@ class TestService {
             const test = await testRepository.findWithQuestionsAndAuthor(testId)
             if (!test) throw ApiError.NotFound("Тест не найден")
 
-            const { test: updatedTest, questions } = await testRepository.addQuestionsToTest(
-                testId,
-                updateTestData.questions,
-                test
-            )
+            const { updatedTest, questions } = await testRepository.executeTransaction(async tx => {
+                // Создание вопросов и ответов
+                const createdQuestions = await Promise.all(
+                    updateTestData.questions.map(async (questionData, index) => {
+                        const createdQuestion = await testRepository.createQuestion(
+                            testId,
+                            {
+                                text: questionData.text,
+                                type: questionData.type,
+                                order: index + 1,
+                            },
+                            tx
+                        )
+
+                        await testRepository.createAnswersForQuestion(createdQuestion.id, questionData.answers, tx)
+
+                        return testRepository.getQuestionWithAnswers(createdQuestion.id, tx)
+                    })
+                )
+
+                const validQuestions = createdQuestions.filter(question => question !== null)
+
+                // 2. Увеличиваем версию теста
+                await testRepository.incrementTestVersion(testId, test.version, tx)
+
+                // 3. Очищаем неиспользуемые снапшоты
+                await testRepository.cleanupUnusedSnapshots(testId, tx)
+
+                // 4. Создаем новый снапшот
+                await testRepository.createSnapshot(test, tx)
+
+                return { updatedTest: test, questions: validQuestions }
+            })
+
+            // Обновляем кэш
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
 

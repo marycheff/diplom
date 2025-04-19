@@ -1,25 +1,35 @@
 import { UserDTO } from "@/types/user.types"
 import { QuestionType } from "@prisma/client"
 import { JsonValue } from "@prisma/client/runtime/library"
+export interface CreateTest {
+    title: string
+    description: string | null
+    settings?: TestSettingsDTO | null
+}
 
-export interface AnswerDTO {
-    id: string
+export interface CreateQuestionDTO {
+    text: string
+    type: QuestionType
+    order?: number
+}
+export interface CreateAnswerDTO {
     text: string
     isCorrect: boolean
+}
+
+export interface AnswerDTO extends CreateAnswerDTO {
+    id: string
+    questionId?: string
 }
 export interface TestsListDTO {
     tests: TestDTO[]
     total: number
 }
 
-export interface QuestionDTO {
+export interface QuestionDTO extends CreateQuestionDTO {
     id: string
-    text: string
-    order?: number
     answers: AnswerDTO[]
-    type: QuestionType
 }
-
 export interface TestDTO {
     id: string
     author: {
@@ -119,15 +129,12 @@ export interface AnswerUserDTO {
 }
 
 export interface UserTestSettingsDTO {
-    
     timeLimit?: number | null
     shuffleQuestions?: boolean
     shuffleAnswers?: boolean
     requireRegistration?: boolean
     inputFields?: JsonValue
 }
-
-
 
 // СНАПШОТЫ
 export interface SnapshotWithOriginalTestDTO {

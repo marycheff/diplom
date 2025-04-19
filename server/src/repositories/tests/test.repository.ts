@@ -1,8 +1,9 @@
-import { ShortTestInfo, TestSettingsDTO } from "@/types/test.types"
+import { CreateAnswerDTO, CreateQuestionDTO, CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types/test.types"
 import { isValidUUID } from "@/utils/validator"
-import { Answer, Prisma, PrismaClient, Question, QuestionType, Test, TestSettings } from "@prisma/client"
+import { Answer, Prisma, PrismaClient, Question, Test, TestSettings } from "@prisma/client"
 
 const prisma = new PrismaClient()
+
 type TestWithQuestionsAndSettings = Test & {
     questions: (Question & { answers: Answer[] })[]
     settings: TestSettings | null
@@ -108,6 +109,16 @@ class TestRepository {
         return newSnapshot
     }
 
+    // async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo, tx?: Prisma.TransactionClient) {
+    //     const client = tx || prisma
+    //     return client.test.update({
+    //         where: { id: testId },
+    //         data: {
+    //             title: updatedShortInfo.title,
+    //             description: updatedShortInfo.description,
+    //         },
+    //     })
+    // }
     async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
         return client.test.update({
@@ -115,6 +126,15 @@ class TestRepository {
             data: {
                 title: updatedShortInfo.title,
                 description: updatedShortInfo.description,
+            },
+            include: {
+                questions: {
+                    include: {
+                        answers: true,
+                    },
+                },
+                settings: true,
+                author: true,
             },
         })
     }
@@ -132,50 +152,7 @@ class TestRepository {
         return prisma.$transaction(callback)
     }
 
-    async updateSettingsWithSnapshot(
-        testId: string,
-        testSettings: TestSettingsDTO,
-        test: TestWithQuestionsAndSettings
-    ) {
-        return this.executeTransaction(async tx => {
-            const existingSettings = await this.findSettingsById(testId, tx)
-
-            if (existingSettings) {
-                await this.updateSettings(testId, testSettings, tx)
-            } else {
-                await this.createSettings(testId, testSettings, tx)
-            }
-
-            await this.createSnapshot(test, tx)
-            await this.incrementTestVersion(testId, test.version, tx)
-
-            return true
-        })
-    }
-
-    async updateShortInfoWithSnapshot(
-        testId: string,
-        updatedShortInfo: ShortTestInfo,
-        test: TestWithQuestionsAndSettings
-    ) {
-        return this.executeTransaction(async tx => {
-            await this.updateShortInfo(testId, updatedShortInfo, tx)
-            await this.createSnapshot(test, tx)
-            await this.incrementTestVersion(testId, test.version, tx)
-
-            return true
-        })
-    }
-
-    async create(
-        authorId: string,
-        testData: {
-            title: string
-            description: string | null
-            settings?: TestSettingsDTO | null
-        },
-        tx?: Prisma.TransactionClient
-    ) {
+    async create(authorId: string, testData: CreateTest, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
 
         const createdTest = await client.test.create({
@@ -213,32 +190,11 @@ class TestRepository {
         return { createdTest, settings }
     }
 
-    async createWithSnapshot(
-        authorId: string,
-        testData: {
-            title: string
-            description: string | null
-            settings?: TestSettingsDTO | null
-        }
-    ) {
-        return this.executeTransaction(async tx => {
-            const { createdTest, settings } = await this.create(authorId, testData, tx)
-
-            await this.createSnapshot(
-                {
-                    ...createdTest,
-                    settings,
-                    questions: [],
-                },
-                tx
-            )
-
-            await tx.test.update({
-                where: { id: createdTest.id },
-                data: { version: 1 },
-            })
-
-            return { createdTest, settings }
+    async updateVersion(testId: string, version: number, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.test.update({
+            where: { id: testId },
+            data: { version },
         })
     }
 
@@ -262,34 +218,19 @@ class TestRepository {
         })
     }
 
-    async createQuestion(
-        testId: string,
-        questionData: {
-            text: string
-            type: QuestionType
-            order: number
-        },
-        tx?: Prisma.TransactionClient
-    ) {
+    async createQuestion(testId: string, questionData: CreateQuestionDTO, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
         return client.question.create({
             data: {
                 text: questionData.text,
-                order: questionData.order,
+                order: questionData.order!,
                 testId: testId,
                 type: questionData.type,
             },
         })
     }
 
-    async createAnswersForQuestion(
-        questionId: string,
-        answersData: {
-            text: string
-            isCorrect: boolean
-        }[],
-        tx?: Prisma.TransactionClient
-    ) {
+    async createAnswersForQuestion(questionId: string, answersData: CreateAnswerDTO[], tx?: Prisma.TransactionClient) {
         const client = tx || prisma
         return client.answer.createMany({
             data: answersData.map(answerData => ({
@@ -306,46 +247,6 @@ class TestRepository {
         return client.question.findUnique({
             where: { id: questionId },
             include: { answers: true },
-        })
-    }
-
-    async addQuestionsToTest(
-        testId: string,
-        questionsData: {
-            text: string
-            type: QuestionType
-            answers: {
-                text: string
-                isCorrect: boolean
-            }[]
-        }[],
-        test: TestWithAuthor
-    ) {
-        return this.executeTransaction(async tx => {
-            const createdQuestions = await Promise.all(
-                questionsData.map(async (questionData, index) => {
-                    const createdQuestion = await this.createQuestion(
-                        testId,
-                        {
-                            text: questionData.text,
-                            type: questionData.type,
-                            order: index + 1,
-                        },
-                        tx
-                    )
-
-                    await this.createAnswersForQuestion(createdQuestion.id, questionData.answers, tx)
-
-                    return this.getQuestionWithAnswers(createdQuestion.id, tx)
-                })
-            )
-
-            const validQuestions = createdQuestions.filter(question => question !== null)
-
-            await this.incrementTestVersion(testId, test.version, tx)
-            await this.createSnapshot(test, tx)
-
-            return { test, questions: validQuestions }
         })
     }
     async findByAuthor(userId: string, skip: number, limit: number) {
@@ -571,6 +472,65 @@ class TestRepository {
     }
     async count(where?: Prisma.TestWhereInput): Promise<number> {
         return prisma.test.count({ where })
+    }
+
+    async cleanupUnusedSnapshots(testId: string, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+
+        // Находим все снапшоты, к которым нет привязанных попыток
+        const unusedSnapshots = await client.testSnapshot.findMany({
+            where: {
+                testId: testId,
+                attempts: {
+                    none: {}, // нет связанных attempts
+                },
+            },
+            include: {
+                questions: {
+                    include: {
+                        answers: true,
+                    },
+                },
+                settings: true,
+            },
+        })
+
+        // Удаляем найденные снапшоты и связанные данные
+        for (const snapshot of unusedSnapshots) {
+            // Сначала удаляем ответы для каждого вопроса
+            for (const question of snapshot.questions) {
+                await client.answerSnapshot.deleteMany({
+                    where: {
+                        questionId: question.id,
+                    },
+                })
+            }
+
+            // Затем удаляем вопросы
+            await client.questionSnapshot.deleteMany({
+                where: {
+                    snapshotId: snapshot.id,
+                },
+            })
+
+            // Удаляем настройки
+            if (snapshot.settings) {
+                await client.testSettingsSnapshot.delete({
+                    where: {
+                        snapshotId: snapshot.id,
+                    },
+                })
+            }
+
+            // Наконец удаляем сам снапшот
+            await client.testSnapshot.delete({
+                where: {
+                    id: snapshot.id,
+                },
+            })
+        }
+
+        return unusedSnapshots.length
     }
 }
 
