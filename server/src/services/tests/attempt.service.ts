@@ -2,8 +2,7 @@ import ApiError from "@/exceptions/api-error"
 import attemptRepository from "@/repositories/tests/attempt.repository"
 import testRepository from "@/repositories/tests/test.repository"
 import { mapToTestAttemptDTO } from "@/services/mappers/test.mappers"
-import { PreTestUserData, PreTestUserDataLabels } from "@/types/input-fields"
-import { AttemptsListDTO, TestAttemptDTO } from "@/types/test.types"
+import { AttemptsListDTO, PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/types"
 import { redisClient } from "@/utils/redis-client"
 
 class AttemptService {

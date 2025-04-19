@@ -19,6 +19,6 @@
         }
     },
     "include": ["src/**/*"],
-    "files": ["src/types/express.d.ts"],
+    "files": ["src/types/utils/express.d.ts"],
     "exclude": ["node_modules", "**/*.test.ts"]
 }

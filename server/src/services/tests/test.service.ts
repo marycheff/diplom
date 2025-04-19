@@ -10,7 +10,8 @@ import {
     TestsListDTO,
     UpdateTestDTO,
     UserTestDTO,
-} from "@/types/test.types"
+} from "@/types"
+
 import { redisClient } from "@/utils/redis-client"
 
 class TestService {

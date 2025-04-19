@@ -2,7 +2,7 @@ import ApiError from "@/exceptions/api-error"
 import questionRepository from "@/repositories/tests/question.repository"
 import testRepository from "@/repositories/tests/test.repository"
 import { mapQuestion, mapTest } from "@/services/mappers/test.mappers"
-import { QuestionDTO, TestDTO } from "@/types/test.types"
+import { QuestionDTO, TestDTO } from "@/types"
 
 class QuestionService {
     async getTestQuestions(testId: string): Promise<QuestionDTO[]> {

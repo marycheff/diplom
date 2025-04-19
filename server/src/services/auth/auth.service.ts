@@ -5,7 +5,7 @@ import tokenService from "@/services/auth/token.service"
 import mailService from "@/services/mail.service"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
 
-import { CreateUserDTO, UserDTO } from "@/types/user.types"
+import { CreateUserDTO, UserDTO } from "@/types/core/user.types"
 import { Token } from "@prisma/client"
 import bcrypt from "bcryptjs"
 import { v4 as uuid_v4 } from "uuid"

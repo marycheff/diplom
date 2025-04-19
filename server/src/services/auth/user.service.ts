@@ -1,7 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import userRepository from "@/repositories/auth/user.repository"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
-import { UpdateUserDTO, UserDTO, UsersListDTO } from "@/types/user.types"
+import { UpdateUserDTO, UserDTO, UsersListDTO } from "@/types/core/user.types"
 import { redisClient } from "@/utils/redis-client"
 import { User } from "@prisma/client"
 import bcrypt from "bcryptjs"

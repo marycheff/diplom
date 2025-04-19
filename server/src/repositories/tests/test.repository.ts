@@ -1,4 +1,4 @@
-import { CreateAnswerDTO, CreateQuestionDTO, CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types/test.types"
+import { CreateAnswerDTO, CreateQuestionDTO, CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types"
 import { isValidUUID } from "@/utils/validator"
 import { Answer, Prisma, PrismaClient, Question, Test, TestSettings } from "@prisma/client"
 

@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import testService from "@/services/tests/test.service"
-import { CreateTest, QuestionDTO, ShortTestInfo, TestSettingsDTO, UpdateTestDTO } from "@/types/test.types"
+import { CreateTest, QuestionDTO, ShortTestInfo, TestSettingsDTO, UpdateTestDTO } from "@/types"
 
 import { NextFunction, Request, Response } from "express"
 

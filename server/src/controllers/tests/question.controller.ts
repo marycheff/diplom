@@ -1,5 +1,6 @@
 import questionService from "@/services/tests/question.service"
-import { QuestionDTO } from "@/types/test.types"
+import { QuestionDTO } from "@/types"
+
 import { NextFunction, Request, Response } from "express"
 class QuestionController {
     async getTestQuestions(req: Request, res: Response, next: NextFunction) {
@@ -48,7 +49,5 @@ class QuestionController {
             next(error)
         }
     }
-
-    
 }
 export default new QuestionController()

@@ -1,17 +1,17 @@
 import { mapUserToDto } from "@/services/mappers/user.mappers"
 import {
     AnswerDTO,
+    AnswerUserDTO,
     AttemptQuestionDTO,
     QuestionDTO,
     TestAttemptDTO,
     TestDTO,
     TestSettingsDTO,
     TestSnapshotDTO,
-    UserTestDTO,
     UserQuestionDTO,
-    UserAnswerDTO,
-    AnswerUserDTO
-} from "@/types/test.types"
+    UserTestDTO,
+} from "@/types"
+
 import {
     Answer,
     AnswerSnapshot,

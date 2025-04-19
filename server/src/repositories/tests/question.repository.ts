@@ -1,4 +1,4 @@
-import { QuestionDTO } from "@/types/test.types"
+import { QuestionDTO } from "@/types"
 import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()

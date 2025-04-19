@@ -1,4 +1,4 @@
-import { PreTestUserData } from "@/types/input-fields"
+import { PreTestUserData } from "@/types"
 import { isValidUUID } from "@/utils/validator"
 import { z } from "zod"
 

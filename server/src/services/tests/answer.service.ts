@@ -1,10 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import answerRepository from "@/repositories/tests/answer.repository"
 import { mapAnswer, mapQuestion, mapTest } from "@/services/mappers/test.mappers"
-import { AnswerDTO, QuestionDTO, TestDTO } from "@/types/test.types"
-import { Answer, PrismaClient } from "@prisma/client"
-
-const prisma = new PrismaClient()
+import { AnswerDTO, QuestionDTO, TestDTO } from "@/types"
 
 class AnswerService {
     async getQuestionAnswers(questionId: string): Promise<AnswerDTO[]> {
@@ -57,7 +54,10 @@ class AnswerService {
     }
 
     // Удаление ответа
-    async deleteAnswer(answer: Answer): Promise<void> {
+    async deleteAnswer(answer: AnswerDTO): Promise<void> {
+        if (!answer.id || !answer.questionId) {
+            throw ApiError.BadRequest("Недостаточно данных для удаления ответа")
+        }
         try {
             const correctAnswers = await answerRepository.findCorrectAnswers(answer.questionId)
 

@@ -1,4 +1,4 @@
-import { CreateUserDTO } from "@/types/user.types"
+import { CreateUserDTO } from "@/types/core/user.types"
 import { getActivationLinkExpDate, getResetCodeExpDate } from "@/utils/math"
 import { Prisma, PrismaClient, User } from "@prisma/client"
 

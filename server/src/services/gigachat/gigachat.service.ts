@@ -1,5 +1,5 @@
 import ApiError from "@/exceptions/api-error"
-import { ChatContentResponse, GetChatContentParams } from "@/types/gigachat.types"
+import { ChatContentResponse, GetChatContentParams } from "@/types"
 import axios, { AxiosError } from "axios"
 import https from "https"
 
