@@ -1,9 +1,10 @@
+import { AnswerDTO, QuestionDTO, TestDTO, UserDTO } from "@/types"
 import "express"
 declare module "express" {
     interface Request {
-        user?: UserDto
+        user?: UserDTO
         test?: TestDTO
         question?: QuestionDTO
-        answer?: IAnswer
+        answer?: AnswerDTO
     }
 }
