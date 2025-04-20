@@ -1,11 +1,22 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { Button } from "@/shared/ui/Button"
+import { ValidatedInput } from "@/shared/ui/Input"
+import { formatSpaces } from "@/shared/utils/formatter"
+import { SubmitHandler, useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 
+interface StartTest {
+    testId: string
+}
 const HomePage = () => {
     const navigate = useNavigate()
     const { user, logout, isAdmin } = useAuthStore()
 
+    const { register, handleSubmit, setValue } = useForm<StartTest>()
+    const onSubmit: SubmitHandler<StartTest> = data => {
+        // можно отправить пустое тело
+        navigate(`/${formatSpaces(data.testId)}/start`)
+    }
     return (
         <>
             <div>
@@ -17,6 +28,22 @@ const HomePage = () => {
                         <Button onClick={() => navigate("/admin/users")}>Пользователи</Button>
                         <Button onClick={() => navigate("/admin/tests")}>Тесты</Button>
                         <Button onClick={() => navigate("/admin/attempts")}>Попытки прохождения</Button>
+                        <br />
+                        <br />
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <ValidatedInput
+                                clearable
+                                name="testId"
+                                placeholder="ID теста"
+                                register={register}
+                                setValue={setValue}
+                                validationRules={{
+                                    required: "Обязательное поле",
+                                }}
+                            />
+                            <br />
+                            <Button type="submit">Пройти тест</Button>
+                        </form>
 
                         {/* <Link to={"/admin/users"}>Пользователи</Link> */}
                         <br />
@@ -31,14 +58,6 @@ const HomePage = () => {
                 <br />
                 <br />
                 <Button onClick={() => logout()}>Выйти</Button>
-
-                {/* <Select
-                    register={register}
-                    label="Количество ответов для генерации"
-                    name="numOfAnswers"
-                    options={[{ value: "1" }, { value: "2" }, { value: "3" }, { value: "4" }]}
-                    value="1"
-                /> */}
             </div>
         </>
     )

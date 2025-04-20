@@ -2,6 +2,7 @@ import AdminPage from "@/features/admin/pages/AdminPage"
 import AllAttemptsPage from "@/features/attempts/pages/AllAttempts/AllAttemptsPage"
 import AttemptInfoPage from "@/features/attempts/pages/AttemptInfo/AttemptInfoPage"
 import TestAttemptsPage from "@/features/attempts/pages/TestAttempts/TestAttemptsPage"
+import Questions from "@/features/attempts/Start/Questions"
 import StartTest from "@/features/attempts/Start/StartTest"
 import ActivationErrorPage from "@/features/auth/pages/ActivationError"
 import ActivationSuccessPage from "@/features/auth/pages/ActivationSuccess"
@@ -58,6 +59,7 @@ const AppRouter = () => {
         <Route key="activationError" path="/activation-error" element={<ActivationErrorPage />} />,
         <Route key="activationSuccess" path="/activation-success" element={<ActivationSuccessPage />} />,
         <Route key="startAttempt" path="/:testId/start" element={<StartTest />} />,
+        <Route key="passAttempt" path="/my-attempts/:attemptId" element={<Questions />} />,
     ]
 
     // Список защищенных маршрутов для авторизованных пользователей
@@ -72,6 +74,7 @@ const AppRouter = () => {
         <Route key="my-test-add-questions" path="/my-tests/:testId/add-questions" element={<TestInfoPage />} />,
         <Route key="my-test-edit-settings" path="/my-tests/:testId/edit-settings" element={<TestInfoPage />} />,
         <Route key="startAttempt" path="/:testId/start" element={<StartTest />} />,
+        <Route key="passAttempt" path="/my-attempts/:attemptId" element={<Questions />} />,
     ]
 
     // Маршруты для администраторов

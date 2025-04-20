@@ -5,12 +5,14 @@ import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import styles from "../../tests/pages/TestInfo/TestInfoPage.module.scss"
 const StartTest = () => {
+   
+    const navigate = useNavigate()
     const { testId } = useParams<{ testId: string }>()
     if (!testId) {
-        return <div>ID пользователя не указан</div>
+        return <div>ID теста не указан</div>
     }
     if (!isValidUUID(testId)) {
         return <div>Невалидный Id</div>
@@ -35,12 +37,14 @@ const StartTest = () => {
     if (!test) {
         return <div>Тест не найден</div>
     }
-    const handleStartAttempt = async () => {
-        const data = await startAttempt(testId)
-        if (data) {
-            setAttemptId(data)
-        }
-    }
+   const handleStartAttempt = async () => {
+       const data = await startAttempt(testId)
+       if (data) {
+           setAttemptId(data)
+           navigate(`/my-attempts/${data.attemptId}`)
+         
+       }
+   }
 
     return (
         <div>
