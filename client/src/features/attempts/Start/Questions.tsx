@@ -1,6 +1,5 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { useCookie } from "@/shared/hooks/useCookie"
 import { AttemptAnswer, QuestionType, TestAttemptDTO, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -12,179 +11,157 @@ import { useParams } from "react-router-dom"
 import styles from "./Questions.module.scss"
 
 const Questions = () => {
+    // Параметры маршрута
     const { attemptId } = useParams<{ attemptId: string }>()
-    if (!attemptId) {
-        return <div>ID попытки не указан</div>
-    }
-    if (!isValidUUID(attemptId)) {
-        return <div>Невалидный Id</div>
-    }
+
+    // Состояния компонента
     const [selectedAnswers, setSelectedAnswers] = useState<string[]>([])
-    const [allAnswers, setAllAnswers, clearAllAnswers] = useCookie<Record<string, string[]>>(
-        `test_answers_${attemptId}`
-    )
-    const [answerTimes, setAnswerTimes, clearAnswerTimes] = useCookie<Record<string, string>>(
-        `answer_times_${attemptId}`
-    )
-
-    const { isFetching: isTestFetching, getTestForUserById } = useTestStore()
-    const { isFetching: isAttemptFetching, getAttemptById, saveAnswers, completeAttempt, isLoading } = useAttemptStore()
-
+    const [allAnswers, setAllAnswers] = useState<Record<string, string[]>>({})
     const [test, setTest] = useState<UserTestDTO | null>(null)
     const [attempt, setAttempt] = useState<TestAttemptDTO | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
 
+    // Хуки из store
+    const { isFetching: isTestFetching, getTestForUserById } = useTestStore()
+    const { isFetching: isAttemptFetching, getAttemptById, saveAnswers, completeAttempt, isLoading } = useAttemptStore()
+
+    // Проверка валидности attemptId
+    if (!attemptId) return <div>ID попытки не указан</div>
+    if (!isValidUUID(attemptId)) return <div>Невалидный Id</div>
+
+    // Загрузка сохраненных ответов из localStorage при монтировании
+    useEffect(() => {
+        const loadSavedAnswers = async () => {
+            try {
+                const savedAnswers = localStorage.getItem(`test_answers_${attemptId}`)
+                if (savedAnswers) {
+                    setAllAnswers(JSON.parse(savedAnswers))
+                }
+            } catch {
+                toast.error("Ошибка в получении сохраненных ответов")
+            }
+        }
+        loadSavedAnswers()
+    }, [attemptId])
+
+    // Сохранение ответов в localStorage при изменении allAnswers
+    useEffect(() => {
+        if (attemptId && Object.keys(allAnswers).length > 0) {
+            localStorage.setItem(`test_answers_${attemptId}`, JSON.stringify(allAnswers))
+        }
+    }, [allAnswers, attemptId])
+
+    // Загрузка данных попытки
     const fetchAttempt = async () => {
         const fetchedAttempt = await getAttemptById(attemptId)
-        if (fetchedAttempt) {
-            setAttempt(fetchedAttempt)
-        }
+        setAttempt(fetchedAttempt || null)
     }
 
+    // Загрузка данных теста
     const fetchTest = async () => {
-        if (!attempt) {
-            return
-        }
+        if (!attempt) return
         const fetchedTest = await getTestForUserById(attempt.test.id)
-        if (fetchedTest) {
-            setTest(fetchedTest)
-        }
+        setTest(fetchedTest || null)
     }
 
+    // Инициализация данных при монтировании
     useEffect(() => {
         fetchAttempt()
     }, [attemptId])
 
     useEffect(() => {
-        if (attempt) {
-            fetchTest()
-        }
+        if (attempt) fetchTest()
     }, [attempt])
 
-    // Load selected answers for current question when page changes
+    // Обновление выбранных ответов при смене страницы
     useEffect(() => {
-        if (test && test.questions && test.questions.length > 0) {
+        if (test?.questions?.length) {
             const currentQuestion = test.questions[currentPage - 1]
-            if (currentQuestion) {
-                const questionId = currentQuestion.id
-                setSelectedAnswers(allAnswers[questionId] || [])
-            }
+            setSelectedAnswers(allAnswers[currentQuestion.id] || [])
         }
     }, [currentPage, test, allAnswers])
 
-    if (isAttemptFetching || isTestFetching) {
-        return <Loader fullScreen />
-    }
-
-    if (!attempt) {
-        return <div>Попытка не найдена</div>
-    }
-
-    if (!test) {
-        return <div>Тест не найден</div>
-    }
-
-    const questions = test.questions || []
-    const totalPages = questions.length
-
+    // Обработчики событий
     const handlePageChange = (newPage: number) => {
-        // Save current answers before changing page
-        if (currentQuestion) {
-            saveCurrentQuestionAnswers()
-        }
+        saveCurrentQuestionAnswers()
         setCurrentPage(newPage)
     }
 
-    // Save current question's answers to allAnswers state
-    const saveCurrentQuestionAnswers = () => {
-        if (currentQuestion) {
-            setAllAnswers(prev => ({
-                ...prev,
-                [currentQuestion.id]: selectedAnswers,
-            }))
-        }
-    }
-
-    if (questions.length === 0) {
-        return <div>В тесте нет вопросов</div>
-    }
-
-    const currentQuestion = questions[currentPage - 1]
-
     const handleAnswerOptionClick = (answerId: string, isSingleChoice: boolean) => () => {
-        let newSelectedAnswers: string[]
+        const newAnswers = isSingleChoice
+            ? [answerId]
+            : selectedAnswers.includes(answerId)
+            ? selectedAnswers.filter(id => id !== answerId)
+            : [...selectedAnswers, answerId]
 
-        if (isSingleChoice) {
-            newSelectedAnswers = [answerId]
-        } else {
-            if (selectedAnswers.includes(answerId)) {
-                newSelectedAnswers = selectedAnswers.filter(id => id !== answerId)
-            } else {
-                newSelectedAnswers = [...selectedAnswers, answerId]
-            }
-        }
-
-        setSelectedAnswers(newSelectedAnswers)
-
-        // Обновляем все ответы
-        setAllAnswers(prev => ({
-            ...prev,
-            [currentQuestion.id]: newSelectedAnswers,
-        }))
-
-        // Сохраняем время ответа
-        updateAnswerTime(currentQuestion.id)
+        setSelectedAnswers(newAnswers)
+        updateAnswersState(newAnswers)
     }
 
     const handleCheckboxChange = (answerId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.checked) {
-            const newSelectedAnswers = [...selectedAnswers, answerId]
-            setSelectedAnswers(newSelectedAnswers)
-            setAllAnswers(prev => ({
-                ...prev,
-                [currentQuestion.id]: newSelectedAnswers,
-            }))
-        } else {
-            const newSelectedAnswers = selectedAnswers.filter(id => id !== answerId)
-            setSelectedAnswers(newSelectedAnswers)
-            setAllAnswers(prev => ({
-                ...prev,
-                [currentQuestion.id]: newSelectedAnswers,
-            }))
+        const newAnswers = e.target.checked
+            ? [...selectedAnswers, answerId]
+            : selectedAnswers.filter(id => id !== answerId)
+
+        setSelectedAnswers(newAnswers)
+        updateAnswersState(newAnswers)
+    }
+
+    // Вспомогательные функции
+    const updateAnswersState = (newAnswers: string[]) => {
+        if (!currentQuestion) return
+        setAllAnswers(prev => ({ ...prev, [currentQuestion.id]: newAnswers }))
+        updateAnswerTime(currentQuestion.id)
+    }
+
+    const saveCurrentQuestionAnswers = () => {
+        if (currentQuestion) {
+            setAllAnswers(prev => ({ ...prev, [currentQuestion.id]: selectedAnswers }))
         }
     }
 
-    // Функция отправки ответов
-    const handleSubmitAnswers = async () => {
-        const formattedAnswers: AttemptAnswer[] = Object.entries(allAnswers).map(([questionId, answersIds]) => ({
-            questionId,
-            answersIds,
-            answeredAt: answerTimes[questionId] ? new Date(answerTimes[questionId]) : new Date(),
-        }))
-
-        await saveAnswers(attemptId, formattedAnswers)
-        await completeAttempt(attemptId)
-
-        // Очищаем куки
-        clearAllAnswers()
-        clearAnswerTimes()
-
-        toast.success("Ответы успешно отправлены. Попытка завершена.")
-    }
-
-    // Обновление времени ответа через useCookie
     const updateAnswerTime = (questionId: string) => {
-        setAnswerTimes(prev => ({
-            ...prev,
-            [questionId]: new Date().toISOString(),
-        }))
+        localStorage.setItem(`answer_time_${attemptId}_${questionId}`, new Date().toISOString())
     }
+
+    // Отправка результатов
+    const handleSubmitAnswers = async () => {
+        try {
+            saveCurrentQuestionAnswers()
+
+            const formattedAnswers: AttemptAnswer[] = Object.entries(allAnswers).map(([questionId, answersIds]) => ({
+                questionId,
+                answersIds,
+                answeredAt: new Date(localStorage.getItem(`answer_time_${attemptId}_${questionId}`) || Date.now()),
+            }))
+
+            await saveAnswers(attemptId, formattedAnswers)
+            await completeAttempt(attemptId)
+
+            // Очистка localStorage
+            localStorage.removeItem(`test_answers_${attemptId}`)
+            Object.keys(allAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
+
+            toast.success("Ответы успешно отправлены. Попытка завершена.")
+            setAllAnswers({})
+        } catch (error) {
+            toast.error("Ошибка при отправке ответов")
+        }
+    }
+
+    // Состояния загрузки
+    if (isAttemptFetching || isTestFetching) return <Loader fullScreen />
+    if (!attempt) return <div>Попытка не найдена</div>
+    if (!test) return <div>Тест не найден</div>
+    if (!test.questions?.length) return <div>В тесте нет вопросов</div>
+
+    const currentQuestion = test.questions[currentPage - 1]
+    const totalPages = test.questions.length
 
     return (
         <div className={styles.questionsContainer}>
-            <div className={styles.paginationContainer}>
-                <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />
-            </div>
+            <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />
+
             <div className={styles.questionHeader}>
                 <h2>
                     Вопрос {currentPage} из {totalPages}
@@ -194,44 +171,33 @@ const Questions = () => {
             <div className={styles.questionContent}>
                 <h3>{currentQuestion.text}</h3>
 
-                {/* Отображение вариантов ответа */}
                 <div className={styles.answerOptions}>
                     {currentQuestion.answers?.map((answer, index) => (
                         <div
-                            key={index}
+                            key={answer.id}
                             className={styles.answerOption}
                             onClick={handleAnswerOptionClick(
                                 answer.id,
                                 currentQuestion.type === QuestionType.SINGLE_CHOICE
                             )}>
                             {currentQuestion.type === QuestionType.SINGLE_CHOICE ? (
-                                <input
-                                    type="radio"
-                                    id={`answer-${index}`}
-                                    name="answer"
-                                    checked={selectedAnswers.includes(answer.id)}
-                                    onChange={() => {}}
-                                />
+                                <input type="radio" checked={selectedAnswers.includes(answer.id)} readOnly />
                             ) : (
-                                <input
-                                    type="checkbox"
-                                    id={`answer-${index}`}
-                                    name="answer"
-                                    checked={selectedAnswers.includes(answer.id)}
-                                    onChange={() => {}}
-                                />
+                                <input type="checkbox" checked={selectedAnswers.includes(answer.id)} readOnly />
                             )}
-                            <label htmlFor={`answer-${index}`}>{answer.text}</label>
+                            <label>{answer.text}</label>
                         </div>
                     ))}
                 </div>
             </div>
+
             {currentPage === totalPages && (
-                <div className={styles.submitContainer}>
-                    <Button onClick={handleSubmitAnswers} disabled={isLoading || Object.keys(allAnswers).length === 0}>
-                        {isLoading ? "Отправка..." : "Отправить ответы"}
-                    </Button>
-                </div>
+                <Button
+                    onClick={handleSubmitAnswers}
+                    disabled={isLoading || !Object.keys(allAnswers).length}
+                    className={styles.submitButton}>
+                    {isLoading ? "Отправка..." : "Отправить ответы"}
+                </Button>
             )}
         </div>
     )
