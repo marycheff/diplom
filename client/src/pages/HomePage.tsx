@@ -44,6 +44,22 @@ const HomePage = () => {
                             <br />
                             <Button type="submit">Пройти тест</Button>
                         </form>
+                        {/* <br />
+                        <br />
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <ValidatedInput
+                                clearable
+                                name="testId"
+                                placeholder="ID теста"
+                                register={register}
+                                setValue={setValue}
+                                validationRules={{
+                                    required: "Обязательное поле",
+                                }}
+                            />
+                            <br />
+                            <Button type="submit">Пройти тест</Button>
+                        </form> */}
 
                         {/* <Link to={"/admin/users"}>Пользователи</Link> */}
                         <br />

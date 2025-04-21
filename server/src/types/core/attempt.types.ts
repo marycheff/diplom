@@ -45,3 +45,8 @@ export interface UserAnswerDTO {
     timeSpent: number | null
     createdAt: Date
 }
+export interface AttemptAnswer {
+    questionId: string
+    answersIds: string[]
+    timeSpent?: number
+}

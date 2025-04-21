@@ -16,6 +16,7 @@ import {
     getAttemptSchema,
     getTestSnapshotSchema,
     saveAnswerSchema,
+    saveAnswersSchema,
     shortInfoSchema,
     startTestAttemptSchema,
     testIdSchema,
@@ -127,18 +128,26 @@ router.post(
 
 // Сохранение ответа во время попытки
 router.post(
-    "/attempts/:attemptId/answers",
+    "/attempts/:attemptId/answer",
     // authMiddleware,
     conditionalAuthMiddleware,
     validateRequest(saveAnswerSchema),
     attemptController.saveAnswer
+)
+// Сохранение ответа во время попытки
+router.post(
+    "/attempts/:attemptId/answers",
+    // authMiddleware,
+    conditionalAuthMiddleware,
+    validateRequest(saveAnswersSchema),
+    attemptController.saveAnswers
 )
 // Завершение попытки
 router.post(
     "/attempts/:attemptId/complete",
     // authMiddleware,
     validateRequest(completeTestAttemptSchema),
-    attemptController.completeTestAttempt
+    attemptController.completeAttempt
 )
 
 router.get(

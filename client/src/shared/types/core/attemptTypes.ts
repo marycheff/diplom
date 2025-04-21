@@ -8,6 +8,8 @@ export interface AttemptState {
     getAllAttempts: (page: number, limit: number) => Promise<AttemptsListDTO | undefined>
     // TODO: исправить any
     startAttempt: (testId: string, userData?: any) => Promise<StartAttempt | undefined>
+    saveAnswers: (attemptId: string, answers: AttemptAnswer[]) => Promise<void>
+    completeAttempt: (attemptId: string) => Promise<CompleteAttemptResponse>
     // CACHE
     CACHE_EXPIRATION_TIME: number
     cache: Record<string, { data: AttemptsListDTO; timestamp: Date }>
@@ -52,4 +54,12 @@ export interface AttemptQuestionDTO {
         answeredAt: Date | null
         createdAt: Date
     } | null
+}
+export interface AttemptAnswer {
+    questionId: string
+    answersIds: string[]
+    timeSpent?: number
+}
+export interface CompleteAttemptResponse {
+    score: number
 }

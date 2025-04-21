@@ -2,7 +2,7 @@ import ApiError from "@/exceptions/api-error"
 import attemptRepository from "@/repositories/tests/attempt.repository"
 import testRepository from "@/repositories/tests/test.repository"
 import { mapToTestAttemptDTO } from "@/services/mappers/test.mappers"
-import { AttemptsListDTO, PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/types"
+import { AttemptAnswer, AttemptsListDTO, PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/types"
 import { redisClient } from "@/utils/redis-client"
 
 class AttemptService {
@@ -100,7 +100,7 @@ class AttemptService {
                     throw ApiError.BadRequest("Ответ не принадлежат вопросу")
                 }
 
-                await attemptRepository.saveUserAnswers(attemptId, questionId, answersIds, timeSpent)
+                await attemptRepository.saveUserAnswer(attemptId, questionId, answersIds, timeSpent)
                 await redisClient.del(`attempt:${attemptId}`)
             }
         } catch (error) {
@@ -109,6 +109,55 @@ class AttemptService {
             }
             console.error(error)
             throw ApiError.InternalError("Ошибка при сохранении ответа")
+        }
+    }
+    // Сохранение всех ответов
+    async saveAnswers(attemptId: string, answers: AttemptAnswer[]): Promise<void> {
+        try {
+            const attempt = await attemptRepository.findAttemptWithTest(attemptId)
+            if (!attempt) {
+                throw ApiError.BadRequest("Попытка не существует")
+            }
+            if (attempt.status === "COMPLETED" || attempt.completedAt) {
+                throw ApiError.BadRequest("Попытка уже завершена")
+            }
+
+            // Проверка всех ответов перед сохранением
+            for (const answer of answers) {
+                const { questionId, answersIds, timeSpent = 0 } = answer
+
+                const question = await testRepository.getQuestionWithAnswers(questionId)
+                if (!question || question.testId !== attempt.testId) {
+                    throw ApiError.BadRequest(`Вопрос ${questionId} не принадлежит тесту`)
+                }
+
+                if (question.type === "SINGLE_CHOICE" && answersIds.length > 1) {
+                    throw ApiError.BadRequest(
+                        `Для вопроса ${questionId} с одиночным выбором можно указать только один ответ`
+                    )
+                }
+
+                if (answersIds.length > 0) {
+                    const validAnswerIds = question.answers.map(a => a.id)
+                    const allAnswersValid = answersIds.every(id => validAnswerIds.includes(id))
+                    if (!allAnswersValid) {
+                        if (question.type == "MULTIPLE_CHOICE") {
+                            throw ApiError.BadRequest(`Один или несколько ответов не принадлежат вопросу ${questionId}`)
+                        }
+                        throw ApiError.BadRequest(`Ответ не принадлежит вопросу ${questionId}`)
+                    }
+                }
+            }
+
+            // Сохранение всех ответов в одной транзакции
+            await attemptRepository.saveUserAnswers(attemptId, answers)
+            await redisClient.del(`attempt:${attemptId}`)
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при сохранении ответов")
         }
     }
 

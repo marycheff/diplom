@@ -31,9 +31,19 @@ class AttemptController {
             next(e)
         }
     }
+    async saveAnswers(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { attemptId } = req.params
+            const { answers } = req.body
+            await attemptService.saveAnswers(attemptId, answers)
+            res.status(204).send()
+        } catch (e) {
+            next(e)
+        }
+    }
 
     // Завершить попытку
-    async completeTestAttempt(req: Request, res: Response, next: NextFunction) {
+    async completeAttempt(req: Request, res: Response, next: NextFunction) {
         try {
             const { attemptId } = req.params
             const result = await attemptService.completeAttempt(attemptId)

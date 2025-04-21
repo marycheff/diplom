@@ -60,5 +60,18 @@ export const useAttemptStore = create<AttemptState>(set => {
             }
             return withLoading(operation)
         },
+        saveAnswers: async (attemptId, answers) => {
+            const operation = async () => {
+                await attemptService.saveAnswers(attemptId, answers)
+            }
+            return withLoading(operation)
+        },
+        completeAttempt: async attemptId => {
+            const operation = async () => {
+                const response = await attemptService.completeAttempt(attemptId)
+                return response.data
+            }
+            return withLoading(operation)
+        },
     }
 })

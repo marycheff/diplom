@@ -1,11 +1,12 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { QuestionType, TestAttemptDTO, UserTestDTO } from "@/shared/types"
-import Checkbox from "@/shared/ui/Checkbox/Checkbox"
+import { AttemptAnswer, QuestionType, TestAttemptDTO, UserTestDTO } from "@/shared/types"
+import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 import { useParams } from "react-router-dom"
 import styles from "./Questions.module.scss"
 
@@ -17,21 +18,43 @@ const Questions = () => {
     if (!isValidUUID(attemptId)) {
         return <div>Невалидный Id</div>
     }
+
+    // State for current question's selected answers
     const [selectedAnswers, setSelectedAnswers] = useState<string[]>([])
-    const handleCheckboxChange = (answerId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.checked) {
-            setSelectedAnswers([...selectedAnswers, answerId])
-        } else {
-            setSelectedAnswers(selectedAnswers.filter(id => id !== answerId))
-        }
-    }
+
+    // State for all answers in the test
+    const [allAnswers, setAllAnswers] = useState<Record<string, string[]>>({})
+
+    // State for submission status
 
     const { isFetching: isTestFetching, getTestForUserById } = useTestStore()
-    const { isFetching: isAttemptFetching, getAttemptById } = useAttemptStore()
+    const { isFetching: isAttemptFetching, getAttemptById, saveAnswers, completeAttempt, isLoading } = useAttemptStore()
 
     const [test, setTest] = useState<UserTestDTO | null>(null)
     const [attempt, setAttempt] = useState<TestAttemptDTO | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
+
+    // Load saved answers from localStorage when component mounts
+    useEffect(() => {
+        if (attemptId) {
+            const savedAnswers = localStorage.getItem(`test_answers_${attemptId}`)
+            if (savedAnswers) {
+                try {
+                    const parsedAnswers = JSON.parse(savedAnswers)
+                    setAllAnswers(parsedAnswers)
+                } catch (error) {
+                    console.error("Failed to parse saved answers", error)
+                }
+            }
+        }
+    }, [attemptId])
+
+    // Update localStorage whenever allAnswers changes
+    useEffect(() => {
+        if (attemptId && Object.keys(allAnswers).length > 0) {
+            localStorage.setItem(`test_answers_${attemptId}`, JSON.stringify(allAnswers))
+        }
+    }, [allAnswers, attemptId])
 
     const fetchAttempt = async () => {
         const fetchedAttempt = await getAttemptById(attemptId)
@@ -60,6 +83,17 @@ const Questions = () => {
         }
     }, [attempt])
 
+    // Load selected answers for current question when page changes
+    useEffect(() => {
+        if (test && test.questions && test.questions.length > 0) {
+            const currentQuestion = test.questions[currentPage - 1]
+            if (currentQuestion) {
+                const questionId = currentQuestion.id
+                setSelectedAnswers(allAnswers[questionId] || [])
+            }
+        }
+    }, [currentPage, test, allAnswers])
+
     if (isAttemptFetching || isTestFetching) {
         return <Loader fullScreen />
     }
@@ -76,7 +110,21 @@ const Questions = () => {
     const totalPages = questions.length
 
     const handlePageChange = (newPage: number) => {
+        // Save current answers before changing page
+        if (currentQuestion) {
+            saveCurrentQuestionAnswers()
+        }
         setCurrentPage(newPage)
+    }
+
+    // Save current question's answers to allAnswers state
+    const saveCurrentQuestionAnswers = () => {
+        if (currentQuestion) {
+            setAllAnswers(prev => ({
+                ...prev,
+                [currentQuestion.id]: selectedAnswers,
+            }))
+        }
     }
 
     if (questions.length === 0) {
@@ -84,19 +132,75 @@ const Questions = () => {
     }
 
     const currentQuestion = questions[currentPage - 1]
+
     const handleAnswerOptionClick = (answerId: string, isSingleChoice: boolean) => () => {
+        let newSelectedAnswers: string[]
+
         if (isSingleChoice) {
-            // For radio buttons, just set the selected answer
-            setSelectedAnswers([answerId])
+            newSelectedAnswers = [answerId]
         } else {
-            // For checkboxes, toggle the selection
             if (selectedAnswers.includes(answerId)) {
-                setSelectedAnswers(selectedAnswers.filter(id => id !== answerId))
+                newSelectedAnswers = selectedAnswers.filter(id => id !== answerId)
             } else {
-                setSelectedAnswers([...selectedAnswers, answerId])
+                newSelectedAnswers = [...selectedAnswers, answerId]
             }
         }
+
+        setSelectedAnswers(newSelectedAnswers)
+
+        // Update allAnswers immediately
+        setAllAnswers(prev => ({
+            ...prev,
+            [currentQuestion.id]: newSelectedAnswers,
+        }))
     }
+
+    const handleCheckboxChange = (answerId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.checked) {
+            const newSelectedAnswers = [...selectedAnswers, answerId]
+            setSelectedAnswers(newSelectedAnswers)
+
+            // Update allAnswers immediately
+            setAllAnswers(prev => ({
+                ...prev,
+                [currentQuestion.id]: newSelectedAnswers,
+            }))
+        } else {
+            const newSelectedAnswers = selectedAnswers.filter(id => id !== answerId)
+            setSelectedAnswers(newSelectedAnswers)
+
+            // Update allAnswers immediately
+            setAllAnswers(prev => ({
+                ...prev,
+                [currentQuestion.id]: newSelectedAnswers,
+            }))
+        }
+    }
+
+    // Submit all answers to the server
+    const handleSubmitAnswers = async () => {
+        // Save current question answers first
+        saveCurrentQuestionAnswers()
+
+        // Format answers for API
+        const formattedAnswers: AttemptAnswer[] = Object.entries(allAnswers).map(([questionId, answersIds]) => ({
+            questionId,
+            answersIds,
+            // timeSpent will be added later
+        }))
+
+        await saveAnswers(attemptId, formattedAnswers)
+        toast.success("Ответы успешно отправлены")
+        toast.success("Попытка завершена.")
+
+        await completeAttempt(attemptId)
+
+        localStorage.removeItem(`test_answers_${attemptId}`)
+
+        setAllAnswers({})
+        // toast.success("Ответы успешно отправлены. Попытка завершена.")
+    }
+
     return (
         <div className={styles.questionsContainer}>
             <div className={styles.paginationContainer}>
@@ -130,10 +234,17 @@ const Questions = () => {
                                     onChange={() => {}}
                                 />
                             ) : (
-                                <Checkbox
+                                // <Checkbox
+                                //     id={`answer-${index}`}
+                                //     checked={selectedAnswers.includes(answer.id)}
+                                //     onChange={handleCheckboxChange(answer.id)}
+                                // />
+                                <input
+                                    type="checkbox"
                                     id={`answer-${index}`}
+                                    name="answer"
                                     checked={selectedAnswers.includes(answer.id)}
-                                    onChange={handleCheckboxChange(answer.id)}
+                                    onChange={() => {}}
                                 />
                             )}
 
@@ -142,6 +253,13 @@ const Questions = () => {
                     ))}
                 </div>
             </div>
+            {currentPage === totalPages && (
+                <div className={styles.submitContainer}>
+                    <Button onClick={handleSubmitAnswers} disabled={isLoading || Object.keys(allAnswers).length === 0}>
+                        {isLoading ? "Отправка..." : "Отправить ответы"}
+                    </Button>
+                </div>
+            )}
         </div>
     )
 }

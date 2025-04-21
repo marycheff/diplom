@@ -50,7 +50,7 @@ class AttemptRepository {
         })
     }
 
-    async saveUserAnswers(attemptId: string, questionId: string, answersIds: string[], timeSpent: number) {
+    async saveUserAnswer(attemptId: string, questionId: string, answersIds: string[], timeSpent: number) {
         return prisma.$transaction(async tx => {
             await tx.userAnswer.deleteMany({
                 where: { attemptId, questionId },
@@ -65,6 +65,34 @@ class AttemptRepository {
                     answeredAt: new Date(),
                 })),
             })
+        })
+    }
+    async saveUserAnswers(
+        attemptId: string,
+        answers: Array<{ questionId: string; answersIds: string[]; timeSpent?: number }>
+    ) {
+        return prisma.$transaction(async tx => {
+            for (const answer of answers) {
+                const { questionId, answersIds, timeSpent = 0 } = answer
+
+                // Удаляем предыдущие ответы на этот вопрос
+                await tx.userAnswer.deleteMany({
+                    where: { attemptId, questionId },
+                })
+
+                // Создаем новые ответы
+                if (answersIds.length > 0) {
+                    await tx.userAnswer.createMany({
+                        data: answersIds.map(answerId => ({
+                            attemptId,
+                            questionId,
+                            answerId,
+                            timeSpent,
+                            answeredAt: new Date(),
+                        })),
+                    })
+                }
+            }
         })
     }
     async findAttemptWithDetails(attemptId: string) {
@@ -173,7 +201,7 @@ class AttemptRepository {
         const inProgressAttempt = await prisma.testAttempt.findFirst({
             where: {
                 userId: userId,
-                status: "IN_PROGRESS", 
+                status: "IN_PROGRESS",
             },
         })
 
