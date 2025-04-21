@@ -27,9 +27,11 @@ export interface AttemptQuestionDTO {
         type: QuestionType
     }
     answers: AnswerDTO[]
-    userAnswer: {
-        userAnswerId: string
-        answer: AnswerDTO
+    userAnswers: {
+        answers: Array<{
+            userAnswerId: string
+            answer: AnswerDTO
+        }>
         timeSpent: number | null
         answeredAt: Date | null
         createdAt: Date

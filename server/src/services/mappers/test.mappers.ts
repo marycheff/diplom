@@ -86,8 +86,23 @@ export const mapToAttemptQuestionDTO = (
     userAnswers: UserAnswer[],
     allAnswers: Answer[]
 ): AttemptQuestionDTO => {
-    const userAnswer = userAnswers.find(a => a.questionId === question.id)
-    const answer = userAnswer?.answerId ? allAnswers.find(a => a.id === userAnswer.answerId) : null
+    const userAnswersForQuestion = userAnswers.filter(a => a.questionId === question.id)
+
+    if (userAnswersForQuestion.length === 0) {
+        return {
+            question: {
+                id: question.id,
+                text: question.text,
+                order: question.order,
+                type: question.type,
+            },
+            answers: question.answers.map(mapAnswer),
+            userAnswers: null,
+        }
+    }
+
+    // Берем метаданные из первого ответа (предполагаем что они одинаковые для всех ответов на вопрос)
+    const firstAnswer = userAnswersForQuestion[0]
 
     return {
         question: {
@@ -97,18 +112,25 @@ export const mapToAttemptQuestionDTO = (
             type: question.type,
         },
         answers: question.answers.map(mapAnswer),
-        userAnswer:
-            userAnswer && answer
-                ? {
-                      userAnswerId: userAnswer.id, // ID из UserAnswer
-                      answer: mapAnswer(answer),
-                      timeSpent: userAnswer.timeSpent,
-                      answeredAt: userAnswer.answeredAt,
-                      createdAt: userAnswer.createdAt,
-                  }
-                : null,
+        userAnswers: {
+            answers: userAnswersForQuestion.map(userAnswer => {
+                const answer = allAnswers.find(a => a.id === userAnswer.answerId)
+                if (!answer) {
+                    throw new Error(`Answer with id ${userAnswer.answerId} not found`)
+                }
+
+                return {
+                    userAnswerId: userAnswer.id,
+                    answer: mapAnswer(answer),
+                }
+            }),
+            timeSpent: firstAnswer.timeSpent,
+            answeredAt: firstAnswer.answeredAt,
+            createdAt: firstAnswer.createdAt,
+        },
     }
 }
+
 export const mapToTestAttemptDTO = (
     attempt: TestAttempt & {
         test: Test & {
