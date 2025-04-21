@@ -59,7 +59,9 @@ export interface AttemptAnswer {
     questionId: string
     answersIds: string[]
     timeSpent?: number
+    answeredAt?: Date
 }
+
 export interface CompleteAttemptResponse {
     score: number
 }

@@ -1,5 +1,6 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import { useCookie } from "@/shared/hooks/useCookie"
 import { AttemptAnswer, QuestionType, TestAttemptDTO, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -18,14 +19,13 @@ const Questions = () => {
     if (!isValidUUID(attemptId)) {
         return <div>Невалидный Id</div>
     }
-
-    // State for current question's selected answers
     const [selectedAnswers, setSelectedAnswers] = useState<string[]>([])
-
-    // State for all answers in the test
-    const [allAnswers, setAllAnswers] = useState<Record<string, string[]>>({})
-
-    // State for submission status
+    const [allAnswers, setAllAnswers, clearAllAnswers] = useCookie<Record<string, string[]>>(
+        `test_answers_${attemptId}`
+    )
+    const [answerTimes, setAnswerTimes, clearAnswerTimes] = useCookie<Record<string, string>>(
+        `answer_times_${attemptId}`
+    )
 
     const { isFetching: isTestFetching, getTestForUserById } = useTestStore()
     const { isFetching: isAttemptFetching, getAttemptById, saveAnswers, completeAttempt, isLoading } = useAttemptStore()
@@ -33,28 +33,6 @@ const Questions = () => {
     const [test, setTest] = useState<UserTestDTO | null>(null)
     const [attempt, setAttempt] = useState<TestAttemptDTO | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
-
-    // Load saved answers from localStorage when component mounts
-    useEffect(() => {
-        if (attemptId) {
-            const savedAnswers = localStorage.getItem(`test_answers_${attemptId}`)
-            if (savedAnswers) {
-                try {
-                    const parsedAnswers = JSON.parse(savedAnswers)
-                    setAllAnswers(parsedAnswers)
-                } catch (error) {
-                    console.error("Failed to parse saved answers", error)
-                }
-            }
-        }
-    }, [attemptId])
-
-    // Update localStorage whenever allAnswers changes
-    useEffect(() => {
-        if (attemptId && Object.keys(allAnswers).length > 0) {
-            localStorage.setItem(`test_answers_${attemptId}`, JSON.stringify(allAnswers))
-        }
-    }, [allAnswers, attemptId])
 
     const fetchAttempt = async () => {
         const fetchedAttempt = await getAttemptById(attemptId)
@@ -148,19 +126,20 @@ const Questions = () => {
 
         setSelectedAnswers(newSelectedAnswers)
 
-        // Update allAnswers immediately
+        // Обновляем все ответы
         setAllAnswers(prev => ({
             ...prev,
             [currentQuestion.id]: newSelectedAnswers,
         }))
+
+        // Сохраняем время ответа
+        updateAnswerTime(currentQuestion.id)
     }
 
     const handleCheckboxChange = (answerId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.checked) {
             const newSelectedAnswers = [...selectedAnswers, answerId]
             setSelectedAnswers(newSelectedAnswers)
-
-            // Update allAnswers immediately
             setAllAnswers(prev => ({
                 ...prev,
                 [currentQuestion.id]: newSelectedAnswers,
@@ -168,8 +147,6 @@ const Questions = () => {
         } else {
             const newSelectedAnswers = selectedAnswers.filter(id => id !== answerId)
             setSelectedAnswers(newSelectedAnswers)
-
-            // Update allAnswers immediately
             setAllAnswers(prev => ({
                 ...prev,
                 [currentQuestion.id]: newSelectedAnswers,
@@ -177,28 +154,30 @@ const Questions = () => {
         }
     }
 
-    // Submit all answers to the server
+    // Функция отправки ответов
     const handleSubmitAnswers = async () => {
-        // Save current question answers first
-        saveCurrentQuestionAnswers()
-
-        // Format answers for API
         const formattedAnswers: AttemptAnswer[] = Object.entries(allAnswers).map(([questionId, answersIds]) => ({
             questionId,
             answersIds,
-            // timeSpent will be added later
+            answeredAt: answerTimes[questionId] ? new Date(answerTimes[questionId]) : new Date(),
         }))
 
         await saveAnswers(attemptId, formattedAnswers)
-        toast.success("Ответы успешно отправлены")
-        toast.success("Попытка завершена.")
-
         await completeAttempt(attemptId)
 
-        localStorage.removeItem(`test_answers_${attemptId}`)
+        // Очищаем куки
+        clearAllAnswers()
+        clearAnswerTimes()
 
-        setAllAnswers({})
-        // toast.success("Ответы успешно отправлены. Попытка завершена.")
+        toast.success("Ответы успешно отправлены. Попытка завершена.")
+    }
+
+    // Обновление времени ответа через useCookie
+    const updateAnswerTime = (questionId: string) => {
+        setAnswerTimes(prev => ({
+            ...prev,
+            [questionId]: new Date().toISOString(),
+        }))
     }
 
     return (
@@ -234,11 +213,6 @@ const Questions = () => {
                                     onChange={() => {}}
                                 />
                             ) : (
-                                // <Checkbox
-                                //     id={`answer-${index}`}
-                                //     checked={selectedAnswers.includes(answer.id)}
-                                //     onChange={handleCheckboxChange(answer.id)}
-                                // />
                                 <input
                                     type="checkbox"
                                     id={`answer-${index}`}
@@ -247,7 +221,6 @@ const Questions = () => {
                                     onChange={() => {}}
                                 />
                             )}
-
                             <label htmlFor={`answer-${index}`}>{answer.text}</label>
                         </div>
                     ))}
