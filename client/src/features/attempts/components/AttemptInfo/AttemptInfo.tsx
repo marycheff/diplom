@@ -200,30 +200,38 @@ const AttemptInfo = () => {
                                             ))}
                                         </div>
                                         <div className={styles.answerSection}>
-                                            <h3 className={styles.answerTitle}>Ответ пользователя:</h3>
-                                            {question.userAnswer ? (
+                                            <h3 className={styles.answerTitle}>Ответы пользователя:</h3>
+                                            {question.userAnswers && question.userAnswers.answers.length > 0 ? (
                                                 <>
-                                                    <div
-                                                        className={`${styles.answerItem} ${
-                                                            question.userAnswer.answer.isCorrect
-                                                                ? styles.correctAnswer
-                                                                : styles.incorrectAnswer
-                                                        }`}>
-                                                        <span className={styles.answerText}>
-                                                            {question.userAnswer.answer.text}
-                                                        </span>
-                                                        <span className={styles.answerStatus}>
-                                                            {question.userAnswer.answer.isCorrect
-                                                                ? "✓ Верно"
-                                                                : "✗ Неверно"}
-                                                        </span>
-                                                    </div>
+                                                    {question.userAnswers.answers.map(userAnswer => (
+                                                        <div
+                                                            key={userAnswer.userAnswerId}
+                                                            className={styles.answerItemWrapper}>
+                                                            <div
+                                                                className={`${styles.answerItem} ${
+                                                                    userAnswer.answer.isCorrect
+                                                                        ? styles.correctAnswer
+                                                                        : styles.incorrectAnswer
+                                                                }`}>
+                                                                <span className={styles.answerText}>
+                                                                    {userAnswer.answer.text}
+                                                                </span>
+                                                                <span className={styles.answerStatus}>
+                                                                    {userAnswer.answer.isCorrect
+                                                                        ? "✓ Верно"
+                                                                        : "✗ Неверно"}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {/* Show time and date info once after all answers */}
                                                     <div className={styles.answerMeta}>
                                                         <div className={styles.metaItem}>
                                                             <span className={styles.metaLabel}>Затраченное время:</span>
                                                             <span className={styles.metaValue}>
-                                                                {question.userAnswer.timeSpent ? (
-                                                                    `${formatSeconds(question.userAnswer.timeSpent)}`
+                                                                {question.userAnswers &&
+                                                                question.userAnswers.timeSpent ? (
+                                                                    `${formatSeconds(question.userAnswers.timeSpent)}`
                                                                 ) : (
                                                                     <span className={styles.emptyField}>
                                                                         не указано
@@ -234,8 +242,9 @@ const AttemptInfo = () => {
                                                         <div className={styles.metaItem}>
                                                             <span className={styles.metaLabel}>Дата ответа:</span>
                                                             <span className={styles.metaValue}>
-                                                                {question.userAnswer.answeredAt ? (
-                                                                    formatDate(question.userAnswer.answeredAt)
+                                                                {question.userAnswers &&
+                                                                question.userAnswers.answeredAt ? (
+                                                                    formatDate(question.userAnswers.answeredAt)
                                                                 ) : (
                                                                     <span className={styles.emptyField}>
                                                                         не указана
