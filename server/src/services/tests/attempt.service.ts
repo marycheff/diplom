@@ -225,12 +225,10 @@ class AttemptService {
         try {
             const cacheKey = `attempt:${attemptId}`
             const cachedData = await redisClient.get(cacheKey)
-            // if (cachedData) {
-            //     return JSON.parse(cachedData)
-            // }
-
+            if (cachedData) {
+                return JSON.parse(cachedData)
+            }
             const attempt = await attemptRepository.findById(attemptId)
-            console.log(attempt)
             if (!attempt) {
                 throw ApiError.BadRequest("Попытка не найдена")
             }
