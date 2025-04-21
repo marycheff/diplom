@@ -154,6 +154,11 @@ export const saveAnswersSchema = z.object({
                             message: "Массив answersIds содержит дублирующиеся идентификаторы",
                         }),
                     timeSpent: z.number().optional().default(0),
+                    answeredAt: z
+                        .string()
+                        .or(z.date())
+                        .optional()
+                        .transform(val => (val ? new Date(val) : undefined)),
                 })
             )
             .nonempty("Должен быть указан хотя бы один ответ"),

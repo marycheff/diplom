@@ -1,3 +1,4 @@
+import { AttemptAnswer } from "@/types"
 import { Prisma, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
@@ -67,13 +68,10 @@ class AttemptRepository {
             })
         })
     }
-    async saveUserAnswers(
-        attemptId: string,
-        answers: Array<{ questionId: string; answersIds: string[]; timeSpent?: number }>
-    ) {
+    async saveUserAnswers(attemptId: string, answers: AttemptAnswer[]) {
         return prisma.$transaction(async tx => {
             for (const answer of answers) {
-                const { questionId, answersIds, timeSpent = 0 } = answer
+                const { questionId, answersIds, timeSpent = 0, answeredAt } = answer
 
                 // Удаляем предыдущие ответы на этот вопрос
                 await tx.userAnswer.deleteMany({
@@ -88,7 +86,7 @@ class AttemptRepository {
                             questionId,
                             answerId,
                             timeSpent,
-                            answeredAt: new Date(),
+                            answeredAt: answeredAt || new Date(),
                         })),
                     })
                 }
