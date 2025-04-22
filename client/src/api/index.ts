@@ -40,9 +40,9 @@ axiosInstance.interceptors.response.use(
                 // Повторяем оригинальный запрос с новым токеном
                 return axiosInstance(originalRequest)
             } catch (e) {
-                console.log("Пользователь не авторизован")
                 localStorage.removeItem("token")
                 sessionStorage.removeItem("authChecked")
+                window.location.href = "/"
             }
         }
         // Пробрасываем ошибку дальше, если она не связана с истекшим токеном
