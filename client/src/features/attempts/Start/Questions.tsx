@@ -4,6 +4,7 @@ import { AttemptAnswer, QuestionType, TestAttemptDTO, UserTestDTO } from "@/shar
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
+import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
@@ -121,7 +122,9 @@ const Questions = () => {
     }
 
     const updateAnswerTime = (questionId: string) => {
-        localStorage.setItem(`answer_time_${attemptId}_${questionId}`, new Date().toISOString())
+        const timeKey = `answer_time_${attemptId}_${questionId}`
+        const currentTime = new Date().toISOString()
+        saveEncryptedTime(timeKey, currentTime)
     }
 
     // Отправка результатов
@@ -129,14 +132,18 @@ const Questions = () => {
         try {
             saveCurrentQuestionAnswers()
 
-            const formattedAnswers: AttemptAnswer[] = Object.entries(allAnswers).map(([questionId, answersIds]) => ({
-                questionId,
-                answersIds,
-                answeredAt: new Date(localStorage.getItem(`answer_time_${attemptId}_${questionId}`) || Date.now()),
-            }))
+            const formattedAnswers: AttemptAnswer[] = Object.entries(allAnswers).map(([questionId, answersIds]) => {
+                const timeKey = `answer_time_${attemptId}_${questionId}`
+                const answeredAt = getDecryptedTime(timeKey)
+                return {
+                    questionId,
+                    answersIds,
+                    answeredAt,
+                }
+            })
 
             await saveAnswers(attemptId, formattedAnswers)
-            await completeAttempt(attemptId)
+            // await completeAttempt(attemptId)
 
             // Очистка localStorage
             localStorage.removeItem(`test_answers_${attemptId}`)
