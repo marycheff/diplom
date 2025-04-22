@@ -16,6 +16,7 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
 }) => {
     const [localValue, setLocalValue] = useState("")
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+    const inputId = `input-${name}`
 
     // Делаем валидацию опциональной
     const passwordValidation: RegisterOptions = noValidation
@@ -66,12 +67,13 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
                 <input
                     type={isPasswordVisible ? "text" : "password"}
                     disabled={disabled}
+                    id={inputId}
                     placeholder=""
                     className={`${styles.input} ${className}`}
                     onFocus={() => setIsFocused(true)}
                     {...inputProps}
                 />
-                <label htmlFor={name} className={styles.placeholder}>
+                <label htmlFor={inputId} className={styles.placeholder}>
                     {placeholder}
                 </label>
                 {clearable && !disabled && hasValue && (

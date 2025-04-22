@@ -20,6 +20,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
 }) => {
     const [isFocused, setIsFocused] = useState(false)
     const [inputValue, setInputValue] = useState(defaultValue)
+    const inputId = `input-${name}`
 
     // Получаем текущее значение поля из react-hook-form
     const { ref, ...registeredInput } = register(name, {
@@ -60,6 +61,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                             }
                             ref(element)
                         }}
+                        id={inputId}
                         disabled={disabled}
                         className={`${styles.input} ${styles.textarea}`}
                         onFocus={() => setIsFocused(true)}
@@ -76,6 +78,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                             }
                             ref(element)
                         }}
+                        id={inputId}
                         type={type}
                         disabled={disabled}
                         className={styles.input}
@@ -85,7 +88,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                     />
                 )}
                 {floatingLabel && (
-                    <label htmlFor={name} className={styles.placeholder}>
+                    <label htmlFor={inputId} className={styles.placeholder}>
                         {placeholder}
                     </label>
                 )}

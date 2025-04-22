@@ -15,7 +15,7 @@ export const Input: FC<InputProps> = ({
     floatingLabel = true,
 }) => {
     const [isFocused, setIsFocused] = useState(false)
-
+    const inputId = `input-${name}`
     const handleClear = () => {
         if (onChange) {
             onChange({ target: { value: "" } } as ChangeEvent<HTMLInputElement>)
@@ -40,11 +40,11 @@ export const Input: FC<InputProps> = ({
                     onKeyDown={onKeyDown}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    id={name}
+                    id={inputId}
                 />
                 {/* Отображаем label только если используется floating label */}
                 {floatingLabel && (
-                    <label htmlFor={name} className={styles.placeholder}>
+                    <label htmlFor={inputId} className={styles.placeholder}>
                         {placeholder}
                     </label>
                 )}
