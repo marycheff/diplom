@@ -25,7 +25,7 @@ class ChatController {
                 throw next(ApiError.BadRequest("Не все данные заполнены"))
             }
             // Получаем токен для работы с нейросетью
-            const token = await getAccessToken(envConfig.AUTH_DATA as string)
+            const token = await getAccessToken(envConfig.GIGACHAT_AUTH_DATA as string)
 
             // Запрашиваем ответы у нейросети
             const generatedAnswers = await getChatContent({ token, numOfAnswers, question, answer })
