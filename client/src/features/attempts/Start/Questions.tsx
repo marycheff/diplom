@@ -1,7 +1,9 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import TestTimer from "@/features/attempts/Timer/TestTimer"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { AttemptAnswer, QuestionType, TestAttemptDTO, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
+import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import Loader from "@/shared/ui/Loader/Loader"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
 import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
@@ -10,6 +12,7 @@ import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useParams } from "react-router-dom"
 import styles from "./Questions.module.scss"
+const DEFAULT_TEST_TIME = 5
 
 const Questions = () => {
     // Параметры маршрута
@@ -83,11 +86,17 @@ const Questions = () => {
     }, [currentPage, test, allAnswers])
 
     // Обработчики событий
+
+    // Обработчик изменения страницы
     const handlePageChange = (newPage: number) => {
         saveCurrentQuestionAnswers()
         setCurrentPage(newPage)
     }
-
+    // Обработчик истечения времени
+    const handleTimeExpired = () => {
+        handleSubmitAnswers()
+    }
+    // Обработчик клика на ответ
     const handleAnswerOptionClick = (answerId: string, isSingleChoice: boolean) => () => {
         const newAnswers = isSingleChoice
             ? [answerId]
@@ -98,7 +107,7 @@ const Questions = () => {
         setSelectedAnswers(newAnswers)
         updateAnswersState(newAnswers)
     }
-
+    // Обработчик изменения состояния чекбокса
     const handleCheckboxChange = (answerId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const newAnswers = e.target.checked
             ? [...selectedAnswers, answerId]
@@ -143,7 +152,7 @@ const Questions = () => {
             })
 
             await saveAnswers(attemptId, formattedAnswers)
-            // await completeAttempt(attemptId)
+            await completeAttempt(attemptId)
 
             // Очистка localStorage
             localStorage.removeItem(`test_answers_${attemptId}`)
@@ -167,6 +176,7 @@ const Questions = () => {
 
     return (
         <div className={styles.questionsContainer}>
+            <TestTimer attemptId={attemptId} defaultTime={DEFAULT_TEST_TIME} onTimeExpired={() => {}} />
             <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />
 
             <div className={styles.questionHeader}>
@@ -190,7 +200,11 @@ const Questions = () => {
                             {currentQuestion.type === QuestionType.SINGLE_CHOICE ? (
                                 <input type="radio" checked={selectedAnswers.includes(answer.id)} readOnly />
                             ) : (
-                                <input type="checkbox" checked={selectedAnswers.includes(answer.id)} readOnly />
+                                <Checkbox
+                                    id={`checkbox-${index}`}
+                                    checked={selectedAnswers.includes(answer.id)}
+                                    onChange={handleCheckboxChange(answer.id)}
+                                />
                             )}
                             <label>{answer.text}</label>
                         </div>

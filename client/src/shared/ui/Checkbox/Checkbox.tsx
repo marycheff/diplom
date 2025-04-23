@@ -19,6 +19,7 @@ const Checkbox: FC<CheckboxProps> = ({ id, label, checked, disabled, onChange })
                 checked={checked}
                 disabled={disabled}
                 onChange={onChange}
+                readOnly
             />
             <svg>
                 <use xlinkHref="#checkmark-28" />
