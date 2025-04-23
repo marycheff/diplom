@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 class AttemptRepository {
     async createAttempt(data: {
         testId: string
-        snapshotId: string
+        testSnapshotId: string
         userId?: string
         userData?: Record<string, any> | null
     }) {
@@ -14,7 +14,7 @@ class AttemptRepository {
             const attempt = await tx.testAttempt.create({
                 data: {
                     testId: data.testId,
-                    snapshotId: data.snapshotId,
+                    testSnapshotId: data.testSnapshotId,
                     userId: data.userId,
                     userData: data.userData === null ? Prisma.JsonNull : data.userData,
                     status: "IN_PROGRESS",

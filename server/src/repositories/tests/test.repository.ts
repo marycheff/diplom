@@ -74,8 +74,8 @@ class TestRepository {
         for (const question of test.questions) {
             const questionSnapshot = await client.questionSnapshot.create({
                 data: {
-                    snapshotId: newSnapshot.id,
-                    originalId: question.id,
+                    testSnapshotId: newSnapshot.id,
+                    originalTestId: question.id,
                     text: question.text,
                     order: question.order,
                     type: question.type,
@@ -85,7 +85,7 @@ class TestRepository {
             await client.answerSnapshot.createMany({
                 data: question.answers.map(answer => ({
                     questionId: questionSnapshot.id,
-                    originalId: answer.id,
+                    originalTestId: answer.id,
                     text: answer.text,
                     isCorrect: answer.isCorrect,
                 })),
@@ -95,7 +95,7 @@ class TestRepository {
         if (test.settings) {
             await client.testSettingsSnapshot.create({
                 data: {
-                    snapshotId: newSnapshot.id,
+                    testSnapshotId: newSnapshot.id,
                     requireRegistration: test.settings.requireRegistration,
                     inputFields: test.settings.inputFields ?? [],
                     showDetailedResults: test.settings.showDetailedResults,
@@ -434,9 +434,9 @@ class TestRepository {
         })
     }
 
-    async findSnapshot(snapshotId: string) {
+    async findSnapshot(testSnapshotId: string) {
         return prisma.testSnapshot.findUnique({
-            where: { id: snapshotId },
+            where: { id: testSnapshotId },
             include: {
                 originalTest: {
                     include: {
@@ -509,7 +509,7 @@ class TestRepository {
             // Затем удаляем вопросы
             await client.questionSnapshot.deleteMany({
                 where: {
-                    snapshotId: snapshot.id,
+                    testSnapshotId: snapshot.id,
                 },
             })
 
@@ -517,7 +517,7 @@ class TestRepository {
             if (snapshot.settings) {
                 await client.testSettingsSnapshot.delete({
                     where: {
-                        snapshotId: snapshot.id,
+                        testSnapshotId: snapshot.id,
                     },
                 })
             }

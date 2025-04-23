@@ -53,7 +53,7 @@ class AttemptService {
             }
             const newAttempt = await attemptRepository.createAttempt({
                 testId,
-                snapshotId: latestSnapshot.id,
+                testSnapshotId: latestSnapshot.id,
                 userId,
                 userData: settings?.requireRegistration ? null : userData,
             })

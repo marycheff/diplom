@@ -107,21 +107,21 @@ model Answer {
 }
 
 model TestAttempt {
-  id          String            @id @default(uuid())
-  testId      String
-  snapshotId  String?
-  userId      String?
-  userData    Json?
-  score       Float?
-  startedAt   DateTime          @default(now())
-  completedAt DateTime?
-  status      TestAttemptStatus
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  test        Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
-  snapshot    TestSnapshot?     @relation(fields: [snapshotId], references: [id])
-  user        User?             @relation("TestAttemptUser", fields: [userId], references: [id])
-  answers     UserAnswer[]
+  id             String            @id @default(uuid())
+  testId         String
+  testSnapshotId String?
+  userId         String?
+  userData       Json?
+  score          Float?
+  startedAt      DateTime          @default(now())
+  completedAt    DateTime?
+  status         TestAttemptStatus
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  test           Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
+  snapshot       TestSnapshot?     @relation(fields: [testSnapshotId], references: [id])
+  user           User?             @relation("TestAttemptUser", fields: [userId], references: [id])
+  answers        UserAnswer[]
 
   @@map("test_attempts")
 }
@@ -169,35 +169,35 @@ model TestSnapshot {
 }
 
 model QuestionSnapshot {
-  id         String           @id @default(uuid())
-  snapshotId String
-  snapshot   TestSnapshot     @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
-  originalId String
-  text       String
-  order      Int
-  type       QuestionType
-  createdAt  DateTime         @default(now())
-  answers    AnswerSnapshot[]
+  id             String           @id @default(uuid())
+  testSnapshotId String
+  testSnapshot   TestSnapshot     @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
+  originalTestId String
+  text           String
+  order          Int
+  type           QuestionType
+  createdAt      DateTime         @default(now())
+  answers        AnswerSnapshot[]
 
   @@map("question_snapshots")
 }
 
 model AnswerSnapshot {
-  id         String           @id @default(uuid())
-  questionId String
-  question   QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  originalId String
-  text       String
-  isCorrect  Boolean          @default(false)
-  createdAt  DateTime         @default(now())
+  id             String           @id @default(uuid())
+  questionId     String
+  question       QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  originalTestId String
+  text           String
+  isCorrect      Boolean          @default(false)
+  createdAt      DateTime         @default(now())
 
   @@map("answer_snapshots")
 }
 
 model TestSettingsSnapshot {
   id                  String       @id @default(uuid())
-  snapshotId          String       @unique
-  snapshot            TestSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  testSnapshotId      String       @unique
+  snapshot            TestSnapshot @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
   requireRegistration Boolean      @default(false)
   inputFields         Json?
   showDetailedResults Boolean      @default(false)

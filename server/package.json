@@ -43,15 +43,6 @@
         "typescript": "^5.8.3"
     },
     "_moduleAliases": {
-        "@": "./dist/src",
-        "@/dtos": "./dist/src/dtos",
-        "@/services": "./dist/src/services",
-        "@/controllers": "./dist/src/controllers",
-        "@/middleware": "./dist/src/middleware",
-        "@/modules": "./dist/src/modules",
-        "@/utils": "./dist/src/utils",
-        "@/types": "./dist/src/types",
-        "@/exceptions": "./dist/src/exceptions",
-        "@/routes": "./dist/src/routes"
+        "@": "./dist/src"
     }
 }
