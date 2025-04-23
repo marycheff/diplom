@@ -1,3 +1,4 @@
+import { envConfig } from "@/config/env-config"
 import { errorMiddleware } from "@/middleware/error.middleware"
 import authRoutes from "@/routes/auth.routes"
 import chatRoutes from "@/routes/chat.routes"
@@ -10,7 +11,6 @@ import cors from "cors"
 import dotenv from "dotenv"
 import express, { NextFunction, Request, Response } from "express"
 import "module-alias/register"
-import envConfig from "./config/env-сonfig"
 
 dotenv.config()
 

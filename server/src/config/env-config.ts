@@ -23,7 +23,7 @@ for (const envVar of requiredEnvVars) {
     }
 }
 
-export default {
+export const envConfig = {
     DATABASE_URL: process.env.DATABASE_URL,
     JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,

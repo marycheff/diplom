@@ -1,4 +1,4 @@
-import envConfig from "@/config/env-сonfig"
+import { envConfig } from "@/config/env-config"
 import ApiError from "@/exceptions/api-error"
 import authService from "@/services/auth/auth.service"
 

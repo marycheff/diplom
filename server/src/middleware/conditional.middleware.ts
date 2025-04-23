@@ -1,4 +1,5 @@
 import tokenService from "@/services/auth/token.service"
+import { UserDTO } from "@/types"
 import { NextFunction, Request, Response } from "express"
 export default function conditionalAuthMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
@@ -7,8 +8,8 @@ export default function conditionalAuthMiddleware(req: Request, res: Response, n
             const accessToken = authorizationHeader.split(" ")[1]
 
             if (accessToken) {
-                const userData = tokenService.validateAccessToken(accessToken)
-                
+                const userData = tokenService.validateAccessToken(accessToken) as UserDTO
+
                 if (userData) {
                     req.user = userData
                 }

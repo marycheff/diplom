@@ -1,4 +1,4 @@
-import envConfig from "@/config/env-сonfig"
+import { envConfig } from "@/config/env-config"
 import ApiError from "@/exceptions/api-error"
 import nodemailer from "nodemailer"
 import SMTPTransport from "nodemailer/lib/smtp-transport"

@@ -1,4 +1,4 @@
-import envConfig from "@/config/env-сonfig"
+import { envConfig } from "@/config/env-config"
 import tokenRepository from "@/repositories/auth/token.repository"
 import { Token } from "@prisma/client"
 import jwt from "jsonwebtoken"
