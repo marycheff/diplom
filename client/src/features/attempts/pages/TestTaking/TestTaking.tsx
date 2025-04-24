@@ -6,13 +6,13 @@ import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import Loader from "@/shared/ui/Loader/Loader"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
+import { DEFAULT_TEST_TIME_MINUTES } from "@/shared/utils/constants"
 import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useParams } from "react-router-dom"
 import styles from "./TestTaking.module.scss"
-const DEFAULT_TEST_TIME = 5
 
 const TestTaking = () => {
     // Параметры маршрута
@@ -176,7 +176,7 @@ const TestTaking = () => {
 
     return (
         <div className={styles.questionsContainer}>
-            <TestTimer attemptId={attemptId} defaultTime={DEFAULT_TEST_TIME} onTimeExpired={() => {}} />
+            <TestTimer attemptId={attemptId} defaultTime={DEFAULT_TEST_TIME_MINUTES} onTimeExpired={() => {}} />
             <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />
 
             <div className={styles.questionHeader}>
