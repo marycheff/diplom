@@ -11,10 +11,10 @@ import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useParams } from "react-router-dom"
-import styles from "./Questions.module.scss"
+import styles from "./TestTaking.module.scss"
 const DEFAULT_TEST_TIME = 5
 
-const Questions = () => {
+const TestTaking = () => {
     // Параметры маршрута
     const { attemptId } = useParams<{ attemptId: string }>()
 
@@ -224,4 +224,4 @@ const Questions = () => {
     )
 }
 
-export default Questions
+export default TestTaking

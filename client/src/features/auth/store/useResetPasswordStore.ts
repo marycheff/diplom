@@ -1,5 +1,6 @@
 import { API_URL } from "@/api"
 import { ResetPasswordState } from "@/shared/types"
+import { RESET_PASSWORD_TIMEOUT_MINUTES } from "@/shared/utils/constants"
 import axios, { AxiosError } from "axios"
 import toast from "react-hot-toast"
 import { create } from "zustand"
@@ -80,9 +81,6 @@ export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
             return false
         }
         const currentTime = Date.now()
-        return (
-            currentTime - resetCodeTimestamp <
-            Number(import.meta.env.VITE_RESET_PASSWORD_TIMEOUT_MINUTES || 5) * 60 * 1000
-        )
+        return currentTime - resetCodeTimestamp < RESET_PASSWORD_TIMEOUT_MINUTES * 60 * 1000
     },
 }))

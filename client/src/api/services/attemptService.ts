@@ -1,5 +1,11 @@
 import axiosInstance from "@/api"
-import { AttemptAnswer, AttemptsListDTO, CompleteAttemptResponse, StartAttempt, TestAttemptDTO } from "@/shared/types"
+import {
+    AttemptAnswer,
+    AttemptsListDTO,
+    CompleteAttemptResponse,
+    StartAttemptDTO,
+    TestAttemptDTO,
+} from "@/shared/types"
 import { AxiosResponse } from "axios"
 
 class AttemptService {
@@ -23,8 +29,8 @@ class AttemptService {
         })
     }
     // TODO: исправить any
-    startTestAttempt(testId: string, userData?: any): Promise<AxiosResponse<StartAttempt>> {
-        return axiosInstance.post<StartAttempt>(`/tests/${testId}/start`, {
+    startTestAttempt(testId: string, userData?: any): Promise<AxiosResponse<StartAttemptDTO>> {
+        return axiosInstance.post<StartAttemptDTO>(`/tests/${testId}/start`, {
             userData,
         })
     }

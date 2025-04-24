@@ -1,9 +1,9 @@
 import AdminPage from "@/features/admin/pages/AdminPage"
 import AllAttemptsPage from "@/features/attempts/pages/AllAttempts/AllAttemptsPage"
 import AttemptInfoPage from "@/features/attempts/pages/AttemptInfo/AttemptInfoPage"
+import StartAttemptPage from "@/features/attempts/pages/StartAttempt/StartAttemptPage"
 import TestAttemptsPage from "@/features/attempts/pages/TestAttempts/TestAttemptsPage"
-import Questions from "@/features/attempts/Start/Questions"
-import StartTest from "@/features/attempts/Start/StartTest"
+import TestTaking from "@/features/attempts/pages/TestTaking/TestTaking"
 import ActivationErrorPage from "@/features/auth/pages/ActivationError"
 import ActivationSuccessPage from "@/features/auth/pages/ActivationSuccess"
 import LoginPage from "@/features/auth/pages/Login/LoginPage"
@@ -58,8 +58,8 @@ const AppRouter = () => {
         <Route key="signup" path="/signup" element={<SignupPage />} />,
         <Route key="activationError" path="/activation-error" element={<ActivationErrorPage />} />,
         <Route key="activationSuccess" path="/activation-success" element={<ActivationSuccessPage />} />,
-        <Route key="startAttempt" path="/:testId/start" element={<StartTest />} />,
-        <Route key="passAttempt" path="/my-attempts/:attemptId" element={<Questions />} />,
+        <Route key="startAttempt" path="/:testId/start" element={<StartAttemptPage />} />,
+        <Route key="passAttempt" path="/my-attempts/:attemptId" element={<TestTaking />} />,
     ]
 
     // Список защищенных маршрутов для авторизованных пользователей
@@ -73,8 +73,8 @@ const AppRouter = () => {
         <Route key="my-test" path="/my-tests/:testId" element={<TestInfoPage />} />,
         <Route key="my-test-add-questions" path="/my-tests/:testId/add-questions" element={<TestInfoPage />} />,
         <Route key="my-test-edit-settings" path="/my-tests/:testId/edit-settings" element={<TestInfoPage />} />,
-        <Route key="startAttempt" path="/:testId/start" element={<StartTest />} />,
-        <Route key="passAttempt" path="/my-attempts/:attemptId" element={<Questions />} />,
+        <Route key="startAttempt" path="/:testId/start" element={<StartAttemptPage />} />,
+        <Route key="passAttempt" path="/my-attempts/:attemptId" element={<TestTaking />} />,
     ]
 
     // Маршруты для администраторов

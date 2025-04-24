@@ -1,0 +1,2 @@
+
+export const RESET_PASSWORD_TIMEOUT_MINUTES = 5
