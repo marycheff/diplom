@@ -5,6 +5,7 @@ export interface AttemptState {
     isLoading: boolean
     getTestAttempts: (testId: string, page?: number, limit?: number) => Promise<AttemptsListDTO | undefined>
     getAttemptById: (id: string) => Promise<TestAttemptDTO | undefined>
+    getAttemptForUserById: (id: string) => Promise<TestAttemptUserDTO | undefined>
     getAllAttempts: (page: number, limit: number) => Promise<AttemptsListDTO | undefined>
     // TODO: исправить any
     startAttempt: (testId: string, userData?: any) => Promise<StartAttemptDTO | undefined>
@@ -33,7 +34,15 @@ export interface TestAttemptDTO {
     questions: AttemptQuestionDTO[]
     snapshotId: string
 }
-
+export interface TestAttemptUserDTO {
+    id: string
+    testId: string
+    status: string
+    startedAt: Date
+    completedAt: Date | null
+    score: number | null
+    answers: UserAnswerDTO[]
+}
 export interface AttemptsListDTO {
     attempts: TestAttemptDTO[]
     total: number
@@ -66,4 +75,13 @@ export interface AttemptAnswer {
 
 export interface CompleteAttemptResponse {
     score: number
+}
+export interface UserAnswerDTO {
+    id: string
+    attemptId: string
+    questionId: string
+    answerId: string
+    answeredAt: Date | null
+    timeSpent: number | null
+    createdAt: Date
 }

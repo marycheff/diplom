@@ -195,6 +195,25 @@ class AttemptRepository {
             },
         })
     }
+    async findForUserById(attemptId: string) {
+        return prisma.testAttempt.findUnique({
+            where: { id: attemptId },
+            
+            include: {
+                answers: {
+                    select: {
+                        id: true,
+                        attemptId: true,
+                        questionId: true,
+                        answerId: true,
+                        answeredAt: true,
+                        timeSpent: true,
+                        createdAt: true,
+                    },
+                },
+            },
+        })
+    }
     async findInProgressByUserId(userId: string): Promise<boolean> {
         const inProgressAttempt = await prisma.testAttempt.findFirst({
             where: {

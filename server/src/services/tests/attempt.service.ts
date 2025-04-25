@@ -1,8 +1,15 @@
 import ApiError from "@/exceptions/api-error"
 import attemptRepository from "@/repositories/tests/attempt.repository"
 import testRepository from "@/repositories/tests/test.repository"
-import { mapToTestAttemptDTO } from "@/services/mappers/test.mappers"
-import { AttemptAnswer, AttemptsListDTO, PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/types"
+import { mapToTestAttemptDTO, mapToTestAttemptUserDTO } from "@/services/mappers/test.mappers"
+import {
+    AttemptAnswer,
+    AttemptsListDTO,
+    PreTestUserData,
+    PreTestUserDataLabels,
+    TestAttemptDTO,
+    TestAttemptUserDTO,
+} from "@/types"
 import { redisClient } from "@/utils/redis-client"
 
 class AttemptService {
@@ -102,6 +109,7 @@ class AttemptService {
 
                 await attemptRepository.saveUserAnswer(attemptId, questionId, answersIds, timeSpent)
                 await redisClient.del(`attempt:${attemptId}`)
+                await redisClient.del(`user-attempt:${attemptId}`)
             }
         } catch (error) {
             if (error instanceof ApiError) {
@@ -152,6 +160,8 @@ class AttemptService {
             // Сохранение всех ответов в одной транзакции
             await attemptRepository.saveUserAnswers(attemptId, answers)
             await redisClient.del(`attempt:${attemptId}`)
+            await redisClient.del(`user-attempt:${attemptId}`)
+
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error
@@ -195,6 +205,7 @@ class AttemptService {
 
             await attemptRepository.updateAttemptScore(attemptId, score)
             await redisClient.del(`attempt:${attemptId}`)
+            await redisClient.del(`user-attempt:${attemptId}`)
 
             return { score }
         } catch (error) {
@@ -234,6 +245,30 @@ class AttemptService {
             }
 
             const result = mapToTestAttemptDTO(attempt)
+            await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
+            return result
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении попытки")
+        }
+    }
+    async getForUserById(attemptId: string): Promise<TestAttemptUserDTO> {
+        try {
+            const cacheKey = `user-attempt:${attemptId}`
+            const cachedData = await redisClient.get(cacheKey)
+            if (cachedData) {
+                return JSON.parse(cachedData)
+            }
+            const attempt = await attemptRepository.findForUserById(attemptId)
+            console.log(attempt)
+            if (!attempt) {
+                throw ApiError.BadRequest("Попытка не найдена")
+            }
+
+            const result = mapToTestAttemptUserDTO(attempt)
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
             return result
         } catch (error) {

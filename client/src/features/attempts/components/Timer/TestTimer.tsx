@@ -77,7 +77,6 @@ const TestTimer = ({ attemptId, defaultTime, onTimeExpired, isActive = true }: T
                     if (newTime <= 0) {
                         clearInterval(timer!)
                         setTimerActive(false)
-                        toast.error("Время закончилось")
                         onTimeExpired()
                         localStorage.removeItem(`test_time_${attemptId}`)
                         return 0
@@ -97,7 +96,8 @@ const TestTimer = ({ attemptId, defaultTime, onTimeExpired, isActive = true }: T
     return (
         <div className={styles.timerContainer}>
             <div className={`${styles.timer} ${timeRemaining < 300 ? styles.timerWarning : ""}`}>
-                Оставшееся время: {formatSeconds(timeRemaining)}
+                {/* Оставшееся время:  */}
+                {formatSeconds(timeRemaining)}
             </div>
         </div>
     )

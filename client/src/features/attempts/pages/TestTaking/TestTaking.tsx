@@ -1,12 +1,11 @@
 import TestTimer from "@/features/attempts/components/Timer/TestTimer"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { AttemptAnswer, QuestionType, TestAttemptDTO, UserTestDTO } from "@/shared/types"
+import { AttemptAnswer, QuestionType, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import Loader from "@/shared/ui/Loader/Loader"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
-import { DEFAULT_TEST_TIME_MINUTES } from "@/shared/utils/constants"
 import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -22,12 +21,19 @@ const TestTaking = () => {
     const [selectedAnswers, setSelectedAnswers] = useState<string[]>([])
     const [allAnswers, setAllAnswers] = useState<Record<string, string[]>>({})
     const [test, setTest] = useState<UserTestDTO | null>(null)
-    const [attempt, setAttempt] = useState<TestAttemptDTO | null>(null)
+    const [attempt, setAttempt] = useState<TestAttemptUserDTO | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
+    const [timeLimit, setTimeLimit] = useState(0)
 
     // Хуки из store
     const { isFetching: isTestFetching, getTestForUserById } = useTestStore()
-    const { isFetching: isAttemptFetching, getAttemptById, saveAnswers, completeAttempt, isLoading } = useAttemptStore()
+    const {
+        isFetching: isAttemptFetching,
+        getAttemptForUserById,
+        saveAnswers,
+        completeAttempt,
+        isLoading,
+    } = useAttemptStore()
 
     // Проверка валидности attemptId
     if (!attemptId) return <div>ID попытки не указан</div>
@@ -57,15 +63,16 @@ const TestTaking = () => {
 
     // Загрузка данных попытки
     const fetchAttempt = async () => {
-        const fetchedAttempt = await getAttemptById(attemptId)
+        const fetchedAttempt = await getAttemptForUserById(attemptId)
         setAttempt(fetchedAttempt || null)
     }
 
     // Загрузка данных теста
     const fetchTest = async () => {
         if (!attempt) return
-        const fetchedTest = await getTestForUserById(attempt.test.id)
+        const fetchedTest = await getTestForUserById(attempt.testId)
         setTest(fetchedTest || null)
+        setTimeLimit(fetchedTest?.settings?.timeLimit || 0)
     }
 
     // Инициализация данных при монтировании
@@ -94,7 +101,8 @@ const TestTaking = () => {
     }
     // Обработчик истечения времени
     const handleTimeExpired = () => {
-        handleSubmitAnswers()
+        toast.error("Время закончилось. Ваши ответы будут отправлены автоматически.")
+        // handleSubmitAnswers()
     }
     // Обработчик клика на ответ
     const handleAnswerOptionClick = (answerId: string, isSingleChoice: boolean) => () => {
@@ -172,7 +180,10 @@ const TestTaking = () => {
 
     return (
         <div className={styles.questionsContainer}>
-            <TestTimer attemptId={attemptId} defaultTime={DEFAULT_TEST_TIME_MINUTES * 60} onTimeExpired={() => {}} />
+            {timeLimit > 0 && (
+                <TestTimer attemptId={attemptId} defaultTime={timeLimit} onTimeExpired={handleTimeExpired} />
+            )}
+
             <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />
 
             <div className={styles.questionHeader}>

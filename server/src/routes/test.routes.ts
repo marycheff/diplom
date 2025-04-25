@@ -157,6 +157,7 @@ router.get(
     validateRequest(getAttemptSchema),
     attemptController.getAttempt
 )
+router.get("/attempts/:attemptId/for-user", validateRequest(getAttemptSchema), attemptController.getAttemptForUser)
 
 router.get("/:testId/attempts", authMiddleware, testOwnershipMiddleware, attemptController.getTestAttempts)
 

@@ -13,7 +13,15 @@ export interface TestAttemptDTO {
     questions: AttemptQuestionDTO[]
     snapshotId: string
 }
-
+export interface TestAttemptUserDTO {
+    id: string
+    testId: string
+    status: string
+    startedAt: Date
+    completedAt: Date | null
+    score: number | null
+    answers: UserAnswerDTO[]
+}
 export interface AttemptsListDTO {
     attempts: TestAttemptDTO[]
     total: number
@@ -53,3 +61,4 @@ export interface AttemptAnswer {
     timeSpent?: number
     answeredAt?: Date
 }
+

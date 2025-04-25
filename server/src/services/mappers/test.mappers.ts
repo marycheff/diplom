@@ -5,6 +5,7 @@ import {
     AttemptQuestionDTO,
     QuestionDTO,
     TestAttemptDTO,
+    TestAttemptUserDTO,
     TestDTO,
     TestSettingsDTO,
     TestSnapshotDTO,
@@ -159,6 +160,29 @@ export const mapToTestAttemptDTO = (
         user: attempt.user ? mapUserToDto(attempt.user) : attempt.userData,
         test: mapTest(attempt.test),
         questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
+    }
+}
+export const mapToTestAttemptUserDTO = (
+    attempt: TestAttempt & {
+        answers: UserAnswer[]
+    }
+): TestAttemptUserDTO => {
+    return {
+        id: attempt.id,
+        testId: attempt.testId,
+        status: attempt.status,
+        startedAt: attempt.startedAt,
+        completedAt: attempt.completedAt ?? null,
+        score: attempt.score ?? null,
+        answers: attempt.answers.map(answer => ({
+            id: answer.id,
+            attemptId: answer.attemptId,
+            questionId: answer.questionId,
+            answerId: answer.answerId,
+            timeSpent: answer.timeSpent,
+            answeredAt: answer.answeredAt,
+            createdAt: answer.createdAt,
+        })),
     }
 }
 
