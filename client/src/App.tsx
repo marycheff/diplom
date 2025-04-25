@@ -1,5 +1,4 @@
 import Breadcrumbs from "@/shared/ui/Breadcrumbs/Breadcrumbs"
-import ScrollbarWidthManager from "@/shared/utils/ScrollbarWidthManager"
 import { Toaster } from "react-hot-toast"
 import { BrowserRouter } from "react-router-dom"
 import AppRouter from "./router/AppRouter"

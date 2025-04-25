@@ -1,3 +1,4 @@
+import { ROUTES } from "@/router/paths"
 import { Button } from "@/shared/ui/Button"
 import { useNavigate } from "react-router-dom"
 
@@ -5,7 +6,7 @@ const ActivationErrorPage = () => {
     const navigate = useNavigate()
 
     const handleLoginClick = () => {
-        navigate("/home")
+        navigate(ROUTES.HOME)
     }
     return (
         <div>

@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import { ROUTES } from "@/router/paths"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
 import { formatSpaces } from "@/shared/utils/formatter"
@@ -24,10 +25,10 @@ const HomePage = () => {
 
                 {isAdmin && (
                     <>
-                        <Button onClick={() => navigate("/admin")}>Админ панель</Button>
-                        <Button onClick={() => navigate("/admin/users")}>Пользователи</Button>
-                        <Button onClick={() => navigate("/admin/tests")}>Тесты</Button>
-                        <Button onClick={() => navigate("/admin/attempts")}>Попытки прохождения</Button>
+                        <Button onClick={() => navigate(ROUTES.ADMIN)}>Админ панель</Button>
+                        <Button onClick={() => navigate(ROUTES.ADMIN_USERS)}>Пользователи</Button>
+                        <Button onClick={() => navigate(ROUTES.ADMIN_TESTS)}>Тесты</Button>
+                        <Button onClick={() => navigate(ROUTES.ADMIN_ALL_ATTEMPTS)}>Попытки прохождения</Button>
                         <br />
                         <br />
                         <form onSubmit={handleSubmit(onSubmit)}>
@@ -68,9 +69,9 @@ const HomePage = () => {
                 )}
                 {!isAdmin && <h1>Не админ</h1>}
 
-                <Button onClick={() => navigate("/profile")}>Профиль</Button>
-                <Button onClick={() => navigate("/create-test")}>Создать Тест</Button>
-                <Button onClick={() => navigate("/my-tests")}>Мои тесты</Button>
+                <Button onClick={() => navigate(ROUTES.PROFILE)}>Профиль</Button>
+                <Button onClick={() => navigate(ROUTES.CREATE_TEST)}>Создать Тест</Button>
+                <Button onClick={() => navigate(ROUTES.MY_TESTS)}>Мои тесты</Button>
                 <br />
                 <br />
                 <Button onClick={() => logout()}>Выйти</Button>

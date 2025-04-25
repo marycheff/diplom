@@ -1,3 +1,4 @@
+import { ROUTES } from "@/router/paths"
 import BackButton from "@/shared/ui/Button/BackButton/BackButton"
 import { isValidUUID } from "@/shared/utils/validator"
 import { Link, useLocation } from "react-router-dom"
@@ -7,7 +8,7 @@ const Breadcrumbs = () => {
     const location = useLocation()
     const path = location.pathname
 
-    const excludedPaths = ["/login", "/signup", "/activation-error", "/activation-success"]
+    const excludedPaths = [ROUTES.LOGIN, ROUTES.SIGNUP, ROUTES.ACTIVATION_ERROR, ROUTES.ACTIVATION_SUCCESS]
     const shouldDisplayBreadcrumbs = !excludedPaths.some(
         excludedPath => path === excludedPath || path.startsWith(`${excludedPath}/`)
     )

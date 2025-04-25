@@ -1,4 +1,5 @@
 
+import { ROUTES } from "@/router/paths"
 import { Button } from "@/shared/ui/Button"
 import { useNavigate } from "react-router-dom"
 
@@ -6,7 +7,7 @@ const ActivationSuccessPage = () => {
     const navigate = useNavigate()
 
     const handleLoginClick = () => {
-        navigate("/login") 
+        navigate(ROUTES.LOGIN) 
     }
 
     return (

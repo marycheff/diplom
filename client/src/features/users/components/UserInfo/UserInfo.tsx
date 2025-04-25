@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useUserStore } from "@/features/users/store/useUserStore"
+import { ROUTES } from "@/router/paths"
 import { UserDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -32,7 +33,7 @@ const UserInfo = () => {
     const handleDeleteUser = async (id: string) => {
         await deleteUser(id)
         toast.success("Пользователь удален")
-        navigate("/admin")
+        navigate(ROUTES.ADMIN)
     }
 
     const handleBlockUser = async (id: string) => {

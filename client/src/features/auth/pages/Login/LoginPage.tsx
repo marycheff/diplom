@@ -1,5 +1,6 @@
 import ResetPasswordForm from "@/features/auth/components/ResetPasswordForm"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import { ROUTES } from "@/router/paths"
 import { Button } from "@/shared/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 import { useState } from "react"
@@ -63,7 +64,7 @@ const LoginPage = () => {
             </form>
             <div>
                 <p>
-                    Нет аккаунта? <Link to="/signup">Зарегистрироваться</Link>
+                    Нет аккаунта? <Link to={ROUTES.SIGNUP}>Зарегистрироваться</Link>
                 </p>
             </div>
             {!isResetPasswordVisible && (

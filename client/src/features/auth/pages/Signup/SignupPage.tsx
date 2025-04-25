@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import { ROUTES } from "@/router/paths"
 import { Button } from "@/shared/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -55,7 +56,7 @@ const SignupPage = () => {
                 <div className="text-center">
                     <p className="text-base-content/60">
                         Уже зарегистрированы?{" "}
-                        <Link to="/login" className="link link-primary">
+                        <Link to={ROUTES.LOGIN} className="link link-primary">
                             Войти
                         </Link>
                     </p>

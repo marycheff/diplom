@@ -1,4 +1,4 @@
-export const ROUTES_PATHS = {
+export const ROUTES = {
     // Публичные маршруты
     LOGIN: "/login",
     SIGNUP: "/signup",

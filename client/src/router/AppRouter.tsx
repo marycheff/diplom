@@ -1,25 +1,25 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import BlockedUserPage from "@/features/users/pages/BlockedUserPage"
+import { ROUTES } from "@/router/paths"
 import { adminRoutes, publicRoutes, userRoutes } from "@/router/routesConfig"
-import { ROUTES_PATHS } from "@/router/paths"
 import InternetConnectionStatus from "@/shared/ui/InternetConnection/InternetConnectionStatus"
 import Loader from "@/shared/ui/Loader/Loader"
-import { useEffect, useState } from "react"
+import { JSX, useEffect, useState } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 
-interface Routes {
-    element: React.ReactNode
+interface RouteProps {
+    element: JSX.Element
     isAdmin?: boolean
 }
 // Компонент для защиты пользовательских роутов
-const ProtectedRoute = ({ element }: Routes) => {
+const ProtectedRoute = ({ element }: RouteProps) => {
     const { isAuth } = useAuthStore()
-    return isAuth ? element : <Navigate to={ROUTES_PATHS.LOGIN} />
+    return isAuth ? element : <Navigate to={ROUTES.LOGIN} />
 }
 
 // Компонент для защиты админских роутов
-const AdminRoute = ({ element, isAdmin }: Routes) => {
-    return isAdmin ? element : <Navigate to={ROUTES_PATHS.HOME} />
+const AdminRoute = ({ element, isAdmin }: RouteProps) => {
+    return isAdmin ? element : <Navigate to={ROUTES.HOME} />
 }
 
 const AppRouter = () => {
@@ -68,9 +68,7 @@ const AppRouter = () => {
                         ))}
                         <Route
                             path="*"
-                            element={
-                                isAuth ? <Navigate to={ROUTES_PATHS.HOME} /> : <Navigate to={ROUTES_PATHS.LOGIN} />
-                            }
+                            element={isAuth ? <Navigate to={ROUTES.HOME} /> : <Navigate to={ROUTES.LOGIN} />}
                         />
                     </>
                 )}
