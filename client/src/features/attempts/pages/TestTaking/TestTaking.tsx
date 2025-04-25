@@ -1,5 +1,5 @@
+import TestTimer from "@/features/attempts/components/Timer/TestTimer"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
-import TestTimer from "@/features/attempts/Timer/TestTimer"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { AttemptAnswer, QuestionType, TestAttemptDTO, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
@@ -138,31 +138,27 @@ const TestTaking = () => {
 
     // Отправка результатов
     const handleSubmitAnswers = async () => {
-        try {
-            saveCurrentQuestionAnswers()
+        saveCurrentQuestionAnswers()
 
-            const formattedAnswers: AttemptAnswer[] = Object.entries(allAnswers).map(([questionId, answersIds]) => {
-                const timeKey = `answer_time_${attemptId}_${questionId}`
-                const answeredAt = getDecryptedTime(timeKey)
-                return {
-                    questionId,
-                    answersIds,
-                    answeredAt,
-                }
-            })
+        const formattedAnswers: AttemptAnswer[] = Object.entries(allAnswers).map(([questionId, answersIds]) => {
+            const timeKey = `answer_time_${attemptId}_${questionId}`
+            const answeredAt = getDecryptedTime(timeKey)
+            return {
+                questionId,
+                answersIds,
+                answeredAt,
+            }
+        })
 
-            await saveAnswers(attemptId, formattedAnswers)
-            await completeAttempt(attemptId)
+        await saveAnswers(attemptId, formattedAnswers)
+        await completeAttempt(attemptId)
 
-            // Очистка localStorage
-            localStorage.removeItem(`test_answers_${attemptId}`)
-            Object.keys(allAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
+        // Очистка localStorage
+        localStorage.removeItem(`test_answers_${attemptId}`)
+        Object.keys(allAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
 
-            toast.success("Ответы успешно отправлены. Попытка завершена.")
-            setAllAnswers({})
-        } catch (error) {
-            toast.error("Ошибка при отправке ответов")
-        }
+        toast.success("Ответы успешно отправлены. Попытка завершена.")
+        setAllAnswers({})
     }
 
     // Состояния загрузки
@@ -176,7 +172,7 @@ const TestTaking = () => {
 
     return (
         <div className={styles.questionsContainer}>
-            <TestTimer attemptId={attemptId} defaultTime={DEFAULT_TEST_TIME_MINUTES} onTimeExpired={() => {}} />
+            <TestTimer attemptId={attemptId} defaultTime={DEFAULT_TEST_TIME_MINUTES * 60} onTimeExpired={() => {}} />
             <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />
 
             <div className={styles.questionHeader}>

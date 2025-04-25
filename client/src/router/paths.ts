@@ -1,0 +1,30 @@
+export const ROUTES_PATHS = {
+    // Публичные маршруты
+    LOGIN: "/login",
+    SIGNUP: "/signup",
+    ACTIVATION_ERROR: "/activation-error",
+    ACTIVATION_SUCCESS: "/activation-success",
+    START_ATTEMPT: "/:testId/start",
+    PASS_ATTEMPT: "/my-attempts/:attemptId",
+
+    // Защищенные маршруты (для авторизованных пользователей)
+    HOME: "/home",
+    CREATE_TEST: "/create-test",
+    PROFILE: "/profile",
+    MY_TESTS: "/my-tests",
+    MY_TEST_INFO: "/my-tests/:testId",
+    MY_TEST_ADD_QUESTIONS: "/my-tests/:testId/add-questions",
+    MY_TEST_EDIT_SETTINGS: "/my-tests/:testId/edit-settings",
+
+    // Админские маршруты
+    ADMIN: "/admin",
+    ADMIN_USERS: "/admin/users",
+    ADMIN_USER_INFO: "/admin/users/:userId",
+    ADMIN_TESTS: "/admin/tests",
+    ADMIN_TEST_INFO: "/admin/tests/:testId",
+    ADMIN_TEST_ATTEMPTS: "/admin/tests/:testId/attempts",
+    ADMIN_ATTEMPT_INFO: "/admin/attempts/:attemptId",
+    ADMIN_ALL_ATTEMPTS: "/admin/attempts",
+    ADMIN_ADD_QUESTIONS: "/admin/tests/:testId/add-questions",
+    ADMIN_EDIT_SETTINGS: "/admin/tests/:testId/edit-settings",
+}
