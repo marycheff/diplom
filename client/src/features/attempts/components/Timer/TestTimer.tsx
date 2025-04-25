@@ -1,6 +1,6 @@
+import { decryptData, encryptData } from "@/shared/utils/crypto"
 import { formatSeconds } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
-import toast from "react-hot-toast"
 import styles from "./TestTimer.module.scss"
 
 interface TestTimerProps {
@@ -20,7 +20,8 @@ const TestTimer = ({ attemptId, defaultTime, onTimeExpired, isActive = true }: T
         (time: number) => {
             if (time > 0) {
                 try {
-                    localStorage.setItem(`test_time_${attemptId}`, time.toString())
+                    const encryptedTime = encryptData(time.toString())
+                    localStorage.setItem(`test_time_${attemptId}`, encryptedTime)
                 } catch (error) {
                     console.error("Ошибка при сохранении времени:", error)
                 }
@@ -32,20 +33,28 @@ const TestTimer = ({ attemptId, defaultTime, onTimeExpired, isActive = true }: T
     // Загрузка сохраненного времени
     const loadSavedTime = useCallback(() => {
         try {
-            const savedTime = localStorage.getItem(`test_time_${attemptId}`)
-            if (savedTime) {
-                const parsedTime = parseInt(savedTime, 10)
-                if (!isNaN(parsedTime)) {
-                    if (parsedTime > 0) {
-                        setTimeRemaining(parsedTime)
-                    } else {
-                        setTimeRemaining(0)
-                        setTimerActive(false)
-                        console.log("Время закончилось")
-                        onTimeExpired()
+            const encryptedTime = localStorage.getItem(`test_time_${attemptId}`)
+            if (encryptedTime) {
+                const decryptedTime = decryptData(encryptedTime)
+                if (decryptedTime) {
+                    const parsedTime = parseInt(decryptedTime, 10)
+                    if (!isNaN(parsedTime)) {
+                        if (parsedTime > 0) {
+                            setTimeRemaining(parsedTime)
+                        } else {
+                            setTimeRemaining(0)
+                            setTimerActive(false)
+                            onTimeExpired()
+                        }
+                        return true
                     }
-                    return true
                 }
+                // Если дешифрование не удалось (например, данные изменены), возвращаем 0
+                setTimeRemaining(0)
+                localStorage.removeItem(`test_time_${attemptId}`)
+                setTimerActive(false)
+                onTimeExpired()
+                return true
             }
             return false
         } catch (error) {
@@ -77,8 +86,8 @@ const TestTimer = ({ attemptId, defaultTime, onTimeExpired, isActive = true }: T
                     if (newTime <= 0) {
                         clearInterval(timer!)
                         setTimerActive(false)
-                        onTimeExpired()
                         localStorage.removeItem(`test_time_${attemptId}`)
+                        onTimeExpired()
                         return 0
                     } else {
                         saveTime(newTime)
