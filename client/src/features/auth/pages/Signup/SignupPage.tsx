@@ -4,7 +4,7 @@ import { Button } from "@/shared/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 import { SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 type SignupFormData = {
     email: string
@@ -12,6 +12,7 @@ type SignupFormData = {
 }
 const SignupPage = () => {
     const { registration, isLoading } = useAuthStore()
+    const navigate = useNavigate()
 
     const {
         register,
@@ -24,6 +25,7 @@ const SignupPage = () => {
     const onSubmit: SubmitHandler<SignupFormData> = async data => {
         await registration(data.email, data.password)
         toast.success("Успешная регистрация")
+        navigate(ROUTES.HOME)
     }
     return (
         <form onSubmit={handleSubmit(onSubmit)}>

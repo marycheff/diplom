@@ -5,7 +5,7 @@ import { Button } from "@/shared/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export type LoginFormData = {
     email: string
@@ -15,6 +15,8 @@ export type LoginFormData = {
 const LoginPage = () => {
     const [isResetPasswordVisible, setIsResetPasswordVisible] = useState(false)
     const { login, isLoading } = useAuthStore()
+        const navigate = useNavigate()
+    
 
     const {
         register,
@@ -31,6 +33,7 @@ const LoginPage = () => {
 
     const onSubmit: SubmitHandler<LoginFormData> = async data => {
         await login(data.email, data.password)
+        navigate(ROUTES.HOME)
     }
 
     return (
