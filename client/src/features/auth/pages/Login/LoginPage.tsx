@@ -15,8 +15,7 @@ export type LoginFormData = {
 const LoginPage = () => {
     const [isResetPasswordVisible, setIsResetPasswordVisible] = useState(false)
     const { login, isLoading } = useAuthStore()
-        const navigate = useNavigate()
-    
+    const navigate = useNavigate()
 
     const {
         register,

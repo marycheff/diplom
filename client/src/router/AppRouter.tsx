@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import BlockedUserPage from "@/features/users/pages/BlockedUserPage"
 import { ROUTES } from "@/router/paths"
-import { adminRoutes, publicRoutes, userRoutes } from "@/router/routesConfig"
+import { adminRoutes, publicRoutes, unauthorizedRoutes, userRoutes } from "@/router/routesConfig"
 import InternetConnectionStatus from "@/shared/ui/InternetConnection/InternetConnectionStatus"
 import Loader from "@/shared/ui/Loader/Loader"
 import { JSX, useEffect, useState } from "react"
@@ -11,6 +11,13 @@ interface RouteProps {
     element: JSX.Element
     isAdmin?: boolean
 }
+
+
+const UnauthorizedRoute = ({ element }: RouteProps) => {
+    const { isAuth } = useAuthStore()
+    return !isAuth ? element : <Navigate to={ROUTES.HOME} />
+}
+
 // Компонент для защиты пользовательских роутов
 const ProtectedRoute = ({ element }: RouteProps) => {
     const { isAuth } = useAuthStore()
@@ -49,9 +56,21 @@ const AppRouter = () => {
                     <Route path="*" element={<BlockedUserPage />} />
                 ) : (
                     <>
+                        {/* Публичные маршруты (доступны всем) */}
                         {publicRoutes.map(route => (
                             <Route key={route.path} path={route.path} element={route.element} />
                         ))}
+
+                        {/* Маршруты для неавторизованных пользователей */}
+                        {unauthorizedRoutes.map(route => (
+                            <Route
+                                key={route.path}
+                                path={route.path}
+                                element={<UnauthorizedRoute element={route.element} />}
+                            />
+                        ))}
+
+                        {/* Маршруты для авторизованных пользователей */}
                         {userRoutes.map(route => (
                             <Route
                                 key={route.path}
@@ -59,6 +78,8 @@ const AppRouter = () => {
                                 element={<ProtectedRoute element={route.element} />}
                             />
                         ))}
+
+                        {/* Админские маршруты */}
                         {adminRoutes.map(route => (
                             <Route
                                 key={route.path}
@@ -66,6 +87,7 @@ const AppRouter = () => {
                                 element={<AdminRoute element={route.element} isAdmin={isAdmin} />}
                             />
                         ))}
+
                         <Route
                             path="*"
                             element={isAuth ? <Navigate to={ROUTES.HOME} /> : <Navigate to={ROUTES.LOGIN} />}

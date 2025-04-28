@@ -42,13 +42,24 @@ export const userRoutes = [
     { path: ROUTES.MY_TEST_ADD_QUESTIONS, element: <TestInfoPage /> },
     { path: ROUTES.MY_TEST_EDIT_SETTINGS, element: <TestInfoPage /> },
 ]
+export const publicRoutes = [
+    { path: ROUTES.START_ATTEMPT, element: <StartAttemptPage /> },
+    { path: ROUTES.PASS_ATTEMPT, element: <TestTaking /> },
+]
 
 // Конфигурация публичных роутов
-export const publicRoutes = [
+export const unauthorizedRoutes = [
     { path: ROUTES.LOGIN, element: <LoginPage /> },
     { path: ROUTES.SIGNUP, element: <SignupPage /> },
     { path: ROUTES.ACTIVATION_ERROR, element: <ActivationErrorPage /> },
     { path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> },
-    { path: ROUTES.START_ATTEMPT, element: <StartAttemptPage /> },
-    { path: ROUTES.PASS_ATTEMPT, element: <TestTaking /> },
 ]
+
+// export const publicRoutes = [
+//     { path: ROUTES.LOGIN, element: <LoginPage /> },
+//     { path: ROUTES.SIGNUP, element: <SignupPage /> },
+//     { path: ROUTES.ACTIVATION_ERROR, element: <ActivationErrorPage /> },
+//     { path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> },
+//     { path: ROUTES.START_ATTEMPT, element: <StartAttemptPage /> },
+//     { path: ROUTES.PASS_ATTEMPT, element: <TestTaking /> },
+// ]

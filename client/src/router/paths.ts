@@ -1,12 +1,14 @@
 export const ROUTES = {
     // Публичные маршруты
+    START_ATTEMPT: "/:testId/start",
+    PASS_ATTEMPT: "/my-attempts/:attemptId",
+
+    // Маршруты для неавторизованных пользователей
     LOGIN: "/login",
     SIGNUP: "/signup",
     ACTIVATION_ERROR: "/activation-error",
     ACTIVATION_SUCCESS: "/activation-success",
-    START_ATTEMPT: "/:testId/start",
-    PASS_ATTEMPT: "/my-attempts/:attemptId",
-
+    
     // Защищенные маршруты (для авторизованных пользователей)
     HOME: "/home",
     CREATE_TEST: "/create-test",
