@@ -89,7 +89,7 @@ const AttemptInfo = () => {
 
                 {/* Информация об авторе теста */}
                 <div className={styles.infoBlock}>
-                    <h1 className={styles.blockTitle}>Информация об авторе теста</h1>
+                    <h1 className={styles.blockTitle}>Информация о тестируемом</h1>
                     <div className={styles.blockContent}>
                         {attempt.user ? (
                             "id" in attempt.user ? (

@@ -6,10 +6,9 @@ import "./styles/global.scss"
 const App = () => {
     return (
         <BrowserRouter>
-            <Breadcrumbs />
+           
             <AppRouter />
             <Toaster position="top-right" reverseOrder={true} />
-            {/* <ScrollbarWidthManager /> */}
         </BrowserRouter>
     )
 }

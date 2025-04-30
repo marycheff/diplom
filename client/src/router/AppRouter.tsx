@@ -2,6 +2,7 @@ import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import BlockedUserPage from "@/features/users/pages/BlockedUserPage"
 import { ROUTES } from "@/router/paths"
 import { adminRoutes, publicRoutes, unauthorizedRoutes, userRoutes } from "@/router/routesConfig"
+import Breadcrumbs from "@/shared/ui/Breadcrumbs/Breadcrumbs"
 import InternetConnectionStatus from "@/shared/ui/InternetConnection/InternetConnectionStatus"
 import Loader from "@/shared/ui/Loader/Loader"
 import { JSX, useEffect, useState } from "react"
@@ -11,7 +12,6 @@ interface RouteProps {
     element: JSX.Element
     isAdmin?: boolean
 }
-
 
 const UnauthorizedRoute = ({ element }: RouteProps) => {
     const { isAuth } = useAuthStore()
@@ -45,11 +45,12 @@ const AppRouter = () => {
     }, [checkAuth, isAuth])
 
     if (isAuthChecking || !authChecked) {
-        return <Loader fullScreen />
+        return <Loader fullScreen/>
     }
 
     return (
         <>
+            <Breadcrumbs />
             <InternetConnectionStatus />
             <Routes>
                 {user?.isBlocked ? (
