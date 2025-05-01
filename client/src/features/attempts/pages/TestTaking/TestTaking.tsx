@@ -1,6 +1,7 @@
 import TestTimer from "@/features/attempts/components/Timer/TestTimer"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import { ROUTES } from "@/router/paths"
 import { AttemptAnswer, QuestionType, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
@@ -10,7 +11,7 @@ import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import { useParams } from "react-router-dom"
+import { redirect, useParams } from "react-router-dom"
 import styles from "./TestTaking.module.scss"
 
 const TestTaking = () => {
@@ -167,6 +168,7 @@ const TestTaking = () => {
 
         toast.success("Ответы успешно отправлены. Попытка завершена.")
         setAllAnswers({})
+        redirect(ROUTES.HOME)
     }
 
     // Состояния загрузки
