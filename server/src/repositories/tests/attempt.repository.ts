@@ -1,4 +1,4 @@
-import { AttemptAnswer } from "@/types"
+import { AttemptAnswer, PreTestUserDataType } from "@/types"
 import { Prisma, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
@@ -8,7 +8,7 @@ class AttemptRepository {
         testId: string
         testSnapshotId: string
         userId?: string
-        userData?: Record<string, any> | null
+        preTestUserData?: PreTestUserDataType | null
     }) {
         return prisma.$transaction(async tx => {
             const attempt = await tx.testAttempt.create({
@@ -16,7 +16,7 @@ class AttemptRepository {
                     testId: data.testId,
                     testSnapshotId: data.testSnapshotId,
                     userId: data.userId,
-                    userData: data.userData === null ? Prisma.JsonNull : data.userData,
+                    userData: data.preTestUserData === null ? Prisma.JsonNull : data.preTestUserData,
                     status: "IN_PROGRESS",
                 },
             })
@@ -198,7 +198,7 @@ class AttemptRepository {
     async findForUserById(attemptId: string) {
         return prisma.testAttempt.findUnique({
             where: { id: attemptId },
-            
+
             include: {
                 answers: {
                     select: {

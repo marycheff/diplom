@@ -87,40 +87,65 @@ const AttemptInfo = () => {
                     </div>
                 </div>
 
-                {/* Информация об авторе теста */}
+                {/* Информация о тестируемом */}
                 <div className={styles.infoBlock}>
                     <h1 className={styles.blockTitle}>Информация о тестируемом</h1>
                     <div className={styles.blockContent}>
                         {attempt.user ? (
-                            "id" in attempt.user ? (
-                                <>
-                                    <div className={styles.infoRow}>
-                                        <span className={styles.label}>ID:</span>
-                                        <span className={styles.value}>
-                                            <Link to={`/admin/users/${attempt.user.id}`} className="actionLink">
-                                                {attempt.user.id}
-                                            </Link>
-                                        </span>
-                                    </div>
-                                    <div className={styles.infoRow}>
-                                        <span className={styles.label}>Email:</span>
-                                        <span className={styles.value}>
-                                            {attempt.user.email || <span className={styles.emptyField}>—</span>}
-                                        </span>
-                                    </div>
-                                </>
-                            ) : (
-                                Object.entries(attempt.user).map(([key, value]) => (
-                                    <div key={key} className={styles.infoRow}>
-                                        <span className={styles.label}>
-                                            {PreTestUserDataLabels[key as PreTestUserData] || key}:
-                                        </span>
-                                        <span className={styles.value}>{value}</span>
-                                    </div>
-                                ))
-                            )
+                            <>
+                                <div className={styles.infoRow}>
+                                    <span className={styles.label}>ID:</span>
+                                    <span className={styles.value}>
+                                        <Link to={`/admin/users/${attempt.user.id}`} className="actionLink">
+                                            {attempt.user.id}
+                                        </Link>
+                                    </span>
+                                </div>
+
+                                <div className={styles.infoRow}>
+                                    <span className={styles.label}>Email:</span>
+                                    <span className={styles.value}>
+                                        {attempt.user.email || <span className={styles.emptyField}>—</span>}
+                                    </span>
+                                </div>
+
+                                {attempt.preTestUserData && (
+                                    <>
+                                        <div className={styles.subTitle}>
+                                            Информация, полученная перед началом теста
+                                        </div>
+                                        {Object.entries(attempt.preTestUserData).map(([key, value]) => (
+                                            <div key={key} className={styles.infoRow}>
+                                                <span className={styles.label}>
+                                                    {PreTestUserDataLabels[key as PreTestUserData] || key}:
+                                                </span>
+                                                <span className={styles.value}>
+                                                    {value || <span className={styles.emptyField}>—</span>}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </>
+                                )}
+                            </>
                         ) : (
-                            <div className={styles.emptyBlock}>Информация об авторе теста отсутствует</div>
+                            <>
+                                <div className={styles.infoRow}>АНОНИМНЫЙ ПОЛЬЗОВАТЕЛЬ</div>
+                                <div className={styles.subTitle}>Информация, полученная перед началом теста</div>
+                                {attempt.preTestUserData ? (
+                                    Object.entries(attempt.preTestUserData).map(([key, value]) => (
+                                        <div key={key} className={styles.infoRow}>
+                                            <span className={styles.label}>
+                                                {PreTestUserDataLabels[key as PreTestUserData] || key}:
+                                            </span>
+                                            <span className={styles.value}>
+                                                {value || <span className={styles.emptyField}>—</span>}
+                                            </span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className={styles.emptyBlock}>Информация о тестируемом отсутствует</div>
+                                )}
+                            </>
                         )}
                     </div>
                 </div>

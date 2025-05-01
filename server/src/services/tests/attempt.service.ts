@@ -7,6 +7,7 @@ import {
     AttemptsListDTO,
     PreTestUserData,
     PreTestUserDataLabels,
+    PreTestUserDataType,
     TestAttemptDTO,
     TestAttemptUserDTO,
 } from "@/types"
@@ -15,7 +16,7 @@ import { redisClient } from "@/utils/redis-client"
 class AttemptService {
     async startAttempt(
         testId: string,
-        userData?: Record<string, any>,
+        preTestUserData?: PreTestUserDataType,
         userId?: string
     ): Promise<{ attemptId: string }> {
         try {
@@ -33,10 +34,10 @@ class AttemptService {
 
             if (settings?.inputFields && Array.isArray(settings.inputFields) && settings.inputFields.length > 0) {
                 const inputFields = settings.inputFields as PreTestUserData[]
-                if (!userData || inputFields.some(field => userData[field] == null)) {
-                    const missingLabels = inputFields.filter(field => userData?.[field] == null)
+                if (!preTestUserData || inputFields.some(field => preTestUserData[field] == null)) {
+                    const missingLabels = inputFields.filter(field => preTestUserData?.[field] == null)
                     const missingLabelsRu = inputFields
-                        .filter(field => userData?.[field] == null)
+                        .filter(field => preTestUserData?.[field] == null)
                         .map(f => PreTestUserDataLabels[f])
                     throw ApiError.BadRequest(
                         `Не все обязательные поля заполнены: ${missingLabelsRu.join(", ")} (${missingLabels.join(
@@ -62,7 +63,7 @@ class AttemptService {
                 testId,
                 testSnapshotId: latestSnapshot.id,
                 userId,
-                userData: settings?.requireRegistration ? null : userData,
+                preTestUserData: settings?.requireRegistration ? null : preTestUserData,
             })
 
             return { attemptId: newAttempt.id }
@@ -161,7 +162,6 @@ class AttemptService {
             await attemptRepository.saveUserAnswers(attemptId, answers)
             await redisClient.del(`attempt:${attemptId}`)
             await redisClient.del(`user-attempt:${attemptId}`)
-
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error

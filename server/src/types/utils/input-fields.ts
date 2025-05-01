@@ -29,3 +29,6 @@ export const PreTestUserDataLabels: Record<PreTestUserData, string> = {
     [PreTestUserData.Grade]: "Класс",
     [PreTestUserData.Group]: "Группа",
 }
+export interface PreTestUserDataType {
+    [key: string]: string | number | boolean | null | undefined
+}

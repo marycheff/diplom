@@ -1,6 +1,7 @@
+import { PreTestForm } from "@/features/attempts/components/PreTestForm/PreTestForm"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { StartAttemptDTO, UserTestDTO } from "@/shared/types"
+import { UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"
@@ -14,7 +15,6 @@ const StartAttemptPage = () => {
     const { testId } = useParams<{ testId: string }>()
     const { isLoading, startAttempt } = useAttemptStore()
     const { isFetching, getTestForUserById } = useTestStore()
-    const [attemptId, setAttemptId] = useState<StartAttemptDTO | null>(null)
     const [test, setTest] = useState<UserTestDTO | null>(null)
 
     useEffect(() => {
@@ -48,17 +48,17 @@ const StartAttemptPage = () => {
         return <div>Тест не найден</div>
     }
 
-    const handleStartAttempt = async () => {
+    const handleStartAttempt = async (userData?: Record<string, string>) => {
         if (!testId) return
-        const data = await startAttempt(testId)
+        console.log(userData)
+        const data = await startAttempt(testId, userData)
         if (data && data.attemptId) {
-            setAttemptId(data)
             navigate(`/my-attempts/${data.attemptId}`)
         } else {
             toast.error("Не удалось начать попытку. Попробуйте снова")
         }
     }
-
+    const hasRequiredFields = test?.settings?.inputFields && test.settings.inputFields.length > 0
     return (
         <div>
             {/* НАЗВАНИЕ ТЕСТА */}
@@ -76,8 +76,15 @@ const StartAttemptPage = () => {
                     </span>
                 </div>
             </div>
-            <Button onClick={handleStartAttempt}>Начать попытку</Button>
-            {attemptId && <p>{attemptId.attemptId}</p>}
+            {hasRequiredFields ? (
+                <PreTestForm
+                    inputFields={test!.settings?.inputFields!}
+                    onSubmit={handleStartAttempt}
+                    isLoading={isLoading}
+                />
+            ) : (
+                <Button onClick={handleStartAttempt}>Начать попытку</Button>
+            )}
         </div>
     )
 }

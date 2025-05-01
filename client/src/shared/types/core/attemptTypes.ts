@@ -29,7 +29,8 @@ export interface TestAttemptDTO {
     startedAt: Date
     completedAt: Date | null
     score: number | null
-    user: UserDTO | Record<PreTestUserData, string> | null
+    user: UserDTO | null
+    preTestUserData: Record<PreTestUserData, string> | null
     test: TestDTO
     questions: AttemptQuestionDTO[]
     snapshotId: string

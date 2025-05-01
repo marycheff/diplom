@@ -3,6 +3,7 @@ import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { Button } from "@/shared/ui/Button"
 import { EditableInput } from "@/shared/ui/Input"
 import Loader from "@/shared/ui/Loader/Loader"
+import { formatSpaces } from "@/shared/utils/formatter"
 import { useEffect, useState } from "react"
 import { useUserStore } from "../store/useUserStore"
 
@@ -61,7 +62,14 @@ const UserProfilePage = () => {
 
     // Сохранение изменений
     const handleSaveClick = async () => {
-        await updateUser(user?.id!, userFields)
+        const cleanedFields = Object.fromEntries(
+            Object.entries(userFields).map(([key, value]) => [
+                key,
+                typeof value === "string" ? formatSpaces(value) : value,
+            ])
+        )
+
+        await updateUser(user?.id!, cleanedFields)
         getUserInfo()
     }
 

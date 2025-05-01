@@ -1,5 +1,5 @@
 import { PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
-import { formatDate } from "@/shared/utils/formatter"
+import { formatDate, shortenUuid } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./AttemptsTable.module.scss"
@@ -35,35 +35,38 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                     <tr key={attempt.id}>
                                         <td>
                                             <Link to={`/admin/attempts/${attempt.id}`} className="actionLink">
-                                                {attempt.id}
+                                                {shortenUuid(attempt.id)}
                                             </Link>
                                         </td>
                                         <td>
                                             {attempt.user ? (
-                                                "id" in attempt.user ? (
-                                                    // UserDTO
+                                                // UserDTO
+                                                <>
                                                     <Link to={`/admin/users/${attempt.user.id}`} className="actionLink">
-                                                        {attempt.user.id}
+                                                        {shortenUuid(attempt.user.id)}
                                                     </Link>
-                                                ) : (
-                                                    // Record<PreTestUserData, string>
-                                                    <span>
-                                                        {Object.entries(attempt.user)
-                                                            .map(([key, value]) => {
-                                                                const label =
-                                                                    PreTestUserDataLabels[key as PreTestUserData] || key
-                                                                return `${label}: ${value}`
-                                                            })
-                                                            .join(", ")}
-                                                    </span>
-                                                )
+                                                    <br />
+                                                    {attempt.user.email || <span className={styles.emptyField}>—</span>}
+                                                </>
+                                            ) : attempt.preTestUserData ? (
+                                                // Record<PreTestUserData, string>
+                                                <span>
+                                                    {Object.entries(attempt.preTestUserData)
+                                                        .map(([key, value]) => {
+                                                            const label =
+                                                                PreTestUserDataLabels[key as PreTestUserData] || key
+                                                            return `${label}: ${value}`
+                                                        })
+                                                        .join(", ")}
+                                                </span>
                                             ) : (
                                                 "—"
                                             )}
                                         </td>
+
                                         <td>
                                             <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
-                                                {attempt.test.id}
+                                                {shortenUuid(attempt.test.id)}
                                             </Link>
                                             <br />
                                             {attempt.test.title}

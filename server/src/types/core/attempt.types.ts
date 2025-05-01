@@ -1,6 +1,5 @@
-import { AnswerDTO, TestDTO, UserDTO } from "@/types"
+import { AnswerDTO, PreTestUserDataType, TestDTO, UserDTO } from "@/types"
 import { QuestionType } from "@prisma/client"
-import { JsonValue } from "@prisma/client/runtime/library"
 
 export interface TestAttemptDTO {
     id: string
@@ -8,7 +7,8 @@ export interface TestAttemptDTO {
     startedAt: Date
     completedAt: Date | null
     score: number | null
-    user: UserDTO | JsonValue | null
+    user: UserDTO | null
+    preTestUserData: PreTestUserDataType | null
     test: TestDTO
     questions: AttemptQuestionDTO[]
     snapshotId: string
@@ -61,4 +61,3 @@ export interface AttemptAnswer {
     timeSpent?: number
     answeredAt?: Date
 }
-

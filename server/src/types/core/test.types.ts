@@ -21,7 +21,7 @@ export interface TestDTO {
         patronymic?: string | null
     }
     title: string
-    description?: string
+    description: string | null
     questions?: QuestionDTO[]
     settings?: TestSettingsDTO
     totalAttempts: number
