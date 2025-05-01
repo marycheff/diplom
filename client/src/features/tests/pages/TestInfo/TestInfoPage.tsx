@@ -8,15 +8,17 @@ import { useTestStore } from "@/features/tests/store/useTestStore"
 import {
     PreTestUserDataLabels,
     QuestionDTO,
+    Role,
     ShortTestInfo,
     TestDTO,
     TestSettingsDTO,
     UpdateTestDTO,
 } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
+import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import Loader from "@/shared/ui/Loader/Loader"
 import Modal from "@/shared/ui/Modal/Modal"
-import { formatSeconds, formatSpaces } from "@/shared/utils/formatter"
+import { formatSeconds, formatSpaces, shortenUuid } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
@@ -157,24 +159,39 @@ const TestInfoPage = () => {
                         <InfoRowSkeleton rows={4} />
                     ) : (
                         <div className={styles.blockContent}>
+                            {currentUser?.role === Role.ADMIN && (
+                                <div className={styles.infoRow}>
+                                    <span className={styles.label}>ID:</span>
+                                    <span className={styles.value}>
+                                        {shortenUuid(test.id)}
+                                        <CopyButton textToCopy={test.id} showOnHover />
+                                    </span>
+                                </div>
+                            )}
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>ID:</span>
-                                <span className={styles.value}>{test.id}</span>
+                                <span className={styles.label}>
+                                    Ссылка
+                                    {/* для прохождения: */}
+                                </span>
+                                <span className={styles.value}>
+                                    {/* <Button>Скопировать</Button> */}
+                                    <CopyButton textToCopy={`http://localhost:3000/${test.id}/start`} variant="text" />
+                                </span>
                             </div>
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>Название:</span>
+                                <span className={styles.label}>Название</span>
                                 <span className={styles.value}>
                                     {test.title || <span className={styles.emptyField}>не указано</span>}
                                 </span>
                             </div>
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>Описание:</span>
+                                <span className={styles.label}>Описание</span>
                                 <span className={styles.value}>
                                     {test.description || <span className={styles.emptyField}>не указано</span>}
                                 </span>
                             </div>
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>Всего попыток:</span>
+                                <span className={styles.label}>Всего попыток</span>
                                 <span className={styles.value}>
                                     {test.totalAttempts === 0 ? (
                                         "0"
@@ -208,31 +225,31 @@ const TestInfoPage = () => {
                                 ) : (
                                     <>
                                         <div className={styles.infoRow}>
-                                            <span className={styles.label}>Требуется регистрация:</span>
+                                            <span className={styles.label}>Требуется регистрация</span>
                                             <span className={styles.value}>
                                                 {test.settings.requireRegistration ? "Да" : "Нет"}
                                             </span>
                                         </div>
                                         <div className={styles.infoRow}>
-                                            <span className={styles.label}>Показывать детальные результаты:</span>
+                                            <span className={styles.label}>Показывать детальные результаты</span>
                                             <span className={styles.value}>
                                                 {test.settings.showDetailedResults ? "Да" : "Нет"}
                                             </span>
                                         </div>
                                         <div className={styles.infoRow}>
-                                            <span className={styles.label}>Перемешивать вопросы:</span>
+                                            <span className={styles.label}>Перемешивать вопросы</span>
                                             <span className={styles.value}>
                                                 {test.settings.shuffleQuestions ? "Да" : "Нет"}
                                             </span>
                                         </div>
                                         <div className={styles.infoRow}>
-                                            <span className={styles.label}>Перемешивать варианты ответов:</span>
+                                            <span className={styles.label}>Перемешивать варианты ответов</span>
                                             <span className={styles.value}>
                                                 {test.settings.shuffleAnswers ? "Да" : "Нет"}
                                             </span>
                                         </div>
                                         <div className={styles.infoRow}>
-                                            <span className={styles.label}>Поля ввода:</span>
+                                            <span className={styles.label}>Поля ввода</span>
                                             <span className={styles.value}>
                                                 {test.settings.inputFields && test.settings.inputFields.length > 0 ? (
                                                     test.settings.inputFields
@@ -244,7 +261,7 @@ const TestInfoPage = () => {
                                             </span>
                                         </div>
                                         <div className={styles.infoRow}>
-                                            <span className={styles.label}>Лимит времени:</span>
+                                            <span className={styles.label}>Лимит времени</span>
                                             <span className={styles.value}>
                                                 {test.settings.timeLimit ? (
                                                     formatSeconds(test.settings.timeLimit)
@@ -268,7 +285,7 @@ const TestInfoPage = () => {
                         <h1 className={styles.blockTitle}>Информация об авторе</h1>
                         <div className={styles.blockContent}>
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>ID:</span>
+                                <span className={styles.label}>ID</span>
                                 <span className={styles.value}>
                                     <Link to={`/admin/users/${test.author.id}`} className="actionLink">
                                         {test.author.id}
@@ -276,25 +293,25 @@ const TestInfoPage = () => {
                                 </span>
                             </div>
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>Email:</span>
+                                <span className={styles.label}>Email</span>
                                 <span className={styles.value}>
                                     {test.author.email || <span className={styles.emptyField}>не указан</span>}
                                 </span>
                             </div>
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>Имя:</span>
+                                <span className={styles.label}>Имя</span>
                                 <span className={styles.value}>
                                     {test.author.name || <span className={styles.emptyField}>не указано</span>}
                                 </span>
                             </div>
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>Фамилия:</span>
+                                <span className={styles.label}>Фамилия</span>
                                 <span className={styles.value}>
                                     {test.author.surname || <span className={styles.emptyField}>не указана</span>}
                                 </span>
                             </div>
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>Отчество:</span>
+                                <span className={styles.label}>Отчество</span>
                                 <span className={styles.value}>
                                     {test.author.patronymic || <span className={styles.emptyField}>не указано</span>}
                                 </span>

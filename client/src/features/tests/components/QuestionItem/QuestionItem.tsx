@@ -51,10 +51,10 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
                     {/* <Button onClick={onEdit} tooltip="Редактировать">
                         ✏️
                     </Button> */}
-                    <Button onClick={onDelete} tooltip="Удалить">
+                    <Button onClick={onDelete} title="Удалить">
                         🗑️
                     </Button>
-                    <Button onClick={onToggle} tooltip="Развернуть">
+                    <Button onClick={onToggle} title={expanded ? "Свернуть" : "Развернуть"}>
                         {expanded ? "▲" : "▼"}
                     </Button>
                 </div>

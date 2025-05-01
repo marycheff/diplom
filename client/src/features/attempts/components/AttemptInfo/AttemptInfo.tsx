@@ -94,7 +94,7 @@ const AttemptInfo = () => {
                         {attempt.user ? (
                             <>
                                 <div className={styles.infoRow}>
-                                    <span className={styles.label}>ID:</span>
+                                    <span className={styles.label}>ID</span>
                                     <span className={styles.value}>
                                         <Link to={`/admin/users/${attempt.user.id}`} className="actionLink">
                                             {attempt.user.id}
@@ -103,7 +103,7 @@ const AttemptInfo = () => {
                                 </div>
 
                                 <div className={styles.infoRow}>
-                                    <span className={styles.label}>Email:</span>
+                                    <span className={styles.label}>Email</span>
                                     <span className={styles.value}>
                                         {attempt.user.email || <span className={styles.emptyField}>—</span>}
                                     </span>
@@ -117,7 +117,7 @@ const AttemptInfo = () => {
                                         {Object.entries(attempt.preTestUserData).map(([key, value]) => (
                                             <div key={key} className={styles.infoRow}>
                                                 <span className={styles.label}>
-                                                    {PreTestUserDataLabels[key as PreTestUserData] || key}:
+                                                    {PreTestUserDataLabels[key as PreTestUserData] || key}
                                                 </span>
                                                 <span className={styles.value}>
                                                     {value || <span className={styles.emptyField}>—</span>}
@@ -135,7 +135,7 @@ const AttemptInfo = () => {
                                     Object.entries(attempt.preTestUserData).map(([key, value]) => (
                                         <div key={key} className={styles.infoRow}>
                                             <span className={styles.label}>
-                                                {PreTestUserDataLabels[key as PreTestUserData] || key}:
+                                                {PreTestUserDataLabels[key as PreTestUserData] || key}
                                             </span>
                                             <span className={styles.value}>
                                                 {value || <span className={styles.emptyField}>—</span>}
@@ -157,7 +157,7 @@ const AttemptInfo = () => {
                         {attempt.test ? (
                             <>
                                 <div className={styles.infoRow}>
-                                    <span className={styles.label}>ID:</span>
+                                    <span className={styles.label}>ID</span>
                                     <span className={styles.value}>
                                         <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
                                             {attempt.test.id}
@@ -182,7 +182,7 @@ const AttemptInfo = () => {
                                     </span>
                                 </div>
                                 <div className={styles.infoRow}>
-                                    <span className={styles.label}>Название:</span>
+                                    <span className={styles.label}>Название</span>
                                     <span className={styles.value}>
                                         {attempt.test.title || <span className={styles.emptyField}>—</span>}
                                     </span>

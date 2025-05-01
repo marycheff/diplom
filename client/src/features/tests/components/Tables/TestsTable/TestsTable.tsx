@@ -44,11 +44,9 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                             </td>
                                             <td>
                                                 <Link to={`/admin/users/${test.author.id}`} className="actionLink">
-                                                    {shortenUuid(test.author.id)}
+                                                    {/* {shortenUuid(test.author.id)} */}
+                                                    {test.author.email}
                                                 </Link>
-
-                                                <br />
-                                                {test.author.email}
                                             </td>
                                             <td>{test.title}</td>
                                             <td>{test.description || "–"}</td>

@@ -1,0 +1,47 @@
+.iconButton {
+    background: none;
+    border: none;
+    padding: 4px;
+    margin-left: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    transform: translateY(0);
+
+    &[data-visible="false"] {
+        opacity: 0;
+        transform: translateY(-2px);
+        pointer-events: none;
+    }
+    
+    &[data-visible="true"] {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    &:hover {
+        transform: scale(1.1);
+    }
+}
+
+.textButton {
+    transition: all 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-1px);
+    }
+}
+
+.content {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    vertical-align: middle;
+}

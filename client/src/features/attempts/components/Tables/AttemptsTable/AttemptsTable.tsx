@@ -43,10 +43,10 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                                 // UserDTO
                                                 <>
                                                     <Link to={`/admin/users/${attempt.user.id}`} className="actionLink">
-                                                        {shortenUuid(attempt.user.id)}
+                                                        {/* {shortenUuid(attempt.user.id)} */}
+                                                        {attempt.user.email || <span>перейти</span>}
                                                     </Link>
                                                     <br />
-                                                    {attempt.user.email || <span className={styles.emptyField}>—</span>}
                                                 </>
                                             ) : attempt.preTestUserData ? (
                                                 // Record<PreTestUserData, string>
@@ -66,10 +66,11 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
 
                                         <td>
                                             <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
-                                                {shortenUuid(attempt.test.id)}
+                                                {/* {shortenUuid(attempt.test.id)} */}
+                                                {attempt.test.title}
                                             </Link>
-                                            <br />
-                                            {attempt.test.title}
+                                            {/* <br />
+                                            {attempt.test.title} */}
                                         </td>
                                         <td>{attempt.status}</td>
                                         <td>{formatDate(attempt.startedAt)}</td>

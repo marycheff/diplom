@@ -1,36 +1,37 @@
-import Tooltip from "@/shared/ui/Tooltip/Tooltip"
-import { FC, useRef } from "react"
+import { forwardRef } from "react"
 import styles from "./Button.module.scss"
 import { ButtonProps } from "./Button.props"
 
-export const Button: FC<ButtonProps> = ({
-    children,
-    type = "button",
-    isLoading,
-    disabled,
-    onClick,
-    loadingText = "Загрузка...",
-    tooltip,
-    className,
-}) => {
-    const buttonRef = useRef<HTMLButtonElement>(null)
-
-    return (
-        <>
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+    (
+        {
+            children,
+            type = "button",
+            isLoading,
+            disabled,
+            onClick,
+            loadingText = "Загрузка...",
+            className,
+            ...restProps // Собираем остальные пропсы
+        },
+        ref
+    ) => {
+        return (
             <button
-                ref={buttonRef}
+                ref={ref}
                 type={type}
                 disabled={isLoading || disabled}
                 onClick={onClick}
                 className={`
                     ${styles.button}
                     ${className || ""}
-                `}>
+                `}
+                {...restProps} // Передаем все остальные пропсы
+            >
                 {isLoading ? loadingText : children}
             </button>
-            {tooltip && <Tooltip content={tooltip} targetRef={buttonRef} delay={300} />}
-        </>
-    )
-}
+        )
+    }
+)
 
 export default Button
