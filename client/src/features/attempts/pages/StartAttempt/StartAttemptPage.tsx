@@ -1,7 +1,7 @@
 import { PreTestForm } from "@/features/attempts/components/PreTestForm/PreTestForm"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { UserTestDTO } from "@/shared/types"
+import { PreTestUserDataType, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"
@@ -48,9 +48,8 @@ const StartAttemptPage = () => {
         return <div>Тест не найден</div>
     }
 
-    const handleStartAttempt = async (userData?: Record<string, string>) => {
+    const handleStartAttempt = async (userData?: PreTestUserDataType) => {
         if (!testId) return
-        console.log(userData)
         const data = await startAttempt(testId, userData)
         if (data && data.attemptId) {
             navigate(`/my-attempts/${data.attemptId}`)

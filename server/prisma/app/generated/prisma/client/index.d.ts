@@ -9374,7 +9374,7 @@ export namespace Prisma {
     testId: number
     testSnapshotId: number
     userId: number
-    userData: number
+    preTestUserData: number
     score: number
     startedAt: number
     completedAt: number
@@ -9424,7 +9424,7 @@ export namespace Prisma {
     testId?: true
     testSnapshotId?: true
     userId?: true
-    userData?: true
+    preTestUserData?: true
     score?: true
     startedAt?: true
     completedAt?: true
@@ -9525,7 +9525,7 @@ export namespace Prisma {
     testId: string
     testSnapshotId: string | null
     userId: string | null
-    userData: JsonValue | null
+    preTestUserData: JsonValue | null
     score: number | null
     startedAt: Date
     completedAt: Date | null
@@ -9558,7 +9558,7 @@ export namespace Prisma {
     testId?: boolean
     testSnapshotId?: boolean
     userId?: boolean
-    userData?: boolean
+    preTestUserData?: boolean
     score?: boolean
     startedAt?: boolean
     completedAt?: boolean
@@ -9577,7 +9577,7 @@ export namespace Prisma {
     testId?: boolean
     testSnapshotId?: boolean
     userId?: boolean
-    userData?: boolean
+    preTestUserData?: boolean
     score?: boolean
     startedAt?: boolean
     completedAt?: boolean
@@ -9594,7 +9594,7 @@ export namespace Prisma {
     testId?: boolean
     testSnapshotId?: boolean
     userId?: boolean
-    userData?: boolean
+    preTestUserData?: boolean
     score?: boolean
     startedAt?: boolean
     completedAt?: boolean
@@ -9611,7 +9611,7 @@ export namespace Prisma {
     testId?: boolean
     testSnapshotId?: boolean
     userId?: boolean
-    userData?: boolean
+    preTestUserData?: boolean
     score?: boolean
     startedAt?: boolean
     completedAt?: boolean
@@ -9620,7 +9620,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TestAttemptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "testId" | "testSnapshotId" | "userId" | "userData" | "score" | "startedAt" | "completedAt" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["testAttempt"]>
+  export type TestAttemptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "testId" | "testSnapshotId" | "userId" | "preTestUserData" | "score" | "startedAt" | "completedAt" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["testAttempt"]>
   export type TestAttemptInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     test?: boolean | TestDefaultArgs<ExtArgs>
     snapshot?: boolean | TestAttempt$snapshotArgs<ExtArgs>
@@ -9652,7 +9652,7 @@ export namespace Prisma {
       testId: string
       testSnapshotId: string | null
       userId: string | null
-      userData: Prisma.JsonValue | null
+      preTestUserData: Prisma.JsonValue | null
       score: number | null
       startedAt: Date
       completedAt: Date | null
@@ -10090,7 +10090,7 @@ export namespace Prisma {
     readonly testId: FieldRef<"TestAttempt", 'String'>
     readonly testSnapshotId: FieldRef<"TestAttempt", 'String'>
     readonly userId: FieldRef<"TestAttempt", 'String'>
-    readonly userData: FieldRef<"TestAttempt", 'Json'>
+    readonly preTestUserData: FieldRef<"TestAttempt", 'Json'>
     readonly score: FieldRef<"TestAttempt", 'Float'>
     readonly startedAt: FieldRef<"TestAttempt", 'DateTime'>
     readonly completedAt: FieldRef<"TestAttempt", 'DateTime'>
@@ -17431,7 +17431,7 @@ export namespace Prisma {
     testId: 'testId',
     testSnapshotId: 'testSnapshotId',
     userId: 'userId',
-    userData: 'userData',
+    preTestUserData: 'preTestUserData',
     score: 'score',
     startedAt: 'startedAt',
     completedAt: 'completedAt',
@@ -18191,7 +18191,7 @@ export namespace Prisma {
     testId?: StringFilter<"TestAttempt"> | string
     testSnapshotId?: StringNullableFilter<"TestAttempt"> | string | null
     userId?: StringNullableFilter<"TestAttempt"> | string | null
-    userData?: JsonNullableFilter<"TestAttempt">
+    preTestUserData?: JsonNullableFilter<"TestAttempt">
     score?: FloatNullableFilter<"TestAttempt"> | number | null
     startedAt?: DateTimeFilter<"TestAttempt"> | Date | string
     completedAt?: DateTimeNullableFilter<"TestAttempt"> | Date | string | null
@@ -18209,7 +18209,7 @@ export namespace Prisma {
     testId?: SortOrder
     testSnapshotId?: SortOrderInput | SortOrder
     userId?: SortOrderInput | SortOrder
-    userData?: SortOrderInput | SortOrder
+    preTestUserData?: SortOrderInput | SortOrder
     score?: SortOrderInput | SortOrder
     startedAt?: SortOrder
     completedAt?: SortOrderInput | SortOrder
@@ -18230,7 +18230,7 @@ export namespace Prisma {
     testId?: StringFilter<"TestAttempt"> | string
     testSnapshotId?: StringNullableFilter<"TestAttempt"> | string | null
     userId?: StringNullableFilter<"TestAttempt"> | string | null
-    userData?: JsonNullableFilter<"TestAttempt">
+    preTestUserData?: JsonNullableFilter<"TestAttempt">
     score?: FloatNullableFilter<"TestAttempt"> | number | null
     startedAt?: DateTimeFilter<"TestAttempt"> | Date | string
     completedAt?: DateTimeNullableFilter<"TestAttempt"> | Date | string | null
@@ -18248,7 +18248,7 @@ export namespace Prisma {
     testId?: SortOrder
     testSnapshotId?: SortOrderInput | SortOrder
     userId?: SortOrderInput | SortOrder
-    userData?: SortOrderInput | SortOrder
+    preTestUserData?: SortOrderInput | SortOrder
     score?: SortOrderInput | SortOrder
     startedAt?: SortOrder
     completedAt?: SortOrderInput | SortOrder
@@ -18270,7 +18270,7 @@ export namespace Prisma {
     testId?: StringWithAggregatesFilter<"TestAttempt"> | string
     testSnapshotId?: StringNullableWithAggregatesFilter<"TestAttempt"> | string | null
     userId?: StringNullableWithAggregatesFilter<"TestAttempt"> | string | null
-    userData?: JsonNullableWithAggregatesFilter<"TestAttempt">
+    preTestUserData?: JsonNullableWithAggregatesFilter<"TestAttempt">
     score?: FloatNullableWithAggregatesFilter<"TestAttempt"> | number | null
     startedAt?: DateTimeWithAggregatesFilter<"TestAttempt"> | Date | string
     completedAt?: DateTimeNullableWithAggregatesFilter<"TestAttempt"> | Date | string | null
@@ -19228,7 +19228,7 @@ export namespace Prisma {
 
   export type TestAttemptCreateInput = {
     id?: string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -19246,7 +19246,7 @@ export namespace Prisma {
     testId: string
     testSnapshotId?: string | null
     userId?: string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -19258,7 +19258,7 @@ export namespace Prisma {
 
   export type TestAttemptUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19276,7 +19276,7 @@ export namespace Prisma {
     testId?: StringFieldUpdateOperationsInput | string
     testSnapshotId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: NullableStringFieldUpdateOperationsInput | string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19291,7 +19291,7 @@ export namespace Prisma {
     testId: string
     testSnapshotId?: string | null
     userId?: string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -19302,7 +19302,7 @@ export namespace Prisma {
 
   export type TestAttemptUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19316,7 +19316,7 @@ export namespace Prisma {
     testId?: StringFieldUpdateOperationsInput | string
     testSnapshotId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: NullableStringFieldUpdateOperationsInput | string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20399,7 +20399,7 @@ export namespace Prisma {
     testId?: SortOrder
     testSnapshotId?: SortOrder
     userId?: SortOrder
-    userData?: SortOrder
+    preTestUserData?: SortOrder
     score?: SortOrder
     startedAt?: SortOrder
     completedAt?: SortOrder
@@ -21984,7 +21984,7 @@ export namespace Prisma {
 
   export type TestAttemptCreateWithoutUserInput = {
     id?: string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -22000,7 +22000,7 @@ export namespace Prisma {
     id?: string
     testId: string
     testSnapshotId?: string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -22130,7 +22130,7 @@ export namespace Prisma {
     testId?: StringFilter<"TestAttempt"> | string
     testSnapshotId?: StringNullableFilter<"TestAttempt"> | string | null
     userId?: StringNullableFilter<"TestAttempt"> | string | null
-    userData?: JsonNullableFilter<"TestAttempt">
+    preTestUserData?: JsonNullableFilter<"TestAttempt">
     score?: FloatNullableFilter<"TestAttempt"> | number | null
     startedAt?: DateTimeFilter<"TestAttempt"> | Date | string
     completedAt?: DateTimeNullableFilter<"TestAttempt"> | Date | string | null
@@ -22405,7 +22405,7 @@ export namespace Prisma {
 
   export type TestAttemptCreateWithoutTestInput = {
     id?: string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -22421,7 +22421,7 @@ export namespace Prisma {
     id?: string
     testSnapshotId?: string | null
     userId?: string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -23320,7 +23320,7 @@ export namespace Prisma {
 
   export type TestAttemptCreateWithoutAnswersInput = {
     id?: string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -23337,7 +23337,7 @@ export namespace Prisma {
     testId: string
     testSnapshotId?: string | null
     userId?: string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -23422,7 +23422,7 @@ export namespace Prisma {
 
   export type TestAttemptUpdateWithoutAnswersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23439,7 +23439,7 @@ export namespace Prisma {
     testId?: StringFieldUpdateOperationsInput | string
     testSnapshotId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: NullableStringFieldUpdateOperationsInput | string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23675,7 +23675,7 @@ export namespace Prisma {
 
   export type TestAttemptCreateWithoutSnapshotInput = {
     id?: string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -23691,7 +23691,7 @@ export namespace Prisma {
     id?: string
     testId: string
     userId?: string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -24079,7 +24079,7 @@ export namespace Prisma {
     id?: string
     testId: string
     testSnapshotId?: string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -24122,7 +24122,7 @@ export namespace Prisma {
 
   export type TestAttemptUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24138,7 +24138,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     testId?: StringFieldUpdateOperationsInput | string
     testSnapshotId?: NullableStringFieldUpdateOperationsInput | string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24152,7 +24152,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     testId?: StringFieldUpdateOperationsInput | string
     testSnapshotId?: NullableStringFieldUpdateOperationsInput | string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24215,7 +24215,7 @@ export namespace Prisma {
     id?: string
     testSnapshotId?: string | null
     userId?: string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -24266,7 +24266,7 @@ export namespace Prisma {
 
   export type TestAttemptUpdateWithoutTestInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24282,7 +24282,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     testSnapshotId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: NullableStringFieldUpdateOperationsInput | string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24296,7 +24296,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     testSnapshotId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: NullableStringFieldUpdateOperationsInput | string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24497,7 +24497,7 @@ export namespace Prisma {
     id?: string
     testId: string
     userId?: string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     startedAt?: Date | string
     completedAt?: Date | string | null
@@ -24537,7 +24537,7 @@ export namespace Prisma {
 
   export type TestAttemptUpdateWithoutSnapshotInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24553,7 +24553,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     testId?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24567,7 +24567,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     testId?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
-    userData?: NullableJsonNullValueInput | InputJsonValue
+    preTestUserData?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

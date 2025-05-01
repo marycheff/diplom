@@ -8,7 +8,7 @@ export interface AttemptState {
     getAttemptForUserById: (id: string) => Promise<TestAttemptUserDTO | undefined>
     getAllAttempts: (page: number, limit: number) => Promise<AttemptsListDTO | undefined>
     // TODO: исправить any
-    startAttempt: (testId: string, userData?: any) => Promise<StartAttemptDTO | undefined>
+    startAttempt: (testId: string, preTestUserData?: any) => Promise<StartAttemptDTO | undefined>
     saveAnswers: (attemptId: string, answers: AttemptAnswer[]) => Promise<void>
     completeAttempt: (attemptId: string) => Promise<CompleteAttemptResponse>
     // CACHE

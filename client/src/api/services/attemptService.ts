@@ -3,6 +3,7 @@ import {
     AttemptAnswer,
     AttemptsListDTO,
     CompleteAttemptResponse,
+    PreTestUserDataType,
     StartAttemptDTO,
     TestAttemptDTO,
     TestAttemptUserDTO,
@@ -33,9 +34,9 @@ class AttemptService {
         })
     }
     // TODO: исправить any
-    startTestAttempt(testId: string, userData?: any): Promise<AxiosResponse<StartAttemptDTO>> {
+    startTestAttempt(testId: string, preTestUserData?: PreTestUserDataType): Promise<AxiosResponse<StartAttemptDTO>> {
         return axiosInstance.post<StartAttemptDTO>(`/tests/${testId}/start`, {
-            userData,
+            userData: preTestUserData,
         })
     }
     saveAnswers(attemptId: string, answers: AttemptAnswer[]): Promise<AxiosResponse<void>> {

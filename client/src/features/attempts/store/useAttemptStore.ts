@@ -60,9 +60,9 @@ export const useAttemptStore = create<AttemptState>(set => {
             }
             return withFetching(operation)
         },
-        startAttempt: async (testId, userData) => {
+        startAttempt: async (testId, preTestUserData) => {
             const operation = async () => {
-                const response = await attemptService.startTestAttempt(testId, userData)
+                const response = await attemptService.startTestAttempt(testId, preTestUserData)
                 return response.data
             }
             return withLoading(operation)
