@@ -16,7 +16,7 @@ class AttemptRepository {
                     testId: data.testId,
                     testSnapshotId: data.testSnapshotId,
                     userId: data.userId,
-                    userData: data.preTestUserData === null ? Prisma.JsonNull : data.preTestUserData,
+                    preTestUserData: data.preTestUserData === null ? Prisma.JsonNull : data.preTestUserData,
                     status: "IN_PROGRESS",
                 },
             })
