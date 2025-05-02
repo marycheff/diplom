@@ -4,7 +4,7 @@
     padding: 4px;
     margin-left: 8px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 1;
     transform: translateY(0);
 
@@ -25,13 +25,13 @@
     }
 }
 
-.textButton {
-    transition: all 0.2s ease;
+// .textButton {
+//     transition: all 0.2s ease;
     
-    &:hover {
-        transform: translateY(-1px);
-    }
-}
+//     &:hover {
+//         transform: translateY(-1px);
+//     }
+// }
 
 .content {
     display: inline-flex;

@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react"
-import toast from "react-hot-toast"
 import Button from "@/shared/ui/Button/Base/Button"
+import { useEffect, useRef, useState } from "react"
+import toast from "react-hot-toast"
 import styles from "./CopyButton.module.scss"
 
 interface CopyButtonProps {
@@ -35,8 +35,8 @@ const CopyButton = ({ textToCopy, className = "", showOnHover = false, variant =
         try {
             await navigator.clipboard.writeText(textToCopy)
             setIsCopied(true)
+            setTimeout(() => setIsCopied(false), 1500)
             toast.success("Скопировано!")
-            setTimeout(() => setIsCopied(false), 500)
         } catch (err) {
             console.error("Failed to copy text: ", err)
         }
@@ -56,7 +56,10 @@ const CopyButton = ({ textToCopy, className = "", showOnHover = false, variant =
     if (variant === "text") {
         return (
             <Button onClick={handleCopy} className={`${styles.textButton} ${className}`}>
-                <span className={styles.content}>Копировать {getIcon()}</span>
+                <span className={styles.content}>
+                    {isCopied ? "Скопировано" : "Копировать"}
+                    {getIcon()}
+                </span>
             </Button>
         )
     }

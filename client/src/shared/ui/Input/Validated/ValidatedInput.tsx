@@ -1,5 +1,7 @@
 import { ValidatedInputProps } from "@/shared/ui/Input/Validated/ValidatedInput.props"
 import { ChangeEvent, FC, useEffect, useState } from "react"
+import { Controller } from "react-hook-form"
+import { PatternFormat } from "react-number-format"
 import styles from "./ValidatedInput.module.scss"
 
 const ValidatedInput: FC<ValidatedInputProps<any>> = ({
@@ -17,23 +19,29 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
     defaultValue = "",
     multiline = false,
     rows = 1,
+    mask,
+    maskChar = "_",
+    control,
+    trigger,
 }) => {
     const [isFocused, setIsFocused] = useState(false)
     const [inputValue, setInputValue] = useState(defaultValue)
     const inputId = `input-${name}`
 
-    // Получаем текущее значение поля из react-hook-form
-    const { ref, ...registeredInput } = register(name, {
-        ...validationRules,
-        onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            setInputValue(e.target.value)
-        },
-        onBlur: () => setIsFocused(false),
-    })
+    const { ref, onChange, onBlur, ...registeredInput } = register(name, validationRules)
 
-    // Синхронизируем значение из формы с локальным состоянием
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        onChange(e) // Вызываем оригинальный обработчик onChange из register
+        setInputValue(e.target.value)
+        if (errors) trigger(name)
+    }
+
+    const handleBlur = (e: any) => {
+        onBlur(e) // Вызываем оригинальный обработчик onBlur из register для запуска валидации
+        setIsFocused(false)
+    }
+
     useEffect(() => {
-        // Получаем текущее значение из DOM-элемента
         const selector = multiline ? `textarea[name="${name}"]` : `input[name="${name}"]`
         const input = document.querySelector(selector) as HTMLInputElement | HTMLTextAreaElement
         if (input && input.value) {
@@ -65,9 +73,37 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                         disabled={disabled}
                         className={`${styles.input} ${styles.textarea}`}
                         onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
+                        onBlur={handleBlur}
+                        onChange={handleChange}
                         name={name}
                         rows={rows}
+                    />
+                ) : mask ? (
+                    <Controller
+                        name={name}
+                        control={control}
+                        rules={validationRules}
+                        render={({ field }) => (
+                            <PatternFormat
+                                format={mask}
+                                mask={maskChar}
+                                value={field.value || ""}
+                                onValueChange={values => {
+                                    field.onChange(values.formattedValue)
+                                    setInputValue(values.formattedValue)
+                                    if (errors) trigger(name)
+                                }}
+                                onFocus={() => setIsFocused(true)}
+                                onBlur={e => {
+                                    field.onBlur()
+                                    setIsFocused(false)
+                                }}
+                                id={inputId}
+                                disabled={disabled}
+                                className={styles.input}
+                                allowEmptyFormatting={isFocused} // Показываем маску при фокусе, даже если поле пустое
+                            />
+                        )}
                     />
                 ) : (
                     <input
@@ -83,7 +119,8 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                         disabled={disabled}
                         className={styles.input}
                         onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
+                        onBlur={handleBlur}
+                        onChange={handleChange}
                         name={name}
                     />
                 )}
@@ -92,16 +129,15 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                         {placeholder}
                     </label>
                 )}
-
                 {clearable && !disabled && hasValue && (
                     <button type="button" className={styles.clearButton} onClick={handleClear} tabIndex={-1}>
-                        &times;
+                        ×
                     </button>
                 )}
             </div>
-
-            {errors && <p className={styles.error}>{errors.message}</p>}
+            {errors && errors.message && <p className={styles.error}>{errors.message}</p>}
         </div>
     )
 }
+
 export default ValidatedInput
