@@ -1,5 +1,5 @@
 import { PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
-import { formatDate, shortenUuid } from "@/shared/utils/formatter"
+import { formatDate, shortenText } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./AttemptsTable.module.scss"
@@ -35,7 +35,7 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                     <tr key={attempt.id}>
                                         <td>
                                             <Link to={`/admin/attempts/${attempt.id}`} className="actionLink">
-                                                {shortenUuid(attempt.id)}
+                                                {shortenText(attempt.id)}
                                             </Link>
                                         </td>
                                         <td>

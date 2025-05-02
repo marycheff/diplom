@@ -34,7 +34,8 @@ export const formatSpaces = (str?: string): string => {
     return (str || "").replace(/\s+/g, " ").trim()
 }
 // Сокращение UUID
-export const shortenUuid = (uuid: string, length: number = 8): string => {
-    if (!uuid) return ""
-    return `${uuid.substring(0, length)}...`
+export const shortenText = (text: string, length: number = 8): string => {
+    if (!text) return ""
+    if (text.length <= length) return text
+    return `${text.substring(0, length)}...`
 }

@@ -1,5 +1,5 @@
 import { TestDTO } from "@/shared/types"
-import { shortenUuid } from "@/shared/utils/formatter"
+import { shortenText } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./TestsTable.module.scss"
@@ -26,7 +26,6 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                     <th scope="col">ID</th>
                                     <th scope="col">Автор</th>
                                     <th scope="col">Название</th>
-                                    <th scope="col">Описание</th>
                                     <th scope="col">Количество вопросов</th>
                                     <th scope="col">Требуется регистрация</th>
                                     <th scope="col">Показывать детальные результаты</th>
@@ -38,18 +37,22 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                     return (
                                         <tr key={test.id}>
                                             <td>
-                                                <Link to={`/admin/tests/${test.id}`} className="actionLink">
-                                                    {shortenUuid(test.id)}
+                                                <Link
+                                                    to={`/admin/tests/${test.id}`}
+                                                    className="actionLink"
+                                                    title={test.id}>
+                                                    {shortenText(test.id)}
                                                 </Link>
                                             </td>
                                             <td>
-                                                <Link to={`/admin/users/${test.author.id}`} className="actionLink">
-                                                    {/* {shortenUuid(test.author.id)} */}
-                                                    {test.author.email}
+                                                <Link
+                                                    to={`/admin/users/${test.author.id}`}
+                                                    className="actionLink"
+                                                    title={test.author.email}>
+                                                    {shortenText(test.author.email, 30)}
                                                 </Link>
                                             </td>
-                                            <td>{test.title}</td>
-                                            <td>{test.description || "–"}</td>
+                                            <td>{shortenText(test.title, 30)}</td>
                                             <td>{test.questions ? test.questions.length : 0}</td>
                                             <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
                                             <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td>
