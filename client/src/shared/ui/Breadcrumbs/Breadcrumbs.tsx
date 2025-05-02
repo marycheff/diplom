@@ -1,17 +1,30 @@
 import { ROUTES } from "@/router/paths"
 import BackButton from "@/shared/ui/Button/BackButton/BackButton"
 import { isValidUUID } from "@/shared/utils/validator"
-import { Link, useLocation } from "react-router-dom"
+import { Link, matchPath, useLocation } from "react-router-dom"
 import styles from "./Breadcrumbs.module.scss"
 
 const Breadcrumbs = () => {
     const location = useLocation()
     const path = location.pathname
 
-    const excludedPaths = [ROUTES.LOGIN, ROUTES.SIGNUP, ROUTES.ACTIVATION_ERROR, ROUTES.ACTIVATION_SUCCESS]
-    const shouldDisplayBreadcrumbs = !excludedPaths.some(
-        excludedPath => path === excludedPath || path.startsWith(`${excludedPath}/`)
-    )
+    const excludedPaths = [
+        ROUTES.LOGIN,
+        ROUTES.SIGNUP,
+        ROUTES.ACTIVATION_ERROR,
+        ROUTES.ACTIVATION_SUCCESS,
+        ROUTES.START_ATTEMPT,
+    ]
+    const shouldDisplayBreadcrumbs = !excludedPaths.some(excludedPath => {
+        // Для динамических путей
+        if (excludedPath.includes(":")) {
+            const match = matchPath({ path: excludedPath, end: true }, path)
+            return match !== null
+        }
+        // Для статических путей
+        return path === excludedPath || path.startsWith(`${excludedPath}/`)
+    })
+
     if (!shouldDisplayBreadcrumbs) {
         return null
     }
@@ -29,6 +42,7 @@ const Breadcrumbs = () => {
         "my-tests": "Мои тесты",
         "add-questions": "Добавление вопросов",
         "edit-settings": "Редактирование вопросов",
+        start: "Начать",
     }
 
     return (
