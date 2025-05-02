@@ -11,6 +11,7 @@ const Select: FC<SelectProps> = ({
     error = false,
     label,
     required = false,
+    onChange,
 }: SelectProps) => {
     const [isOpen, setOpen] = useState(false)
     const [selected, setSelected] = useState(value || options[0]?.value || "") // Устанавливаем начальное значение
@@ -22,6 +23,12 @@ const Select: FC<SelectProps> = ({
         const element = document.getElementById(name) as HTMLInputElement
         if (element) element.value = selected
     }, [selected, name])
+
+    useEffect(() => {
+        if (onChange) {
+            onChange(selected)
+        }
+    }, [selected, onChange])
 
     const containerClasses = [styles.container, isOpen ? styles.open : "", error ? styles.error : ""].join(" ")
 
@@ -36,7 +43,8 @@ const Select: FC<SelectProps> = ({
                 {...register(name, { required })}
                 className={styles.htmlSelect}
                 style={{ display: "none" }} // Скрываем нативный селект
-            >
+                // onChange={handleChange}
+                >
                 {options.map(item => (
                     <option key={item.value} value={item.value}>
                         {item.label || item.value}
