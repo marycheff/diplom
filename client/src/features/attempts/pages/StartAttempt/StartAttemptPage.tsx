@@ -1,5 +1,6 @@
 import { PreTestForm } from "@/features/attempts/components/PreTestForm/PreTestForm"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { PreTestUserDataType, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
@@ -16,6 +17,7 @@ const StartAttemptPage = () => {
     const { isLoading, startAttempt } = useAttemptStore()
     const { isFetching, getTestForUserById } = useTestStore()
     const [test, setTest] = useState<UserTestDTO | null>(null)
+    const { user } = useAuthStore()
 
     useEffect(() => {
         if (!testId) {
@@ -47,9 +49,12 @@ const StartAttemptPage = () => {
     if (!test && !isFetching) {
         return <div>Тест не найден</div>
     }
-
+    if (test?.settings?.requireRegistration && !user) {
+        return <div>Тест требует регистрации</div>
+    }
     const handleStartAttempt = async (userData?: PreTestUserDataType) => {
         if (!testId) return
+        console.log(userData)
         const data = await startAttempt(testId, userData)
         if (data && data.attemptId) {
             navigate(`/my-attempts/${data.attemptId}`)

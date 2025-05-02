@@ -1,5 +1,6 @@
 import { PreTestUserData, PreTestUserDataLabels } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
+import DateSelect from "@/shared/ui/DateSelect/DateSelect"
 import { ValidatedInput } from "@/shared/ui/Input"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -7,6 +8,8 @@ import styles from "./PreTestForm.module.scss"
 
 export type UserDataFormValues = {
     [key in PreTestUserData]?: string | number
+} & {
+    [key: `${string}_iso`]: string
 }
 
 interface PreTestFormProps {
@@ -32,6 +35,9 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
 
     const handleFormSubmit: SubmitHandler<UserDataFormValues> = async data => {
         const userData = Object.entries(data).reduce((acc, [key, value]) => {
+            if (key.endsWith("_day") || key.endsWith("_month") || key.endsWith("_year")) {
+                return acc
+            }
             if (key === PreTestUserData.Age && typeof value === "string") {
                 const ageValue = parseInt(value)
                 if (!isNaN(ageValue)) {
@@ -41,6 +47,9 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
                 acc[key] = value
             } else if (key === PreTestUserData.BirthDate && typeof value === "string") {
                 acc[key] = value
+                if (data[`${key}_iso`]) {
+                    acc[`${key}_iso`] = data[`${key}_iso`]
+                }
             } else {
                 const formatted = typeof value === "string" ? formatSpaces(value) : value
                 if (formatted && formatted !== "") {
@@ -49,7 +58,6 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
             }
             return acc
         }, {} as Record<string, string | number>)
-
         await onSubmit(userData)
     }
 
@@ -83,25 +91,31 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
                         message: "Телефон должен быть в формате +7 (999) 999-99-99",
                     },
                 }
-            case PreTestUserData.BirthDate:
-                return {
-                    ...baseRule,
-                    pattern: {
-                        value: /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.\d{4}$/,
-                        message: "Дата должна быть в формате дд.мм.гггг",
-                    },
-                }
             default:
                 return baseRule
         }
     }
 
     const renderInput = (field: string) => {
+       
+        if (field === PreTestUserData.BirthDate) {
+            return (
+                <DateSelect
+                    key={field}
+                    name={field}
+                    register={register}
+                    setValue={setValue}
+                    trigger={trigger}
+                    error={!!errors[field as PreTestUserData]}
+                    required={true}
+                    label={PreTestUserDataLabels[field as PreTestUserData]}
+                />
+            )
+        }
+
         const mask =
             field === PreTestUserData.Phone
-                ? "+7 (###) ###-##-##" // Используем # вместо 9
-                : field === PreTestUserData.BirthDate
-                ? "##.##.####" // Используем # вместо 9
+                ? "+7 (###) ###-##-##" 
                 : undefined
 
         return (
