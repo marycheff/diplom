@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { UserDTO } from "@/shared/types"
-import { shortenUuid } from "@/shared/utils/formatter"
+import { shortenText } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./UsersTable.module.scss"
@@ -20,10 +20,10 @@ const UsersTable: FC<UsersTableProps> = ({ users, total }) => {
             <tr key={user.id}>
                 <td>
                     {isCurrentUser ? (
-                        <span>{shortenUuid(user.id)} (Вы)</span>
+                        <span>{shortenText(user.id)} (Вы)</span>
                     ) : (
                         <Link to={`/admin/users/${user.id}`} className="actionLink">
-                            {shortenUuid(user.id)}
+                            {shortenText(user.id)}
                         </Link>
                     )}
                 </td>
