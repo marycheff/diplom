@@ -18,7 +18,7 @@ import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import Loader from "@/shared/ui/Loader/Loader"
 import Modal from "@/shared/ui/Modal/Modal"
-import { formatSeconds, formatSpaces, shortenUuid } from "@/shared/utils/formatter"
+import { formatSeconds, formatSpaces, shortenText } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
@@ -163,7 +163,7 @@ const TestInfoPage = () => {
                                 <div className={styles.infoRow}>
                                     <span className={styles.label}>ID:</span>
                                     <span className={styles.value}>
-                                        {shortenUuid(test.id)}
+                                        {shortenText(test.id)}
                                         <CopyButton textToCopy={test.id} showOnHover />
                                     </span>
                                 </div>

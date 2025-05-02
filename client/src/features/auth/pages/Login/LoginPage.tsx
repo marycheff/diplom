@@ -22,8 +22,11 @@ const LoginPage = () => {
         handleSubmit,
         formState: { errors },
         setValue,
+        trigger,
     } = useForm<LoginFormData>({
-        mode: "onChange",
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
     })
 
     const handleResetPasswordClick = () => {
@@ -45,6 +48,7 @@ const LoginPage = () => {
                     register={register}
                     setValue={setValue}
                     errors={errors.email}
+                    trigger={trigger}
                     validationRules={{
                         required: "Email обязателен",
                         pattern: {

@@ -39,8 +39,10 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
             }))
     })
 
-    const { register, handleSubmit, formState, setValue, watch, reset } = useForm<GenerateAnswerFormData>({
-        mode: "onChange",
+    const { register, handleSubmit, formState, setValue, watch, reset, trigger } = useForm<GenerateAnswerFormData>({
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
         defaultValues: {
             numOfAnswers: 3,
         },
@@ -271,6 +273,7 @@ const QuestionCreator: FC<QuestionCreatorProps> = ({ onQuestionComplete, onCance
                         register={register}
                         setValue={setValue}
                         errors={formState.errors}
+                        trigger={trigger}
                         isLoading={false}
                         isButtonDisabled={!isFormValid}
                         onSubmit={handleSubmit(handleAddQuestion)}

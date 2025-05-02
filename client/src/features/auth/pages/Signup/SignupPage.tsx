@@ -19,8 +19,11 @@ const SignupPage = () => {
         formState: { errors },
         setValue,
         handleSubmit,
+        trigger,
     } = useForm<SignupFormData>({
-        mode: "onChange",
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
     })
     const onSubmit: SubmitHandler<SignupFormData> = async data => {
         await registration(data.email, data.password)
@@ -34,6 +37,7 @@ const SignupPage = () => {
                     name="email"
                     register={register}
                     setValue={setValue}
+                    trigger={trigger}
                     errors={errors.email}
                     placeholder="Email"
                     validationRules={{

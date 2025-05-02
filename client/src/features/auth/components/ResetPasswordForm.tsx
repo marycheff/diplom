@@ -33,8 +33,11 @@ const ResetPasswordForm: FC = () => {
         formState: { errors: passwordErrors },
         setValue: setPasswordValue,
         handleSubmit: handlePasswordSubmit,
+        trigger: passwordTrigger,
     } = useForm<ResetPasswordFormData>({
-        mode: "onChange",
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
     })
 
     const {
@@ -43,8 +46,11 @@ const ResetPasswordForm: FC = () => {
         setValue: setEmailValue,
         handleSubmit: handleEmailSubmit,
         reset: emailReset,
+        trigger: emailTrigger,
     } = useForm<EmailFormData>({
-        mode: "onChange",
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
     })
 
     const {
@@ -52,8 +58,11 @@ const ResetPasswordForm: FC = () => {
         formState: { errors: codeErrors },
         setValue: setCodeValue,
         handleSubmit: handleCodeSubmit,
+        trigger: codeTrigger,
     } = useForm<CodeFormData>({
-        mode: "onChange",
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
     })
 
     // Таймер для блокировки кнопки повторной отправки
@@ -102,6 +111,7 @@ const ResetPasswordForm: FC = () => {
                         name="email"
                         type="email"
                         placeholder="Email"
+                        trigger={emailTrigger}
                         register={registerEmail}
                         setValue={setEmailValue}
                         errors={emailErrors.email}
@@ -124,6 +134,7 @@ const ResetPasswordForm: FC = () => {
                         placeholder="Код с email"
                         register={registerCode}
                         setValue={setCodeValue}
+                        trigger={codeTrigger}
                         errors={codeErrors.reset_code}
                         validationRules={{
                             required: "Код подтверждения обязателен",
@@ -148,6 +159,7 @@ const ResetPasswordForm: FC = () => {
                         setValue={setPasswordValue}
                         errors={passwordErrors.newPassword}
                         placeholder="Новый пароль"
+                        // trigger={passwordTrigger}
                     />
                     <Button type="submit" disabled={isLoading}>
                         Сбросить пароль

@@ -15,8 +15,11 @@ const CreateTestPage = () => {
         handleSubmit,
         formState: { errors },
         setValue,
+        trigger,
     } = useForm<ShortTestInfo>({
-        mode: "onChange",
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
     })
     const onSubmit: SubmitHandler<ShortTestInfo> = async data => {
         const response = await createTest(data.title, data.description)
@@ -29,6 +32,7 @@ const CreateTestPage = () => {
         <div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <ValidatedInput
+                    trigger={trigger}
                     clearable
                     name="title"
                     placeholder="Название (обязательно)"
@@ -43,6 +47,8 @@ const CreateTestPage = () => {
                     name="description"
                     multiline
                     clearable
+                    trigger={trigger}
+                    errors={errors.description}
                     placeholder="Описание"
                     register={register}
                     setValue={setValue}

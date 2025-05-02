@@ -20,7 +20,7 @@ const UpdatePasswordForm = () => {
         setValue,
         handleSubmit,
     } = useForm<ChangePasswordFormData>({
-        mode: "onChange",
+        mode: "onBlur",
     })
 
     const onSubmit: SubmitHandler<ChangePasswordFormData> = async data => {

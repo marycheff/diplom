@@ -26,8 +26,11 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
         setValue,
         formState,
         watch,
+        trigger,
     } = useForm<ShortTestInfo>({
-        mode: "onChange",
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
         defaultValues: {
             title: data.title,
             description: data.description,
@@ -45,6 +48,7 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
             <form onSubmit={handleSubmit(onSubmit)}>
                 {/* Название (обязательно) */}
                 <ValidatedInput
+                    trigger={trigger}
                     // floatingLabel={false}
                     clearable
                     name="title"
@@ -59,6 +63,7 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
                 <br />
                 {/* Описание */}
                 <ValidatedInput
+                    trigger={trigger}
                     // floatingLabel={false}
                     multiline
                     clearable

@@ -13,7 +13,11 @@ const HomePage = () => {
     const navigate = useNavigate()
     const { user, logout, isAdmin } = useAuthStore()
 
-    const { register, handleSubmit, setValue } = useForm<StartTest>()
+    const { register, handleSubmit, setValue, trigger } = useForm<StartTest>({
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
+    })
     const onSubmit: SubmitHandler<StartTest> = data => {
         // можно отправить пустое тело
         navigate(`/${formatSpaces(data.testId)}/start`)
@@ -38,6 +42,7 @@ const HomePage = () => {
                                 placeholder="ID теста"
                                 register={register}
                                 setValue={setValue}
+                                trigger={trigger}
                                 validationRules={{
                                     required: "Обязательное поле",
                                 }}

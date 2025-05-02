@@ -39,8 +39,10 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
             }))
     })
 
-    const { register, handleSubmit, formState, setValue, watch, reset } = useForm<GenerateAnswerFormData>({
-        mode: "onChange",
+    const { register, handleSubmit, formState, setValue, watch, reset, trigger } = useForm<GenerateAnswerFormData>({
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
         defaultValues: {
             numOfAnswers: 3,
         },
@@ -272,6 +274,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
                         register={register}
                         setValue={setValue}
                         errors={formState.errors}
+                        trigger={trigger}
                         isLoading={false}
                         isButtonDisabled={!isFormValid}
                         onSubmit={handleSubmit(handleAddQuestion)}

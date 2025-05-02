@@ -30,9 +30,12 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
         handleSubmit,
         setValue,
         watch,
+        trigger,
         formState: { errors },
     } = useForm({
-        mode: "onChange",
+        mode: "onBlur",
+        reValidateMode: "onChange",
+        shouldFocusError: false,
         defaultValues: initialValues,
     })
 
@@ -161,6 +164,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                         className={styles.timeInput}
                         // floatingLabel={false}
                         name="hours"
+                        trigger={trigger}
                         placeholder="Часы"
                         register={register}
                         setValue={setValue}
@@ -179,6 +183,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                         name="minutes"
                         placeholder="Минуты"
                         register={register}
+                        trigger={trigger}
                         setValue={setValue}
                         errors={errors.minutes}
                         validationRules={{
@@ -193,6 +198,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                         className={styles.timeInput}
                         floatingLabel={false}
                         name="seconds"
+                        trigger={trigger}
                         placeholder="Секунды"
                         register={register}
                         setValue={setValue}

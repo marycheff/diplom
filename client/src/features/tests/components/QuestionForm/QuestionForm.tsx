@@ -3,7 +3,7 @@ import { ValidatedInput } from "@/shared/ui/Input"
 import Loader from "@/shared/ui/Loader/Loader"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { FC, FormEvent } from "react"
-import { FieldErrors, RegisterOptions, UseFormRegister, UseFormSetValue } from "react-hook-form"
+import { FieldErrors, RegisterOptions, UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form"
 
 interface QuestionFormProps {
     register: UseFormRegister<GenerateAnswerFormData>
@@ -12,9 +12,18 @@ interface QuestionFormProps {
     onSubmit: (e: FormEvent<HTMLFormElement>) => void
     isButtonDisabled: boolean
     setValue: UseFormSetValue<GenerateAnswerFormData>
+    trigger: UseFormTrigger<GenerateAnswerFormData>
 }
 
-const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisabled, isLoading, onSubmit, setValue }) => {
+const QuestionForm: FC<QuestionFormProps> = ({
+    register,
+    errors,
+    isButtonDisabled,
+    isLoading,
+    onSubmit,
+    setValue,
+    trigger,
+}) => {
     const hasText = (value: string): boolean => /[a-zA-Zа-яА-Я]/.test(value)
     const isWithinWordCount = (value: string, min: number, max: number): boolean => {
         const wordCount = formatSpaces(value).split(/\s+/).length
@@ -47,6 +56,7 @@ const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisable
                 clearable
                 placeholder="Вопрос"
                 name="question"
+                trigger={trigger}
                 register={register}
                 setValue={setValue}
                 errors={errors?.question}
@@ -57,6 +67,7 @@ const QuestionForm: FC<QuestionFormProps> = ({ register, errors, isButtonDisable
                 clearable
                 placeholder="Правильный ответ"
                 name="answer"
+                trigger={trigger}
                 register={register}
                 setValue={setValue}
                 errors={errors?.answer}
