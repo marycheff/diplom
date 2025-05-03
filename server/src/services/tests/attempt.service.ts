@@ -12,6 +12,7 @@ import {
     TestAttemptDTO,
     TestAttemptUserDTO,
 } from "@/types"
+import { calculateTestScore } from "@/utils/math"
 import { redisClient } from "@/utils/redis-client"
 
 class AttemptService {
@@ -85,7 +86,7 @@ class AttemptService {
             if (!attempt) {
                 throw ApiError.BadRequest("Попытка не существует")
             }
-            if (attempt.status === AttemptStatus.COMPLETED|| attempt.completedAt) {
+            if (attempt.status === AttemptStatus.COMPLETED || attempt.completedAt) {
                 throw ApiError.BadRequest("Попытка уже завершена")
             }
 
@@ -185,24 +186,7 @@ class AttemptService {
             }
 
             const questionsWithAnswers = await attemptRepository.getQuestionsWithCorrectAnswers(attempt.testId)
-            let correctQuestionsCount = 0
-
-            for (const question of questionsWithAnswers) {
-                const userAnswersForQuestion = attempt.answers.filter(a => a.questionId === question.id)
-                const correctAnswerIds = question.answers.map(a => a.id)
-                const userAnswerIds = userAnswersForQuestion.map(a => a.answerId)
-
-                if (
-                    correctAnswerIds.length === userAnswerIds.length &&
-                    correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
-                    userAnswerIds.every(id => correctAnswerIds.includes(id))
-                ) {
-                    correctQuestionsCount++
-                }
-            }
-
-            const totalQuestions = questionsWithAnswers.length
-            const score = (correctQuestionsCount / totalQuestions) * 100
+            const score = calculateTestScore(questionsWithAnswers, attempt.answers)
 
             await attemptRepository.updateAttemptScore(attemptId, score)
             await redisClient.del(`attempt:${attemptId}`)
