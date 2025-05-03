@@ -56,6 +56,10 @@
         top: calc(var(--size) * 0.2);
         stroke-dasharray: 33;
     }
+    input:disabled ~ label {
+        cursor: default;
+        opacity: 0.5;
+    }
 }
 
 @keyframes draw-checkbox-28 {

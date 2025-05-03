@@ -8,8 +8,9 @@ import Modal from "@/shared/ui/Modal/Modal"
 import { formatDate, formatSeconds } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { generatePath, Link, useParams } from "react-router-dom"
 import styles from "./AttemptInfo.module.scss"
+import { ROUTES } from "@/router/paths"
 
 const AttemptInfo = () => {
     const { attemptId } = useParams<{ attemptId: string }>()
@@ -84,6 +85,9 @@ const AttemptInfo = () => {
                                 )}
                             </span>
                         </div>
+                        <Link target="_blank" to={generatePath(ROUTES.PASS_ATTEMPT, { attemptId: attempt.id })} className="actionLink">
+                            Перейти к попытке
+                        </Link>
                     </div>
                 </div>
 

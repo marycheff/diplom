@@ -2,7 +2,7 @@ import TestTimer from "@/features/attempts/components/Timer/TestTimer"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
-import { AttemptAnswer, QuestionType, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
+import { AttemptAnswer, AttemptStatus, QuestionType, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -11,7 +11,7 @@ import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import { redirect, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import styles from "./TestTaking.module.scss"
 
 const TestTaking = () => {
@@ -25,6 +25,7 @@ const TestTaking = () => {
     const [attempt, setAttempt] = useState<TestAttemptUserDTO | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
     const [timeLimit, setTimeLimit] = useState(0)
+    const navigate = useNavigate()
 
     // Хуки из store
     const { isFetching: isTestFetching, getTestForUserById } = useTestStore()
@@ -40,6 +41,9 @@ const TestTaking = () => {
     if (!attemptId) return <div>ID попытки не указан</div>
     if (!isValidUUID(attemptId)) return <div>Невалидный Id</div>
 
+    // Проверка, завершена ли попытка
+    const isAttemptCompleted = attempt && attempt.status !== AttemptStatus.IN_PROGRESS
+
     // Загрузка сохраненных ответов из localStorage при монтировании
     useEffect(() => {
         const loadSavedAnswers = async () => {
@@ -54,10 +58,25 @@ const TestTaking = () => {
         }
         loadSavedAnswers()
     }, [attemptId])
+    // Загрузка ответов из БД для завершенной попытки
+    useEffect(() => {
+        if (isAttemptCompleted && attempt && attempt.answers && attempt.answers.length > 0) {
+            const userAnswers: Record<string, string[]> = {}
+
+            attempt.answers.forEach(answer => {
+                if (!userAnswers[answer.questionId]) {
+                    userAnswers[answer.questionId] = []
+                }
+                userAnswers[answer.questionId].push(answer.answerId)
+            })
+
+            setAllAnswers(userAnswers)
+        }
+    }, [attempt, isAttemptCompleted])
 
     // Сохранение ответов в localStorage при изменении allAnswers
     useEffect(() => {
-        if (attemptId && Object.keys(allAnswers).length > 0) {
+        if (!isAttemptCompleted && attemptId && Object.keys(allAnswers).length > 0) {
             localStorage.setItem(`test_answers_${attemptId}`, JSON.stringify(allAnswers))
         }
     }, [allAnswers, attemptId])
@@ -103,10 +122,12 @@ const TestTaking = () => {
     // Обработчик истечения времени
     const handleTimeExpired = () => {
         toast.error("Время закончилось. Ваши ответы будут отправлены автоматически.")
-        // handleSubmitAnswers()
+        handleSubmitAnswers()
     }
     // Обработчик клика на ответ
     const handleAnswerOptionClick = (answerId: string, isSingleChoice: boolean) => () => {
+        if (isAttemptCompleted) return
+
         const newAnswers = isSingleChoice
             ? [answerId]
             : selectedAnswers.includes(answerId)
@@ -118,6 +139,8 @@ const TestTaking = () => {
     }
     // Обработчик изменения состояния чекбокса
     const handleCheckboxChange = (answerId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (isAttemptCompleted) return
+
         const newAnswers = e.target.checked
             ? [...selectedAnswers, answerId]
             : selectedAnswers.filter(id => id !== answerId)
@@ -167,8 +190,8 @@ const TestTaking = () => {
         Object.keys(allAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
 
         toast.success("Ответы успешно отправлены. Попытка завершена.")
+        navigate(ROUTES.HOME)
         setAllAnswers({})
-        redirect(ROUTES.HOME)
     }
 
     // Состояния загрузки
@@ -182,7 +205,11 @@ const TestTaking = () => {
 
     return (
         <div className={styles.questionsContainer}>
-            {timeLimit > 0 && (
+            {isAttemptCompleted && (
+                <div className={styles.completedBanner}>Попытка завершена. Изменение ответов недоступно.</div>
+            )}
+
+            {timeLimit > 0 && !isAttemptCompleted && (
                 <TestTimer attemptId={attemptId} defaultTime={timeLimit} onTimeExpired={handleTimeExpired} />
             )}
 
@@ -201,18 +228,24 @@ const TestTaking = () => {
                     {currentQuestion.answers?.map((answer, index) => (
                         <div
                             key={answer.id}
-                            className={styles.answerOption}
+                            className={`${styles.answerOption} ${isAttemptCompleted ? styles.disabled : ""}`}
                             onClick={handleAnswerOptionClick(
                                 answer.id,
                                 currentQuestion.type === QuestionType.SINGLE_CHOICE
                             )}>
                             {currentQuestion.type === QuestionType.SINGLE_CHOICE ? (
-                                <input type="radio" checked={selectedAnswers.includes(answer.id)} readOnly />
+                                <input
+                                    type="radio"
+                                    checked={selectedAnswers.includes(answer.id)}
+                                    readOnly
+                                    disabled={isAttemptCompleted!}
+                                />
                             ) : (
                                 <Checkbox
                                     id={`checkbox-${index}`}
                                     checked={selectedAnswers.includes(answer.id)}
                                     onChange={handleCheckboxChange(answer.id)}
+                                    disabled={isAttemptCompleted!}
                                 />
                             )}
                             <label>{answer.text}</label>
@@ -221,12 +254,17 @@ const TestTaking = () => {
                 </div>
             </div>
 
-            {currentPage === totalPages && (
+            {currentPage === totalPages && !isAttemptCompleted && (
                 <Button
                     onClick={handleSubmitAnswers}
                     disabled={isLoading || !Object.keys(allAnswers).length}
                     className={styles.submitButton}>
                     {isLoading ? "Отправка..." : "Отправить ответы"}
+                </Button>
+            )}
+            {currentPage !== totalPages && !isAttemptCompleted && (
+                <Button onClick={() => setCurrentPage(currentPage + 1)} className={styles.submitButton}>
+                    Следующий вопрос
                 </Button>
             )}
         </div>

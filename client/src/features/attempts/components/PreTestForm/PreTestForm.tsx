@@ -2,6 +2,7 @@ import { PreTestUserData, PreTestUserDataLabels } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import DateSelect from "@/shared/ui/DateSelect/DateSelect"
 import { ValidatedInput } from "@/shared/ui/Input"
+import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { SubmitHandler, useForm } from "react-hook-form"
 import styles from "./PreTestForm.module.scss"
@@ -23,14 +24,14 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isValid },
         setValue,
         control,
         trigger,
     } = useForm<UserDataFormValues>({
-        mode: "onBlur",
-        reValidateMode: "onChange",
-        shouldFocusError: false,
+        mode: "onChange",
+        // reValidateMode: "onChange",
+        // shouldFocusError: false,
     })
 
     const handleFormSubmit: SubmitHandler<UserDataFormValues> = async data => {
@@ -91,13 +92,33 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
                         message: "Телефон должен быть в формате +7 (999) 999-99-99",
                     },
                 }
+            case PreTestUserData.School: {
+                return {
+                    ...baseRule,
+                    pattern: {
+                        value: /^[0-9]+$/,
+                        message: "Номер школы должна содержать только цифры",
+                    },
+                    min: {
+                        value: 1,
+                        message: "Номер школы должен быть положительным числом",
+                    },
+                }
+            }
+            case PreTestUserData.Email:
+                return {
+                   ...baseRule,
+                    pattern: {
+                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: "Некорректный адрес электронной почты",
+                    },
+                }
             default:
                 return baseRule
         }
     }
 
     const renderInput = (field: string) => {
-       
         if (field === PreTestUserData.BirthDate) {
             return (
                 <DateSelect
@@ -112,11 +133,24 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
                 />
             )
         }
+        if (field === PreTestUserData.Gender) {
+            return (
+                <Select
+                    key={field}
+                    name={field}
+                    register={register}
+                    error={!!errors[field as PreTestUserData]}
+                    required={true}
+                    label={PreTestUserDataLabels[field as PreTestUserData]}
+                    options={[
+                        { value: "male", label: "Мужской" },
+                        { value: "female", label: "Женский" },
+                    ]}
+                />
+            )
+        }
 
-        const mask =
-            field === PreTestUserData.Phone
-                ? "+7 (###) ###-##-##" 
-                : undefined
+        const mask = field === PreTestUserData.Phone ? "+7 (###) ###-##-##" : undefined
 
         return (
             <ValidatedInput
@@ -130,7 +164,7 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
                 mask={mask}
                 maskChar="_"
                 control={control}
-                type={field === PreTestUserData.Age ? "number" : "text"}
+                type={field === PreTestUserData.Age || field === PreTestUserData.School ? "number" : "text"}
                 trigger={trigger}
             />
         )
@@ -141,7 +175,7 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
             <h3 className={styles.formTitle}>Пожалуйста, заполните следующие поля:</h3>
             {inputFields.map(field => renderInput(field))}
             <div className={styles.formButtons}>
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading || !isValid}>
                     Начать тест
                 </Button>
             </div>
