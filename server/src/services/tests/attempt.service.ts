@@ -5,6 +5,7 @@ import { mapToTestAttemptDTO, mapToTestAttemptUserDTO } from "@/services/mappers
 import {
     AttemptAnswer,
     AttemptsListDTO,
+    AttemptStatus,
     PreTestUserData,
     PreTestUserDataLabels,
     PreTestUserDataType,
@@ -84,7 +85,7 @@ class AttemptService {
             if (!attempt) {
                 throw ApiError.BadRequest("Попытка не существует")
             }
-            if (attempt.status === "COMPLETED" || attempt.completedAt) {
+            if (attempt.status === AttemptStatus.COMPLETED|| attempt.completedAt) {
                 throw ApiError.BadRequest("Попытка уже завершена")
             }
 
@@ -127,7 +128,7 @@ class AttemptService {
             if (!attempt) {
                 throw ApiError.BadRequest("Попытка не существует")
             }
-            if (attempt.status === "COMPLETED" || attempt.completedAt) {
+            if (attempt.status === AttemptStatus.COMPLETED || attempt.completedAt) {
                 throw ApiError.BadRequest("Попытка уже завершена")
             }
 
@@ -263,7 +264,6 @@ class AttemptService {
                 return JSON.parse(cachedData)
             }
             const attempt = await attemptRepository.findForUserById(attemptId)
-            console.log(attempt)
             if (!attempt) {
                 throw ApiError.BadRequest("Попытка не найдена")
             }

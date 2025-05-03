@@ -1,4 +1,4 @@
-import { AttemptAnswer, PreTestUserDataType } from "@/types"
+import { AttemptAnswer, AttemptStatus, PreTestUserDataType } from "@/types"
 import { Prisma, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
@@ -17,7 +17,7 @@ class AttemptRepository {
                     testSnapshotId: data.testSnapshotId,
                     userId: data.userId,
                     preTestUserData: data.preTestUserData === null ? Prisma.JsonNull : data.preTestUserData,
-                    status: "IN_PROGRESS",
+                    status: AttemptStatus.IN_PROGRESS,
                 },
             })
 
@@ -128,7 +128,7 @@ class AttemptRepository {
             where: { id: attemptId },
             data: {
                 score: Math.round(score * 100) / 100,
-                status: "COMPLETED",
+                status: AttemptStatus.COMPLETED,
                 completedAt: new Date(),
             },
         })
@@ -218,7 +218,7 @@ class AttemptRepository {
         const inProgressAttempt = await prisma.testAttempt.findFirst({
             where: {
                 userId: userId,
-                status: "IN_PROGRESS",
+                status: AttemptStatus.IN_PROGRESS,
             },
         })
 

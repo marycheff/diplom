@@ -3,7 +3,7 @@ import { QuestionType } from "@prisma/client"
 
 export interface TestAttemptDTO {
     id: string
-    status: string
+    status: AttemptStatus
     startedAt: Date
     completedAt: Date | null
     score: number | null
@@ -60,4 +60,9 @@ export interface AttemptAnswer {
     answersIds: string[]
     timeSpent?: number
     answeredAt?: Date
+}
+export enum AttemptStatus {
+    IN_PROGRESS = "IN_PROGRESS",
+    COMPLETED = "COMPLETED",
+    EXPIRED = "EXPIRED",
 }

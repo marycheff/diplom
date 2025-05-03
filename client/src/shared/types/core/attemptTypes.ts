@@ -38,7 +38,7 @@ export interface TestAttemptDTO {
 export interface TestAttemptUserDTO {
     id: string
     testId: string
-    status: string
+    status: AttemptStatus
     startedAt: Date
     completedAt: Date | null
     score: number | null
@@ -85,4 +85,9 @@ export interface UserAnswerDTO {
     answeredAt: Date | null
     timeSpent: number | null
     createdAt: Date
+}
+export enum AttemptStatus {
+    IN_PROGRESS = "IN_PROGRESS",
+    COMPLETED = "COMPLETED",
+    EXPIRED = "EXPIRED",
 }
