@@ -15,6 +15,7 @@ export interface UserTestSettingsDTO {
     shuffleAnswers?: boolean
     requireRegistration?: boolean
     inputFields?: PreTestUserData[]
+    showDetailedResults?: boolean
 }
 
 export interface TestSettingsSnapshotDTO {

@@ -46,6 +46,13 @@ export const useAttemptStore = create<AttemptState>(set => {
             }
             return withFetching(operation)
         },
+        getAttemptResults: async id => {
+            const operation = async () => {
+                const response = await attemptService.getAttemptResultsById(id)
+                return response.data
+            }
+            return withFetching(operation)
+        },
         getAttemptForUserById: async id => {
             const operation = async () => {
                 const response = await attemptService.getAttemptForUserById(id)

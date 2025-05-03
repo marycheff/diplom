@@ -1,7 +1,7 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { AttemptStatus, QuestionType, TestAttemptDTO, TestAttemptUserDTO, TestDTO } from "@/shared/types"
+import { AttemptStatus, QuestionType, TestAttemptDTO, TestAttemptResultDTO, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -12,14 +12,14 @@ const AttemptResultsPage = () => {
     // Параметры маршрута
     const { attemptId } = useParams<{ attemptId: string }>()
     const [attemptForUser, setAttemptForUser] = useState<TestAttemptUserDTO | null>(null)
-    const [attempt, setAttempt] = useState<TestAttemptDTO | null>(null)
-    const [test, setTest] = useState<TestDTO | null>(null)
-    const { isFetching: isTestFetching, getTestById } = useTestStore()
+    const [attempt, setAttempt] = useState<TestAttemptResultDTO | null>(null)
+    const [test, setTest] = useState<UserTestDTO | null>(null)
+    const { isFetching: isTestFetching, getTestById, getTestForUserById } = useTestStore()
     const { isAdmin } = useAuthStore()
 
     const {
         isFetching: isAttemptFetching,
-        getAttemptById,
+        getAttemptResults,
         getAttemptForUserById,
         saveAnswers,
         completeAttempt,
@@ -35,14 +35,14 @@ const AttemptResultsPage = () => {
         setAttemptForUser(fetchedAttempt || null)
     }
     const fetchAttempt = async () => {
-        const fetchedAttempt = await getAttemptById(attemptId)
+        const fetchedAttempt = await getAttemptResults(attemptId)
         setAttempt(fetchedAttempt || null)
     }
 
     // Загрузка данных теста
     const fetchTest = async () => {
         if (!attemptForUser) return
-        const fetchedTest = await getTestById(attemptForUser.testId)
+        const fetchedTest = await getTestForUserById(attemptForUser.testId)
         setTest(fetchedTest || null)
     }
     // Инициализация данных при монтировании
@@ -93,7 +93,7 @@ const AttemptResultsPage = () => {
 
     return (
         <div className={styles.container}>
-            {test?.settings?.showDetailedResults || isAdmin ? (
+            {test.settings?.showDetailedResults || isAdmin ? (
                 <>
                     <div className={styles.infoBlock}>
                         <h1 className={styles.blockTitle}>Результаты теста</h1>
