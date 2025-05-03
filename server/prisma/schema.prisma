@@ -18,12 +18,12 @@ model User {
   isActivated       Boolean       @default(false)
   role              Role          @default(USER)
   activationLink    String?
-  activationLinkExp DateTime?
   resetCode         String?
-  resetCodeExp      DateTime?
   isBlocked         Boolean       @default(false)
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
+  activationLinkExp DateTime?
+  resetCodeExp      DateTime?
   badWordsAdded     BadWord[]     @relation("AddedByUser")
   testAttempts      TestAttempt[] @relation("TestAttemptUser")
   testsCreated      Test[]        @relation("TestAuthor")
@@ -49,11 +49,11 @@ model TestSettings {
   requireRegistration Boolean  @default(false)
   inputFields         Json?
   showDetailedResults Boolean  @default(false)
-  shuffleQuestions    Boolean  @default(false)
-  shuffleAnswers      Boolean  @default(false)
   timeLimit           Int?     @default(0)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+  shuffleAnswers      Boolean  @default(false)
+  shuffleQuestions    Boolean  @default(false)
   test                Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@map("test_settings")
@@ -66,9 +66,9 @@ model Test {
   description   String?
   status        ModerationStatus @default(PENDING)
   totalAttempts Int              @default(0)
-  version       Int              @default(1)
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
+  version       Int              @default(1)
   questions     Question[]
   testAttempts  TestAttempt[]
   settings      TestSettings?
@@ -110,19 +110,20 @@ model Answer {
 model TestAttempt {
   id              String            @id @default(uuid())
   testId          String
-  testSnapshotId  String?
   userId          String?
   preTestUserData Json?
   score           Float?
   startedAt       DateTime          @default(now())
   completedAt     DateTime?
   status          TestAttemptStatus
-  createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
+  testSnapshotId  String?
+  expirationTime  DateTime?
   test            Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
   snapshot        TestSnapshot?     @relation(fields: [testSnapshotId], references: [id])
   user            User?             @relation("TestAttemptUser", fields: [userId], references: [id])
   answers         UserAnswer[]
+  
 
   @@map("test_attempts")
 }
@@ -156,15 +157,15 @@ model BadWord {
 model TestSnapshot {
   id           String                @id @default(uuid())
   testId       String
-  version      Int                   @default(1)
-  originalTest Test                  @relation(fields: [testId], references: [id], onDelete: Cascade)
   title        String
   description  String?
   status       ModerationStatus
   createdAt    DateTime              @default(now())
+  version      Int                   @default(1)
   questions    QuestionSnapshot[]
-  settings     TestSettingsSnapshot?
   attempts     TestAttempt[]
+  settings     TestSettingsSnapshot?
+  originalTest Test                  @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@map("test_snapshots")
 }
@@ -172,13 +173,13 @@ model TestSnapshot {
 model QuestionSnapshot {
   id             String           @id @default(uuid())
   testSnapshotId String
-  testSnapshot   TestSnapshot     @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
   originalTestId String
   text           String
   order          Int
   type           QuestionType
   createdAt      DateTime         @default(now())
   answers        AnswerSnapshot[]
+  testSnapshot   TestSnapshot     @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
 
   @@map("question_snapshots")
 }
@@ -186,11 +187,11 @@ model QuestionSnapshot {
 model AnswerSnapshot {
   id             String           @id @default(uuid())
   questionId     String
-  question       QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
   originalTestId String
   text           String
   isCorrect      Boolean          @default(false)
   createdAt      DateTime         @default(now())
+  question       QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@map("answer_snapshots")
 }
@@ -198,7 +199,6 @@ model AnswerSnapshot {
 model TestSettingsSnapshot {
   id                  String       @id @default(uuid())
   testSnapshotId      String       @unique
-  snapshot            TestSnapshot @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
   requireRegistration Boolean      @default(false)
   inputFields         Json?
   showDetailedResults Boolean      @default(false)
@@ -206,6 +206,7 @@ model TestSettingsSnapshot {
   shuffleAnswers      Boolean      @default(false)
   timeLimit           Int?         @default(0)
   createdAt           DateTime     @default(now())
+  snapshot            TestSnapshot @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
 
   @@map("test_settings_snapshots")
 }
