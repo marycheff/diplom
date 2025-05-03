@@ -2,6 +2,7 @@ export const ROUTES = {
     // Публичные маршруты
     START_ATTEMPT: "/:testId/start",
     PASS_ATTEMPT: "/my-attempts/:attemptId",
+    ATTEMPT_RESULTS: "/my-attempts/:attemptId/results",
 
     // Маршруты для неавторизованных пользователей
     LOGIN: "/login",

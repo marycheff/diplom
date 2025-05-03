@@ -1,0 +1,307 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.infoBlock {
+    background-color: color($background, 100);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+    margin-bottom: 24px;
+}
+
+.blockTitle {
+    background-color: color($primary, 400);
+    color: color($background, 100);
+    padding: 15px 20px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.blockContent {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.infoRow {
+    display: flex;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid color($background, 600);
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    @media screen and (max-width: 480px) {
+        flex-direction: column;
+
+        .label {
+            width: 100%;
+            margin-bottom: 4px;
+        }
+    }
+}
+
+.label {
+    font-weight: 600;
+    color: color($secondary, 600);
+    width: 35%;
+    min-width: 120px;
+
+    @media screen and (max-width: 768px) {
+        min-width: 100px;
+    }
+}
+
+.value {
+    color: color($primary, 600);
+    flex: 1;
+    width: 65%;
+    word-break: break-word;
+}
+
+.emptyField {
+    color: color($secondary, 400);
+    font-style: italic;
+}
+
+.emptyBlock {
+    text-align: center;
+    color: color($secondary, 400);
+    font-style: italic;
+    padding: 20px 0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.questionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.questionBlock {
+    background-color: color($background, 400);
+    border-radius: 12px;
+    padding: 15px;
+    border-left: 4px solid color($primary, 400);
+}
+
+.questionHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+
+    @media screen and (max-width: 576px) {
+        flex-wrap: wrap;
+
+        .questionType {
+            margin-top: 5px;
+        }
+    }
+}
+
+.questionNumber {
+    background-color: color($primary, 400);
+    color: color($background, 100);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.questionText {
+    font-weight: 600;
+    font-size: 16px;
+    flex: 1;
+    color: color($primary, 600);
+}
+
+.questionType {
+    background-color: color($background, 600);
+    color: color($secondary, 800);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.questionVerdict {
+    margin-left: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.correctVerdict {
+    background-color: rgba(color($primary, 400), 0.1);
+    border-left: 4px solid color($primary, 400);
+}
+
+.incorrectVerdict {
+    background-color: rgba(color($error, 400), 0.1);
+    border-left: 4px solid color($error, 400);
+}
+
+.verdictLabel {
+    font-weight: 600;
+    color: color($secondary, 600);
+}
+
+.verdictValue {
+    font-weight: 600;
+}
+
+.answersList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.answerSection {
+    margin-left: 40px;
+
+    @media screen and (max-width: 576px) {
+        margin-left: 10px;
+    }
+}
+
+.answerTitle {
+    color: color($secondary, 600);
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.answerItem {
+    background-color: color($background, 200);
+    border-radius: 8px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid color($background, 600);
+
+    &:hover {
+        background-color: color($background, 400);
+    }
+
+    @media screen and (max-width: 480px) {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .answerStatus,
+        .correctBadge {
+            margin-top: 5px;
+            align-self: flex-end;
+        }
+    }
+}
+
+.answerItemWrapper {
+    margin-bottom: 8px;
+}
+
+.correctAnswer {
+    border-left: 4px solid color($primary, 400);
+}
+
+.incorrectAnswer {
+    border-left: 4px solid color($error, 400);
+}
+
+.answerText {
+    flex: 1;
+    color: color($primary, 600);
+}
+
+.correctBadge,
+.answerStatus {
+    background-color: color($primary, 400);
+    color: color($background, 100);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.statusBadge {
+    background-color: color($primary, 400);
+    color: color($background, 100);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.answerMeta {
+    margin-top: 12px;
+    padding: 10px;
+    background-color: color($background, 200);
+    border-radius: 8px;
+}
+
+.metaItem {
+    display: flex;
+    margin-bottom: 6px;
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.metaLabel {
+    font-weight: 600;
+    color: color($secondary, 600);
+    min-width: 150px;
+}
+
+.metaValue {
+    color: color($primary, 600);
+}
+
+.missedAnswersSection {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: color($background, 200);
+    border-radius: 8px;
+    border-left: 4px solid color($error, 400);
+}
+
+.missedAnswersTitle {
+    color: color($error, 600);
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.missedAnswer {
+    border-left: 4px solid color($error, 400);
+    margin-bottom: 8px;
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.missedBadge {
+    background-color: color($error, 400);
+    color: color($background, 100);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}

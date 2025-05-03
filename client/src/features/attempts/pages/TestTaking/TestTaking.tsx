@@ -11,7 +11,7 @@ import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import { useNavigate, useParams } from "react-router-dom"
+import { generatePath, useNavigate, useParams } from "react-router-dom"
 import styles from "./TestTaking.module.scss"
 
 const TestTaking = () => {
@@ -190,7 +190,13 @@ const TestTaking = () => {
         Object.keys(allAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
 
         toast.success("Ответы успешно отправлены. Попытка завершена.")
-        navigate(ROUTES.HOME)
+        // navigate(ROUTES.HOME)
+        if (attempt) {
+            navigate(generatePath(ROUTES.ATTEMPT_RESULTS, { attemptId: attempt.id }))
+        } else {
+            navigate(ROUTES.HOME)
+        }
+
         setAllAnswers({})
     }
 

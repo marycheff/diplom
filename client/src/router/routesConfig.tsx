@@ -1,6 +1,7 @@
 import AdminPage from "@/features/admin/pages/AdminPage"
 import AllAttemptsPage from "@/features/attempts/pages/AllAttempts/AllAttemptsPage"
 import AttemptInfoPage from "@/features/attempts/pages/AttemptInfo/AttemptInfoPage"
+import AttemptResultsPage from "@/features/attempts/pages/AttemptResults/AttemptResultsPage"
 import StartAttemptPage from "@/features/attempts/pages/StartAttempt/StartAttemptPage"
 import TestAttemptsPage from "@/features/attempts/pages/TestAttempts/TestAttemptsPage"
 import TestTaking from "@/features/attempts/pages/TestTaking/TestTaking"
@@ -45,6 +46,7 @@ export const userRoutes = [
 export const publicRoutes = [
     { path: ROUTES.START_ATTEMPT, element: <StartAttemptPage /> },
     { path: ROUTES.PASS_ATTEMPT, element: <TestTaking /> },
+    { path: ROUTES.ATTEMPT_RESULTS, element: <AttemptResultsPage /> },
 ]
 
 // Конфигурация публичных роутов

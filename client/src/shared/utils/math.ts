@@ -1,0 +1,23 @@
+export const calculateTestScore = (
+    questionsWithAnswers: { id: string; answers: { id: string }[] }[],
+    userAnswers: { questionId: string; answerId: string }[]
+): number => {
+    let correctQuestionsCount = 0
+
+    for (const question of questionsWithAnswers) {
+        const userAnswersForQuestion = userAnswers.filter(a => a.questionId === question.id)
+        const correctAnswerIds = question.answers.map(a => a.id)
+        const userAnswerIds = userAnswersForQuestion.map(a => a.answerId)
+
+        if (
+            correctAnswerIds.length === userAnswerIds.length &&
+            correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
+            userAnswerIds.every(id => correctAnswerIds.includes(id))
+        ) {
+            correctQuestionsCount++
+        }
+    }
+
+    const totalQuestions = questionsWithAnswers.length
+    return totalQuestions > 0 ? (correctQuestionsCount / totalQuestions) * 100 : 0
+}

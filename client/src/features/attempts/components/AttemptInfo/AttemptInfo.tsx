@@ -1,16 +1,16 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
 
+import { ROUTES } from "@/router/paths"
 import { PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import Modal from "@/shared/ui/Modal/Modal"
-import { formatDate, formatSeconds } from "@/shared/utils/formatter"
+import { formatDate } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import { generatePath, Link, useParams } from "react-router-dom"
 import styles from "./AttemptInfo.module.scss"
-import { ROUTES } from "@/router/paths"
 
 const AttemptInfo = () => {
     const { attemptId } = useParams<{ attemptId: string }>()
@@ -85,8 +85,17 @@ const AttemptInfo = () => {
                                 )}
                             </span>
                         </div>
-                        <Link target="_blank" to={generatePath(ROUTES.PASS_ATTEMPT, { attemptId: attempt.id })} className="actionLink">
+                        <Link
+                            target="_blank"
+                            to={generatePath(ROUTES.PASS_ATTEMPT, { attemptId: attempt.id })}
+                            className="actionLink">
                             Перейти к попытке
+                        </Link>
+                        <Link
+                            target="_blank"
+                            to={generatePath(ROUTES.ATTEMPT_RESULTS, { attemptId: attempt.id })}
+                            className="actionLink">
+                            Перейти к результатам
                         </Link>
                     </div>
                 </div>
@@ -255,7 +264,7 @@ const AttemptInfo = () => {
                                                     ))}
                                                     {/* Show time and date info once after all answers */}
                                                     <div className={styles.answerMeta}>
-                                                        <div className={styles.metaItem}>
+                                                        {/* <div className={styles.metaItem}>
                                                             <span className={styles.metaLabel}>Затраченное время:</span>
                                                             <span className={styles.metaValue}>
                                                                 {question.userAnswers &&
@@ -267,7 +276,7 @@ const AttemptInfo = () => {
                                                                     </span>
                                                                 )}
                                                             </span>
-                                                        </div>
+                                                        </div> */}
                                                         <div className={styles.metaItem}>
                                                             <span className={styles.metaLabel}>Дата ответа:</span>
                                                             <span className={styles.metaValue}>
