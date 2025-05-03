@@ -1,6 +1,5 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
-
 import { ROUTES } from "@/router/paths"
 import { PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"

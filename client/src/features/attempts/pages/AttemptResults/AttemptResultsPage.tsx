@@ -100,7 +100,13 @@ const AttemptResultsPage = () => {
                         <div className={styles.blockContent}>
                             <div className={styles.infoRow}>
                                 <span className={styles.label}>Результат:</span>
-                                <span className={styles.value}>{attempt.score}%</span>
+                                <span className={styles.value}>
+                                    {typeof attempt.score === "number" ? (
+                                        `${attempt.score}%`
+                                    ) : (
+                                        <span className={styles.emptyField}>—</span>
+                                    )}
+                                </span>
                             </div>
                             <div className={styles.infoRow}>
                                 <span className={styles.label}>Правильных ответов:</span>

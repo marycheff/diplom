@@ -54,14 +54,18 @@ const StartAttemptPage = () => {
     }
     const handleStartAttempt = async (userData?: PreTestUserDataType) => {
         if (!testId) return
-        console.log(userData)
-        const data = await startAttempt(testId, userData)
-        if (data && data.attemptId) {
-            navigate(`/my-attempts/${data.attemptId}`)
-        } else {
-            toast.error("Не удалось начать попытку. Попробуйте снова")
+        try {
+            const data = userData ? await startAttempt(testId, userData) : await startAttempt(testId)
+            if (data && data.attemptId) {
+                navigate(`/my-attempts/${data.attemptId}`)
+            } else {
+                toast.error("Не удалось начать попытку. Попробуйте снова")
+            }
+        } catch (error) {
+            toast.error("Произошла ошибка при начале попытки")
         }
     }
+
     const hasRequiredFields = test?.settings?.inputFields && test.settings.inputFields.length > 0
     return (
         <div>
@@ -87,7 +91,7 @@ const StartAttemptPage = () => {
                     isLoading={isLoading}
                 />
             ) : (
-                <Button onClick={handleStartAttempt}>Начать попытку</Button>
+                <Button onClick={() => handleStartAttempt()}>Начать попытку</Button>
             )}
         </div>
     )
