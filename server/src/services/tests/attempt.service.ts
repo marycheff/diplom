@@ -1,19 +1,25 @@
 import ApiError from "@/exceptions/api-error"
 import attemptRepository from "@/repositories/tests/attempt.repository"
 import testRepository from "@/repositories/tests/test.repository"
-import { mapToTestAttemptDTO, mapToTestAttemptUserDTO } from "@/services/mappers/test.mappers"
+import {
+    mapToAttemptWithResultsDTO,
+    mapToTestAttemptDTO,
+    mapToTestAttemptUserDTO,
+} from "@/services/mappers/test.mappers"
 import {
     AttemptAnswer,
     AttemptsListDTO,
-    AttemptStatus,
     PreTestUserData,
     PreTestUserDataLabels,
     PreTestUserDataType,
     TestAttemptDTO,
+    TestAttemptResultDTO,
     TestAttemptUserDTO,
+    UserDTO,
 } from "@/types"
 import { calculateTestScore } from "@/utils/math"
 import { redisClient } from "@/utils/redis-client"
+import { Role, TestAttemptStatus } from "@prisma/client"
 
 class AttemptService {
     async startAttempt(
@@ -86,7 +92,7 @@ class AttemptService {
             if (!attempt) {
                 throw ApiError.BadRequest("Попытка не существует")
             }
-            if (attempt.status === AttemptStatus.COMPLETED || attempt.completedAt) {
+            if (attempt.status === TestAttemptStatus.COMPLETED || attempt.completedAt) {
                 throw ApiError.BadRequest("Попытка уже завершена")
             }
 
@@ -129,7 +135,7 @@ class AttemptService {
             if (!attempt) {
                 throw ApiError.BadRequest("Попытка не существует")
             }
-            if (attempt.status === AttemptStatus.COMPLETED || attempt.completedAt) {
+            if (attempt.status === TestAttemptStatus.COMPLETED || attempt.completedAt) {
                 throw ApiError.BadRequest("Попытка уже завершена")
             }
 
@@ -231,6 +237,35 @@ class AttemptService {
 
             const result = mapToTestAttemptDTO(attempt)
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
+            return result
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            console.error(error)
+            throw ApiError.InternalError("Ошибка при получении попытки")
+        }
+    }
+    async getWithResults(attemptId: string, user?: UserDTO): Promise<TestAttemptResultDTO> {
+        try {
+            // const cacheKey = `attempt:${attemptId}`
+            // const cachedData = await redisClient.get(cacheKey)
+            // if (cachedData) {
+            //     return JSON.parse(cachedData)
+            // }
+            const attempt = await attemptRepository.findById(attemptId)
+            if (!attempt) {
+                throw ApiError.BadRequest("Попытка не найдена")
+            }
+            if (attempt.status !== TestAttemptStatus.COMPLETED) {
+                if (user?.role !== Role.ADMIN) throw ApiError.BadRequest("Попытка не завершена")
+            }
+            // if (attempt.status !== TestAttemptStatus.COMPLETED) {
+            //     throw ApiError.BadRequest("Попытка не завершена")
+            // }
+
+            const result = mapToAttemptWithResultsDTO(attempt)
+            // await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
             return result
         } catch (error) {
             if (error instanceof ApiError) {

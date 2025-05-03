@@ -77,6 +77,17 @@ class AttemptController {
             next(error)
         }
     }
+    //Получить конкретную попытку
+    async getAttemptResults(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { attemptId } = req.params
+            const user = req.user
+            const attempt = await attemptService.getWithResults(attemptId, user)
+            res.json(attempt)
+        } catch (error) {
+            next(error)
+        }
+    }
     //Получить конкретную попытку для пользователя
     async getAttemptForUser(req: Request, res: Response, next: NextFunction) {
         try {

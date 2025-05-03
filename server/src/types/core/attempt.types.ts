@@ -1,9 +1,10 @@
+
 import { AnswerDTO, PreTestUserDataType, TestDTO, UserDTO } from "@/types"
-import { QuestionType } from "@prisma/client"
+import { QuestionType, Test, TestAttemptStatus } from "@prisma/client"
 
 export interface TestAttemptDTO {
     id: string
-    status: AttemptStatus
+    status: TestAttemptStatus
     startedAt: Date
     completedAt: Date | null
     score: number | null
@@ -12,6 +13,18 @@ export interface TestAttemptDTO {
     test: TestDTO
     questions: AttemptQuestionDTO[]
     snapshotId: string
+}
+export interface TestAttemptResultDTO {
+    id: string
+    status: TestAttemptStatus
+    startedAt: Date
+    completedAt: Date | null
+    score: number | null
+    // user: UserDTO | null
+    // preTestUserData: PreTestUserDataType | null
+    // test: TestDTO
+    questions: AttemptQuestionDTO[]
+    // snapshotId: string
 }
 export interface TestAttemptUserDTO {
     id: string
@@ -60,9 +73,4 @@ export interface AttemptAnswer {
     answersIds: string[]
     timeSpent?: number
     answeredAt?: Date
-}
-export enum AttemptStatus {
-    IN_PROGRESS = "IN_PROGRESS",
-    COMPLETED = "COMPLETED",
-    EXPIRED = "EXPIRED",
 }

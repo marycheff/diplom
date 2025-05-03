@@ -6,6 +6,7 @@ import {
     PreTestUserDataType,
     QuestionDTO,
     TestAttemptDTO,
+    TestAttemptResultDTO,
     TestAttemptUserDTO,
     TestDTO,
     TestSettingsDTO,
@@ -73,13 +74,13 @@ export const mapTest = (
         settings: test.settings
             ? {
                   requireRegistration: test.settings.requireRegistration,
-                  inputFields: test.settings.inputFields,
+                  showDetailedResults: test.settings.showDetailedResults,
                   shuffleAnswers: test.settings.shuffleAnswers,
                   shuffleQuestions: test.settings.shuffleQuestions,
-                  showDetailedResults: test.settings.showDetailedResults,
                   timeLimit: test.settings.timeLimit,
+                  inputFields: test.settings.inputFields,
               }
-            : {},
+            : ({} as TestSettingsDTO),
         questions: test.questions?.map(question => mapQuestion(question)) || [],
     }
 }
@@ -159,8 +160,40 @@ export const mapToTestAttemptDTO = (
         score: attempt.score ?? null,
         snapshotId: attempt.testSnapshotId ?? "",
         user: attempt.user ? mapUserToDto(attempt.user) : null,
-        preTestUserData: attempt.userData as PreTestUserDataType,
+        preTestUserData: attempt.preTestUserData as PreTestUserDataType,
         test: mapTest(attempt.test),
+        questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
+    }
+}
+
+export const mapToAttemptWithResultsDTO = (
+    attempt: TestAttempt & {
+        test: Test & {
+            questions: (Question & { answers: Answer[] })[]
+            author: {
+                id: string
+                email: string
+                name?: string | null
+                surname?: string | null
+                patronymic?: string | null
+            }
+        }
+        user: User | null
+        answers: UserAnswer[]
+    }
+): TestAttemptResultDTO => {
+    const allAnswers = attempt.test.questions.flatMap(q => q.answers)
+
+    return {
+        id: attempt.id,
+        status: attempt.status,
+        startedAt: attempt.startedAt,
+        completedAt: attempt.completedAt ?? null,
+        score: attempt.score ?? null,
+        // snapshotId: attempt.testSnapshotId ?? "",
+        // user: attempt.user ? mapUserToDto(attempt.user) : null,
+        // preTestUserData: attempt.preTestUserData as PreTestUserDataType,
+        // test: mapTest(attempt.test),
         questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
     }
 }
@@ -254,10 +287,11 @@ export const mapUserTest = (
         settings: test.settings
             ? {
                   requireRegistration: test.settings.requireRegistration,
-                  inputFields: test.settings.inputFields,
+                  showDetailedResults: test.settings.showDetailedResults,
                   shuffleAnswers: test.settings.shuffleAnswers,
                   shuffleQuestions: test.settings.shuffleQuestions,
                   timeLimit: test.settings.timeLimit,
+                  inputFields: test.settings.inputFields,
               }
             : {},
         questions: test.questions?.map(question => mapUserQuestion(question)) || [],
