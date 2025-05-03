@@ -1,4 +1,4 @@
-import { QuestionDTO, TestSettingsDTO, UserQuestionDTO, UserTestSettingsDTO } from "@/types"
+import { QuestionDTO, TestSettingsDTO, UserQuestionDTO } from "@/types"
 
 export interface CreateTest {
     title: string
@@ -44,5 +44,5 @@ export interface UserTestDTO {
     title: string
     description?: string
     questions?: UserQuestionDTO[]
-    settings?: UserTestSettingsDTO
+    settings?: TestSettingsDTO
 }

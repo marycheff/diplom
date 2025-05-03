@@ -11,6 +11,17 @@ class AttemptRepository {
         preTestUserData?: PreTestUserDataType | null
     }) {
         return prisma.$transaction(async tx => {
+            const testSnapshot = await tx.testSnapshot.findUnique({
+                where: { id: data.testSnapshotId },
+                include: { settings: true },
+            })
+
+            const timeLimit = testSnapshot?.settings?.timeLimit
+            let expirationTime = null
+            if (timeLimit && timeLimit > 0) {
+                expirationTime = new Date(Date.now() + timeLimit * 60000)
+            }
+            console.log(expirationTime)
             const attempt = await tx.testAttempt.create({
                 data: {
                     testId: data.testId,
@@ -18,6 +29,7 @@ class AttemptRepository {
                     userId: data.userId,
                     preTestUserData: data.preTestUserData === null ? Prisma.JsonNull : data.preTestUserData,
                     status: TestAttemptStatus.IN_PROGRESS,
+                    expirationTime,
                 },
             })
 

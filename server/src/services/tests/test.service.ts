@@ -18,26 +18,33 @@ class TestService {
     // Обновление настроек теста
     async updateTestSettings(testId: string, testSettings: TestSettingsDTO): Promise<void> {
         try {
-            const test = await testRepository.findById(testId)
-            if (!test) throw ApiError.NotFound("Тест не найден")
-
             await testRepository.executeTransaction(async tx => {
+                // 1. Получаем актуальные данные внутри транзакции
+                const test = await testRepository.findById(testId, tx)
+                if (!test) throw ApiError.NotFound("Тест не найден")
+
+                // 2. Обновляем настройки
                 const existingSettings = await testRepository.findSettingsById(testId, tx)
                 if (existingSettings) {
-                    await testRepository.updateSettings(testId, testSettings, tx)
+                    const res = await testRepository.updateSettings(testId, testSettings, tx)
                 } else {
                     await testRepository.createSettings(testId, testSettings, tx)
                 }
+
+                // 3. Инкрементим версию с актуальными данными
                 await testRepository.incrementTestVersion(testId, test.version, tx)
                 await testRepository.cleanupUnusedSnapshots(testId, tx)
 
-                const updatedTest = await testRepository.findDetailedTestById(testId)
+                // 4. Получаем обновленные данные в рамках транзакции
+                const updatedTest = await testRepository.findDetailedTestById(testId, tx) // <-- Добавляем tx
+
+                // 5. Используем обновленные данные для снапшота
                 if (!updatedTest) {
                     throw ApiError.InternalError("Не удалось получить обновленный тест")
                 }
+
                 await testRepository.createSnapshot(updatedTest, tx)
             })
-
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
         } catch (error) {
@@ -113,10 +120,10 @@ class TestService {
     }
     async addQuestions(testId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
         try {
-            const test = await testRepository.findWithQuestionsAndAuthor(testId)
-            if (!test) throw ApiError.NotFound("Тест не найден")
-
             const { updatedTest, questions } = await testRepository.executeTransaction(async tx => {
+                const test = await testRepository.findWithQuestionsAndAuthor(testId, tx)
+                if (!test) throw ApiError.NotFound("Тест не найден")
+
                 // Создание вопросов и ответов
                 const createdQuestions = await Promise.all(
                     updateTestData.questions.map(async (questionData, index) => {
@@ -145,8 +152,11 @@ class TestService {
                 await testRepository.cleanupUnusedSnapshots(testId, tx)
 
                 // 4. Создаем новый снапшот
-                await testRepository.createSnapshot(test, tx)
-
+                const testWithUpdatedQuestions = {
+                    ...test,
+                    questions: [...validQuestions],
+                }
+                await testRepository.createSnapshot(testWithUpdatedQuestions, tx)
                 return { updatedTest: test, questions: validQuestions }
             })
 

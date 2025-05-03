@@ -293,7 +293,7 @@ export const mapUserTest = (
                   timeLimit: test.settings.timeLimit,
                   inputFields: test.settings.inputFields,
               }
-            : {},
+            : ({} as TestSettingsDTO),
         questions: test.questions?.map(question => mapUserQuestion(question)) || [],
     }
 }

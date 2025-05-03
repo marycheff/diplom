@@ -54,6 +54,7 @@ class TestRepository {
                 ...testSettings,
                 testId,
                 inputFields: testSettings.inputFields as Prisma.InputJsonValue,
+                timeLimit: testSettings.timeLimit,
             },
         })
     }
@@ -312,10 +313,13 @@ class TestRepository {
         })
     }
 
-    async findDetailedTestById(testId: string) {
-        return prisma.test.findUnique({
+    async findDetailedTestById(testId: string, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.test.findUnique({
             where: { id: testId },
             include: {
+                settings: true,
+
                 questions: {
                     include: {
                         answers: true,
@@ -331,7 +335,6 @@ class TestRepository {
                         patronymic: true,
                     },
                 },
-                settings: true,
             },
         })
     }

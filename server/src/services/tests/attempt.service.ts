@@ -234,7 +234,7 @@ class AttemptService {
             if (!attempt) {
                 throw ApiError.BadRequest("Попытка не найдена")
             }
-
+            // console.log(attempt)
             const result = mapToTestAttemptDTO(attempt)
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
             return result
