@@ -50,7 +50,6 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
         logger.debug(`[${LOG_NAMESPACE}] Успешная авторизация пользователя`, {
             userId: userData.id,
-            email: userData.email,
             path: req.path,
             method: req.method,
         })
