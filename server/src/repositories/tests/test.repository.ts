@@ -1,8 +1,7 @@
 import { CreateAnswerDTO, CreateQuestionDTO, CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types"
+import { prisma } from "@/utils/prisma-client"
 import { isValidUUID } from "@/utils/validator"
-import { Answer, Prisma, PrismaClient, Question, Test, TestSettings } from "@prisma/client"
-
-const prisma = new PrismaClient()
+import { Answer, Prisma, Question, Test, TestSettings } from "@prisma/client"
 
 type TestWithQuestionsAndSettings = Test & {
     questions: (Question & { answers: Answer[] })[]
@@ -17,6 +16,7 @@ type TestWithAuthor = TestWithQuestionsAndSettings & {
         patronymic: string | null
     }
 }
+
 class TestRepository {
     async findById(testId: string, tx?: Prisma.TransactionClient): Promise<TestWithQuestionsAndSettings | null> {
         const client = tx || prisma
@@ -149,8 +149,9 @@ class TestRepository {
     }
 
     // Транзакционные операции
-    async executeTransaction<T>(callback: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
-        return prisma.$transaction(callback)
+    async executeTransaction<T>(callback: (tx: any) => Promise<T>): Promise<T> {
+        const result = await prisma.$transaction(callback)
+        return result
     }
 
     async create(authorId: string, testData: CreateTest, tx?: Prisma.TransactionClient) {

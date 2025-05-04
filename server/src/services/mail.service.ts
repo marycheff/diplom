@@ -1,7 +1,10 @@
 import { envConfig } from "@/config/env-config"
 import ApiError from "@/exceptions/api-error"
+import { logger } from "@/utils/logger"
 import nodemailer from "nodemailer"
 import SMTPTransport from "nodemailer/lib/smtp-transport"
+
+const LOG_NAMESPACE = "MailService"
 
 class MailService {
     transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo>
@@ -19,6 +22,7 @@ class MailService {
     }
 
     async sendActivationMail(to: string, link: string) {
+        logger.info(`[${LOG_NAMESPACE}] Отправка письма активации`)
         try {
             await this.transporter.sendMail({
                 from: envConfig.SMTP_USER,
@@ -32,7 +36,11 @@ class MailService {
                 </div>
             `,
             })
+            logger.info(`[${LOG_NAMESPACE}] Письмо активации успешно отправлено`)
         } catch (error: any) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма активации`, {
+                error: error instanceof Error ? error.message : String(error),
+            })
             if (error.responseCode === 550) {
                 throw ApiError.BadRequest(`Ошибка отправки письма: почтовый ящик ${to} не найден`)
             }
@@ -40,6 +48,7 @@ class MailService {
         }
     }
     async sendResetPasswordMail(to: string, email: string, code: string) {
+        logger.info(`[${LOG_NAMESPACE}] Отправка письма для сброса пароля`)
         try {
             await this.transporter.sendMail({
                 from: envConfig.SMTP_USER,
@@ -53,7 +62,11 @@ class MailService {
                 </div>
             `,
             })
+            logger.info(`[${LOG_NAMESPACE}] Письмо для сброса пароля успешно отправлено`)
         } catch (error: any) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма для сброса пароля`, {
+                error: error instanceof Error ? error.message : String(error),
+            })
             if (error.responseCode === 550) {
                 throw ApiError.BadRequest(`Ошибка отправки письма: почтовый ящик ${to} не найден`)
             }
