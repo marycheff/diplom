@@ -148,12 +148,6 @@ class TestRepository {
         })
     }
 
-    // Транзакционные операции
-    async executeTransaction<T>(callback: (tx: any) => Promise<T>): Promise<T> {
-        const result = await prisma.$transaction(callback)
-        return result
-    }
-
     async create(authorId: string, testData: CreateTest, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
 

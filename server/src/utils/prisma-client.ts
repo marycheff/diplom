@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client"
-import { logger } from "../utils/logger"
 import { performance } from "perf_hooks"
+import { logger } from "../utils/logger"
 
 const prisma = new PrismaClient().$extends({
     query: {
@@ -32,5 +32,10 @@ const prisma = new PrismaClient().$extends({
         },
     },
 })
+// Функция для выполнения транзакций, которую можно использовать из любого репозитория
+const executeTransaction = async <T>(callback: (tx: any) => Promise<T>): Promise<T> => {
+    const result = await prisma.$transaction(callback)
+    return result as T
+}
 
-export { prisma }
+export { executeTransaction, prisma }

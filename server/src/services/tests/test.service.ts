@@ -12,6 +12,7 @@ import {
     UserTestDTO,
 } from "@/types"
 import { logger } from "@/utils/logger"
+import { executeTransaction } from "@/utils/prisma-client"
 import { redisClient } from "@/utils/redis-client"
 
 const LOG_NAMESPACE = "TestService"
@@ -20,7 +21,7 @@ class TestService {
     async updateTestSettings(testId: string, testSettings: TestSettingsDTO): Promise<void> {
         logger.info(`[${LOG_NAMESPACE}] Обновление настроек теста`, { testId })
         try {
-            await testRepository.executeTransaction(async tx => {
+            await executeTransaction(async tx => {
                 const test = await testRepository.findById(testId, tx)
                 if (!test) {
                     logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
@@ -69,7 +70,7 @@ class TestService {
                 throw ApiError.NotFound("Тест не найден")
             }
 
-            await testRepository.executeTransaction(async tx => {
+            await executeTransaction(async tx => {
                 const updatedTest = await testRepository.updateShortInfo(testId, updatedShortInfo, tx)
                 await testRepository.incrementTestVersion(testId, test.version, tx)
                 await testRepository.cleanupUnusedSnapshots(testId, tx)
@@ -95,7 +96,7 @@ class TestService {
     async createTest(authorId: string, testData: CreateTest): Promise<TestDTO> {
         logger.info(`[${LOG_NAMESPACE}] Создание теста`, { authorId })
         try {
-            const result = await testRepository.executeTransaction(async tx => {
+            const result = await executeTransaction(async tx => {
                 const { createdTest, settings } = await testRepository.create(authorId, testData, tx)
 
                 await testRepository.createSnapshot(
@@ -136,7 +137,7 @@ class TestService {
     async addQuestions(testId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
         logger.info(`[${LOG_NAMESPACE}] Добавление вопросов к тесту`, { testId })
         try {
-            const { updatedTest, questions } = await testRepository.executeTransaction(async tx => {
+            const { updatedTest, questions } = await executeTransaction(async tx => {
                 const test = await testRepository.findWithQuestionsAndAuthor(testId, tx)
                 if (!test) {
                     logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
