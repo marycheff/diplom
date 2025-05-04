@@ -161,7 +161,7 @@ export const saveAnswersSchema = z.object({
                         .transform(val => (val ? new Date(val) : undefined)),
                 })
             )
-            .nonempty("Должен быть указан хотя бы один ответ"),
+            // .nonempty("Должен быть указан хотя бы один ответ"),
     }),
 })
 // Завершение попытки

@@ -1,5 +1,5 @@
 import { AttemptAnswer, PreTestUserDataType } from "@/types"
-import { Prisma, PrismaClient, TestAttemptStatus } from "@prisma/client"
+import { Prisma, PrismaClient, TestAttempt, TestAttemptStatus } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
@@ -19,9 +19,9 @@ class AttemptRepository {
             const timeLimit = testSnapshot?.settings?.timeLimit
             let expirationTime = null
             if (timeLimit && timeLimit > 0) {
-                expirationTime = new Date(Date.now() + timeLimit * 60000)
+                expirationTime = new Date(Date.now() + timeLimit * 1000)
             }
-            console.log(expirationTime)
+    
             const attempt = await tx.testAttempt.create({
                 data: {
                     testId: data.testId,
@@ -319,6 +319,23 @@ class AttemptRepository {
     async count(where?: Prisma.TestAttemptWhereInput): Promise<number> {
         return prisma.testAttempt.count({
             where,
+        })
+    }
+
+    async findExpiredAttempts(batchSize: number): Promise<TestAttempt[]> {
+        return prisma.testAttempt.findMany({
+            where: {
+                status: TestAttemptStatus.IN_PROGRESS,
+                expirationTime: { lt: new Date() },
+            },
+            take: batchSize,
+        })
+    }
+
+    async updateAttemptsStatus(attemptIds: string[], status: TestAttemptStatus) {
+        return prisma.testAttempt.updateMany({
+            where: { id: { in: attemptIds } },
+            data: { status },
         })
     }
 }

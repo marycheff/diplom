@@ -13,7 +13,7 @@ const requiredEnvVars = [
     "CLIENT_URL",
     "GIGACHAT_AUTH_DATA",
     "ALLOWED_ORIGINS",
-    
+    "NODE_ENV",
 ]
 
 for (const envVar of requiredEnvVars) {
