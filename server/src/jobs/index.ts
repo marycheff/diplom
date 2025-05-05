@@ -5,7 +5,7 @@ export function initializeJobs(): void {
     logger.info("Инициализация фоновых задач...")
 
     // Запуск задачи проверки просроченных попыток
-    expiredAttemptsJob.start()
+    // expiredAttemptsJob.start()
 
     logger.info("Все фоновые задачи успешно запущены")
 }

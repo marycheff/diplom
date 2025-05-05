@@ -2,8 +2,10 @@ import ApiError from "@/exceptions/api-error"
 import questionRepository from "@/repositories/tests/question.repository"
 import testRepository from "@/repositories/tests/test.repository"
 import { mapQuestion, mapTest } from "@/services/mappers/test.mappers"
-import { QuestionDTO, TestDTO } from "@/types"
+import { QuestionDTO, TestDTO, UpdateTestDTO } from "@/types"
 import { logger } from "@/utils/logger"
+import { executeTransaction, prisma } from "@/utils/prisma-client"
+import { redisClient } from "@/utils/redis-client"
 
 const LOG_NAMESPACE = "QuestionService"
 
@@ -30,6 +32,65 @@ class QuestionService {
                 error: error instanceof Error ? error.message : String(error),
             })
             throw ApiError.InternalError("Ошибка при получении вопросов теста")
+        }
+    }
+    async addQuestions(testId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
+        logger.info(`[${LOG_NAMESPACE}] Добавление вопросов к тесту`, { testId })
+        try {
+            const { updatedTest, questions } = await executeTransaction(async tx => {
+                const test = await testRepository.findWithQuestionsAndAuthor(testId, tx)
+                if (!test) {
+                    logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
+                    throw ApiError.NotFound("Тест не найден")
+                }
+
+                const createdQuestions = await Promise.all(
+                    updateTestData.questions.map(async (questionData, index) => {
+                        const createdQuestion = await testRepository.createQuestion(
+                            testId,
+                            {
+                                text: questionData.text,
+                                type: questionData.type,
+                                order: index + 1,
+                            },
+                            tx
+                        )
+
+                        await testRepository.createAnswersForQuestion(createdQuestion.id, questionData.answers, tx)
+
+                        return testRepository.getQuestionWithAnswers(createdQuestion.id, tx)
+                    })
+                )
+
+                const validQuestions = createdQuestions.filter(question => question !== null)
+
+                await testRepository.incrementTestVersion(testId, test.version, tx)
+                await testRepository.cleanupUnusedSnapshots(testId, tx)
+
+                const testWithUpdatedQuestions = {
+                    ...test,
+                    questions: [...validQuestions],
+                }
+                await testRepository.createSnapshot(testWithUpdatedQuestions, tx)
+                return { updatedTest: test, questions: validQuestions }
+            })
+
+            await redisClient.del(`test:${testId}`)
+            await redisClient.del(`user-test:${testId}`)
+            logger.info(`[${LOG_NAMESPACE}] Вопросы успешно добавлены к тесту`, { testId })
+            return mapTest({
+                ...updatedTest,
+                questions,
+            })
+        } catch (error) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при добавлении вопросов к тесту`, {
+                testId,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            if (error instanceof ApiError) {
+                throw error
+            }
+            throw ApiError.InternalError("Ошибка при добавлении вопросов к тесту")
         }
     }
 
@@ -174,6 +235,137 @@ class QuestionService {
                 error: error instanceof Error ? error.message : String(error),
             })
             throw ApiError.BadRequest("Ошибка при обновлении вопроса")
+        }
+    }
+
+    async upsertQuestions(testId: string, questions: QuestionDTO[]): Promise<QuestionDTO[]> {
+        logger.info(`[${LOG_NAMESPACE}] Обновление/добавление вопросов теста`, {
+            testId,
+            questionsCount: questions.length,
+        })
+
+        try {
+            // Проверяем существование теста
+            const test = await testRepository.findById(testId)
+            if (!test) {
+                logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
+                throw ApiError.NotFound("Тест не найден")
+            }
+
+            // Получаем текущие вопросы теста
+            const existingQuestions = await questionRepository.findManyByTestId(testId)
+            const existingQuestionsMap = new Map(existingQuestions.map(q => [q.id, q]))
+
+            // Результаты обработки
+            const result: QuestionDTO[] = []
+
+            // Используем транзакцию для атомарности операции
+            await prisma.$transaction(async transaction => {
+                // Обрабатываем каждый вопрос из входящего массива
+                for (const question of questions) {
+                    try {
+                        let processedQuestion: QuestionDTO
+
+                        if (question.id && existingQuestionsMap.has(question.id)) {
+                            // Обновляем существующий вопрос
+                            logger.debug(`[${LOG_NAMESPACE}] Обновление существующего вопроса`, {
+                                questionId: question.id,
+                            })
+
+                            await transaction.question.update({
+                                where: { id: question.id },
+                                data: {
+                                    text: question.text,
+                                    order: question.order,
+                                    type: question.type,
+                                },
+                            })
+
+                            // Удаляем старые ответы
+                            await transaction.answer.deleteMany({
+                                where: { questionId: question.id },
+                            })
+
+                            // Создаем новые ответы
+                            for (const answer of question.answers) {
+                                await transaction.answer.create({
+                                    data: {
+                                        text: answer.text,
+                                        isCorrect: answer.isCorrect,
+                                        questionId: question.id,
+                                        isGenerated: false,
+                                    },
+                                })
+                            }
+
+                            processedQuestion = question
+                        } else {
+                            // Создаем новый вопрос
+                            logger.debug(`[${LOG_NAMESPACE}] Создание нового вопроса`)
+
+                            const newQuestion = await transaction.question.create({
+                                data: {
+                                    text: question.text,
+                                    order: question.order,
+                                    type: question.type,
+                                    testId: testId,
+                                    answers: {
+                                        create: question.answers.map(answer => ({
+                                            text: answer.text,
+                                            isCorrect: answer.isCorrect,
+                                            isGenerated: false,
+                                        })),
+                                    },
+                                },
+                                include: {
+                                    answers: true,
+                                },
+                            })
+
+                            processedQuestion = mapQuestion(newQuestion)
+                        }
+
+                        result.push(processedQuestion)
+                    } catch (error) {
+                        logger.error(`[${LOG_NAMESPACE}] Ошибка при обработке вопроса`, {
+                            questionId: question.id,
+                            error: error instanceof Error ? error.message : String(error),
+                        })
+                        throw error // Прокидываем ошибку для отмены транзакции
+                    }
+                }
+
+                // Определяем ID вопросов, которые нужно удалить (те, которых нет в обновленном списке)
+                const updatedQuestionIds = new Set(questions.filter(q => q.id).map(q => q.id))
+                const questionsToDelete = existingQuestions.filter(q => !updatedQuestionIds.has(q.id))
+
+                // Удаляем вопросы, которых нет в обновленном списке (опционально, в зависимости от требований)
+                for (const questionToDelete of questionsToDelete) {
+                    logger.debug(`[${LOG_NAMESPACE}] Удаление вопроса`, { questionId: questionToDelete.id })
+                    await transaction.answer.deleteMany({
+                        where: { questionId: questionToDelete.id },
+                    })
+                    await transaction.question.delete({
+                        where: { id: questionToDelete.id },
+                    })
+                }
+            })
+
+            logger.info(`[${LOG_NAMESPACE}] Вопросы теста успешно обновлены/добавлены`, {
+                testId,
+                processedQuestionsCount: result.length,
+            })
+
+            return result
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при обновлении/добавлении вопросов теста`, {
+                testId,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при обновлении/добавлении вопросов теста")
         }
     }
 }

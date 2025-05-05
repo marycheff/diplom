@@ -20,22 +20,7 @@ class TestController {
         }
     }
 
-    // Добавление вопросов к тесту
-    async updateTest(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { testId } = req.params
-            const updateTestData: UpdateTestDTO = {
-                questions: req.body.questions.map((question: QuestionDTO, index: number) => ({
-                    ...question,
-                    order: index + 1,
-                })),
-            }
-            const updatedTest = await testService.addQuestions(testId, updateTestData)
-            res.json(updatedTest)
-        } catch (error) {
-            next(error)
-        }
-    }
+    
     // async updateTestQuestions(req: Request, res: Response, next: NextFunction) {
     //     try {
     //         const { testId } = req.params

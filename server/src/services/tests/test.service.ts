@@ -139,65 +139,6 @@ class TestService {
         }
     }
 
-    async addQuestions(testId: string, updateTestData: UpdateTestDTO): Promise<TestDTO> {
-        logger.info(`[${LOG_NAMESPACE}] Добавление вопросов к тесту`, { testId })
-        try {
-            const { updatedTest, questions } = await executeTransaction(async tx => {
-                const test = await testRepository.findWithQuestionsAndAuthor(testId, tx)
-                if (!test) {
-                    logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
-                    throw ApiError.NotFound("Тест не найден")
-                }
-
-                const createdQuestions = await Promise.all(
-                    updateTestData.questions.map(async (questionData, index) => {
-                        const createdQuestion = await testRepository.createQuestion(
-                            testId,
-                            {
-                                text: questionData.text,
-                                type: questionData.type,
-                                order: index + 1,
-                            },
-                            tx
-                        )
-
-                        await testRepository.createAnswersForQuestion(createdQuestion.id, questionData.answers, tx)
-
-                        return testRepository.getQuestionWithAnswers(createdQuestion.id, tx)
-                    })
-                )
-
-                const validQuestions = createdQuestions.filter(question => question !== null)
-
-                await testRepository.incrementTestVersion(testId, test.version, tx)
-                await testRepository.cleanupUnusedSnapshots(testId, tx)
-
-                const testWithUpdatedQuestions = {
-                    ...test,
-                    questions: [...validQuestions],
-                }
-                await testRepository.createSnapshot(testWithUpdatedQuestions, tx)
-                return { updatedTest: test, questions: validQuestions }
-            })
-
-            await redisClient.del(`test:${testId}`)
-            await redisClient.del(`user-test:${testId}`)
-            logger.info(`[${LOG_NAMESPACE}] Вопросы успешно добавлены к тесту`, { testId })
-            return mapTest({
-                ...updatedTest,
-                questions,
-            })
-        } catch (error) {
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при добавлении вопросов к тесту`, {
-                testId,
-                error: error instanceof Error ? error.message : String(error),
-            })
-            if (error instanceof ApiError) {
-                throw error
-            }
-            throw ApiError.InternalError("Ошибка при добавлении вопросов к тесту")
-        }
-    }
 
     async getMyTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение тестов пользователя`, { userId, page, limit })

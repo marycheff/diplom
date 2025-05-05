@@ -77,19 +77,19 @@ router.get("/:testId/for-user", validateRequest(testIdSchema), testController.ge
 
 // Добавление вопросов к тесту
 // router.put("/:testId/questions", authMiddleware, validateRequest(updateTestSchema), testController.updateTest)
-router.put("/:testId/questions", authMiddleware, testOwnershipMiddleware, testController.updateTest)
-// router.put("/:testId/questions", authMiddleware, testController.updateTestQuestions)
+router.put("/:testId/questions", authMiddleware, testOwnershipMiddleware, questionController.addQuestions)
+// router.put("/:testId/questions", authMiddleware, questionController.upsertQuestions)
 
 // Получение всех вопросов теста
 router.get("/:testId/questions", authMiddleware, questionController.getTestQuestions)
 
 // Обновление вопроса
-router.put(
-    "/questions/:questionId",
-    authMiddleware,
-    validateRequest(updateQuestionSchema),
-    questionController.updateQuestion
-)
+// router.put(
+//     "/questions/:questionId",
+//     authMiddleware,
+//     validateRequest(updateQuestionSchema),
+//     questionController.updateQuestion
+// )
 // Удаление вопроса из теста
 router.delete("/questions/:questionId", authMiddleware, questionOwnershipMiddleware, questionController.deleteQuestion)
 
