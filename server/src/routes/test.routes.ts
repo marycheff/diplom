@@ -20,6 +20,7 @@ import {
     shortInfoSchema,
     startTestAttemptSchema,
     testIdSchema,
+    testSettingsSchema,
     updateQuestionSchema,
 } from "@/schemas/test.schema"
 import express from "express"
@@ -47,7 +48,7 @@ router.put(
     "/:testId/settings",
     authMiddleware,
     testOwnershipMiddleware,
-    // validateRequest(testSettingsSchema),
+    validateRequest(testSettingsSchema),
     testController.updateTestSettings
 )
 
@@ -158,7 +159,12 @@ router.get(
     attemptController.getAttempt
 )
 router.get("/attempts/:attemptId/for-user", validateRequest(getAttemptSchema), attemptController.getAttemptForUser)
-router.get("/attempts/:attemptId/results",conditionalAuthMiddleware, validateRequest(getAttemptSchema), attemptController.getAttemptResults)
+router.get(
+    "/attempts/:attemptId/results",
+    conditionalAuthMiddleware,
+    validateRequest(getAttemptSchema),
+    attemptController.getAttemptResults
+)
 
 router.get("/:testId/attempts", authMiddleware, testOwnershipMiddleware, attemptController.getTestAttempts)
 

@@ -138,30 +138,29 @@ export const saveAnswersSchema = z.object({
         }),
     }),
     body: z.object({
-        answers: z
-            .array(
-                z.object({
-                    questionId: z.string().min(1, "ID вопроса обязательно").refine(isValidUUID, {
-                        message: "ID вопроса должен быть корректным UUID",
+        answers: z.array(
+            z.object({
+                questionId: z.string().min(1, "ID вопроса обязательно").refine(isValidUUID, {
+                    message: "ID вопроса должен быть корректным UUID",
+                }),
+                answersIds: z
+                    .array(
+                        z.string().min(1, "ID ответа не может быть пустым").refine(isValidUUID, {
+                            message: "ID ответа должен быть корректным UUID",
+                        })
+                    )
+                    .refine(val => new Set(val).size === val.length, {
+                        message: "Массив answersIds содержит дублирующиеся идентификаторы",
                     }),
-                    answersIds: z
-                        .array(
-                            z.string().min(1, "ID ответа не может быть пустым").refine(isValidUUID, {
-                                message: "ID ответа должен быть корректным UUID",
-                            })
-                        )
-                        .refine(val => new Set(val).size === val.length, {
-                            message: "Массив answersIds содержит дублирующиеся идентификаторы",
-                        }),
-                    timeSpent: z.number().optional().default(0),
-                    answeredAt: z
-                        .string()
-                        .or(z.date())
-                        .optional()
-                        .transform(val => (val ? new Date(val) : undefined)),
-                })
-            )
-            // .nonempty("Должен быть указан хотя бы один ответ"),
+                timeSpent: z.number().optional().default(0),
+                answeredAt: z
+                    .string()
+                    .or(z.date())
+                    .optional()
+                    .transform(val => (val ? new Date(val) : undefined)),
+            })
+        ),
+        // .nonempty("Должен быть указан хотя бы один ответ"),
     }),
 })
 // Завершение попытки
@@ -174,16 +173,29 @@ export const completeTestAttemptSchema = z.object({
 })
 
 export const testSettingsSchema = z.object({
-    requireRegistration: z.boolean().optional(),
-    // inputFields: z.array(z.nativeEnum(PreTestUserData)).optional(),
-    inputFields: z
-        .array(z.nativeEnum(PreTestUserData))
-        .optional()
-        .refine(fields => {
-            if (!fields) return true
-            return fields.every(f => Object.values(PreTestUserData).includes(f))
-        }, "Недопустимое поле в requiredFields"),
-    showDetailedResults: z.boolean().optional(),
+    body: z
+        .object({
+            requireRegistration: z.boolean().optional(),
+            inputFields: z
+                .array(z.nativeEnum(PreTestUserData))
+                .optional()
+                .refine(fields => {
+                    if (!fields) return true
+                    return fields.every(f => Object.values(PreTestUserData).includes(f))
+                }, "Недопустимое поле в inputFields")
+                .refine(fields => {
+                    if (!fields) return true
+                    return new Set(fields).size === fields.length
+                }, "Массив inputFields содержит дублирующиеся значения"),
+            shuffleQuestions: z.boolean().optional(),
+            shuffleAnswers: z.boolean().optional(),
+            showDetailedResults: z.boolean().optional(),
+            timeLimit: z.number().nullable().optional(),
+        })
+        .strict("Обнаружены недопустимые поля в настройках теста")
+        .refine(data => Object.keys(data).length > 0, {
+            message: "Должно быть передано хотя бы одно поле настроек",
+        }),
 })
 
 export const getTestSnapshotSchema = z.object({

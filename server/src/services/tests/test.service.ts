@@ -14,6 +14,7 @@ import {
 import { logger } from "@/utils/logger"
 import { executeTransaction } from "@/utils/prisma-client"
 import { redisClient } from "@/utils/redis-client"
+import { sortInputFields } from "@/utils/sort"
 
 const LOG_NAMESPACE = "TestService"
 
@@ -24,15 +25,26 @@ class TestService {
             await executeTransaction(async tx => {
                 const test = await testRepository.findById(testId, tx)
                 if (!test) {
-                    logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                     throw ApiError.NotFound("Тест не найден")
                 }
 
                 const existingSettings = await testRepository.findSettingsById(testId, tx)
+
+                const sortedInputFields = Array.isArray(testSettings.inputFields)
+                    ? sortInputFields(
+                          testSettings.inputFields.filter((field): field is string => typeof field === "string")
+                      )
+                    : []
+
+                const settingsWithSortedFields = {
+                    ...testSettings,
+                    inputFields: sortedInputFields,
+                }
+
                 if (existingSettings) {
-                    await testRepository.updateSettings(testId, testSettings, tx)
+                    await testRepository.updateSettings(testId, settingsWithSortedFields, tx)
                 } else {
-                    await testRepository.createSettings(testId, testSettings, tx)
+                    await testRepository.createSettings(testId, settingsWithSortedFields, tx)
                 }
 
                 await testRepository.incrementTestVersion(testId, test.version, tx)
@@ -40,23 +52,16 @@ class TestService {
 
                 const updatedTest = await testRepository.findDetailedTestById(testId, tx)
                 if (!updatedTest) {
-                    logger.error(`[${LOG_NAMESPACE}] Не удалось получить обновленный тест`, { testId })
                     throw ApiError.InternalError("Не удалось получить обновленный тест")
                 }
 
                 await testRepository.createSnapshot(updatedTest, tx)
             })
+
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
             logger.info(`[${LOG_NAMESPACE}] Настройки теста успешно обновлены`, { testId })
         } catch (error) {
-            if (error instanceof ApiError) {
-                throw error
-            }
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при обновлении настроек теста`, {
-                testId,
-                error: error instanceof Error ? error.message : String(error),
-            })
             throw ApiError.InternalError("Ошибка при обновлении настроек теста")
         }
     }

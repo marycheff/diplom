@@ -77,8 +77,11 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
     }, [watchedValues, initialValues])
 
     const onSubmit: SubmitHandler<any> = data => {
+        // Сортировка inputFields в соответствии с порядком в PreTestUserData
+        const sortedInputFields = Object.values(PreTestUserData).filter(field => data.inputFields.includes(field))
+
         onSettingsComplete({
-            inputFields: data.inputFields,
+            inputFields: sortedInputFields,
             requireRegistration: data.requireRegistration === "Да",
             showDetailedResults: data.showDetailedResults === "Да",
             shuffleQuestions: data.shuffleQuestions === "Да",
