@@ -117,6 +117,39 @@ class AnswerService {
             throw ApiError.BadRequest("Ошибка при удалении ответов")
         }
     }
+
+    async isAnswerBelongsToQuestion(
+        answerId: string,
+        questionId: string
+    ): Promise<{
+        answer: AnswerDTO | null
+        belongsToQuestion: boolean
+    }> {
+        logger.debug(`[${LOG_NAMESPACE}] Проверка принадлежности ответа к вопросу`, { answerId, questionId })
+        try {
+            const answer = await answerRepository.findAnswerWithDetails(answerId)
+
+            if (!answer) {
+                logger.warn(`[${LOG_NAMESPACE}] Ответ не найден`, { answerId })
+                return { answer: null, belongsToQuestion: false }
+            }
+
+            if (!answer.question || answer.question.id !== questionId) {
+                logger.warn(`[${LOG_NAMESPACE}] Ответ не принадлежит указанному вопросу`, { answerId, questionId })
+                return { answer: mapAnswer(answer), belongsToQuestion: false }
+            }
+
+            logger.debug(`[${LOG_NAMESPACE}] Ответ принадлежит указанному вопросу`, { answerId, questionId })
+            return { answer: mapAnswer(answer), belongsToQuestion: true }
+        } catch (error) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при проверке принадлежности ответа к вопросу`, {
+                answerId,
+                questionId,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при проверке принадлежности ответа к вопросу")
+        }
+    }
 }
 
 export default new AnswerService()

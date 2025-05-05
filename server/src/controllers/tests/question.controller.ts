@@ -47,6 +47,7 @@ class QuestionController {
                 ...question,
                 order: index + 1,
             }))
+            console.log(questions)
             const updatedQuestions = await questionService.addQuestions(testId, questions)
             res.status(200).json({
                 questions: updatedQuestions,
@@ -64,7 +65,7 @@ class QuestionController {
             const updatedQuestions = await questionService.upsertQuestions(testId, questions)
 
             res.status(200).json({
-                success: true,
+
                 message: "Вопросы успешно обновлены",
                 questions: updatedQuestions,
             })

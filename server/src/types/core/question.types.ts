@@ -3,7 +3,7 @@ import { QuestionType } from "@prisma/client"
 export interface CreateQuestionDTO {
     text: string
     type: QuestionType
-    order: number
+    order?: number
 }
 
 export interface CreateAnswerDTO {
