@@ -57,14 +57,82 @@ class QuestionRepository {
         })
     }
 
+    async update(questionId: string, updateData: QuestionDTO, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+
+        // Обновление основных данных вопроса
+        await client.question.update({
+            where: { id: questionId },
+            data: {
+                text: updateData.text,
+                order: updateData.order,
+                type: updateData.type,
+            },
+        })
+
+        // Получение текущих ответов
+        const currentAnswers = await client.answer.findMany({
+            where: { questionId },
+        })
+
+        const currentAnswersMap = new Map(currentAnswers.map(a => [a.id, a]))
+
+        // Обработка каждого ответа
+        for (const answer of updateData.answers) {
+            if (isValidUUID(answer.id) && currentAnswersMap.has(answer.id)) {
+                // Обновление существующего ответа
+                await client.answer.update({
+                    where: { id: answer.id },
+                    data: {
+                        text: answer.text,
+                        isCorrect: answer.isCorrect,
+                    },
+                })
+            } else {
+                // Создание нового ответа
+                await client.answer.create({
+                    data: {
+                        text: answer.text,
+                        isCorrect: answer.isCorrect,
+                        questionId: questionId,
+                        isGenerated: false,
+                    },
+                })
+            }
+        }
+
+        // Поиск и удаление ответов, которых нет в обновленном списке
+        const updatedAnswerIds = updateData.answers.filter(a => isValidUUID(a.id)).map(a => a.id)
+        const answersToDelete = Array.from(currentAnswersMap.keys()).filter(id => !updatedAnswerIds.includes(id))
+
+        if (answersToDelete.length > 0) {
+            await client.answer.deleteMany({
+                where: {
+                    id: { in: answersToDelete },
+                },
+            })
+        }
+
+        // Возврат обновленного вопроса с ответами
+        const updatedQuestion = await client.question.findUnique({
+            where: { id: questionId },
+            include: { answers: true },
+        })
+
+        return {
+            ...updateData,
+            answers: updatedQuestion?.answers,
+        }
+    }
+
     async delete(questionId: string, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
-        // Сначала удаляем все связанные ответы
+        // Удаление всех связанных ответов
         await client.answer.deleteMany({
             where: { questionId },
         })
 
-        // Затем удаляем сам вопрос
+        // Удаление самого вопроса
         return await client.question.delete({
             where: { id: questionId },
         })
@@ -72,7 +140,7 @@ class QuestionRepository {
 
     async deleteAllByTestId(testId: string, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
-        // Удаляем все ответы для вопросов теста
+        // Удаление всех ответов для вопросов теста
         const questions = await this.findManyByTestId(testId, tx)
         const questionIds = questions.map(q => q.id)
 
@@ -86,82 +154,13 @@ class QuestionRepository {
             })
         }
 
-        // Удаляем все вопросы теста
+        // Удаление всех вопросов теста
         return await client.question.deleteMany({
             where: { testId },
         })
     }
 
-    async update(questionId: string, updateData: QuestionDTO, tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-
-        // Обновляем основные данные вопроса
-        await client.question.update({
-            where: { id: questionId },
-            data: {
-                text: updateData.text,
-                order: updateData.order,
-                type: updateData.type,
-            },
-        })
-
-        // Получаем текущие ответы
-        const currentAnswers = await client.answer.findMany({
-            where: { questionId },
-        })
-
-        const currentAnswersMap = new Map(currentAnswers.map(a => [a.id, a]))
-
-        // Обрабатываем каждый ответ
-        for (const answer of updateData.answers) {
-            if (isValidUUID(answer.id) && currentAnswersMap.has(answer.id)) {
-                // Обновляем существующий ответ
-                await client.answer.update({
-                    where: { id: answer.id },
-                    data: {
-                        text: answer.text,
-                        isCorrect: answer.isCorrect,
-                    },
-                })
-            } else {
-                // Создаем новый ответ
-                await client.answer.create({
-                    data: {
-                        text: answer.text,
-                        isCorrect: answer.isCorrect,
-                        questionId: questionId,
-                        isGenerated: false,
-                    },
-                })
-            }
-        }
-
-        // Находим и удаляем ответы, которых нет в обновленном списке
-        const updatedAnswerIds = updateData.answers.filter(a => isValidUUID(a.id)).map(a => a.id)
-
-        const answersToDelete = Array.from(currentAnswersMap.keys()).filter(id => !updatedAnswerIds.includes(id))
-
-        if (answersToDelete.length > 0) {
-            await client.answer.deleteMany({
-                where: {
-                    id: { in: answersToDelete },
-                },
-            })
-        }
-
-        // Возвращаем обновленный вопрос с ответами
-        const updatedQuestion = await client.question.findUnique({
-            where: { id: questionId },
-            include: { answers: true },
-        })
-
-        return {
-            ...updateData,
-            answers: updatedQuestion?.answers,
-        }
-    }
-
-    async createQuestion(questionData: QuestionDTO, testId: string, tx?: Prisma.TransactionClient) {
+    async create(questionData: QuestionDTO, testId: string, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
         return client.question.create({
             data: {
@@ -202,9 +201,9 @@ class QuestionRepository {
         })
     }
 
-    async deleteQuestions(questionIds: string[], tx?: Prisma.TransactionClient) {
+    async deleteMany(questionIds: string[], tx?: Prisma.TransactionClient) {
         const client = tx || prisma
-        // Сначала удаляем все связанные ответы
+        // Удаление всех связанных ответов
         await client.answer.deleteMany({
             where: {
                 questionId: {
@@ -213,7 +212,7 @@ class QuestionRepository {
             },
         })
 
-        // Затем удаляем сами вопросы
+        // Удаление самих вопросов
         return client.question.deleteMany({
             where: {
                 id: {

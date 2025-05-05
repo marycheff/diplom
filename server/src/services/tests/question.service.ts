@@ -12,6 +12,11 @@ import { isValidUUID } from "@/utils/validator"
 const LOG_NAMESPACE = "QuestionService"
 
 class QuestionService {
+    /**
+     * Получение вопросов теста по его идентификатору
+     * @param testId Идентификатор теста
+     * @returns Массив DTO вопросов теста
+     */
     async getTestQuestions(testId: string): Promise<QuestionDTO[]> {
         logger.debug(`[${LOG_NAMESPACE}] Получение вопросов теста`, { testId })
         try {
@@ -36,7 +41,13 @@ class QuestionService {
             throw ApiError.InternalError("Ошибка при получении вопросов теста")
         }
     }
-    // TODO: доделать
+
+    /**
+     * Добавление новых вопросов к тесту
+     * @param testId Идентификатор теста
+     * @param data Массив DTO данных для новых вопросов
+     * @returns Обновленный DTO теста с добавленными вопросами
+     */
     async addQuestions(testId: string, data: QuestionDTO[]): Promise<TestDTO> {
         logger.info(`[${LOG_NAMESPACE}] Добавление вопросов к тесту`, { testId })
         try {
@@ -46,7 +57,6 @@ class QuestionService {
                     logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                     throw ApiError.NotFound("Тест не найден")
                 }
-
                 const createdQuestions = await Promise.all(
                     data.map(async (questionData, index) => {
                         const createdQuestion = await testRepository.createQuestion(
@@ -58,18 +68,13 @@ class QuestionService {
                             },
                             tx
                         )
-
                         await testRepository.createAnswersForQuestion(createdQuestion.id, questionData.answers, tx)
-
                         return testRepository.getQuestionWithAnswers(createdQuestion.id, tx)
                     })
                 )
-
                 const validQuestions = createdQuestions.filter(question => question !== null)
-
                 await testRepository.incrementTestVersion(testId, test.version, tx)
                 await testRepository.cleanupUnusedSnapshots(testId, tx)
-
                 const testWithUpdatedQuestions = {
                     ...test,
                     questions: [...validQuestions],
@@ -77,7 +82,6 @@ class QuestionService {
                 await testRepository.createSnapshot(testWithUpdatedQuestions, tx)
                 return { updatedTest: test, questions: validQuestions }
             })
-
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
             logger.info(`[${LOG_NAMESPACE}] Вопросы успешно добавлены к тесту`, { testId })
@@ -97,6 +101,12 @@ class QuestionService {
         }
     }
 
+    /**
+     * Проверка принадлежности вопроса к тесту
+     * @param questionId Идентификатор вопроса
+     * @param testId Идентификатор теста
+     * @returns Флаг принадлежности вопроса к тесту
+     */
     async isQuestionBelongsToTest(questionId: string, testId: string): Promise<boolean> {
         logger.debug(`[${LOG_NAMESPACE}] Проверка принадлежности вопроса к тесту`, { questionId, testId })
         try {
@@ -125,18 +135,22 @@ class QuestionService {
         }
     }
 
+    /**
+     * Проверка принадлежности вопроса к любому тесту
+     *
+     * @param questionId Идентификатор вопроса
+     * @returns Объект с данными вопроса, теста и флагом принадлежности
+     */
     async isQuestionBelongsToAnyTest(
         questionId: string
     ): Promise<{ question: QuestionDTO | null; test: TestDTO | null; belongsToTest: boolean }> {
         logger.debug(`[${LOG_NAMESPACE}] Проверка принадлежности вопроса к любому тесту`, { questionId })
         try {
             const question = await questionRepository.findByIdWithDetails(questionId)
-
             if (!question) {
                 logger.warn(`[${LOG_NAMESPACE}] Вопрос не найден`, { questionId })
                 return { question: null, test: null, belongsToTest: false }
             }
-
             if (!question.test) {
                 logger.warn(`[${LOG_NAMESPACE}] Вопрос не принадлежит тесту`, { questionId })
                 return {
@@ -145,7 +159,6 @@ class QuestionService {
                     belongsToTest: false,
                 }
             }
-
             logger.debug(`[${LOG_NAMESPACE}] Вопрос принадлежит тесту`, { questionId })
             return {
                 question: mapQuestion(question),
@@ -161,6 +174,11 @@ class QuestionService {
         }
     }
 
+    /**
+     * Получение вопроса по идентификатору
+     * @param questionId Идентификатор вопроса
+     * @returns DTO вопроса
+     */
     async getQuestionById(questionId: string): Promise<QuestionDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение вопроса по ID`, { questionId })
         try {
@@ -183,6 +201,11 @@ class QuestionService {
         }
     }
 
+    /**
+     * Удаление вопроса по идентификатору
+     * @param questionId Идентификатор вопроса
+     * @returns void
+     */
     async deleteQuestion(questionId: string): Promise<void> {
         logger.info(`[${LOG_NAMESPACE}] Удаление вопроса`, { questionId })
         try {
@@ -197,6 +220,11 @@ class QuestionService {
         }
     }
 
+    /**
+     * Удаление всех вопросов теста
+     * @param testId Идентификатор теста
+     * @returns void
+     */
     async deleteAllQuestions(testId: string): Promise<void> {
         logger.info(`[${LOG_NAMESPACE}] Удаление всех вопросов теста`, { testId })
         try {
@@ -219,6 +247,12 @@ class QuestionService {
         }
     }
 
+    /**
+     * Обновление данных вопроса
+     * @param questionId Идентификатор вопроса
+     * @param updateData DTO с обновленными данными вопроса
+     * @returns void
+     */
     async updateQuestion(questionId: string, updateData: QuestionDTO): Promise<void> {
         logger.info(`[${LOG_NAMESPACE}] Обновление вопроса`, { questionId })
         try {
@@ -241,39 +275,39 @@ class QuestionService {
         }
     }
 
+    /**
+     * Полное обновление (вставка или обновление) вопросов теста
+     * @param testId Идентификатор теста
+     * @param questions Массив DTO с данными вопросов
+     * @returns Массив DTO обновленных вопросов
+     */
     async upsertQuestions(testId: string, questions: QuestionDTO[]): Promise<QuestionDTO[]> {
         logger.info(`[${LOG_NAMESPACE}] Полное обновление вопросов теста`, {
             testId,
             questionsCount: questions.length,
         })
-
         return executeTransaction(async tx => {
-            // Проверяем существование теста
+            // Проверка существования теста
             const test = await testRepository.findById(testId, tx)
             if (!test) {
                 logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                 throw ApiError.NotFound("Тест не найден")
             }
-
-            // Получаем все существующие вопросы теста
+            // Получение всех существующих вопросов теста
             const existingQuestions = await questionRepository.findManyByTestId(testId, tx)
-
-            // Создаем мапу для быстрого поиска существующих вопросов
+            // Создание мапы для быстрого поиска существующих вопросов
             const existingQuestionsMap = new Map(existingQuestions.map(q => [q.id, q]))
-
-            // Отслеживаем, какие вопросы уже обработали
+            // Инициализация отслеживания обработанных вопросов
             const processedQuestionIds = new Set<string>()
             const processedQuestions = []
-
-            // Обрабатываем каждый вопрос из входящего массива
+            // Обработка каждого вопроса из входящего массива
             for (const [index, question] of questions.entries()) {
                 try {
                     question.order = index + 1
                     let questionId = question.id
-
-                    // Если ID валидный UUID, проверяем существование вопроса
+                    // Проверка валидности UUID вопроса
                     if (isValidUUID(questionId)) {
-                        // Проверяем принадлежность вопроса к тесту
+                        // Проверка принадлежности вопроса к тесту
                         const belongs = await this.isQuestionBelongsToTest(questionId, testId)
                         if (!belongs) {
                             logger.warn(`[${LOG_NAMESPACE}] Вопрос не принадлежит тесту`, {
@@ -282,14 +316,12 @@ class QuestionService {
                             })
                             throw ApiError.BadRequest("Вопрос не принадлежит текущему тесту")
                         }
-
-                        // Обновляем существующий вопрос
+                        // Обновление существующего вопроса
                         if (existingQuestionsMap.has(questionId)) {
                             logger.debug(`[${LOG_NAMESPACE}] Обновление существующего вопроса`, {
                                 questionId: questionId,
                             })
-
-                            // Проверяем принадлежность ответов к вопросу
+                            // Проверка принадлежности ответов к вопросу
                             const answersWithValidIds = question.answers.filter(answer => isValidUUID(answer.id))
                             for (const answer of answersWithValidIds) {
                                 const { belongsToQuestion } = await answerService.isAnswerBelongsToQuestion(
@@ -304,10 +336,8 @@ class QuestionService {
                                     throw ApiError.BadRequest("Ответ не принадлежит указанному вопросу")
                                 }
                             }
-
-                            // Обновляем вопрос и его ответы через репозиторий
+                            // Обновление вопроса и его ответов через репозиторий
                             await questionRepository.update(questionId, question, tx)
-
                             processedQuestionIds.add(questionId)
                         } else {
                             logger.warn(`[${LOG_NAMESPACE}] Вопрос с указанным ID не найден в текущем тесте`, {
@@ -317,22 +347,18 @@ class QuestionService {
                             throw ApiError.NotFound("Вопрос с указанным ID не найден в текущем тесте")
                         }
                     } else {
-                        // Создаем новый вопрос
+                        // Создание нового вопроса
                         logger.debug(`[${LOG_NAMESPACE}] Создание нового вопроса`, { question })
-                        const newQuestion = await questionRepository.createQuestion(question, testId, tx)
-
+                        const newQuestion = await questionRepository.create(question, testId, tx)
                         questionId = newQuestion.id
-                        question.id = questionId // Сохраняем ID вопроса
-
-                        // Сохраняем ответы с их ID
+                        question.id = questionId // Сохранение ID вопроса
+                        // Сохранение ответов с их ID
                         question.answers = newQuestion.answers.map(answer => ({
                             ...answer,
                             id: answer.id,
                         }))
-
                         processedQuestionIds.add(questionId)
                     }
-
                     processedQuestions.push(question)
                 } catch (error) {
                     if (error instanceof ApiError) {
@@ -345,25 +371,21 @@ class QuestionService {
                     throw error
                 }
             }
-
-            // Удаляем вопросы, которых нет в новом списке
+            // Удаление вопросов, которых нет в новом списке
             const questionsToDelete = await questionRepository.getQuestionsToDelete(
                 testId,
                 Array.from(processedQuestionIds),
                 tx
             )
-
             for (const questionToDelete of questionsToDelete) {
                 logger.debug(`[${LOG_NAMESPACE}] Удаление вопроса, которого нет в обновленном списке`, {
                     questionId: questionToDelete.id,
                 })
                 await questionRepository.delete(questionToDelete.id, tx)
             }
-
-            // Очищаем кэш
+            // Очистка кэша
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
-
             return processedQuestions
         })
     }
