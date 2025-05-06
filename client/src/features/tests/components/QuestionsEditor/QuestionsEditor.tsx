@@ -23,10 +23,18 @@ import styles from "./QuestionsEditor.module.scss"
 interface QuestionsEditorProps {
     data: QuestionDTO[]
     onQuestionComplete: (questions: QuestionDTO[]) => void
-    onCancel?: () => void
+    onCancel: () => void
+    hasUnsavedChanges: boolean
+    setHasUnsavedChanges: (value: boolean) => void
 }
 
-const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, onCancel }) => {
+const QuestionsEditor: FC<QuestionsEditorProps> = ({
+    data,
+    onQuestionComplete,
+    onCancel,
+    hasUnsavedChanges,
+    setHasUnsavedChanges,
+}) => {
     const [questions, setQuestions] = useState<QuestionDTO[]>(data)
     const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
     const [expandedQuestionIds, setExpandedQuestionIds] = useState<string[]>([])
@@ -67,10 +75,14 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
         }
     }, [editingQuestion, setValue])
 
-    // Инициализация при изменении входных данных
     useEffect(() => {
         setQuestions(data)
     }, [data])
+
+    useEffect(() => {
+        const isChanged = JSON.stringify(data) !== JSON.stringify(questions)
+        setHasUnsavedChanges(isChanged)
+    }, [questions, data, setHasUnsavedChanges])
 
     const handleCorrectChange = (index: number) => {
         const newAnswers = currentAnswers.map((answer, i) => ({
@@ -118,12 +130,8 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
             setQuestions(prev => [...prev, newQuestion])
         }
 
-        // Сбросить форму и подготовить для нового вопроса
         reset()
         setEditingQuestion(null)
-        // setExpandedQuestionId(null)
-
-        // Инициализировать новые поля для ответов
         const newAnswers = Array(3)
             .fill(null)
             .map((_, index) => ({
@@ -133,24 +141,6 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
             }))
         setCurrentAnswers(newAnswers)
     }
-
-    useEffect(() => {
-        if (editingQuestion) {
-            setValue("question", editingQuestion.text)
-            const correctAnswer = editingQuestion.answers.find(a => a.isCorrect)?.text || ""
-            setValue("answer", correctAnswer)
-            setCurrentAnswers(editingQuestion.answers)
-        } else {
-            const initialAnswers = Array(3)
-                .fill(null)
-                .map((_, index) => ({
-                    id: `temp-${Date.now()}-${index}`,
-                    text: index === 0 ? watch("answer") || "" : "",
-                    isCorrect: index === 0,
-                }))
-            setCurrentAnswers(initialAnswers)
-        }
-    }, [editingQuestion, setValue, watch])
 
     const handleAnswerChange = (index: number, value: string) => {
         const newAnswers = [...currentAnswers]
@@ -188,9 +178,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     const toggleAccordion = (questionId: string) => {
         setExpandedQuestionIds(prev => {
             if (prev.includes(questionId)) {
-                return prev.filter(id => id !== questionId) // Удалить из массива, если он уже есть
+                return prev.filter(id => id !== questionId)
             } else {
-                return [...prev, questionId] // Добавить в массив, если его нет
+                return [...prev, questionId]
             }
         })
     }
@@ -221,7 +211,6 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
             coordinateGetter: sortableKeyboardCoordinates,
         })
     )
-    // Обработчик события завершения перетаскивания
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event
         if (!over || active.id === over.id) return
@@ -235,7 +224,6 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     return (
         <>
             <div className={styles.container}>
-                {/* Левая колонка - список вопросов */}
                 <div className={styles.questionsList}>
                     <div className={styles.finalActions}>
                         <Button
@@ -254,8 +242,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
                             sensors={sensors}
                             collisionDetection={closestCorners}
                             onDragEnd={handleDragEnd}
-                            modifiers={[restrictToParentElement]} // Ограничиваем перетаскивание внутри контейнера
-                        >
+                            modifiers={[restrictToParentElement]}>
                             <SortableContext items={questions.map(q => q.id)} strategy={verticalListSortingStrategy}>
                                 <div className={styles.questionsContainer}>
                                     {questions.map(question => (
@@ -276,7 +263,6 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
                     </div>
                 </div>
 
-                {/* Правая колонка - форма создания/редактирования вопроса */}
                 <div className={styles.newQuestionForm}>
                     <div className={styles.formContent}>
                         <h3>{editingQuestion ? "Редактирование вопроса" : "Новый вопрос"}</h3>
@@ -307,14 +293,6 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
                         <Button className={styles.cancelButton} onClick={resetForm}>
                             Очистить форму
                         </Button>
-
-                        {/* {onCancel && (
-                            <div className={styles.finalActions}>
-                                <Button className={styles.cancelButton} onClick={onCancel}>
-                                    Закрыть
-                                </Button>
-                            </div>
-                        )} */}
                     </div>
                 </div>
             </div>

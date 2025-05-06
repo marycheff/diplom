@@ -16,7 +16,7 @@ import {
 import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import Loader from "@/shared/ui/Loader/Loader"
-import { Modal } from "@/shared/ui/Modal"
+import { ConfirmationModal, Modal } from "@/shared/ui/Modal"
 import { formatSeconds, formatSpaces, shortenText } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -47,6 +47,8 @@ const TestInfoPage = () => {
     )
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(location.pathname.endsWith("/edit-settings"))
     const [isShortInfoModalOpen, setIsShortInfModalOpen] = useState(location.pathname.endsWith("/edit-info"))
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false)
 
     if (!testId) {
         return <div>ID теста не указан</div>
@@ -88,20 +90,16 @@ const TestInfoPage = () => {
         setTest(updatedTest)
     }
     const handleAddQuestionsButton = () => {
-        // navigate(`${location.pathname}/add-questions`)
         setIsAddQuestionsModalOpen(true)
     }
 
     const handleEditQuestionsButton = () => {
-        // navigate(`${location.pathname}/edit-questions`)
         setIsEditQuestionsModalOpen(true)
     }
     const handleEditSettingsButton = () => {
-        // navigate(`${location.pathname}/edit-settings`)
         setIsSettingsModalOpen(true)
     }
     const handleEditShortInfoButton = () => {
-        // navigate(`${location.pathname}/edit-settings`)
         setIsShortInfModalOpen(true)
     }
     const handleSettingsUpdate = async (updatedSettings: TestSettingsDTO) => {
@@ -141,10 +139,17 @@ const TestInfoPage = () => {
         setTest(updatedTest)
     }
 
+    const handleCloseModal = () => {
+        if (hasUnsavedChanges) {
+            setShowConfirmationModal(true)
+        } else {
+            setIsEditQuestionsModalOpen(false)
+        }
+    }
+
     return (
         <div className={styles.container}>
             <div className={styles.topGrid}>
-                {/* Блок 1: Информация о тесте */}
                 <div className={styles.infoBlock}>
                     <div className={styles.blockHeader}>
                         <h1 className={styles.blockTitle}>Информация о тесте</h1>
@@ -168,12 +173,8 @@ const TestInfoPage = () => {
                                 </div>
                             )}
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>
-                                    Ссылка
-                                    {/* для прохождения: */}
-                                </span>
+                                <span className={styles.label}>Ссылка</span>
                                 <span className={styles.value}>
-                                    {/* <Button>Скопировать</Button> */}
                                     <CopyButton textToCopy={`http://localhost:3000/${test.id}/start`} variant="text" />
                                 </span>
                             </div>
@@ -205,7 +206,6 @@ const TestInfoPage = () => {
                     )}
                 </div>
 
-                {/* Блок 2: Настройки теста */}
                 <div className={styles.infoBlock}>
                     <div className={styles.blockHeader}>
                         <h1 className={styles.blockTitle}>Настройки теста</h1>
@@ -278,7 +278,6 @@ const TestInfoPage = () => {
                     </div>
                 </div>
 
-                {/* Блок 3: Информация об авторе */}
                 {test.author.id !== currentUser?.id && (
                     <div className={styles.infoBlock}>
                         <h1 className={styles.blockTitle}>Информация об авторе</h1>
@@ -320,7 +319,6 @@ const TestInfoPage = () => {
                 )}
             </div>
 
-            {/* Блок 4: Информация о вопросах */}
             <div className={styles.infoBlock}>
                 <div className={styles.blockHeader}>
                     <h1 className={styles.blockTitle}>Вопросы и ответы</h1>
@@ -372,29 +370,8 @@ const TestInfoPage = () => {
 
             <Modal
                 fullScreen
-                isOpen={isEditQuestionsModalOpen}
-                onClose={() => {
-                    // navigate(-1)
-                    setIsEditQuestionsModalOpen(false)
-                }}
-                title="Редактирование вопросов">
-                <QuestionsEditor
-                    data={test.questions || []}
-                    onQuestionComplete={questions => {
-                        handleQuestionsUpdate(questions)
-                        setIsEditQuestionsModalOpen(false)
-                    }}
-                    onCancel={() => setIsEditQuestionsModalOpen(false)}
-                />
-            </Modal>
-
-            <Modal
-                fullScreen
                 isOpen={isSettingsModalOpen}
-                onClose={() => {
-                    // navigate(-1)
-                    setIsSettingsModalOpen(false)
-                }}
+                onClose={() => setIsSettingsModalOpen(false)}
                 title="Редактирование настроек теста">
                 <TestSettingsEditor
                     settings={test.settings || {}}
@@ -407,10 +384,7 @@ const TestInfoPage = () => {
             </Modal>
             <Modal
                 isOpen={isShortInfoModalOpen}
-                onClose={() => {
-                    // navigate(-1)
-                    setIsShortInfModalOpen(false)
-                }}
+                onClose={() => setIsShortInfModalOpen(false)}
                 title="Редактирование информации о тесте">
                 <TestInfoEditor
                     data={{ title: formatSpaces(test.title), description: formatSpaces(test.description) }}
@@ -421,6 +395,36 @@ const TestInfoPage = () => {
                     onCancel={() => setIsSettingsModalOpen(false)}
                 />
             </Modal>
+
+            <Modal
+                fullScreen
+                isOpen={isEditQuestionsModalOpen}
+                onClose={handleCloseModal}
+                title="Редактирование вопросов">
+                <QuestionsEditor
+                    data={test.questions || []}
+                    onQuestionComplete={questions => {
+                        handleQuestionsUpdate(questions)
+                        setIsEditQuestionsModalOpen(false)
+                    }}
+                    onCancel={handleCloseModal}
+                    hasUnsavedChanges={hasUnsavedChanges}
+                    setHasUnsavedChanges={setHasUnsavedChanges}
+                />
+            </Modal>
+
+            <ConfirmationModal
+                isOpen={showConfirmationModal}
+                onClose={() => setShowConfirmationModal(false)}
+                onConfirm={() => {
+                    setIsEditQuestionsModalOpen(false)
+                    setShowConfirmationModal(false)
+                }}
+                title="Несохраненные изменения"
+                confirmText="Да"
+                cancelText="Нет">
+                У вас есть несохраненные изменения. Вы уверены, что хотите закрыть редактор?
+            </ConfirmationModal>
         </div>
     )
 }

@@ -23,31 +23,21 @@
     padding: 8px 16px;
     border-radius: 6px;
     background: transparent;
-    border: 1px solid color($secondary,200);
-    color: color($secondary,400);
-    cursor: pointer;
-    transition: all 0.2s ease;
+    border: 1px solid color($secondary, 200);
+    color: color($secondary, 400);
     font-weight: 500;
 
-    &:hover {
-        background: color($background,200);
-        color: color($secondary,600);
+     &:hover {
+        background-color: color($background, 200);
+        color: color($secondary, 600);
     }
 }
 
 .confirmButton {
     padding: 8px 16px;
     border-radius: 6px;
-    background: color($primary,200);
-    border: none;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
     font-weight: 500;
-
-    &:hover {
-        background: color($primary,600);
-    }
+    // color: white;
 }
 
 :global(.modalOverlay) .confirmationForm {

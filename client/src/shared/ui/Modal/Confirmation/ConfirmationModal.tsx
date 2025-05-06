@@ -1,3 +1,4 @@
+import { Button } from "@/shared/ui/Button"
 import { Modal } from "@/shared/ui/Modal"
 import { ReactNode, useEffect } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -49,12 +50,12 @@ const ConfirmationModal = <T extends Record<string, any> = {}>({
             <form onSubmit={handleSubmit(handleConfirm)} className={styles.confirmationForm}>
                 <div className={styles.modalBody}>{children}</div>
                 <footer className={styles.modalFooter}>
-                    <button type="button" className={styles.cancelButton} onClick={handleClose}>
+                    <Button className={styles.cancelButton} onClick={handleClose}>
                         {cancelText}
-                    </button>
-                    <button type="submit" className={styles.confirmButton}>
+                    </Button>
+                    <Button type="submit" className={styles.confirmButton}>
                         {confirmText}
-                    </button>
+                    </Button>
                 </footer>
             </form>
         </Modal>
