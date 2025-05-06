@@ -1,0 +1,53 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.answerRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: #f8f9fa;
+
+    border-radius: 8px;
+}
+
+.input {
+    flex-grow: 1;
+    min-width: 200px;
+}
+
+.checkboxWrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.checkboxLabel {
+    white-space: nowrap;
+}
+
+.deleteButton {
+    background-color: color($error, 400);
+    color: white;
+    border-radius: 4px;
+    font-size: 1.25rem;
+    padding: 4px 10px;
+
+    &:hover {
+        background-color: color($error, 200);
+    }
+}
+
+.addButton {
+    align-self: flex-start;
+}

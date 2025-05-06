@@ -82,7 +82,7 @@ const DateSelect: FC<DateSelectProps> = ({
     useEffect(() => {
         if (selectedDay && selectedMonth && selectedYear) {
             // Преобразуем в ISO формат для внутреннего использования
-            const isoDate = `${selectedYear}-${selectedMonth}-${selectedDay}T00:00:00.000Z`
+            const isoDate = `${selectedYear}-${selectedMonth}-${selectedDay}`
 
             // Сохраняем ISO формат в скрытом поле
             // setValue(`${name}_iso`, isoDate)

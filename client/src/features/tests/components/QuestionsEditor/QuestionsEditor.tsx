@@ -135,7 +135,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     }
 
     const removeAnswer = (index: number) => {
-        if (currentAnswers.length <= 3) return
+        if (currentAnswers.length <= 1) return
         setCurrentAnswers(prev => prev.filter((_, i) => i !== index))
     }
 

@@ -1,0 +1,139 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+}
+
+.sectionTitle {
+    font-size: 1.4rem;
+    color: #34495e;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    button {
+        flex: 1 1 auto;
+        min-width: 200px;
+        padding: 0.8rem 1.5rem;
+        color: white;
+
+        font-size: 1rem;
+    }
+}
+
+.form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    div {
+        flex: 1 1 300px;
+    }
+
+    button {
+        flex: 0 0 auto;
+        align-self: flex-end;
+        background: #27ae60;
+
+        &:hover {
+            background: #219a52;
+        }
+    }
+}
+
+.logoutWrapper {
+    margin-top: auto;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.logoutButton {
+    background: #e74c3c !important;
+    padding: 0.8rem 2rem !important;
+    border-radius: 25px !important;
+    font-weight: 500 !important;
+
+    &:hover {
+        background: #c0392b !important;
+    }
+}
+
+// Адаптивность
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem 1rem;
+        gap: 2rem;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .section {
+        padding: 1.2rem;
+    }
+
+    .buttonGroup {
+        gap: 0.8rem;
+
+        button {
+            min-width: 160px;
+            padding: 0.7rem 1.2rem;
+        }
+    }
+
+    .form {
+        flex-direction: column;
+
+        button {
+            width: 100%;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.8rem;
+    }
+
+    .sectionTitle {
+        font-size: 1.2rem;
+    }
+
+    .buttonGroup button {
+        min-width: 100%;
+    }
+}

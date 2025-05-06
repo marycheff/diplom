@@ -89,7 +89,17 @@ const AppRouter = () => {
 
                         <Route
                             path="*"
-                            element={isAuth ? <Navigate to={ROUTES.HOME} /> : <Navigate to={ROUTES.LOGIN} />}
+                            element={
+                                isAuth ? (
+                                    isAdmin ? (
+                                        <Navigate to={ROUTES.ADMIN} />
+                                    ) : (
+                                        <Navigate to={ROUTES.HOME} />
+                                    )
+                                ) : (
+                                    <Navigate to={ROUTES.LOGIN} />
+                                )
+                            }
                         />
                     </>
                 )}
