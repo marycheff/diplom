@@ -7,9 +7,10 @@ interface ModalProps {
     children: ReactNode
     title?: string
     fullScreen?: boolean
+    isConfirmation?: boolean
 }
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen }) => {
+const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen, isConfirmation = false }) => {
     const [isClosing, setIsClosing] = useState(false)
     const [mouseDownStartedOutside, setMouseDownStartedOutside] = useState(false)
 
@@ -62,16 +63,25 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen })
             onMouseDown={onOverlayMouseDown}
             onMouseUp={onOverlayMouseUp}>
             <div
-                className={`${styles.modalContent} ${isClosing ? styles.closing : ""} ${
-                    fullScreen ? styles.fullScreen : ""
-                }`}
+                className={`
+                    ${styles.modalContent}
+                    ${isClosing ? styles.closing : ""}
+                    ${fullScreen ? styles.fullScreen : ""}
+                    ${isConfirmation ? styles.confirmation : ""}
+                `}
                 onMouseDown={e => e.stopPropagation()} // предотвращает срабатывание, если клик начался в содержимом
             >
                 <button className={styles.closeButton} onClick={handleClose}>
-                    &times;
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path
+                            fill="currentColor"
+                            d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"
+                        />
+                    </svg>
                 </button>
                 {title && <h2 className={styles.modalTitle}>{title}</h2>}
-                {children}
+                <div className={styles.modalBody}>{children}</div>
             </div>
         </div>
     )

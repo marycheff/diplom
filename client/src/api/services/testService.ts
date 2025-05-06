@@ -1,6 +1,7 @@
 import axiosInstance from "@/api"
 import {
     GenerateAnswerFormData,
+    QuestionDTO,
     ShortTestInfo,
     SnapshotWithOriginalTestDTO,
     TestDTO,
@@ -80,6 +81,10 @@ class TestService {
     }
     getSnapshotById = (snapshotId: string): Promise<AxiosResponse<SnapshotWithOriginalTestDTO>> => {
         return axiosInstance.get<SnapshotWithOriginalTestDTO>(`/tests/snapshot/${snapshotId}`)
+    }
+    upsertQuestions = (testId: string, questions: QuestionDTO[]): Promise<AxiosResponse<QuestionDTO[]>> => {
+        // console.log({questions})
+        return axiosInstance.put(`/tests/${testId}/questions-u`, { questions })
     }
 }
 export const testService = new TestService()

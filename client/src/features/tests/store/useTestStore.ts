@@ -119,5 +119,12 @@ export const useTestStore = create<TestState>(set => {
             }
             return withFetching(operation)
         },
+        upsertQuestions: async (testId, questions) => {
+            const operation = async () => {
+                const response = await testService.upsertQuestions(testId, questions)
+                return response.data
+            }
+            return withLoading(operation)
+        },
     }
 })

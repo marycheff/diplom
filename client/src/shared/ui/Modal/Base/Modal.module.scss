@@ -1,0 +1,122 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+  
+  &.closing {
+    animation: fadeOut 0.2s ease-out forwards;
+  }
+}
+
+.modalContent {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  width: 50vw;
+  height: 50vh;
+  margin: 2.5vh 2.5vw;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  animation: scaleIn 0.2s ease-out;
+  display: flex;
+  flex-direction: column;
+  
+  &.closing {
+    animation: scaleOut 0.2s ease-out forwards;
+  }
+  
+  &.fullScreen {
+    width: 90vw;
+    height: 80vh;
+  }
+  
+  &.confirmation {
+    width: 30vw;
+    height: auto;
+    max-height: 40vh;
+    padding: 12px 18px;
+  }
+  
+  // Содержимое с прокруткой внутри модального окна
+  .modalBody {
+    flex: 1;
+    overflow-y: auto;
+    /* Скроллбар будет только внутри этого контейнера */
+    overflow-x: hidden;
+    /* Важно для предотвращения горизонтального скролла */
+    padding-right: 4px; /* Компенсация для скроллбара */
+  }
+}
+
+.modalTitle {
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.closeButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  line-height: 1;
+  color: #666;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: #000;
+  }
+}

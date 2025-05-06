@@ -1,0 +1,64 @@
+import { Modal } from "@/shared/ui/Modal"
+import { ReactNode, useEffect } from "react"
+import { SubmitHandler, useForm } from "react-hook-form"
+import styles from "./ConfirmationModal.module.scss"
+
+interface ConfirmationModalProps<T = any> {
+    isOpen: boolean
+    onClose: () => void
+    onConfirm: SubmitHandler<T>
+    title?: string
+    children: ReactNode
+    confirmText?: string
+    cancelText?: string
+    fullScreen?: boolean
+}
+
+const ConfirmationModal = <T extends Record<string, any> = {}>({
+    isOpen,
+    onClose,
+    onConfirm,
+    title,
+    children,
+    confirmText = "Подтвердить",
+    cancelText = "Отмена",
+    fullScreen,
+}: ConfirmationModalProps<T>) => {
+    const { handleSubmit, register, formState, reset } = useForm<T>()
+
+    // Сбрасываем форму при открытии/закрытии модального окна
+    useEffect(() => {
+        if (!isOpen) {
+            reset()
+        }
+    }, [isOpen, reset])
+
+    // Обработчик закрытия
+    const handleClose = () => {
+        onClose()
+    }
+
+    // Обработчик подтверждения
+    const handleConfirm: SubmitHandler<T> = data => {
+        onConfirm(data)
+        onClose()
+    }
+
+    return (
+        <Modal isOpen={isOpen} onClose={handleClose} title={title} isConfirmation>
+            <form onSubmit={handleSubmit(handleConfirm)} className={styles.confirmationForm}>
+                <div className={styles.modalBody}>{children}</div>
+                <footer className={styles.modalFooter}>
+                    <button type="button" className={styles.cancelButton} onClick={handleClose}>
+                        {cancelText}
+                    </button>
+                    <button type="submit" className={styles.confirmButton}>
+                        {confirmText}
+                    </button>
+                </footer>
+            </form>
+        </Modal>
+    )
+}
+
+export default ConfirmationModal

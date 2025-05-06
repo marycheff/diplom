@@ -35,7 +35,10 @@
 }
 
 .newQuestionForm {
-    padding: 2rem;
+    display: flex;
+    flex-direction: column; /* важно */
+    justify-content: space-between; /* опционально, для предсказуемости */
+    padding: 1rem 2rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background: #f8f9fa;
@@ -47,11 +50,21 @@
         height: auto;
     }
 }
+.formContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+}
 
 .formActions {
     display: flex;
     gap: 1rem;
-    margin-top: 1.5rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    justify-content: space-between;
 }
 
 .finalActions {
@@ -60,6 +73,7 @@
     gap: 1rem;
     margin-top: 1rem;
     width: 100%;
+    // box-shadow: 0 15px 15px -10px rgba(0, 0, 0, 0.386);
 }
 
 .cancelButton {

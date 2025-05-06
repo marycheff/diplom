@@ -3,6 +3,7 @@ import QuestionForm from "@/features/tests/components/QuestionForm/QuestionForm"
 import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
 import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
+import { ConfirmationModal } from "@/shared/ui/Modal"
 import { formatSpaces } from "@/shared/utils/formatter"
 import {
     closestCorners,
@@ -29,6 +30,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     const [questions, setQuestions] = useState<QuestionDTO[]>(data)
     const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
     const [expandedQuestionIds, setExpandedQuestionIds] = useState<string[]>([])
+
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+    const [questionToDelete, setQuestionToDelete] = useState<string | null>(null)
     const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
         return Array(3)
             .fill(null)
@@ -196,8 +200,15 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     }
 
     const deleteQuestion = (questionId: string) => {
-        setQuestions(prev => prev.filter(q => q.id !== questionId))
-        setExpandedQuestionIds(prev => prev.filter(id => id !== questionId))
+        setQuestionToDelete(questionId)
+        setDeleteModalOpen(true)
+    }
+    const confirmDeleteQuestion = () => {
+        if (questionToDelete) {
+            setQuestions(prev => prev.filter(q => q.id !== questionToDelete))
+            setExpandedQuestionIds(prev => prev.filter(id => id !== questionToDelete))
+            setQuestionToDelete(null)
+        }
     }
 
     const handleSubmitQuestions = () => {
@@ -222,89 +233,101 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     }
 
     return (
-        <div className={styles.container}>
-            {/* Левая колонка - список вопросов */}
-            <div className={styles.questionsList}>
-                <div className={styles.finalActions}>
-                    <Button
-                        onClick={() => {
-                            resetForm()
-                            setEditingQuestion(null)
-                        }}>
-                        Добавить вопрос
-                    </Button>
-                    <Button onClick={handleSubmitQuestions} disabled={questions.length === 0}>
-                        Сохранить все
-                    </Button>
-                </div>
-                <div>Всего вопросов: {questions.length}</div>
-
-                <div className={styles.questionsContainer}>
-                    <DndContext
-                        sensors={sensors}
-                        collisionDetection={closestCorners}
-                        onDragEnd={handleDragEnd}
-                        modifiers={[restrictToParentElement]} // Ограничиваем перетаскивание внутри контейнера
-                    >
-                        <SortableContext items={questions.map(q => q.id)} strategy={verticalListSortingStrategy}>
-                            <div className={styles.questionsContainer}>
-                                {questions.map(question => (
-                                    <QuestionItem
-                                        key={question.id}
-                                        id={question.id}
-                                        order={questions.indexOf(question) + 1}
-                                        question={question}
-                                        expanded={expandedQuestionIds.includes(question.id)}
-                                        onToggle={() => toggleAccordion(question.id)}
-                                        onEdit={() => editQuestion(question)}
-                                        onDelete={() => deleteQuestion(question.id)}
-                                    />
-                                ))}
-                            </div>
-                        </SortableContext>
-                    </DndContext>
-                </div>
-            </div>
-
-            {/* Правая колонка - форма создания/редактирования вопроса */}
-            <div className={styles.newQuestionForm}>
-                <h3>{editingQuestion ? "Редактирование вопроса" : "Новый вопрос"}</h3>
-                <div>
-                    <QuestionForm
-                        register={register}
-                        setValue={setValue}
-                        errors={formState.errors}
-                        trigger={trigger}
-                        isLoading={false}
-                        isButtonDisabled={!isFormValid}
-                        onSubmit={handleSubmit(handleAddQuestion)}
-                    />
-                    <AnswersList
-                        answers={currentAnswers}
-                        handleAnswerChange={handleAnswerChange}
-                        handleCorrectChange={handleCorrectChange}
-                        removeAnswer={removeAnswer}
-                        addAnswer={addAnswer}
-                        correctAnswer={currentAnswer}
-                    />
-                </div>
-                <div className={styles.formActions}>
-                    <Button onClick={handleSubmit(handleAddQuestion)} disabled={!isFormValid}>
-                        {editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
-                    </Button>
-                    <Button className={styles.cancelButton} onClick={resetForm}>
-                        Отменить
-                    </Button>
-                </div>
-                {onCancel && (
+        <>
+            <div className={styles.container}>
+                {/* Левая колонка - список вопросов */}
+                <div className={styles.questionsList}>
                     <div className={styles.finalActions}>
-                        <Button className={styles.cancelButton} onClick={onCancel}>
-                            Закрыть
+                        <Button
+                            onClick={() => {
+                                resetForm()
+                                setEditingQuestion(null)
+                            }}>
+                            Добавить вопрос
                         </Button>
+                        <Button onClick={handleSubmitQuestions}>Сохранить все</Button>
+                        <div>Всего вопросов: {questions.length}</div>
                     </div>
-                )}
+
+                    <div className={styles.questionsContainer}>
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCorners}
+                            onDragEnd={handleDragEnd}
+                            modifiers={[restrictToParentElement]} // Ограничиваем перетаскивание внутри контейнера
+                        >
+                            <SortableContext items={questions.map(q => q.id)} strategy={verticalListSortingStrategy}>
+                                <div className={styles.questionsContainer}>
+                                    {questions.map(question => (
+                                        <QuestionItem
+                                            key={question.id}
+                                            id={question.id}
+                                            order={questions.indexOf(question) + 1}
+                                            question={question}
+                                            expanded={expandedQuestionIds.includes(question.id)}
+                                            onToggle={() => toggleAccordion(question.id)}
+                                            onEdit={() => editQuestion(question)}
+                                            onDelete={() => deleteQuestion(question.id)}
+                                        />
+                                    ))}
+                                </div>
+                            </SortableContext>
+                        </DndContext>
+                    </div>
+                </div>
+
+                {/* Правая колонка - форма создания/редактирования вопроса */}
+                <div className={styles.newQuestionForm}>
+                    <div className={styles.formContent}>
+                        <h3>{editingQuestion ? "Редактирование вопроса" : "Новый вопрос"}</h3>
+                        <div>
+                            <QuestionForm
+                                register={register}
+                                setValue={setValue}
+                                errors={formState.errors}
+                                trigger={trigger}
+                                isLoading={false}
+                                isButtonDisabled={!isFormValid}
+                                onSubmit={handleSubmit(handleAddQuestion)}
+                            />
+                            <AnswersList
+                                answers={currentAnswers}
+                                handleAnswerChange={handleAnswerChange}
+                                handleCorrectChange={handleCorrectChange}
+                                removeAnswer={removeAnswer}
+                                addAnswer={addAnswer}
+                                correctAnswer={currentAnswer}
+                            />
+                        </div>
+                    </div>
+                    <div className={styles.formActions}>
+                        <Button onClick={handleSubmit(handleAddQuestion)} disabled={!isFormValid}>
+                            {editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
+                        </Button>
+                        <Button className={styles.cancelButton} onClick={resetForm}>
+                            Очистить форму
+                        </Button>
+
+                        {/* {onCancel && (
+                            <div className={styles.finalActions}>
+                                <Button className={styles.cancelButton} onClick={onCancel}>
+                                    Закрыть
+                                </Button>
+                            </div>
+                        )} */}
+                    </div>
+                </div>
             </div>
-        </div>
+            <ConfirmationModal
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={confirmDeleteQuestion}
+                title="Удаление вопроса"
+                confirmText="Удалить"
+                cancelText="Отмена">
+                <p>Вы уверены, что хотите удалить этот вопрос?</p>
+            </ConfirmationModal>
+        </>
     )
 }
 
