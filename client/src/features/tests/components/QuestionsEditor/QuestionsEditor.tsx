@@ -24,23 +24,16 @@ interface QuestionsEditorProps {
     data: QuestionDTO[]
     onQuestionComplete: (questions: QuestionDTO[]) => void
     onCancel: () => void
-    hasUnsavedChanges: boolean
     setHasUnsavedChanges: (value: boolean) => void
 }
 
-const QuestionsEditor: FC<QuestionsEditorProps> = ({
-    data,
-    onQuestionComplete,
-    onCancel,
-    hasUnsavedChanges,
-    setHasUnsavedChanges,
-}) => {
+const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, onCancel, setHasUnsavedChanges }) => {
     const [questions, setQuestions] = useState<QuestionDTO[]>(data)
     const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
     const [expandedQuestionIds, setExpandedQuestionIds] = useState<string[]>([])
-
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [questionToDelete, setQuestionToDelete] = useState<string | null>(null)
+
     const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
         return Array(3)
             .fill(null)
@@ -51,8 +44,18 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
             }))
     })
 
+    // Добавляем состояние для отслеживания изначального состояния формы
+    const [initialFormState, setInitialFormState] = useState({
+        question: "",
+        answer: "",
+        numOfAnswers: 3,
+    })
+
+    // Добавляем состояние для отслеживания изначальных ответов
+    const [initialAnswers, setInitialAnswers] = useState<AnswerDTO[]>(currentAnswers)
+
     const { register, handleSubmit, formState, setValue, watch, reset, trigger } = useForm<GenerateAnswerFormData>({
-        mode: "onBlur",
+        mode: "onSubmit",
         reValidateMode: "onChange",
         shouldFocusError: false,
         defaultValues: {
@@ -72,6 +75,22 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
             setValue("answer", editingQuestion.answers.find(a => a.isCorrect)?.text || "")
             setValue("numOfAnswers", 3)
             setCurrentAnswers(editingQuestion.answers)
+
+            // Устанавливаем начальное состояние при редактировании
+            setInitialFormState({
+                question: editingQuestion.text,
+                answer: editingQuestion.answers.find(a => a.isCorrect)?.text || "",
+                numOfAnswers: 3,
+            })
+            setInitialAnswers(editingQuestion.answers)
+        } else {
+            // Сбрасываем начальное состояние при создании нового вопроса
+            setInitialFormState({
+                question: "",
+                answer: "",
+                numOfAnswers: 3,
+            })
+            setInitialAnswers(currentAnswers)
         }
     }, [editingQuestion, setValue])
 
@@ -79,10 +98,33 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
         setQuestions(data)
     }, [data])
 
+    // Проверка наличия изменений в форме
+    const hasFormChanges =
+        currentQuestion !== initialFormState.question ||
+        currentAnswer !== initialFormState.answer ||
+        JSON.stringify(currentAnswers) !== JSON.stringify(initialAnswers)
+
     useEffect(() => {
-        const isChanged = JSON.stringify(data) !== JSON.stringify(questions)
-        setHasUnsavedChanges(isChanged)
-    }, [questions, data, setHasUnsavedChanges])
+        const questionsChanged = JSON.stringify(data) !== JSON.stringify(questions)
+
+        // Проверяем, заполнена ли форма (любой текст в полях)
+        const isFormFilled = Boolean(currentQuestion || currentAnswer)
+
+        // Устанавливаем флаг несохраненных изменений, если есть изменения в вопросах или в форме
+        const hasUnsavedChanges = questionsChanged || (hasFormChanges && isFormFilled)
+
+        setHasUnsavedChanges(hasUnsavedChanges)
+    }, [
+        questions,
+        data,
+        setHasUnsavedChanges,
+        currentQuestion,
+        currentAnswer,
+        currentAnswers,
+        initialFormState,
+        initialAnswers,
+        hasFormChanges,
+    ])
 
     const handleCorrectChange = (index: number) => {
         const newAnswers = currentAnswers.map((answer, i) => ({
@@ -140,6 +182,14 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                 isCorrect: index === 0,
             }))
         setCurrentAnswers(newAnswers)
+
+        // Сбрасываем начальное состояние формы
+        setInitialFormState({
+            question: "",
+            answer: "",
+            numOfAnswers: 3,
+        })
+        setInitialAnswers(newAnswers)
     }
 
     const handleAnswerChange = (index: number, value: string) => {
@@ -164,15 +214,22 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
         reset()
         setEditingQuestion(null)
         setExpandedQuestionIds([])
-        setCurrentAnswers(
-            Array(3)
-                .fill(null)
-                .map((_, index) => ({
-                    id: `temp-${Date.now()}-${index}`,
-                    text: "",
-                    isCorrect: index === 0,
-                }))
-        )
+        const newAnswers = Array(3)
+            .fill(null)
+            .map((_, index) => ({
+                id: `temp-${Date.now()}-${index}`,
+                text: "",
+                isCorrect: index === 0,
+            }))
+        setCurrentAnswers(newAnswers)
+
+        // Сбрасываем начальное состояние формы
+        setInitialFormState({
+            question: "",
+            answer: "",
+            numOfAnswers: 3,
+        })
+        setInitialAnswers(newAnswers)
     }
 
     const toggleAccordion = (questionId: string) => {
@@ -221,6 +278,16 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
         })
     }
 
+    // Проверка состояния кнопки "Добавить вопрос"
+    const isAddButtonDisabled =
+        // Если есть несохраненные изменения в заполненной форме
+        (hasFormChanges && Boolean(currentQuestion || currentAnswer)) ||
+        // Или если форма нового вопроса уже открыта и пуста
+        (!editingQuestion && !currentQuestion && !currentAnswer)
+    const isFormEmpty =
+        !currentQuestion &&
+        !currentAnswer &&
+        currentAnswers.every(answer => !answer.text || formatSpaces(answer.text) === "")
     return (
         <>
             <div className={styles.container}>
@@ -230,10 +297,15 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                             onClick={() => {
                                 resetForm()
                                 setEditingQuestion(null)
-                            }}>
+                            }}
+                            disabled={isAddButtonDisabled}>
                             Добавить вопрос
                         </Button>
-                        <Button onClick={handleSubmitQuestions}>Сохранить все</Button>
+                        <Button
+                            onClick={handleSubmitQuestions}
+                            disabled={hasFormChanges && Boolean(currentQuestion || currentAnswer)}>
+                            Сохранить все
+                        </Button>
                         <div>Всего вопросов: {questions.length}</div>
                     </div>
 
@@ -290,9 +362,22 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                         <Button onClick={handleSubmit(handleAddQuestion)} disabled={!isFormValid}>
                             {editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
                         </Button>
-                        <Button className={styles.cancelButton} onClick={resetForm}>
-                            Очистить форму
-                        </Button>
+                        {!editingQuestion && (
+                            <Button className={styles.cancelButton} onClick={resetForm} disabled={isFormEmpty}>
+                                Очистить форму
+                            </Button>
+                        )}
+                        {/* TODO: КНОПКА ОТМЕНИТЬ ИЗМЕНЕНИЯ */}
+                        {editingQuestion && (
+                            <Button
+                                className={styles.cancelButton}
+                                onClick={() => {
+                                    resetForm()
+                                    setEditingQuestion(null)
+                                }}>
+                                Отменить изменения
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>

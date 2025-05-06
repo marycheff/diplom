@@ -41,7 +41,6 @@ const TestInfoPage = () => {
     const { user: currentUser } = useAuthStore()
     const navigate = useNavigate()
     const location = useLocation()
-    const [isAddQuestionsModalOpen, setIsAddQuestionsModalOpen] = useState(location.pathname.endsWith("/add-questions"))
     const [isEditQuestionsModalOpen, setIsEditQuestionsModalOpen] = useState(
         location.pathname.endsWith("/edit-questions")
     )
@@ -89,10 +88,6 @@ const TestInfoPage = () => {
         toast.success("Вопрос(ы) добавлены")
         setTest(updatedTest)
     }
-    const handleAddQuestionsButton = () => {
-        setIsAddQuestionsModalOpen(true)
-    }
-
     const handleEditQuestionsButton = () => {
         setIsEditQuestionsModalOpen(true)
     }
@@ -408,7 +403,6 @@ const TestInfoPage = () => {
                         setIsEditQuestionsModalOpen(false)
                     }}
                     onCancel={handleCloseModal}
-                    hasUnsavedChanges={hasUnsavedChanges}
                     setHasUnsavedChanges={setHasUnsavedChanges}
                 />
             </Modal>
