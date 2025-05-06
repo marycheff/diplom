@@ -69,8 +69,8 @@ export const startTestAttemptSchema = z.object({
                         .optional(),
                     [PreTestUserData.BirthDate]: z
                         .string()
-                        .datetime({
-                            message: "Дата рождения должна быть в формате ISO",
+                        .regex(/^\d{4}-\d{2}-\d{2}$/, {
+                            message: "Дата рождения должна быть в формате YYYY-MM-DD",
                         })
                         .optional(),
                     [PreTestUserData.Age]: z
