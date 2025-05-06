@@ -24,6 +24,11 @@
             td {
                 padding: 10px;
                 text-align: left;
+                max-width: 200px; 
+                max-height: 60px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             th {

@@ -17,6 +17,7 @@ import AllUsersPage from "@/features/users/pages/AllUsers/AllUsersPage"
 import UserInfoPage from "@/features/users/pages/UserInfo/UserInfoPage"
 import UserProfilePage from "@/features/users/pages/UserProfilePage"
 import HomePage from "@/pages/HomePage"
+import WelcomePage from "@/pages/WelcomePage"
 import { ROUTES } from "@/router/paths"
 
 // Конфигурация админских роутов
@@ -43,25 +44,17 @@ export const userRoutes = [
     { path: ROUTES.MY_TEST_ADD_QUESTIONS, element: <TestInfoPage /> },
     { path: ROUTES.MY_TEST_EDIT_SETTINGS, element: <TestInfoPage /> },
 ]
+// Конфигурация публичных роутов
 export const publicRoutes = [
     { path: ROUTES.START_ATTEMPT, element: <StartAttemptPage /> },
     { path: ROUTES.PASS_ATTEMPT, element: <TestTaking /> },
     { path: ROUTES.ATTEMPT_RESULTS, element: <AttemptResultsPage /> },
 ]
-
-// Конфигурация публичных роутов
+// Конфигурация роутов для неавторизованных пользователей
 export const unauthorizedRoutes = [
     { path: ROUTES.LOGIN, element: <LoginPage /> },
     { path: ROUTES.SIGNUP, element: <SignupPage /> },
     { path: ROUTES.ACTIVATION_ERROR, element: <ActivationErrorPage /> },
     { path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> },
+    { path: ROUTES.WELCOME, element: <WelcomePage /> },
 ]
-
-// export const publicRoutes = [
-//     { path: ROUTES.LOGIN, element: <LoginPage /> },
-//     { path: ROUTES.SIGNUP, element: <SignupPage /> },
-//     { path: ROUTES.ACTIVATION_ERROR, element: <ActivationErrorPage /> },
-//     { path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> },
-//     { path: ROUTES.START_ATTEMPT, element: <StartAttemptPage /> },
-//     { path: ROUTES.PASS_ATTEMPT, element: <TestTaking /> },
-// ]

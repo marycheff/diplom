@@ -9,7 +9,8 @@ export const ROUTES = {
     SIGNUP: "/signup",
     ACTIVATION_ERROR: "/activation-error",
     ACTIVATION_SUCCESS: "/activation-success",
-    
+    WELCOME: "/",
+
     // Защищенные маршруты (для авторизованных пользователей)
     HOME: "/home",
     CREATE_TEST: "/create-test",

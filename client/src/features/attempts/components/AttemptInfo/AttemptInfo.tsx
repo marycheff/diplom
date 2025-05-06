@@ -1,7 +1,7 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
 import { ROUTES } from "@/router/paths"
-import { PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
+import { AttemptStatus, PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { Modal } from "@/shared/ui/Modal"
@@ -84,12 +84,15 @@ const AttemptInfo = () => {
                                 )}
                             </span>
                         </div>
-                        <Link
-                            target="_blank"
-                            to={generatePath(ROUTES.PASS_ATTEMPT, { attemptId: attempt.id })}
-                            className="actionLink">
-                            Перейти к попытке
-                        </Link>
+                        {attempt.status !== AttemptStatus.IN_PROGRESS && (
+                            <Link
+                                target="_blank"
+                                to={generatePath(ROUTES.PASS_ATTEMPT, { attemptId: attempt.id })}
+                                className="actionLink">
+                                Перейти к попытке
+                            </Link>
+                        )}
+
                         <Link
                             target="_blank"
                             to={generatePath(ROUTES.ATTEMPT_RESULTS, { attemptId: attempt.id })}

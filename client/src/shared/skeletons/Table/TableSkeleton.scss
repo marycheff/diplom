@@ -2,11 +2,11 @@
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;
     animation: loading 1.5s infinite;
-    color: transparent; 
+    color: transparent;
 }
 
 .skeleton-text {
-    display: inline; 
+    display: inline;
 }
 
 .skeleton-box {
@@ -17,7 +17,7 @@
 }
 
 .skeleton-box--wide {
-    width: 150px; 
+    width: 150px;
 }
 
 @keyframes loading {
@@ -38,7 +38,7 @@
 
         h3 {
             margin: 0;
-            font-size: 1.2rem; 
+            font-size: 1.2rem;
         }
     }
 
@@ -54,6 +54,11 @@
             td {
                 padding: 10px;
                 text-align: left;
+                max-width: 200px;
+                max-height: 60px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             th {

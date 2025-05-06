@@ -14,7 +14,8 @@ const Breadcrumbs = () => {
         ROUTES.ACTIVATION_ERROR,
         ROUTES.ACTIVATION_SUCCESS,
         ROUTES.START_ATTEMPT,
-        ROUTES.PASS_ATTEMPT
+        ROUTES.PASS_ATTEMPT,
+        ROUTES.WELCOME,
     ]
     const shouldDisplayBreadcrumbs = !excludedPaths.some(excludedPath => {
         // Для динамических путей

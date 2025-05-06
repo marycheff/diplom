@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import BlockedUserPage from "@/features/users/pages/BlockedUserPage"
+import WelcomePage from "@/pages/WelcomePage"
 import { ROUTES } from "@/router/paths"
 import { adminRoutes, publicRoutes, unauthorizedRoutes, userRoutes } from "@/router/routesConfig"
 import Breadcrumbs from "@/shared/ui/Breadcrumbs/Breadcrumbs"
@@ -13,14 +14,28 @@ interface RouteProps {
 }
 
 const UnauthorizedRoute = ({ element }: RouteProps) => {
-    const { isAuth } = useAuthStore()
-    return !isAuth ? element : <Navigate to={ROUTES.HOME} />
+    const { isAuth, isAdmin } = useAuthStore()
+
+    if (isAuth) {
+        return isAdmin ? <Navigate to={ROUTES.ADMIN} /> : <Navigate to={ROUTES.HOME} />
+    }
+
+    return element
 }
 
 // Компонент для защиты пользовательских роутов
 const ProtectedRoute = ({ element }: RouteProps) => {
-    const { isAuth } = useAuthStore()
-    return isAuth ? element : <Navigate to={ROUTES.LOGIN} />
+    const { isAuth, isAdmin } = useAuthStore()
+
+    if (!isAuth) {
+        return <Navigate to={ROUTES.WELCOME} />
+    }
+
+    if (isAdmin) {
+        return <Navigate to={ROUTES.ADMIN} />
+    }
+
+    return element
 }
 
 // Компонент для защиты админских роутов
@@ -47,6 +62,14 @@ const AppRouter = () => {
         return <Loader fullScreen />
     }
 
+    // Перенаправление для корневого маршрута "/"
+    const rootRedirect = () => {
+        if (isAuth) {
+            return isAdmin ? <Navigate to={ROUTES.ADMIN} /> : <Navigate to={ROUTES.HOME} />
+        }
+        return <WelcomePage />
+    }
+
     return (
         <>
             <Breadcrumbs />
@@ -55,6 +78,9 @@ const AppRouter = () => {
                     <Route path="*" element={<BlockedUserPage />} />
                 ) : (
                     <>
+                        {/* Обработка корневого маршрута */}
+                        <Route path="/" element={rootRedirect()} />
+
                         {/* Публичные маршруты (доступны всем) */}
                         {publicRoutes.map(route => (
                             <Route key={route.path} path={route.path} element={route.element} />
@@ -65,7 +91,22 @@ const AppRouter = () => {
                             <Route
                                 key={route.path}
                                 path={route.path}
-                                element={<UnauthorizedRoute element={route.element} />}
+                                element={
+                                    // Для ROUTES.WELCOME используем особую логику
+                                    route.path === ROUTES.WELCOME ? (
+                                        isAuth ? (
+                                            isAdmin ? (
+                                                <Navigate to={ROUTES.ADMIN} />
+                                            ) : (
+                                                <Navigate to={ROUTES.HOME} />
+                                            )
+                                        ) : (
+                                            route.element
+                                        )
+                                    ) : (
+                                        <UnauthorizedRoute element={route.element} />
+                                    )
+                                }
                             />
                         ))}
 
@@ -97,7 +138,7 @@ const AppRouter = () => {
                                         <Navigate to={ROUTES.HOME} />
                                     )
                                 ) : (
-                                    <Navigate to={ROUTES.LOGIN} />
+                                    <Navigate to={ROUTES.WELCOME} />
                                 )
                             }
                         />
