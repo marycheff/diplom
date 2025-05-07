@@ -1,15 +1,24 @@
+.layout {
+    &.animating {
+        overflow-x: hidden;
+    }
+}
+
 .mainContent {
     flex: 1;
     padding: 0 20px;
     margin-left: 240px;
     transition: margin-left 0.3s ease-in-out;
+    width: calc(100% - 240px);
+}
 
-    :global(.ps-collapsed) + & {
-        margin-left: 70px;
-    }
+:global(.ps-collapsed) ~ .mainContent {
+    margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
 .content {
     width: 100%;
     height: 100%;
+    padding: 20px 0;
 }

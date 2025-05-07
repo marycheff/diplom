@@ -6,11 +6,17 @@ import { FiEdit, FiFileText, FiList, FiLogOut, FiMenu, FiUser, FiUsers } from "r
 import { Menu, MenuItem, Sidebar as ProSidebar, sidebarClasses } from "react-pro-sidebar"
 import { Link, useNavigate } from "react-router-dom"
 
-export const Sidebar = () => {
+interface SidebarProps {
+    onAnimationStart?: () => void
+    onAnimationEnd?: () => void
+}
+
+export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
     const { logout, isAdmin } = useAuthStore()
     const navigate = useNavigate()
     const [collapsed, setCollapsed] = useState(false)
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
+    const [isAnimating, setIsAnimating] = useState(false)
 
     // Цветовая схема
     const colors = {
@@ -138,13 +144,20 @@ export const Sidebar = () => {
                 }}
                 width="240px"
                 collapsedWidth="70px" // Фиксированная ширина при свернутом состоянии
-                
             >
                 {/* Основное содержимое сайдбара */}
                 <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <Menu menuItemStyles={menuItemStyles}>
                         <MenuItem
-                            onClick={() => setCollapsed(prev => !prev)}
+                            onClick={() => {
+                                setIsAnimating(true)
+                                onAnimationStart?.()
+                                setCollapsed(prev => !prev)
+                                setTimeout(() => {
+                                    setIsAnimating(false)
+                                    onAnimationEnd?.()
+                                }, 300) // Время анимации из transition
+                            }}
                             style={{
                                 fontWeight: 600,
                                 marginBottom: "6px",
