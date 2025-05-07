@@ -26,7 +26,6 @@ aside {
     display: block;
 }
 
-
 html,
 body {
     height: 100%;
@@ -76,8 +75,6 @@ h6 {
     font-weight: inherit;
 } /*--------------------*/
 
-
-
 $font-family: "Roboto", sans-serif;
 $font-size: 14px;
 $line-height: 1.5;
@@ -89,11 +86,11 @@ body {
     line-height: $line-height;
 }
 .actionLink {
-        text-decoration: none;
-        color: #007bff;
-        font-weight: bold;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
 
-        &:hover {
-            text-decoration: underline;
-        }
+    &:hover {
+        text-decoration: underline;
     }
+}

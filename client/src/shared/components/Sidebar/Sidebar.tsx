@@ -2,10 +2,10 @@ import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
 import { ConfirmationModal } from "@/shared/ui/Modal"
 import { useState } from "react"
-import { FiEdit, FiFileText, FiList, FiLogOut, FiMenu, FiUser, FiUsers } from "react-icons/fi"
+import { FiEdit, FiFileText, FiHome, FiList, FiLogOut, FiMenu, FiUser, FiUsers } from "react-icons/fi"
+import { MdOutlineScience } from "react-icons/md"
 import { Menu, MenuItem, Sidebar as ProSidebar, sidebarClasses } from "react-pro-sidebar"
-import { Link, useNavigate } from "react-router-dom"
-
+import { Link, useLocation, useNavigate } from "react-router-dom"
 interface SidebarProps {
     onAnimationStart?: () => void
     onAnimationEnd?: () => void
@@ -17,6 +17,8 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
     const [collapsed, setCollapsed] = useState(false)
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
     const [isAnimating, setIsAnimating] = useState(false)
+    const location = useLocation()
+    const currentPath = location.pathname
 
     // Цветовая схема
     const colors = {
@@ -24,9 +26,10 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
         secondary: "#ff4081", // Акцентный розовый
         management: "#5c6bc0", // Управление - фиолетовый
         testing: "#26a69a", // Тестирование - бирюзовый
+        profile: "#9c27b0", // Профиль - фиолетовый
         background: "#ffffff",
         hover: "#f0f4ff",
-        active: "#e8eaf6",
+        active: "#f1f1f1",
         text: "#333333",
         border: "#e0e0e0",
         exit: "#f44336", // Красный для кнопки выхода
@@ -37,7 +40,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
             backgroundColor: active ? colors.active : "transparent",
             color: active ? colors.primary : colors.text,
             "&:hover": {
-                backgroundColor: colors.hover,
+                backgroundColor: active ? colors.active : colors.hover,
                 color: colors.primary,
             },
             padding: "10px 16px",
@@ -54,13 +57,13 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
         !collapsed && (
             <div
                 style={{
-                    padding: "12px 16px 4px 16px",
+                    padding: "7px 0px 7px 15px",
                     fontSize: "14px",
                     fontWeight: "600",
                     color: color,
                     borderLeft: `4px solid ${color}`,
                     background: `linear-gradient(90deg, ${color}22 0%, transparent 100%)`,
-                    marginTop: "12px",
+                    // margin: "3px 0",
                 }}>
                 {title}
             </div>
@@ -68,52 +71,93 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 
     const adminMenuItems = (
         <>
+            <MenuItem
+                icon={<FiHome style={{ color: colors.primary }} />}
+                component={<Link to={ROUTES.ADMIN} />}
+                active={currentPath === ROUTES.ADMIN}
+                style={{
+                    marginBottom: "8px",
+                    borderBottom: `1px solid ${colors.border}`,
+                    paddingBottom: "8px",
+                }}>
+                {!collapsed && "Главная"}
+            </MenuItem>
             <CategoryHeader title="Управление" color={colors.management} />
             <MenuItem
                 icon={<FiUsers style={{ color: colors.management }} />}
-                component={<Link to={ROUTES.ADMIN_USERS} />}>
+                component={<Link to={ROUTES.ADMIN_USERS} />}
+                active={currentPath.startsWith(ROUTES.ADMIN_USERS)}>
                 {!collapsed && "Пользователи"}
             </MenuItem>
+
             <MenuItem
-                icon={<FiFileText style={{ color: colors.management }} />}
-                component={<Link to={ROUTES.ADMIN_TESTS} />}>
+                icon={<MdOutlineScience style={{ color: colors.management }} />}
+                component={<Link to={ROUTES.ADMIN_TESTS} />}
+                active={currentPath.startsWith(ROUTES.ADMIN_TESTS)}>
                 {!collapsed && "Тесты"}
             </MenuItem>
             <MenuItem
                 icon={<FiList style={{ color: colors.management }} />}
-                component={<Link to={ROUTES.ADMIN_ALL_ATTEMPTS} />}>
+                component={<Link to={ROUTES.ADMIN_ALL_ATTEMPTS} />}
+                active={currentPath.startsWith(ROUTES.ADMIN_ALL_ATTEMPTS)}>
                 {!collapsed && "Попытки"}
             </MenuItem>
 
             <CategoryHeader title="Тестирование" color={colors.testing} />
             <MenuItem
-                icon={<FiUser style={{ color: colors.testing }} />}
-                component={<Link to={ROUTES.ADMIN_PROFILE} />}>
-                {!collapsed && "Профиль"}
-            </MenuItem>
-            <MenuItem
                 icon={<FiEdit style={{ color: colors.testing }} />}
-                component={<Link to={ROUTES.ADMIN_CREATE_TEST} />}>
+                component={<Link to={ROUTES.ADMIN_CREATE_TEST} />}
+                active={currentPath.startsWith(ROUTES.ADMIN_CREATE_TEST)}>
                 {!collapsed && "Создать тест"}
             </MenuItem>
             <MenuItem
                 icon={<FiFileText style={{ color: colors.testing }} />}
-                component={<Link to={ROUTES.ADMIN_MY_TESTS} />}>
+                component={<Link to={ROUTES.ADMIN_MY_TESTS} />}
+                active={currentPath.startsWith(ROUTES.ADMIN_MY_TESTS)}>
                 {!collapsed && "Мои тесты"}
+            </MenuItem>
+            <CategoryHeader title="Профиль" color={colors.profile} />
+            <MenuItem
+                icon={<FiUser style={{ color: colors.profile }} />}
+                component={<Link to={ROUTES.ADMIN_PROFILE} />}
+                active={currentPath.startsWith(ROUTES.ADMIN_PROFILE)}>
+                {!collapsed && "Профиль"}
             </MenuItem>
         </>
     )
 
     const userMenuItems = (
         <>
-            <CategoryHeader title="Тестирование" color={colors.testing} />
-            <MenuItem icon={<FiUser style={{ color: colors.testing }} />} component={<Link to={ROUTES.PROFILE} />}>
+            <MenuItem
+                icon={<FiHome style={{ color: colors.primary }} />}
+                component={<Link to={ROUTES.HOME} />}
+                active={currentPath === ROUTES.HOME}
+                style={{
+                    marginBottom: "8px",
+                    borderBottom: `1px solid ${colors.border}`,
+                    paddingBottom: "8px",
+                }}>
+                {!collapsed && "Главная"}
+            </MenuItem>
+            <CategoryHeader title="Профиль" color={colors.profile} />
+            <MenuItem
+                icon={<FiUser style={{ color: colors.profile }} />}
+                component={<Link to={ROUTES.PROFILE} />}
+                active={currentPath.startsWith(ROUTES.PROFILE)}>
                 {!collapsed && "Профиль"}
             </MenuItem>
-            <MenuItem icon={<FiEdit style={{ color: colors.testing }} />} component={<Link to={ROUTES.CREATE_TEST} />}>
+
+            <CategoryHeader title="Тестирование" color={colors.testing} />
+            <MenuItem
+                icon={<FiEdit style={{ color: colors.testing }} />}
+                component={<Link to={ROUTES.CREATE_TEST} />}
+                active={currentPath.startsWith(ROUTES.CREATE_TEST)}>
                 {!collapsed && "Создать тест"}
             </MenuItem>
-            <MenuItem icon={<FiFileText style={{ color: colors.testing }} />} component={<Link to={ROUTES.MY_TESTS} />}>
+            <MenuItem
+                icon={<FiFileText style={{ color: colors.testing }} />}
+                component={<Link to={ROUTES.MY_TESTS} />}
+                active={currentPath.startsWith(ROUTES.MY_TESTS)}>
                 {!collapsed && "Мои тесты"}
             </MenuItem>
         </>
@@ -160,19 +204,18 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
                             }}
                             style={{
                                 fontWeight: 600,
-                                marginBottom: "6px",
+                                // marginBottom: "6px",
                                 borderBottom: `1px solid ${colors.border}`,
                                 padding: "14px 16px",
                             }}
                             icon={<FiMenu />}>
-                            {!collapsed && (isAdmin ? "Админ-панель" : "Панель управления")}
+                            {!collapsed && (isAdmin ? "Админ-панель" : "НейроТест")}
                         </MenuItem>
 
                         {isAdmin ? adminMenuItems : userMenuItems}
                     </Menu>
                 </div>
 
-                {/* Кнопка выхода, жестко прикрепленная к низу */}
                 <div
                     style={{
                         borderTop: `1px solid ${colors.border}`,
