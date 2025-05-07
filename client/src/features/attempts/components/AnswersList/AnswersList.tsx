@@ -34,6 +34,8 @@ const AnswersList: FC<AnswersListProps> = ({
                         placeholder={`Вариант ответа ${index + 1}`}
                         name={`answer_${index}`}
                         className={styles.input}
+                        tabIndex={0}
+    
                     />
                     <label className={styles.checkboxWrapper}>
                         <Checkbox
@@ -44,10 +46,11 @@ const AnswersList: FC<AnswersListProps> = ({
                                     handleCorrectChange(index)
                                 }
                             }}
+                            tabIndex={-1}
                         />
                         <span className={styles.checkboxLabel}>Правильный</span>
                     </label>
-                    <Button onClick={() => removeAnswer(index)} className={styles.deleteButton}>
+                    <Button onClick={() => removeAnswer(index)} className={styles.deleteButton} tabIndex={-1}>
                         &times;
                     </Button>
                 </div>

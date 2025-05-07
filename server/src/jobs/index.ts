@@ -1,11 +1,11 @@
-import { logger } from "../utils/logger"
-import { expiredAttemptsJob } from "./expired-attempts.job"
+import { expiredAttemptsJob } from "@/jobs/expired-attempts.job"
+import { logger } from "@/utils/logger"
 
 export function initializeJobs(): void {
     logger.info("Инициализация фоновых задач...")
 
     // Запуск задачи проверки просроченных попыток
-    // expiredAttemptsJob.start()
+    expiredAttemptsJob.start()
 
     logger.info("Все фоновые задачи успешно запущены")
 }

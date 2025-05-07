@@ -1,6 +1,7 @@
 import AnswersList from "@/features/attempts/components/AnswersList/AnswersList"
 import QuestionForm from "@/features/tests/components/QuestionForm/QuestionForm"
 import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
+import { useTestStore } from "@/features/tests/store/useTestStore"
 import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import { ConfirmationModal } from "@/shared/ui/Modal"
@@ -18,6 +19,7 @@ import { restrictToParentElement } from "@dnd-kit/modifiers"
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { FC, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import styles from "./QuestionsEditor.module.scss"
 
 interface QuestionsEditorProps {
@@ -26,6 +28,7 @@ interface QuestionsEditorProps {
     onCancel: () => void
     setHasUnsavedChanges: (value: boolean) => void
 }
+const DEFAULT_NUM_OF_ANSWERS = 3
 
 const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, onCancel, setHasUnsavedChanges }) => {
     const [questions, setQuestions] = useState<QuestionDTO[]>(data)
@@ -33,9 +36,10 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     const [expandedQuestionIds, setExpandedQuestionIds] = useState<string[]>([])
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [questionToDelete, setQuestionToDelete] = useState<string | null>(null)
+    const { generateAnswers, isLoading } = useTestStore()
 
     const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
-        return Array(3)
+        return Array(DEFAULT_NUM_OF_ANSWERS)
             .fill(null)
             .map((_, index) => ({
                 id: `temp-${Date.now()}-${index}`,
@@ -48,7 +52,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     const [initialFormState, setInitialFormState] = useState({
         question: "",
         answer: "",
-        numOfAnswers: 3,
+        numOfAnswers: DEFAULT_NUM_OF_ANSWERS,
     })
 
     // Добавляем состояние для отслеживания изначальных ответов
@@ -58,9 +62,6 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
         mode: "onSubmit",
         reValidateMode: "onChange",
         shouldFocusError: false,
-        defaultValues: {
-            numOfAnswers: 3,
-        },
     })
 
     const currentQuestion = watch("question")
@@ -69,18 +70,46 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     const hasCorrectAnswer = currentAnswers.some(answer => answer.isCorrect)
     const isFormValid = currentQuestion && currentAnswer && !hasErrors && hasCorrectAnswer
 
+    const askQuestion = async (data: GenerateAnswerFormData) => {
+        const res = await generateAnswers(data)
+
+        // Сохранение правильного ответа (первый элемент)
+        const correctAnswer = currentAnswers[0] || {
+            id: `temp-${Date.now()}-0`,
+            text: watch("answer") || "", // Берем из поля "Правильный ответ"
+            isCorrect: true,
+        }
+
+        // Создание массива неправильных ответов (первые N из сгенерированных)
+        const incorrectAnswers = res
+            .slice(0, data.numOfAnswers) // Берем только нужное количество
+            .map((answer: string, index) => ({
+                id: `temp-${Date.now()}-${index + 1}`,
+                text: answer,
+                isCorrect: false,
+            }))
+
+        const newAnswers = [correctAnswer, ...incorrectAnswers]
+        if (data.numOfAnswers != incorrectAnswers.length) {
+            toast.error("Нейросеть сгенерировала неправильное кол-во ответов. Попробуйте еще раз.")
+        }
+
+        // Устанавливаем новые ответы
+        setCurrentAnswers(newAnswers)
+    }
+
     useEffect(() => {
         if (editingQuestion) {
             setValue("question", editingQuestion.text)
             setValue("answer", editingQuestion.answers.find(a => a.isCorrect)?.text || "")
-            setValue("numOfAnswers", 3)
+            setValue("numOfAnswers", DEFAULT_NUM_OF_ANSWERS)
             setCurrentAnswers(editingQuestion.answers)
 
             // Устанавливаем начальное состояние при редактировании
             setInitialFormState({
                 question: editingQuestion.text,
                 answer: editingQuestion.answers.find(a => a.isCorrect)?.text || "",
-                numOfAnswers: 3,
+                numOfAnswers: DEFAULT_NUM_OF_ANSWERS,
             })
             setInitialAnswers(editingQuestion.answers)
         } else {
@@ -88,7 +117,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
             setInitialFormState({
                 question: "",
                 answer: "",
-                numOfAnswers: 3,
+                numOfAnswers: DEFAULT_NUM_OF_ANSWERS,
             })
             setInitialAnswers(currentAnswers)
         }
@@ -145,7 +174,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
 
     const handleAddQuestion = (data: GenerateAnswerFormData) => {
         if (currentAnswers.length === 0) {
-            const initialAnswers = Array(3)
+            const initialAnswers = Array(DEFAULT_NUM_OF_ANSWERS)
                 .fill(null)
                 .map((_, index) => ({
                     id: `temp-${Date.now()}-${index}`,
@@ -174,7 +203,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
 
         reset()
         setEditingQuestion(null)
-        const newAnswers = Array(3)
+        const newAnswers = Array(DEFAULT_NUM_OF_ANSWERS)
             .fill(null)
             .map((_, index) => ({
                 id: `temp-${Date.now()}-${index}`,
@@ -187,7 +216,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
         setInitialFormState({
             question: "",
             answer: "",
-            numOfAnswers: 3,
+            numOfAnswers: DEFAULT_NUM_OF_ANSWERS,
         })
         setInitialAnswers(newAnswers)
     }
@@ -214,7 +243,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
         reset()
         setEditingQuestion(null)
         setExpandedQuestionIds([])
-        const newAnswers = Array(3)
+        const newAnswers = Array(DEFAULT_NUM_OF_ANSWERS)
             .fill(null)
             .map((_, index) => ({
                 id: `temp-${Date.now()}-${index}`,
@@ -227,7 +256,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
         setInitialFormState({
             question: "",
             answer: "",
-            numOfAnswers: 3,
+            numOfAnswers: DEFAULT_NUM_OF_ANSWERS,
         })
         setInitialAnswers(newAnswers)
     }
@@ -345,8 +374,8 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
                                 errors={formState.errors}
                                 trigger={trigger}
                                 isLoading={false}
-                                isButtonDisabled={!isFormValid}
-                                onSubmit={handleSubmit(handleAddQuestion)}
+                                isButtonDisabled={!isFormValid || isLoading}
+                                onSubmit={handleSubmit(askQuestion)}
                             />
                             <AnswersList
                                 answers={currentAnswers}

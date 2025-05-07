@@ -7,9 +7,10 @@ interface CheckboxProps {
     checked: boolean
     disabled?: boolean
     onChange: (event: ChangeEvent<HTMLInputElement>) => void
+    tabIndex?: number
 }
 
-const Checkbox: FC<CheckboxProps> = ({ id, label, checked, disabled, onChange }) => {
+const Checkbox: FC<CheckboxProps> = ({ id, label, checked, disabled, tabIndex, onChange }) => {
     return (
         <div className={styles.checkboxWrapper}>
             <input
@@ -20,6 +21,7 @@ const Checkbox: FC<CheckboxProps> = ({ id, label, checked, disabled, onChange })
                 disabled={disabled}
                 onChange={onChange}
                 readOnly
+                tabIndex={tabIndex}
             />
             <svg>
                 <use xlinkHref="#checkmark-28" />

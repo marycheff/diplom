@@ -13,6 +13,7 @@ export const Input: FC<InputProps> = ({
     clearable = false,
     onKeyDown,
     floatingLabel = true,
+    ...props
 }) => {
     const [isFocused, setIsFocused] = useState(false)
     const inputId = `input-${name}`
@@ -41,6 +42,7 @@ export const Input: FC<InputProps> = ({
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                     id={inputId}
+                    {...props}
                 />
                 {/* Отображаем label только если используется floating label */}
                 {floatingLabel && (

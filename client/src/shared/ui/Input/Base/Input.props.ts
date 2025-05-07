@@ -1,6 +1,6 @@
-import { ChangeEvent, KeyboardEvent } from "react"
+import { ChangeEvent, InputHTMLAttributes, KeyboardEvent } from "react"
 
-export interface InputProps {
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     name: string
     value?: string
     placeholder?: string

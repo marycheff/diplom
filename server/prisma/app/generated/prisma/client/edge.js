@@ -309,7 +309,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\User\\Favorites\\diplom\\server\\prisma\\app\\generated\\prisma\\client",
+      "value": "C:\\Users\\User\\Desktop\\diplom\\server\\prisma\\app\\generated\\prisma\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -323,7 +323,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\User\\Favorites\\diplom\\server\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\User\\Desktop\\diplom\\server\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

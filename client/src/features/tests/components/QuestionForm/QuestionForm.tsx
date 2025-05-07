@@ -1,6 +1,8 @@
 import { GenerateAnswerFormData } from "@/shared/types"
+import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Loader from "@/shared/ui/Loader/Loader"
+import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { FC, FormEvent } from "react"
 import { FieldErrors, RegisterOptions, UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form"
@@ -74,7 +76,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 validationRules={answerValidation}
             />
 
-            {/* <Select
+            <Select
                 register={register}
                 label="Количество ответов для генерации"
                 name="numOfAnswers"
@@ -83,7 +85,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
             />
             <Button type="submit" disabled={isButtonDisabled || isLoading}>
                 Генерация
-            </Button> */}
+            </Button>
         </form>
     )
 }
