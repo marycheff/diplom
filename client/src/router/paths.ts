@@ -31,4 +31,8 @@ export const ROUTES = {
     ADMIN_ALL_ATTEMPTS: "/admin/attempts",
     ADMIN_ADD_QUESTIONS: "/admin/tests/:testId/add-questions",
     ADMIN_EDIT_SETTINGS: "/admin/tests/:testId/edit-settings",
+    ADMIN_CREATE_TEST: "/admin/create-test",
+    ADMIN_PROFILE: "/admin/profile",
+    ADMIN_MY_TESTS: "/admin/my-tests",
+    ADMIN_MY_TEST_INFO: "/admin/my-tests/:testId",
 }

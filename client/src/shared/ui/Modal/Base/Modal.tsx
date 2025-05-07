@@ -54,7 +54,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen, i
             if (hasVerticalScrollbar) {
                 const scrollbarWidth = getScrollbarWidth()
                 const currentPadding = parseInt(getComputedStyle(document.body).paddingRight || "0", 10)
-                document.body.style.paddingRight = `${currentPadding + scrollbarWidth}px`
+                // document.body.style.paddingRight = `${currentPadding + scrollbarWidth}px`
             }
 
             document.body.style.overflow = "hidden"

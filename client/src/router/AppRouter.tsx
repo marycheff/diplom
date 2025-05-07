@@ -3,7 +3,7 @@ import BlockedUserPage from "@/features/users/pages/BlockedUserPage"
 import WelcomePage from "@/pages/WelcomePage"
 import { ROUTES } from "@/router/paths"
 import { adminRoutes, publicRoutes, unauthorizedRoutes, userRoutes } from "@/router/routesConfig"
-import Breadcrumbs from "@/shared/ui/Breadcrumbs/Breadcrumbs"
+import { Layout } from "@/shared/components/Layout/Layout"
 import Loader from "@/shared/ui/Loader/Loader"
 import { JSX, useEffect, useState } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
@@ -72,7 +72,6 @@ const AppRouter = () => {
 
     return (
         <>
-            <Breadcrumbs />
             <Routes>
                 {user?.isBlocked ? (
                     <Route path="*" element={<BlockedUserPage />} />
@@ -115,7 +114,7 @@ const AppRouter = () => {
                             <Route
                                 key={route.path}
                                 path={route.path}
-                                element={<ProtectedRoute element={route.element} />}
+                                element={<ProtectedRoute element={<Layout>{route.element}</Layout>} />}
                             />
                         ))}
 
@@ -124,7 +123,7 @@ const AppRouter = () => {
                             <Route
                                 key={route.path}
                                 path={route.path}
-                                element={<AdminRoute element={route.element} isAdmin={isAdmin} />}
+                                element={<AdminRoute element={<Layout>{route.element}</Layout>} isAdmin={isAdmin} />}
                             />
                         ))}
 

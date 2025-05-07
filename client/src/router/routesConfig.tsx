@@ -32,6 +32,10 @@ export const adminRoutes = [
     { path: ROUTES.ADMIN_ALL_ATTEMPTS, element: <AllAttemptsPage /> },
     { path: ROUTES.ADMIN_ADD_QUESTIONS, element: <TestInfoPage /> },
     { path: ROUTES.ADMIN_EDIT_SETTINGS, element: <TestInfoPage /> },
+    { path: ROUTES.ADMIN_CREATE_TEST, element: <CreateTestPage /> },
+    { path: ROUTES.ADMIN_PROFILE, element: <UserProfilePage /> },
+    { path: ROUTES.ADMIN_MY_TESTS, element: <MyTestsPage /> },
+    { path: ROUTES.ADMIN_MY_TEST_INFO, element: <TestInfoPage /> },
 ]
 
 // Конфигурация пользовательских роутов (для авторизованных пользователей)
