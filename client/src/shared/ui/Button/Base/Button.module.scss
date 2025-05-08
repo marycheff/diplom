@@ -9,6 +9,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin: 0 1px;
+    user-select: none;
 
     // Обычный hover
     &:hover {

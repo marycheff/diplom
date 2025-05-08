@@ -1,11 +1,11 @@
 import UpdatePasswordForm from "@/features/auth/components/UpdatePasswordForm"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import { useUserStore } from "@/features/users/store/useUserStore"
 import { Button } from "@/shared/ui/Button"
 import { EditableInput } from "@/shared/ui/Input"
 import Loader from "@/shared/ui/Loader/Loader"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { useEffect, useState } from "react"
-import { useUserStore } from "../store/useUserStore"
 import styles from "./UserProfilePage.module.scss"
 
 type UserFields = {
