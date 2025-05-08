@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
 import { ConfirmationModal } from "@/shared/ui/Modal"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FiEdit, FiFileText, FiHome, FiList, FiLogOut, FiMenu, FiUser, FiUsers } from "react-icons/fi"
 import { MdOutlineScience } from "react-icons/md"
 import { Menu, MenuItem, Sidebar as ProSidebar, sidebarClasses } from "react-pro-sidebar"
@@ -14,11 +14,54 @@ interface SidebarProps {
 export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
     const { logout, isAdmin } = useAuthStore()
     const navigate = useNavigate()
-    const [collapsed, setCollapsed] = useState(false)
+    const [collapsed, setCollapsed] = useState(window.innerWidth < 768)
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
     const [isAnimating, setIsAnimating] = useState(false)
     const location = useLocation()
     const currentPath = location.pathname
+
+    // Отслеживание размера экрана для адаптивного сворачивания сайдбара
+    useEffect(() => {
+        const handleResize = () => {
+            // Если ширина экрана меньше 768px, сворачиваем сайдбар
+            if (window.innerWidth < 768) {
+                setCollapsed(true)
+            }
+        }
+
+        // Добавляем слушатель события resize
+        window.addEventListener("resize", handleResize)
+
+        // Удаляем слушатель при размонтировании компонента
+        return () => {
+            window.removeEventListener("resize", handleResize)
+        }
+    }, []) // Убрана зависимость от collapsed
+
+    // Функция для анимированного сворачивания сайдбара
+    const toggleCollapse = () => {
+        setIsAnimating(true)
+        onAnimationStart?.()
+        setCollapsed(prev => !prev)
+        setTimeout(() => {
+            setIsAnimating(false)
+            onAnimationEnd?.()
+        }, 300) // Время анимации из transition
+    }
+
+    // Функция обработки клика по пункту меню
+    const handleMenuItemClick = () => {
+        // Если устройство мобильное и сайдбар развёрнут, сворачиваем его
+        if (window.innerWidth < 768 && !collapsed) {
+            setIsAnimating(true)
+            onAnimationStart?.()
+            setCollapsed(true)
+            setTimeout(() => {
+                setIsAnimating(false)
+                onAnimationEnd?.()
+            }, 300)
+        }
+    }
 
     // Цветовая схема
     const colors = {
@@ -69,9 +112,23 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
             </div>
         )
 
+    // Создаем оберточный компонент для MenuItem с обработкой клика
+    const MenuItemWithCollapse = (props: any) => (
+        <MenuItem
+            {...props}
+            onClick={(e: any) => {
+                handleMenuItemClick()
+                // Если у MenuItem есть свой обработчик клика, вызываем его
+                if (props.onClick) {
+                    props.onClick(e)
+                }
+            }}
+        />
+    )
+
     const adminMenuItems = (
         <>
-            <MenuItem
+            <MenuItemWithCollapse
                 icon={<FiHome style={{ color: colors.primary }} />}
                 component={<Link to={ROUTES.ADMIN} />}
                 active={currentPath === ROUTES.ADMIN}
@@ -81,54 +138,54 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
                     paddingBottom: "8px",
                 }}>
                 {!collapsed && "Главная"}
-            </MenuItem>
+            </MenuItemWithCollapse>
             <CategoryHeader title="Управление" color={colors.management} />
-            <MenuItem
+            <MenuItemWithCollapse
                 icon={<FiUsers style={{ color: colors.management }} />}
                 component={<Link to={ROUTES.ADMIN_USERS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_USERS)}>
                 {!collapsed && "Пользователи"}
-            </MenuItem>
+            </MenuItemWithCollapse>
 
-            <MenuItem
+            <MenuItemWithCollapse
                 icon={<MdOutlineScience style={{ color: colors.management }} />}
                 component={<Link to={ROUTES.ADMIN_TESTS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_TESTS)}>
                 {!collapsed && "Тесты"}
-            </MenuItem>
-            <MenuItem
+            </MenuItemWithCollapse>
+            <MenuItemWithCollapse
                 icon={<FiList style={{ color: colors.management }} />}
                 component={<Link to={ROUTES.ADMIN_ALL_ATTEMPTS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_ALL_ATTEMPTS)}>
                 {!collapsed && "Попытки"}
-            </MenuItem>
+            </MenuItemWithCollapse>
 
             <CategoryHeader title="Тестирование" color={colors.testing} />
-            <MenuItem
+            <MenuItemWithCollapse
                 icon={<FiEdit style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.ADMIN_CREATE_TEST} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_CREATE_TEST)}>
                 {!collapsed && "Создать тест"}
-            </MenuItem>
-            <MenuItem
+            </MenuItemWithCollapse>
+            <MenuItemWithCollapse
                 icon={<FiFileText style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.ADMIN_MY_TESTS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_MY_TESTS)}>
                 {!collapsed && "Мои тесты"}
-            </MenuItem>
+            </MenuItemWithCollapse>
             <CategoryHeader title="Профиль" color={colors.profile} />
-            <MenuItem
+            <MenuItemWithCollapse
                 icon={<FiUser style={{ color: colors.profile }} />}
                 component={<Link to={ROUTES.ADMIN_PROFILE} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_PROFILE)}>
                 {!collapsed && "Профиль"}
-            </MenuItem>
+            </MenuItemWithCollapse>
         </>
     )
 
     const userMenuItems = (
         <>
-            <MenuItem
+            <MenuItemWithCollapse
                 icon={<FiHome style={{ color: colors.primary }} />}
                 component={<Link to={ROUTES.HOME} />}
                 active={currentPath === ROUTES.HOME}
@@ -138,28 +195,28 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
                     paddingBottom: "8px",
                 }}>
                 {!collapsed && "Главная"}
-            </MenuItem>
+            </MenuItemWithCollapse>
             <CategoryHeader title="Профиль" color={colors.profile} />
-            <MenuItem
+            <MenuItemWithCollapse
                 icon={<FiUser style={{ color: colors.profile }} />}
                 component={<Link to={ROUTES.PROFILE} />}
                 active={currentPath.startsWith(ROUTES.PROFILE)}>
                 {!collapsed && "Профиль"}
-            </MenuItem>
+            </MenuItemWithCollapse>
 
             <CategoryHeader title="Тестирование" color={colors.testing} />
-            <MenuItem
+            <MenuItemWithCollapse
                 icon={<FiEdit style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.CREATE_TEST} />}
                 active={currentPath.startsWith(ROUTES.CREATE_TEST)}>
                 {!collapsed && "Создать тест"}
-            </MenuItem>
-            <MenuItem
+            </MenuItemWithCollapse>
+            <MenuItemWithCollapse
                 icon={<FiFileText style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.MY_TESTS} />}
                 active={currentPath.startsWith(ROUTES.MY_TESTS)}>
                 {!collapsed && "Мои тесты"}
-            </MenuItem>
+            </MenuItemWithCollapse>
         </>
     )
 
@@ -193,18 +250,9 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
                 <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <Menu menuItemStyles={menuItemStyles}>
                         <MenuItem
-                            onClick={() => {
-                                setIsAnimating(true)
-                                onAnimationStart?.()
-                                setCollapsed(prev => !prev)
-                                setTimeout(() => {
-                                    setIsAnimating(false)
-                                    onAnimationEnd?.()
-                                }, 300) // Время анимации из transition
-                            }}
+                            onClick={toggleCollapse}
                             style={{
                                 fontWeight: 600,
-                                // marginBottom: "6px",
                                 borderBottom: `1px solid ${colors.border}`,
                                 padding: "14px 16px",
                             }}

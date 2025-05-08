@@ -1,57 +1,47 @@
-import ResetPasswordForm from "@/features/auth/components/ResetPasswordForm"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
 import { Button } from "@/shared/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
-import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import { Link, useNavigate } from "react-router-dom"
-import styles from "./LoginPage.module.scss"
-
-export type LoginFormData = {
+import styles from "./RegisterPage.module.scss"
+type Register = {
     email: string
     password: string
 }
-
-const LoginPage = () => {
-    const [isResetPasswordVisible, setIsResetPasswordVisible] = useState(false)
-    const { login, isLoading } = useAuthStore()
+const RegisterPage = () => {
+    const { registration, isLoading } = useAuthStore()
     const navigate = useNavigate()
 
     const {
         register,
-        handleSubmit,
         formState: { errors },
         setValue,
+        handleSubmit,
         trigger,
-    } = useForm<LoginFormData>({
+    } = useForm<Register>({
         mode: "onBlur",
         reValidateMode: "onChange",
         shouldFocusError: false,
     })
-
-    const handleResetPasswordClick = () => {
-        setIsResetPasswordVisible(true)
-    }
-
-    const onSubmit: SubmitHandler<LoginFormData> = async data => {
-        await login(data.email, data.password)
+    const onSubmit: SubmitHandler<Register> = async data => {
+        await registration(data.email, data.password)
+        toast.success("Успешная регистрация")
         navigate(ROUTES.HOME)
     }
-
     return (
-        <div className={styles.loginContainer}>
+        <div className={styles.registerContainer}>
             <div className={styles.formWrapper}>
-                <h2 className={styles.title}>Авторизация</h2>
+                <h2 className={styles.title}>Регистрация</h2>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ValidatedInput
-                        clearable
                         name="email"
-                        placeholder="Email"
                         register={register}
                         setValue={setValue}
-                        errors={errors.email}
                         trigger={trigger}
+                        errors={errors.email}
+                        placeholder="Email"
                         validationRules={{
                             required: "Email обязателен",
                             pattern: {
@@ -65,35 +55,20 @@ const LoginPage = () => {
                         register={register}
                         setValue={setValue}
                         errors={errors.password}
-                        noValidation
+                        placeholder="Пароль"
                     />
                     <Button type="submit" disabled={isLoading}>
-                        Вход
+                        Регистрация
                     </Button>
                 </form>
-
-                <div className={styles.registerLink}>
+                <div className={styles.loginLink}>
                     <p>
-                        Нет аккаунта? <Link to={ROUTES.REGISTER}>Зарегистрироваться</Link>
+                        Уже зарегистрированы? <Link to={ROUTES.LOGIN}>Войти</Link>
                     </p>
                 </div>
-
-                {!isResetPasswordVisible && (
-                    <div className={styles.resetPassword}>
-                        <button onClick={handleResetPasswordClick} className={styles.resetPasswordBtn}>
-                            Забыли пароль?
-                        </button>
-                    </div>
-                )}
-
-                {isResetPasswordVisible && (
-                    <div className={styles.resetPasswordForm}>
-                        <ResetPasswordForm />
-                    </div>
-                )}
             </div>
         </div>
     )
 }
 
-export default LoginPage
+export default RegisterPage

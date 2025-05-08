@@ -36,7 +36,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
     const [expandedQuestionIds, setExpandedQuestionIds] = useState<string[]>([])
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [questionToDelete, setQuestionToDelete] = useState<string | null>(null)
-    const { generateAnswers, isLoading } = useTestStore()
+    const { generateAnswers, isLoading: isGenerating } = useTestStore()
 
     const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
         return Array(DEFAULT_NUM_OF_ANSWERS)
@@ -62,6 +62,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
         mode: "onSubmit",
         reValidateMode: "onChange",
         shouldFocusError: false,
+        defaultValues: {
+            numOfAnswers: DEFAULT_NUM_OF_ANSWERS,
+        },
     })
 
     const currentQuestion = watch("question")
@@ -373,8 +376,8 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
                                 setValue={setValue}
                                 errors={formState.errors}
                                 trigger={trigger}
-                                isLoading={false}
-                                isButtonDisabled={!isFormValid || isLoading}
+                                isGenerating={isGenerating}
+                                isButtonDisabled={!isFormValid}
                                 onSubmit={handleSubmit(askQuestion)}
                             />
                             <AnswersList

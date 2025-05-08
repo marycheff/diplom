@@ -8,7 +8,7 @@ import TestTaking from "@/features/attempts/pages/TestTaking/TestTaking"
 import ActivationErrorPage from "@/features/auth/pages/ActivationError"
 import ActivationSuccessPage from "@/features/auth/pages/ActivationSuccess"
 import LoginPage from "@/features/auth/pages/Login/LoginPage"
-import SignupPage from "@/features/auth/pages/Signup/SignupPage"
+import RegisterPage from "@/features/auth/pages/Register/RegisterPage"
 import AllTestsPage from "@/features/tests/pages/AllTests/AllTestsPage"
 import CreateTestPage from "@/features/tests/pages/CreateTest/CreateTestPage"
 import MyTestsPage from "@/features/tests/pages/MyTests/MyTestsPage"
@@ -57,7 +57,7 @@ export const publicRoutes = [
 // Конфигурация роутов для неавторизованных пользователей
 export const unauthorizedRoutes = [
     { path: ROUTES.LOGIN, element: <LoginPage /> },
-    { path: ROUTES.SIGNUP, element: <SignupPage /> },
+    { path: ROUTES.REGISTER, element: <RegisterPage /> },
     { path: ROUTES.ACTIVATION_ERROR, element: <ActivationErrorPage /> },
     { path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> },
     { path: ROUTES.WELCOME, element: <WelcomePage /> },

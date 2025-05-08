@@ -6,7 +6,7 @@ export const ROUTES = {
 
     // Маршруты для неавторизованных пользователей
     LOGIN: "/login",
-    SIGNUP: "/signup",
+    REGISTER: "/register",
     ACTIVATION_ERROR: "/activation-error",
     ACTIVATION_SUCCESS: "/activation-success",
     WELCOME: "/",

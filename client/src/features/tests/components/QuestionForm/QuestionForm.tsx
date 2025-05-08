@@ -1,7 +1,7 @@
 import { GenerateAnswerFormData } from "@/shared/types"
-import { Button } from "@/shared/ui/Button"
+import { AIButton } from "@/shared/ui/Button"
+
 import { ValidatedInput } from "@/shared/ui/Input"
-import Loader from "@/shared/ui/Loader/Loader"
 import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { FC, FormEvent } from "react"
@@ -10,7 +10,7 @@ import { FieldErrors, RegisterOptions, UseFormRegister, UseFormSetValue, UseForm
 interface QuestionFormProps {
     register: UseFormRegister<GenerateAnswerFormData>
     errors?: FieldErrors<GenerateAnswerFormData>
-    isLoading: boolean
+    isGenerating: boolean
     onSubmit: (e: FormEvent<HTMLFormElement>) => void
     isButtonDisabled: boolean
     setValue: UseFormSetValue<GenerateAnswerFormData>
@@ -21,7 +21,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
     register,
     errors,
     isButtonDisabled,
-    isLoading,
+    isGenerating,
     onSubmit,
     setValue,
     trigger,
@@ -53,7 +53,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
 
     return (
         <form onSubmit={onSubmit}>
-            {isLoading && <Loader delay={300} />}
+            {/* {isLoading && <Loader delay={300} />} */}
             <ValidatedInput
                 clearable
                 placeholder="Вопрос"
@@ -83,11 +83,11 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 options={[{ value: "1" }, { value: "2" }, { value: "3" }, { value: "4" }]}
                 value="3"
             />
-            <Button type="submit" disabled={isButtonDisabled || isLoading}>
-                Генерация
-            </Button>
+
+            <AIButton type="submit" generating={isGenerating} disabled={isButtonDisabled}>
+                {isGenerating ? "Генерация" : "Генерировать"}
+            </AIButton>
         </form>
     )
 }
-
 export default QuestionForm

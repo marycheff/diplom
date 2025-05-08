@@ -12,7 +12,7 @@ const WelcomePage = () => {
                 <div className={styles.logo}>НейроТест</div>
                 <div className={styles.authButtons}>
                     <Button onClick={() => navigate(ROUTES.LOGIN)}>Войти</Button>
-                    <Button onClick={() => navigate(ROUTES.SIGNUP)}>Регистрация</Button>
+                    <Button onClick={() => navigate(ROUTES.REGISTER)}>Регистрация</Button>
                 </div>
             </header>
 
@@ -20,7 +20,7 @@ const WelcomePage = () => {
                 <section className={styles.hero}>
                     <h1>Создавайте тесты за минуты</h1>
                     <p>НейроТест — ваш универсальный конструктор тестов. Удобно. Быстро. Современно.</p>
-                    <Button onClick={() => navigate(ROUTES.SIGNUP)}>Начать бесплатно</Button>
+                    <Button onClick={() => navigate(ROUTES.REGISTER)}>Начать бесплатно</Button>
                 </section>
 
                 <section className={styles.features}>

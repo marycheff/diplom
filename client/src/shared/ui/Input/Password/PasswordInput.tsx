@@ -1,8 +1,8 @@
 import { PasswordInputProps } from "@/shared/ui/Input/Password/PasswordInput.props"
 import { ChangeEvent, FC, useState } from "react"
 import { RegisterOptions } from "react-hook-form"
+import { FiEye, FiEyeOff } from "react-icons/fi"
 import styles from "./PasswordInput.module.scss"
-
 const PasswordInput: FC<PasswordInputProps<any>> = ({
     name,
     placeholder = "Пароль",
@@ -87,7 +87,7 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
                         onClick={togglePasswordVisibility}
                         className={styles.toggleButton}
                         tabIndex={-1}>
-                        {isPasswordVisible ? "🙈" : "👁️"}
+                        {isPasswordVisible ? <FiEyeOff /> : <FiEye />}
                     </button>
                 )}
             </div>

@@ -105,6 +105,7 @@ const ResetPasswordForm: FC = () => {
     return (
         <div>
             <h2>Сброс пароля</h2>
+            <br />
             {!isCodeSent ? (
                 <form onSubmit={handleEmailSubmit(onEmailSubmit)}>
                     <ValidatedInput
