@@ -4,6 +4,7 @@ import { Button } from "@/shared/ui/Button"
 import { PasswordInput } from "@/shared/ui/Input"
 import { SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
+import styles from "./UpdatePasswordForm.module.scss"
 
 export type ChangePasswordFormData = {
     oldPassword: string
@@ -29,26 +30,25 @@ const UpdatePasswordForm = () => {
     }
 
     return (
-        <div>
-            <h1>Обновить пароль</h1>
-
+        <div className={styles.formContainer}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <PasswordInput
                     name="oldPassword"
                     register={register}
                     setValue={setValue}
                     errors={errors.oldPassword}
-                    placeholder="Старый пароль"
+                    label="Старый пароль"
                     noValidation
                 />
+
                 <PasswordInput
                     name="newPassword"
                     register={register}
                     setValue={setValue}
                     errors={errors.newPassword}
-                    placeholder="Новый пароль"
+                    label="Новый пароль"
                 />
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading} className={styles.updateBtn}>
                     Обновить пароль
                 </Button>
             </form>

@@ -6,6 +6,7 @@ import Loader from "@/shared/ui/Loader/Loader"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { useEffect, useState } from "react"
 import { useUserStore } from "../store/useUserStore"
+import styles from "./UserProfilePage.module.scss"
 
 type UserFields = {
     [key: string]: string | boolean | undefined | null
@@ -89,48 +90,79 @@ const UserProfilePage = () => {
     }, [userFields, initialUserFields])
 
     return (
-        <div>
-            {/* <BackButton /> */}
-            {(isFetching || isLoadingFields) && <Loader delay={300} />}
-
-            {Object.keys(userFields).length === 0 && !isLoadingFields ? null : ( // Проверяем, загрузились ли данные
-                <div>
-                    {userFields.email && <label>Электронная почта: {userFields.email}</label>}
-                    {userFields.isActivated !== undefined && (
-                        <p>Почта активирована: {userFields.isActivated ? "Да" : "Нет"}</p>
-                    )}
-
-                    {!userFields.isActivated && userFields.email && (
-                        <Button onClick={handleSendActivationLink} disabled={isEmailSending}>
-                            {isEmailSending ? "Отправка..." : "Отправить ссылку еще раз"}
-                        </Button>
-                    )}
-
-                    {/* Генерация полей для редактирования */}
-                    {Object.keys(userFields).map(
-                        field =>
-                            field !== "email" &&
-                            field !== "isActivated" &&
-                            userFields[field] !== undefined && (
-                                <EditableInput
-                                    name={field}
-                                    key={field}
-                                    label={fieldLabels[field] || field}
-                                    value={userFields[field] as string}
-                                    onChange={value => handleFieldChange(field, value)}
-                                    onEditingChange={isEditing => handleEditingChange(field, isEditing)}
-                                />
-                            )
-                    )}
-
-                    <Button
-                        onClick={handleSaveClick}
-                        disabled={!isFormChanged || Object.values(isEditingFields).includes(true) || isLoading}>
-                        Сохранить изменения
-                    </Button>
-
-                    <UpdatePasswordForm />
+        <div className={styles.profilePage}>
+            {(isFetching || isLoadingFields) && (
+                <div className={styles.loader}>
+                    <Loader delay={300} />
                 </div>
+            )}
+
+            {Object.keys(userFields).length === 0 && !isLoadingFields ? null : (
+                <>
+                    <section className={styles.section}>
+                        <h2>Информация об аккаунте</h2>
+                        <div className={styles.accountInfo}>
+                            {userFields.email && (
+                                <div className={styles.emailStatus}>
+                                    <label>Электронная почта:</label>
+                                    <span>{userFields.email}</span>
+                                </div>
+                            )}
+                            {userFields.isActivated !== undefined && (
+                                <div className={styles.emailStatus}>
+                                    <label>Статус почты:</label>
+                                    <span className={userFields.isActivated ? styles.activated : styles.notActivated}>
+                                        {userFields.isActivated ? "Активирована" : "Не активирована"}
+                                    </span>
+                                    {!userFields.isActivated && <span>(Проверьте почтовый ящик)</span>}
+                                </div>
+                            )}
+
+                            {!userFields.isActivated && userFields.email && (
+                                <Button
+                                    onClick={handleSendActivationLink}
+                                    disabled={isEmailSending}
+                                    className={styles.activationButton}>
+                                    {isEmailSending ? "Отправка..." : "Отправить для активации ссылку еще раз"}
+                                </Button>
+                            )}
+                        </div>
+                    </section>
+
+                    <section className={styles.section}>
+                        <h2>Личная информация</h2>
+                        <div className={styles.personalInfo}>
+                            <div className={styles.fields}>
+                                {Object.keys(userFields).map(
+                                    field =>
+                                        field !== "email" &&
+                                        field !== "isActivated" &&
+                                        userFields[field] !== undefined && (
+                                            <EditableInput
+                                                name={field}
+                                                key={field}
+                                                label={fieldLabels[field] || field}
+                                                value={userFields[field] as string}
+                                                onChange={value => handleFieldChange(field, value)}
+                                                onEditingChange={isEditing => handleEditingChange(field, isEditing)}
+                                            />
+                                        )
+                                )}
+                            </div>
+                            <Button
+                                onClick={handleSaveClick}
+                                disabled={!isFormChanged || Object.values(isEditingFields).includes(true) || isLoading}
+                                className={styles.saveButton}>
+                                Сохранить изменения
+                            </Button>
+                        </div>
+                    </section>
+
+                    <section className={`${styles.section}`}>
+                        <h2>Обновление пароля</h2>
+                        <UpdatePasswordForm />
+                    </section>
+                </>
             )}
         </div>
     )

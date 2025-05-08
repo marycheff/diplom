@@ -38,6 +38,10 @@ export enum Role {
     USER = "USER",
     ADMIN = "ADMIN",
 }
+export const RoleLabels: Record<Role, string> = {
+    [Role.USER]: "Пользователь",
+    [Role.ADMIN]: "Администратор",
+}
 export interface UpdateUser {
     name?: string
     surname?: string

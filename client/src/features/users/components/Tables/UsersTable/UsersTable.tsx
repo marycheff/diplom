@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
-import { UserDTO } from "@/shared/types"
+import { RoleLabels, UserDTO } from "@/shared/types"
 import { shortenText } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
@@ -31,7 +31,7 @@ const UsersTable: FC<UsersTableProps> = ({ users, total }) => {
                 <td>{user.name || "—"}</td>
                 <td>{user.surname || "—"}</td>
                 <td>{user.patronymic || "—"}</td>
-                <td>{user.role}</td>
+                <td>{RoleLabels[user.role]}</td>
                 <td>{user.isBlocked ? "Заблокирован" : "Активен"}</td>
             </tr>
         )

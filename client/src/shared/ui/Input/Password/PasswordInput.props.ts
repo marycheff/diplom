@@ -9,4 +9,5 @@ export interface PasswordInputProps<T extends Record<string, any>> {
     errors?: FieldError | undefined
     clearable?: boolean
     noValidation? : boolean
+    label?: string
 }

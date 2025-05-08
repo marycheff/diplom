@@ -26,7 +26,7 @@ export interface StartAttemptDTO {
 
 export interface TestAttemptDTO {
     id: string
-    status: string
+    status: AttemptStatus
     startedAt: Date
     completedAt: Date | null
     score: number | null
@@ -103,4 +103,10 @@ export enum AttemptStatus {
     IN_PROGRESS = "IN_PROGRESS",
     COMPLETED = "COMPLETED",
     EXPIRED = "EXPIRED",
+}
+
+export const AttemptStatusLabels: Record<AttemptStatus, string> = {
+    [AttemptStatus.IN_PROGRESS]: "В процессе",
+    [AttemptStatus.COMPLETED]: "Завершена",
+    [AttemptStatus.EXPIRED]: "Истекла",
 }

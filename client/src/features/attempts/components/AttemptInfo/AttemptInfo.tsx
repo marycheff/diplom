@@ -1,7 +1,13 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
 import { ROUTES } from "@/router/paths"
-import { AttemptStatus, PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
+import {
+    AttemptStatus,
+    AttemptStatusLabels,
+    PreTestUserData,
+    PreTestUserDataLabels,
+    TestAttemptDTO,
+} from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { Modal } from "@/shared/ui/Modal"
@@ -51,21 +57,21 @@ const AttemptInfo = () => {
                     <h1 className={styles.blockTitle}>Информация о попытке</h1>
                     <div className={styles.blockContent}>
                         <div className={styles.infoRow}>
-                            <span className={styles.label}>ID:</span>
+                            <span className={styles.label}>ID</span>
                             <span className={styles.value}>{attempt.id}</span>
                         </div>
                         <div className={styles.infoRow}>
-                            <span className={styles.label}>Статус:</span>
+                            <span className={styles.label}>Статус</span>
                             <span className={styles.value}>
-                                <span className={styles.statusBadge}>{attempt.status}</span>
+                                <span className={styles.statusBadge}>{AttemptStatusLabels[attempt.status]}</span>
                             </span>
                         </div>
                         <div className={styles.infoRow}>
-                            <span className={styles.label}>Дата начала:</span>
+                            <span className={styles.label}>Дата начала</span>
                             <span className={styles.value}>{formatDate(attempt.startedAt)}</span>
                         </div>
                         <div className={styles.infoRow}>
-                            <span className={styles.label}>Дата завершения:</span>
+                            <span className={styles.label}>Дата завершения</span>
                             <span className={styles.value}>
                                 {attempt.completedAt ? (
                                     formatDate(attempt.completedAt)
@@ -75,7 +81,7 @@ const AttemptInfo = () => {
                             </span>
                         </div>
                         <div className={styles.infoRow}>
-                            <span className={styles.label}>Результат:</span>
+                            <span className={styles.label}>Результат</span>
                             <span className={styles.value}>
                                 {typeof attempt.score === "number" ? (
                                     `${attempt.score}%`

@@ -2,8 +2,9 @@ import { Button } from "@/shared/ui/Button"
 import Input from "@/shared/ui/Input/Base/Input"
 import { EditableInputProps } from "@/shared/ui/Input/Editable/EditableInput.props"
 import { ChangeEvent, JSX, useState } from "react"
+import { MdCheck, MdEdit } from "react-icons/md"
 import styles from "./EditableInput.module.scss"
-
+import { FaCheck } from "react-icons/fa6"
 const EditableInput = <T extends Record<string, any>>({
     name,
     label,
@@ -43,9 +44,13 @@ const EditableInput = <T extends Record<string, any>>({
                     floatingLabel={false}
                 />
                 {!isEditing ? (
-                    <Button onClick={handleEditClick}>✎</Button>
+                    <Button onClick={handleEditClick}>
+                        <MdEdit />
+                    </Button>
                 ) : (
-                    <Button onClick={handleSaveClick}>✔</Button>
+                    <Button onClick={handleSaveClick}>
+                        <FaCheck />
+                    </Button>
                 )}
             </div>
         </div>

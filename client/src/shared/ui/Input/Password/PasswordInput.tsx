@@ -5,7 +5,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi"
 import styles from "./PasswordInput.module.scss"
 const PasswordInput: FC<PasswordInputProps<any>> = ({
     name,
-    placeholder = "Пароль",
+    placeholder,
     disabled = false,
     className = "",
     register,
@@ -13,6 +13,7 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
     errors,
     clearable = false,
     noValidation = false,
+    label,
 }) => {
     const [localValue, setLocalValue] = useState("")
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
@@ -63,6 +64,7 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
 
     return (
         <div className={styles.inputWrapper}>
+            <label className={styles.label}>{label}</label>
             <div className={`${styles.inputContainer} ${isActive ? styles.active : ""}`}>
                 <input
                     type={isPasswordVisible ? "text" : "password"}

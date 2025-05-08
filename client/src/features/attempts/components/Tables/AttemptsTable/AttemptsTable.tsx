@@ -1,4 +1,4 @@
-import { PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
+import { AttemptStatusLabels, PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
 import { formatDate, shortenText } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
@@ -72,7 +72,7 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                             {/* <br />
                                             {attempt.test.title} */}
                                         </td>
-                                        <td>{attempt.status}</td>
+                                        <td>{AttemptStatusLabels[attempt.status]}</td>
                                         <td>{formatDate(attempt.startedAt)}</td>
                                         <td>{attempt.completedAt ? formatDate(attempt.completedAt) : "—"}</td>
                                         <td>
