@@ -75,17 +75,15 @@ const AllAttemptsPage = () => {
 
     return (
         <>
-            <br />
-            <br />
-            <Button onClick={handleUpdateButton} disabled={isFetching}>
-                Обновить
-            </Button>
             {page > totalPages && (
                 <Button onClick={handleResetSearch} disabled={isFetching}>
                     Сбросить
                 </Button>
             )}
 
+            <Button onClick={handleUpdateButton} disabled={isFetching}>
+                Обновить
+            </Button>
             <div className="cache-info">
                 <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
             </div>

@@ -14,7 +14,10 @@ interface SidebarProps {
 export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
     const { logout, isAdmin } = useAuthStore()
     const navigate = useNavigate()
-    const [collapsed, setCollapsed] = useState(window.innerWidth < 768)
+    const [collapsed, setCollapsed] = useState(() => {
+        const savedCollapsed = localStorage.getItem("sidebarCollapsed")
+        return savedCollapsed ? JSON.parse(savedCollapsed) : window.innerWidth < 768
+    })
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
     const [isAnimating, setIsAnimating] = useState(false)
     const location = useLocation()
@@ -26,6 +29,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
             // Если ширина экрана меньше 768px, сворачиваем сайдбар
             if (window.innerWidth < 768) {
                 setCollapsed(true)
+                localStorage.setItem("sidebarCollapsed", "true")
             }
         }
 
@@ -42,7 +46,11 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
     const toggleCollapse = () => {
         setIsAnimating(true)
         onAnimationStart?.()
-        setCollapsed(prev => !prev)
+        setCollapsed((prev: boolean) => {
+            const newCollapsed = !prev
+            localStorage.setItem("sidebarCollapsed", JSON.stringify(newCollapsed))
+            return newCollapsed
+        })
         setTimeout(() => {
             setIsAnimating(false)
             onAnimationEnd?.()
@@ -56,6 +64,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
             setIsAnimating(true)
             onAnimationStart?.()
             setCollapsed(true)
+            localStorage.setItem("sidebarCollapsed", "true")
             setTimeout(() => {
                 setIsAnimating(false)
                 onAnimationEnd?.()

@@ -34,4 +34,8 @@
         margin-left: 70px;
         width: calc(100% - 70px);
     }
+    :not(:global(.ps-collapsed)) ~ .mainContent {
+        pointer-events: none;
+        user-select: none;
+    }
 }
