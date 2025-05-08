@@ -139,6 +139,35 @@ class UserRepository {
     async count(where?: Prisma.UserWhereInput): Promise<number> {
         return prisma.user.count({ where })
     }
+    async findExpiredActivationLinks(batchSize: number): Promise<User[]> {
+        return prisma.user.findMany({
+            where: {
+                activationLinkExp: { lt: new Date() },
+            },
+            take: batchSize,
+        })
+    }
+    async findExpiredResetCodes(batchSize: number): Promise<User[]> {
+        return prisma.user.findMany({
+            where: {
+                resetCodeExp: { lt: new Date() },
+            },
+            take: batchSize,
+        })
+    }
+
+    async deleteActivationLinksByUsersIds(userIds: string[]): Promise<Prisma.BatchPayload> {
+        return prisma.user.updateMany({
+            where: { id: { in: userIds } },
+            data: { activationLink: null, activationLinkExp: null },
+        })
+    }
+    async deleteResetCodesByUsersIds(userIds: string[]): Promise<Prisma.BatchPayload> {
+        return prisma.user.updateMany({
+            where: { id: { in: userIds } },
+            data: { resetCode: null, resetCodeExp: null },
+        })
+    }
 }
 
 export default new UserRepository()
