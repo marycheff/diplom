@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { TestDTO } from "@/shared/types"
 import { FC } from "react"
 import { Link } from "react-router-dom"
@@ -9,6 +10,7 @@ interface MyTestsTableProps {
 }
 
 const MyTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
+    const { isAdmin } = useAuthStore()
     return (
         <>
             {tests && tests.length > 0 && (
@@ -22,18 +24,25 @@ const MyTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
                         <table>
                             <thead>
                                 <tr>
+                                    <th scope="col"></th>
                                     <th scope="col">Название</th>
                                     <th scope="col">Описание</th>
                                     <th scope="col">Количество вопросов</th>
                                     <th scope="col">Требуется регистрация</th>
                                     <th scope="col">Показывать детальные результаты</th>
                                     <th scope="col">Количество попыток</th>
-                                    <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {tests.map(test => (
                                     <tr key={test.id}>
+                                        <td>
+                                            <Link
+                                                to={isAdmin ? `/admin/my-tests/${test.id}` : `/my-tests/${test.id}`}
+                                                className="actionLink">
+                                                Перейти
+                                            </Link>
+                                        </td>
                                         <td>{test.title}</td>
                                         <td>{test.description || "–"}</td>
                                         <td>{test.questions ? test.questions.length : 0}</td>
@@ -47,11 +56,6 @@ const MyTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
                                                     {test.totalAttempts}
                                                 </Link>
                                             )}
-                                        </td>
-                                        <td>
-                                            <Link to={`/my-tests/${test.id}`} className="actionLink">
-                                                Перейти
-                                            </Link>
                                         </td>
                                     </tr>
                                 ))}

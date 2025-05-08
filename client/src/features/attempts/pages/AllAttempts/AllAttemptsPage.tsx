@@ -1,5 +1,6 @@
 import AttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/AttemptsTable"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { useCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
@@ -13,7 +14,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 const AllAttemptsPage = () => {
     const { getAllAttempts, isFetching } = useAttemptStore()
     const [attempts, setAttempts] = useState<TestAttemptDTO[]>([])
-    const [total, setTotal] = useState<number>(0)
+    const [total, setTotal] = useState<number | null>(null)
     const [limit] = useState<number>(10)
     const [page, setPage] = useState<number>(1)
     const navigate = useNavigate()
@@ -21,7 +22,7 @@ const AllAttemptsPage = () => {
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
         useCache<AttemptsListDTO>(useAttemptStore)
     const { handleResetSearch: resetSearch } = useSearch()
-
+    const params = new URLSearchParams(location.search)
     const fetchData = useCallback(
         async (currentPage: number) => {
             if (isFetching) return
@@ -55,10 +56,9 @@ const AllAttemptsPage = () => {
 
         setPage(pageParam)
         fetchData(pageParam)
-    }, [location.search, fetchData, cacheVersion])
+    }, [location.search, fetchData, cacheVersion, navigate])
 
     const handlePageChange = (newPage: number) => {
-        const params = new URLSearchParams(location.search)
         params.set("page", newPage.toString())
         navigate({ search: params.toString() })
     }
@@ -71,7 +71,11 @@ const AllAttemptsPage = () => {
         resetSearch()
         // fetchData(1)
     }
-    const totalPages = Math.ceil(total / limit)
+    const isDataLoaded = total !== null
+    const hasTests = total !== null && total > 0
+    const isSearchActive = !!params.get("query")
+    const totalPages = total !== null ? Math.ceil(total / limit) : 0
+    const shouldShowContent = totalPages > 0 && page <= totalPages
 
     return (
         <>
@@ -87,7 +91,7 @@ const AllAttemptsPage = () => {
             <div className="cache-info">
                 <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
             </div>
-            {isFetching ? (
+            {isFetching || !isDataLoaded ? (
                 <TableSkeleton />
             ) : (
                 <>
@@ -97,7 +101,7 @@ const AllAttemptsPage = () => {
                             <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
                         </>
                     ) : (
-                        <div>Ничего не найдено</div>
+                        <NothingFound />
                     )}
                 </>
             )}

@@ -93,7 +93,7 @@ const UserProfilePage = () => {
         <div className={styles.profilePage}>
             {(isFetching || isLoadingFields) && (
                 <div className={styles.loader}>
-                    <Loader delay={300} />
+                    <Loader delay={300} fullScreen />
                 </div>
             )}
 

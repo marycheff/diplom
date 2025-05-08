@@ -1,5 +1,6 @@
 import UsersTable from "@/features/users/components/Tables/UsersTable/UsersTable"
 import { useUserStore } from "@/features/users/store/useUserStore"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { useCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
@@ -14,7 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 const AllUsersPage = () => {
     const [users, setUsers] = useState<UserDTO[]>([])
     const { getUsers, searchUser, isFetching } = useUserStore()
-    const [total, setTotal] = useState<number>(0)
+    const [total, setTotal] = useState<number | null>(null)
     const [limit] = useState<number>(10)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
@@ -23,7 +24,7 @@ const AllUsersPage = () => {
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
         useCache<UsersListDTO>(useUserStore, "users")
     const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
-
+    const params = new URLSearchParams(location.search)
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
             if (isFetching) return
@@ -52,9 +53,7 @@ const AllUsersPage = () => {
     )
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search)
         const query = params.get("query") || ""
-
         let pageParam = parseInt(params.get("page") || "1", 10)
         if (!params.has("page")) {
             params.set("page", "1")
@@ -64,10 +63,9 @@ const AllUsersPage = () => {
         fetchData(pageParam, query || undefined)
         setSearchQuery(query)
         setPage(pageParam)
-    }, [location.search, fetchData, cacheVersion])
+    }, [location.search, fetchData, cacheVersion, navigate])
 
     const handlePageChange = (newPage: number) => {
-        const params = new URLSearchParams(location.search)
         params.set("page", newPage.toString())
         if (searchQuery) {
             params.set("query", searchQuery)
@@ -88,12 +86,17 @@ const AllUsersPage = () => {
         // clearCache()
         // fetchData(1)
     }
+
     const handleUpdateButton = () => {
         clearCache()
         fetchData(page, searchQuery || undefined)
     }
 
-    const totalPages = Math.ceil(total / limit)
+    const isDataLoaded = total !== null
+    const hasUsers = total !== null && total > 0
+    const isSearchActive = !!params.get("query")
+    const totalPages = total !== null ? Math.ceil(total / limit) : 0
+    const shouldShowContent = totalPages > 0 && page <= totalPages
 
     return (
         <>
@@ -106,9 +109,7 @@ const AllUsersPage = () => {
                 placeholder="Поиск"
             />
 
-            <Button
-                onClick={handleResetSearch}
-                disabled={isFetching || !new URLSearchParams(location.search).get("query")}>
+            <Button onClick={handleResetSearch} disabled={isFetching || !isSearchActive}>
                 Сбросить
             </Button>
             <Button onClick={handleUpdateButton} disabled={isFetching}>
@@ -119,17 +120,17 @@ const AllUsersPage = () => {
                 <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
             </div>
 
-            {isFetching ? (
+            {isFetching || !isDataLoaded ? (
                 <TableSkeleton />
             ) : (
                 <>
-                    {totalPages > 0 && page <= totalPages ? (
+                    {shouldShowContent ? (
                         <>
                             <UsersTable users={users} total={total} />
                             <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
                         </>
                     ) : (
-                        <div>Ничего не найдено</div>
+                        <NothingFound />
                     )}
                 </>
             )}

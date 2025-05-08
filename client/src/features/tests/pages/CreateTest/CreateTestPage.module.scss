@@ -1,0 +1,60 @@
+@use "@styles/variables" as *;
+
+.pageWrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 14rem;
+}
+.container {
+    max-width: 560px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: $bg-primary;
+    border-radius: 1.25rem;
+    box-shadow: $shadow-medium;
+    text-align: center;
+}
+
+.icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: $accent-red-10;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+        width: 40px;
+        height: 40px;
+        color: $accent-red;
+    }
+}
+
+.heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: $text-primary;
+}
+
+.text {
+    color: $text-secondary;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $secondary-600;
+    font-weight: 500;
+    transition: color 0.2s;
+
+    &:hover {
+        color:  $secondary-600;
+        text-decoration: underline;
+    }
+}

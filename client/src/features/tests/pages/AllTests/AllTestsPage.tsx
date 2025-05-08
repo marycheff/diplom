@@ -1,5 +1,6 @@
 import TestsTable from "@/features/tests/components/Tables/TestsTable/TestsTable"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { useCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
@@ -14,7 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 const AllTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
     const { getTests, searchTests, isFetching } = useTestStore()
-    const [total, setTotal] = useState<number>(0)
+    const [total, setTotal] = useState<number | null>(null)
     const [limit] = useState<number>(10)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
@@ -23,6 +24,7 @@ const AllTestsPage = () => {
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
         useCache<TestsListDTO>(useTestStore, "tests")
     const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
+    const params = new URLSearchParams(location.search)
 
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
@@ -51,7 +53,6 @@ const AllTestsPage = () => {
     )
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search)
         const query = params.get("query") || ""
         let pageParam = parseInt(params.get("page") || "1", 10)
         if (!params.has("page")) {
@@ -62,10 +63,9 @@ const AllTestsPage = () => {
         setSearchQuery(query)
         setPage(pageParam)
         fetchData(pageParam, query || undefined)
-    }, [location.search, fetchData, cacheVersion])
+    }, [location.search, fetchData, cacheVersion, navigate])
 
     const handlePageChange = (newPage: number) => {
-        const params = new URLSearchParams(location.search)
         params.set("page", newPage.toString())
 
         if (searchQuery) {
@@ -93,7 +93,13 @@ const AllTestsPage = () => {
         clearCache()
         fetchData(page, searchQuery || undefined)
     }
-    const totalPages = Math.ceil(total / limit)
+
+    const isDataLoaded = total !== null
+    const hasTests = total !== null && total > 0
+    const isSearchActive = !!params.get("query")
+    const totalPages = total !== null ? Math.ceil(total / limit) : 0
+    const shouldShowContent = totalPages > 0 && page <= totalPages
+
     return (
         <>
             {/* <BackButton />
@@ -107,9 +113,7 @@ const AllTestsPage = () => {
                 placeholder="Поиск"
             />
 
-            <Button
-                onClick={handleResetSearch}
-                disabled={isFetching || !new URLSearchParams(location.search).get("query")}>
+            <Button onClick={handleResetSearch} disabled={isFetching || !isSearchActive}>
                 Сбросить
             </Button>
 
@@ -121,17 +125,17 @@ const AllTestsPage = () => {
                 <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
             </div>
 
-            {isFetching ? (
+            {isFetching || !isDataLoaded ? (
                 <TableSkeleton />
             ) : (
                 <>
-                    {totalPages > 0 && page <= totalPages ? (
+                    {shouldShowContent ? (
                         <>
                             <TestsTable tests={tests} total={total} />
                             <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
                         </>
                     ) : (
-                        <div>Ничего не найдено</div>
+                        <NothingFound />
                     )}
                 </>
             )}

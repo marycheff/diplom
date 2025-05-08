@@ -1,0 +1,51 @@
+// Colors
+$primary-100: #e0e7e1;
+$primary-200: #c1cfc3;
+$primary-400: #3c493f; // Основной оттенок
+$primary-600: #2e3a30;
+$primary-800: #202b21;
+
+$secondary-100: #e8ebea;
+$secondary-200: #d1d7d5;
+$secondary-400: #7e8d85;
+$secondary-600: #626f68;
+$secondary-800: #46514b;
+
+$background-100: #ffffff;
+$background-200: #f8fcfa;
+$background-400: #f0f7f4; // Основной оттенок
+$background-600: #d8e5e0;
+$background-800: #c0d3cc;
+
+$red-100: #ffcdd2;
+$red-200: #ef9a9a;
+$red-400: #cc4644; // Основной оттенок
+$red-600: #d32f2f;
+$red-800: #c62828;
+
+// Semantic variables
+$text-primary: $primary-400;
+$text-secondary: $secondary-600;
+$text-on-accent: $background-100;
+
+$bg-primary: $background-200;
+$bg-secondary: $background-400;
+$bg-surface: $background-100;
+
+$accent-primary: $primary-400;
+$accent-primary-hover: $primary-600;
+$accent-secondary: $secondary-400;
+
+$border-primary: $primary-200;
+$border-secondary: $secondary-200;
+
+$shadow-color: rgba($primary-800, 0.15);
+$shadow-medium: 0 4px 12px $shadow-color;
+
+$accent-red: $red-400;
+$accent-red-10: rgba($red-400, 0.1);
+$accent-red-hover: $red-600;
+
+// Spacing
+$spacing-unit: 1rem;
+$section-padding: calc($spacing-unit * 2.5);
