@@ -2,6 +2,7 @@ import answerController from "@/controllers/tests/answer.controller"
 import attemptController from "@/controllers/tests/attempt.controller"
 import questionController from "@/controllers/tests/question.controller"
 import testController from "@/controllers/tests/test.controller"
+import { accountActivationMiddleware } from "@/middleware/accountConfirmation.middleware"
 import { adminMiddleware } from "@/middleware/admin.middleware"
 import { authMiddleware } from "@/middleware/auth.middleware"
 import conditionalAuthMiddleware from "@/middleware/conditional.middleware"
@@ -21,7 +22,6 @@ import {
     startTestAttemptSchema,
     testIdSchema,
     testSettingsSchema,
-    updateQuestionSchema,
 } from "@/schemas/test.schema"
 import express from "express"
 
@@ -32,7 +32,13 @@ const router = express.Router()
   ================================= */
 
 // Создание теста
-router.post("/create", authMiddleware, validateRequest(shortInfoSchema), testController.createTest)
+router.post(
+    "/create",
+    authMiddleware,
+    accountActivationMiddleware,
+    validateRequest(shortInfoSchema),
+    testController.createTest
+)
 
 // Получение всех тестов пользователя (только свои)
 router.get("/my-tests", authMiddleware, testController.getMyTests)
@@ -47,6 +53,7 @@ router.delete("/:testId", authMiddleware, testOwnershipMiddleware, testControlle
 router.put(
     "/:testId/settings",
     authMiddleware,
+    accountActivationMiddleware,
     testOwnershipMiddleware,
     validateRequest(testSettingsSchema),
     testController.updateTestSettings
@@ -78,18 +85,12 @@ router.get("/:testId/for-user", validateRequest(testIdSchema), testController.ge
 // Добавление вопросов к тесту
 // router.put("/:testId/questions", authMiddleware, validateRequest(updateTestSchema), testController.updateTest)
 router.put("/:testId/questions", authMiddleware, testOwnershipMiddleware, questionController.addQuestions)
-router.put("/:testId/questions-u", authMiddleware, testOwnershipMiddleware,questionController.upsertQuestions)
+router.put("/:testId/questions-u", authMiddleware, testOwnershipMiddleware, questionController.upsertQuestions)
 
 // Получение всех вопросов теста
 router.get("/:testId/questions", authMiddleware, questionController.getTestQuestions)
 
-// Обновление вопроса
-// router.put(
-//     "/questions/:questionId",
-//     authMiddleware,
-//     validateRequest(updateQuestionSchema),
-//     questionController.updateQuestion
-// )
+
 // Удаление вопроса из теста
 router.delete("/questions/:questionId", authMiddleware, questionOwnershipMiddleware, questionController.deleteQuestion)
 
