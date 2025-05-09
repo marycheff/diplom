@@ -10,6 +10,7 @@ import { CreateUserDTO, UserDTO } from "@/types/core/user.types"
 import { Token } from "@prisma/client"
 import bcrypt from "bcryptjs"
 import { v4 as uuid_v4 } from "uuid"
+import { redisClient } from "@/utils/redis-client"
 
 const LOG_NAMESPACE = "AuthService"
 
@@ -122,6 +123,9 @@ class AuthService {
             const tokens = tokenService.generateTokens(userDto)
 
             await userRepository.saveToken(user.id, tokens.refreshToken)
+
+
+            await redisClient.del(`user:${user.id}`)
             logger.info(`[${LOG_NAMESPACE}] Аккаунт пользователя успешно активирован`, { userId: user.id })
 
             return { ...tokens, user: userDto }

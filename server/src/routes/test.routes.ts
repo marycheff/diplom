@@ -90,7 +90,6 @@ router.put("/:testId/questions-u", authMiddleware, testOwnershipMiddleware, ques
 // Получение всех вопросов теста
 router.get("/:testId/questions", authMiddleware, questionController.getTestQuestions)
 
-
 // Удаление вопроса из теста
 router.delete("/questions/:questionId", authMiddleware, questionOwnershipMiddleware, questionController.deleteQuestion)
 
@@ -152,13 +151,6 @@ router.post(
     attemptController.completeAttempt
 )
 
-router.get(
-    "/attempts/:attemptId/",
-    authMiddleware,
-    adminMiddleware,
-    validateRequest(getAttemptSchema),
-    attemptController.getAttempt
-)
 router.get("/attempts/:attemptId/for-user", validateRequest(getAttemptSchema), attemptController.getAttemptForUser)
 router.get(
     "/attempts/:attemptId/results",
@@ -166,9 +158,18 @@ router.get(
     validateRequest(getAttemptSchema),
     attemptController.getAttemptResults
 )
-
 router.get("/:testId/attempts", authMiddleware, testOwnershipMiddleware, attemptController.getTestAttempts)
 
+router.get("/attempts/my-attempts", authMiddleware, attemptController.getMyAttempts)
+router.get("/attempts/user-attempts", authMiddleware, adminMiddleware, attemptController.getUserAttempts)
+
+router.get(
+    "/attempts/:attemptId/",
+    authMiddleware,
+    adminMiddleware,
+    validateRequest(getAttemptSchema),
+    attemptController.getAttempt
+)
 // router.get(
 //     "/user-attempts/:userId",
 //     authMiddleware,
