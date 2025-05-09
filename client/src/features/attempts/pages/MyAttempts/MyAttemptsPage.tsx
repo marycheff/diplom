@@ -1,0 +1,111 @@
+import MyAttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/MyAttemptsTable"
+import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
+import { useCache } from "@/shared/hooks/useCache"
+import { useSearch } from "@/shared/hooks/useSearch"
+import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
+import { AttemptsListDTO, TestAttemptDTO } from "@/shared/types"
+import { Button } from "@/shared/ui/Button"
+import Pagination from "@/shared/ui/Pagination/Pagination"
+import { formatDate } from "@/shared/utils/formatter"
+import { useCallback, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+
+const MyAttemptsPage = () => {
+    const [attempts, setAttempts] = useState<TestAttemptDTO[]>([])
+    const [total, setTotal] = useState<number | null>(null)
+    const [limit] = useState<number>(10)
+    const [page, setPage] = useState<number>(1)
+    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
+        useCache<AttemptsListDTO>(useAttemptStore)
+    const navigate = useNavigate()
+    const params = new URLSearchParams(location.search)
+
+    const { handleResetSearch: resetSearch } = useSearch()
+
+    const { getMyAttempts, isFetching } = useAttemptStore()
+
+    const fetchData = useCallback(
+        async (currentPage: number) => {
+            if (isFetching) return
+
+            const cacheKey = getCacheKey(currentPage)
+            const cachedData = getCachedData(cacheKey)
+
+            if (cachedData) {
+                setAttempts(cachedData.attempts)
+                setTotal(cachedData.total)
+                return
+            }
+            const data = await getMyAttempts(currentPage, limit)
+            if (data) {
+                setAttempts(data.attempts)
+                setTotal(data.total)
+                saveToCache(cacheKey, data)
+            }
+        },
+        [getCacheKey, getCachedData, saveToCache, getMyAttempts, limit]
+    )
+    useEffect(() => {
+        const params = new URLSearchParams(location.search)
+        let pageParam = parseInt(params.get("page") || "1", 10)
+        if (!params.has("page")) {
+            params.set("page", "1")
+            navigate({ search: params.toString() })
+            pageParam = 1
+        }
+
+        setPage(pageParam)
+        fetchData(pageParam)
+    }, [location.search, fetchData, cacheVersion, navigate])
+    const handlePageChange = (newPage: number) => {
+        params.set("page", newPage.toString())
+        navigate({ search: params.toString() })
+    }
+    const handleUpdateButton = () => {
+        clearCache()
+    }
+    const handleResetSearch = () => {
+        // clearCache()
+        resetSearch()
+        // fetchData(1)
+    }
+    const isDataLoaded = total !== null
+    const hasTests = total !== null && total > 0
+    const isSearchActive = !!params.get("query")
+    const totalPages = total !== null ? Math.ceil(total / limit) : 0
+    const shouldShowContent = totalPages > 0 && page <= totalPages
+
+    return (
+        <>
+            {page > totalPages && (
+                <Button onClick={handleResetSearch} disabled={isFetching}>
+                    Сбросить
+                </Button>
+            )}
+
+            <Button onClick={handleUpdateButton} disabled={isFetching}>
+                Обновить
+            </Button>
+            <div className="cache-info">
+                <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+            </div>
+            {isFetching || !isDataLoaded ? (
+                <TableSkeleton />
+            ) : (
+                <>
+                    {attempts.length > 0 && totalPages > 0 && page <= totalPages ? (
+                        <>
+                            <MyAttemptsTable attempts={attempts} total={total} />
+                            <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
+                        </>
+                    ) : (
+                        <NothingFound />
+                    )}
+                </>
+            )}
+        </>
+    )
+}
+
+export default MyAttemptsPage

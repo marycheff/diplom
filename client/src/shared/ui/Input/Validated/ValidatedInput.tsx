@@ -77,6 +77,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                         onChange={handleChange}
                         name={name}
                         rows={rows}
+                        maxLength={400}
                     />
                 ) : mask ? (
                     <Controller

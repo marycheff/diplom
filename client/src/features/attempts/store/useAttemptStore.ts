@@ -87,5 +87,12 @@ export const useAttemptStore = create<AttemptState>(set => {
             }
             return withLoading(operation)
         },
+        getMyAttempts: async (page = 1, limit = 10) => {
+            const operation = async () => {
+                const response = await attemptService.getMyAttempts(page, limit)
+                return response.data
+            }
+            return withFetching(operation)
+        },
     }
 })

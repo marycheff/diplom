@@ -37,7 +37,6 @@ class AttemptService {
             },
         })
     }
-    // TODO: исправить any
     startTestAttempt(testId: string, preTestUserData?: PreTestUserDataType): Promise<AxiosResponse<StartAttemptDTO>> {
         return axiosInstance.post<StartAttemptDTO>(`/tests/${testId}/start`, {
             userData: preTestUserData,
@@ -50,6 +49,14 @@ class AttemptService {
     }
     completeAttempt(attemptId: string): Promise<AxiosResponse<CompleteAttemptResponse>> {
         return axiosInstance.post<CompleteAttemptResponse>(`/tests/attempts/${attemptId}/complete`)
+    }
+    getMyAttempts(page = 1, limit = 10): Promise<AxiosResponse<AttemptsListDTO>> {
+        return axiosInstance.get<AttemptsListDTO>("/tests/attempts/my-attempts", {
+            params: {
+                page,
+                limit,
+            },
+        })
     }
 }
 

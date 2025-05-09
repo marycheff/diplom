@@ -3,12 +3,12 @@ export const ROUTES = {
     START_ATTEMPT: "/:testId/start",
     PASS_ATTEMPT: "/my-attempts/:attemptId",
     ATTEMPT_RESULTS: "/my-attempts/:attemptId/results",
+    ACTIVATION_ERROR: "/activation-error",
+    ACTIVATION_SUCCESS: "/activation-success",
 
     // Маршруты для неавторизованных пользователей
     LOGIN: "/login",
     REGISTER: "/register",
-    ACTIVATION_ERROR: "/activation-error",
-    ACTIVATION_SUCCESS: "/activation-success",
     WELCOME: "/",
 
     // Защищенные маршруты (для авторизованных пользователей)
@@ -19,6 +19,7 @@ export const ROUTES = {
     MY_TEST_INFO: "/my-tests/:testId",
     MY_TEST_ADD_QUESTIONS: "/my-tests/:testId/add-questions",
     MY_TEST_EDIT_SETTINGS: "/my-tests/:testId/edit-settings",
+    MY_ATTEMPTS: "/my-attempts",
 
     // Админские маршруты
     ADMIN: "/admin",
@@ -35,4 +36,5 @@ export const ROUTES = {
     ADMIN_PROFILE: "/admin/profile",
     ADMIN_MY_TESTS: "/admin/my-tests",
     ADMIN_MY_TEST_INFO: "/admin/my-tests/:testId",
+    ADMIN_MY_ATTEMPTS: "/admin/my-attempts",
 }

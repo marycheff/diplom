@@ -182,6 +182,12 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
                 active={currentPath.startsWith(ROUTES.ADMIN_MY_TESTS)}>
                 {!collapsed && "Мои тесты"}
             </MenuItemWithCollapse>
+            <MenuItemWithCollapse
+                icon={<FiFileText style={{ color: colors.testing }} />}
+                component={<Link to={ROUTES.ADMIN_MY_ATTEMPTS} />}
+                active={currentPath.startsWith(ROUTES.ADMIN_MY_ATTEMPTS)}>
+                {!collapsed && "Мои попытки прохождения"}
+            </MenuItemWithCollapse>
             <CategoryHeader title="Профиль" color={colors.profile} />
             <MenuItemWithCollapse
                 icon={<FiUser style={{ color: colors.profile }} />}
@@ -225,6 +231,12 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
                 component={<Link to={ROUTES.MY_TESTS} />}
                 active={currentPath.startsWith(ROUTES.MY_TESTS)}>
                 {!collapsed && "Мои тесты"}
+            </MenuItemWithCollapse>
+            <MenuItemWithCollapse
+                icon={<FiFileText style={{ color: colors.testing }} />}
+                component={<Link to={ROUTES.MY_ATTEMPTS} />}
+                active={currentPath.startsWith(ROUTES.MY_ATTEMPTS)}>
+                {!collapsed && "Мои попытки прохождения"}
             </MenuItemWithCollapse>
         </>
     )

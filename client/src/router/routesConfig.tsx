@@ -2,6 +2,7 @@ import AdminPage from "@/features/admin/pages/AdminPage"
 import AllAttemptsPage from "@/features/attempts/pages/AllAttempts/AllAttemptsPage"
 import AttemptInfoPage from "@/features/attempts/pages/AttemptInfo/AttemptInfoPage"
 import AttemptResultsPage from "@/features/attempts/pages/AttemptResults/AttemptResultsPage"
+import MyAttemptsPage from "@/features/attempts/pages/MyAttempts/MyAttemptsPage"
 import StartAttemptPage from "@/features/attempts/pages/StartAttempt/StartAttemptPage"
 import TestAttemptsPage from "@/features/attempts/pages/TestAttempts/TestAttemptsPage"
 import TestTaking from "@/features/attempts/pages/TestTaking/TestTaking"
@@ -36,6 +37,7 @@ export const adminRoutes = [
     { path: ROUTES.ADMIN_PROFILE, element: <UserProfilePage /> },
     { path: ROUTES.ADMIN_MY_TESTS, element: <MyTestsPage /> },
     { path: ROUTES.ADMIN_MY_TEST_INFO, element: <TestInfoPage /> },
+    { path: ROUTES.ADMIN_MY_ATTEMPTS, element: <MyAttemptsPage /> },
 ]
 
 // Конфигурация пользовательских роутов (для авторизованных пользователей)
@@ -47,18 +49,19 @@ export const userRoutes = [
     { path: ROUTES.MY_TEST_INFO, element: <TestInfoPage /> },
     { path: ROUTES.MY_TEST_ADD_QUESTIONS, element: <TestInfoPage /> },
     { path: ROUTES.MY_TEST_EDIT_SETTINGS, element: <TestInfoPage /> },
+    { path: ROUTES.MY_ATTEMPTS, element: <MyAttemptsPage /> },
 ]
 // Конфигурация публичных роутов
 export const publicRoutes = [
     { path: ROUTES.START_ATTEMPT, element: <StartAttemptPage /> },
     { path: ROUTES.PASS_ATTEMPT, element: <TestTaking /> },
     { path: ROUTES.ATTEMPT_RESULTS, element: <AttemptResultsPage /> },
+    { path: ROUTES.ACTIVATION_ERROR, element: <ActivationErrorPage /> },
+    { path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> },
 ]
 // Конфигурация роутов для неавторизованных пользователей
 export const unauthorizedRoutes = [
     { path: ROUTES.LOGIN, element: <LoginPage /> },
     { path: ROUTES.REGISTER, element: <RegisterPage /> },
-    { path: ROUTES.ACTIVATION_ERROR, element: <ActivationErrorPage /> },
-    { path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> },
     { path: ROUTES.WELCOME, element: <WelcomePage /> },
 ]
