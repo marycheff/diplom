@@ -14,7 +14,7 @@ export interface TestSnapshotDTO {
     description: string | null
     status: string
     createdAt: Date
-    questions: QuestionSnapshotDTO[]
+    questions?: QuestionSnapshotDTO[]
     settings?: TestSettingsSnapshotDTO
 }
 

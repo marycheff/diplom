@@ -3,12 +3,14 @@ import attemptRepository from "@/repositories/tests/attempt.repository"
 import testRepository from "@/repositories/tests/test.repository"
 import {
     mapToAttemptWithResultsDTO,
+    mapToAttemptWithSnapshotDTO,
     mapToTestAttemptDTO,
     mapToTestAttemptUserDTO,
 } from "@/services/mappers/test.mappers"
 import {
     AttemptAnswer,
     AttemptsListDTO,
+    AttemptsWithSnapshotListDTO,
     PreTestUserData,
     PreTestUserDataLabels,
     PreTestUserDataType,
@@ -378,15 +380,15 @@ class AttemptService {
         }
     }
 
-    async getUserAttempts(userId: string, page = 1, limit = 10): Promise<AttemptsListDTO> {
+    async getUserAttempts(userId: string, page = 1, limit = 10): Promise<AttemptsWithSnapshotListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение попыток пользователя`, { userId, page, limit })
         try {
-            const attempts = await attemptRepository.findByUserId(userId, page, limit)
+            const attempts = await attemptRepository.findManyByUserId(userId, page, limit)
             const total = await attemptRepository.count({ userId })
 
             logger.debug(`[${LOG_NAMESPACE}] Попытки пользователя успешно получены`, { userId, count: attempts.length })
             return {
-                attempts: attempts.map(attempt => mapToTestAttemptDTO(attempt)),
+                attempts: attempts.map(attempt => mapToAttemptWithSnapshotDTO(attempt)),
                 total,
             }
         } catch (error) {

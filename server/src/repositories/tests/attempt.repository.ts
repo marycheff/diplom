@@ -275,41 +275,15 @@ class AttemptRepository {
         })
         return attempts
     }
-    async findByUserId(userId: string, page: number, limit: number) {
+    async findManyByUserId(userId: string, page: number, limit: number) {
         const skip = (page - 1) * limit
         const attempts = await prisma.testAttempt.findMany({
             skip,
             take: limit,
             where: { userId },
             include: {
-                test: {
-                    include: {
-                        author: true,
-                        questions: {
-                            include: {
-                                answers: true,
-                            },
-                            orderBy: { order: "asc" },
-                        },
-                    },
-                },
                 user: true,
-                answers: {
-                    include: {
-                        question: true,
-                        answer: true,
-                    },
-                },
-                snapshot: {
-                    include: {
-                        questions: {
-                            include: {
-                                answers: true,
-                            },
-                        },
-                        settings: true,
-                    },
-                },
+                snapshot: true
             },
             orderBy: { startedAt: "desc" },
         })

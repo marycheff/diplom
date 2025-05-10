@@ -3,6 +3,7 @@ import {
     AnswerDTO,
     AnswerUserDTO,
     AttemptQuestionDTO,
+    AttemptWithSnapshotDTO,
     PreTestUserDataType,
     QuestionDTO,
     TestAttemptDTO,
@@ -163,6 +164,33 @@ export const mapToTestAttemptDTO = (
         preTestUserData: attempt.preTestUserData as PreTestUserDataType,
         test: mapTest(attempt.test),
         questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
+    }
+}
+
+export const mapToAttemptWithSnapshotDTO = (
+    attempt: TestAttempt & {
+        user: User | null
+        snapshot: TestSnapshot | null
+    }
+): AttemptWithSnapshotDTO => {
+    return {
+        id: attempt.id,
+        status: attempt.status,
+        startedAt: attempt.startedAt,
+        completedAt: attempt.completedAt ?? null,
+        score: attempt.score ?? null,
+        user: attempt.user ? mapUserToDto(attempt.user) : null,
+        preTestUserData: attempt.preTestUserData as PreTestUserDataType,
+        snapshot: attempt.snapshot
+            ? {
+                  id: attempt.snapshot.id,
+                  testId: attempt.snapshot.testId,
+                  title: attempt.snapshot.title,
+                  description: attempt.snapshot.description,
+                  status: attempt.snapshot.status,
+                  createdAt: attempt.snapshot.createdAt,
+              }
+            : null,
     }
 }
 
