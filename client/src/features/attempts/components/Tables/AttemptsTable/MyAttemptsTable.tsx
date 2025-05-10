@@ -1,11 +1,11 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
-import { AttemptStatusLabels, TestAttemptDTO } from "@/shared/types"
+import { AttemptStatusLabels, AttemptWithSnapshotDTO } from "@/shared/types"
 import { formatDate } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./AttemptsTable.module.scss"
 interface MyAttemptsTableProps {
-    attempts: TestAttemptDTO[] | undefined
+    attempts: AttemptWithSnapshotDTO[] | undefined
     total: number
 }
 const MyAttemptsTable: FC<MyAttemptsTableProps> = ({ attempts, total }) => {
@@ -50,12 +50,17 @@ const MyAttemptsTable: FC<MyAttemptsTableProps> = ({ attempts, total }) => {
 
                                         <td>
                                             {isAdmin ? (
-                                                <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
+                                                <Link
+                                                    to={`/admin/tests/${attempt.snapshot?.testId}`}
+                                                    className="actionLink">
                                                     {/* {shortenUuid(attempt.test.id)} */}
-                                                    {attempt.test.title}
+                                                    {/* {attempt.test.title} */}
+                                                    {/* Перейти */}
+                                                    {attempt.snapshot?.title}
+                                                
                                                 </Link>
                                             ) : (
-                                                attempt.test.title
+                                                attempt.snapshot?.title
                                             )}
 
                                             {/* <br />

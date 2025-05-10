@@ -1,4 +1,4 @@
-import { AnswerDTO, PreTestUserData, QuestionType, TestDTO, UserDTO } from "@/shared/types"
+import { AnswerDTO, PreTestUserData, QuestionType, TestDTO, TestSnapshotDTO, UserDTO } from "@/shared/types"
 
 export interface AttemptState {
     isFetching: boolean
@@ -8,7 +8,7 @@ export interface AttemptState {
     getAttemptResults: (id: string) => Promise<TestAttemptResultDTO | undefined>
     getAttemptForUserById: (id: string) => Promise<TestAttemptUserDTO | undefined>
     getAllAttempts: (page: number, limit: number) => Promise<AttemptsListDTO | undefined>
-    getMyAttempts: (page: number, limit: number) => Promise<AttemptsListDTO | undefined>
+    getMyAttempts: (page: number, limit: number) => Promise<AttemptsWithSnapshotListDTO | undefined>
     // TODO: исправить any
     startAttempt: (testId: string, preTestUserData?: any) => Promise<StartAttemptDTO | undefined>
     saveAnswers: (attemptId: string, answers: AttemptAnswer[]) => Promise<void>
@@ -37,6 +37,23 @@ export interface TestAttemptDTO {
     questions: AttemptQuestionDTO[]
     snapshotId: string
 }
+
+export interface AttemptWithSnapshotDTO {
+    id: string
+    status: AttemptStatus
+    startedAt: Date
+    completedAt: Date | null
+    score: number | null
+    user: UserDTO | null
+    preTestUserData: Record<PreTestUserData, string> | null
+    snapshot: TestSnapshotDTO | null
+}
+
+export interface AttemptsWithSnapshotListDTO {
+    attempts: AttemptWithSnapshotDTO[]
+    total: number
+}
+
 export interface TestAttemptResultDTO {
     id: string
     status: AttemptStatus
@@ -62,6 +79,8 @@ export interface AttemptsListDTO {
     attempts: TestAttemptDTO[]
     total: number
 }
+
+
 
 export interface AttemptQuestionDTO {
     question: {

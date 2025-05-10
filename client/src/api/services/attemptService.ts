@@ -2,6 +2,7 @@ import axiosInstance from "@/api"
 import {
     AttemptAnswer,
     AttemptsListDTO,
+    AttemptsWithSnapshotListDTO,
     CompleteAttemptResponse,
     PreTestUserDataType,
     StartAttemptDTO,
@@ -28,7 +29,7 @@ class AttemptService {
     }
     getAttemptForUserById(id: string): Promise<AxiosResponse<TestAttemptUserDTO>> {
         return axiosInstance.get<TestAttemptUserDTO>(`/tests/attempts/${id}/for-user`)
-    } 
+    }
     getAllAttempts(page = 1, limit = 10): Promise<AxiosResponse<AttemptsListDTO>> {
         return axiosInstance.get<AttemptsListDTO>("/tests/attempts/all", {
             params: {
@@ -50,8 +51,8 @@ class AttemptService {
     completeAttempt(attemptId: string): Promise<AxiosResponse<CompleteAttemptResponse>> {
         return axiosInstance.post<CompleteAttemptResponse>(`/tests/attempts/${attemptId}/complete`)
     }
-    getMyAttempts(page = 1, limit = 10): Promise<AxiosResponse<AttemptsListDTO>> {
-        return axiosInstance.get<AttemptsListDTO>("/tests/attempts/my-attempts", {
+    getMyAttempts(page = 1, limit = 10): Promise<AxiosResponse<AttemptsWithSnapshotListDTO>> {
+        return axiosInstance.get<AttemptsWithSnapshotListDTO>("/tests/attempts/my-attempts", {
             params: {
                 page,
                 limit,

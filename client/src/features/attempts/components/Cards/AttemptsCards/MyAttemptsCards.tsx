@@ -1,12 +1,12 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
-import { AttemptStatus, AttemptStatusLabels, TestAttemptDTO } from "@/shared/types"
+import { AttemptStatus, AttemptStatusLabels, AttemptWithSnapshotDTO, TestAttemptDTO } from "@/shared/types"
 import { formatDate } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./AttemptsCards.module.scss"
 
 interface MyAttemptsCardsProps {
-    attempts: TestAttemptDTO[] | undefined
+    attempts: AttemptWithSnapshotDTO[] | undefined
     total: number
 }
 
@@ -39,7 +39,7 @@ const MyAttemptsCards: FC<MyAttemptsCardsProps> = ({ attempts, total }) => {
                         {attempts.map(attempt => (
                             <div key={attempt.id} className={styles.card}>
                                 <div className={styles.cardHeader}>
-                                    <h3>{attempt.test.title}</h3>
+                                    <h3>{attempt.snapshot?.title}</h3>
                                     <span className={`${styles.statusBadge} ${getStatusClassName(attempt.status)}`}>
                                         {AttemptStatusLabels[attempt.status]}
                                     </span>

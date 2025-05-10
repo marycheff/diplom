@@ -2,10 +2,9 @@ import MyAttemptsCards from "@/features/attempts/components/Cards/AttemptsCards/
 import MyAttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/MyAttemptsTable"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
-import { useCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
-import { AttemptsListDTO, TestAttemptDTO } from "@/shared/types"
+import { AttemptsWithSnapshotListDTO, AttemptWithSnapshotDTO, TestAttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import { formatDate } from "@/shared/utils/formatter"
@@ -16,7 +15,7 @@ import styles from "./MyAttemptsPage.module.scss"
 type ViewMode = "table" | "cards"
 
 const MyAttemptsPage = () => {
-    const [attempts, setAttempts] = useState<TestAttemptDTO[]>([])
+    const [attempts, setAttempts] = useState<AttemptWithSnapshotDTO[]>([])
     const [total, setTotal] = useState<number | null>(null)
     const [limit] = useState<number>(10)
     const [page, setPage] = useState<number>(1)
@@ -24,8 +23,8 @@ const MyAttemptsPage = () => {
         const savedViewMode = localStorage.getItem("myAttemptsViewMode")
         return (savedViewMode as ViewMode) || "cards"
     })
-    const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
-        useCache<AttemptsListDTO>(useAttemptStore, "my-attempts")
+    // const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
+    //     useCache<AttemptsListDTO>(useAttemptStore, "my-attempts")
     const navigate = useNavigate()
     const params = new URLSearchParams(location.search)
 
@@ -43,22 +42,24 @@ const MyAttemptsPage = () => {
         async (currentPage: number) => {
             if (isFetching) return
 
-            const cacheKey = getCacheKey(currentPage)
-            const cachedData = getCachedData(cacheKey)
+            // const cacheKey = getCacheKey(currentPage)
+            // const cachedData = getCachedData(cacheKey)
 
-            if (cachedData) {
-                setAttempts(cachedData.attempts)
-                setTotal(cachedData.total)
-                return
-            }
+            // if (cachedData) {
+            //     setAttempts(cachedData.attempts)
+            //     setTotal(cachedData.total)
+            //     return
+            // }
             const data = await getMyAttempts(currentPage, limit)
             if (data) {
                 setAttempts(data.attempts)
                 setTotal(data.total)
-                saveToCache(cacheKey, data)
+                // saveToCache(cacheKey, data)
             }
         },
-        [getCacheKey, getCachedData, saveToCache, getMyAttempts, limit]
+        [
+            // getCacheKey, getCachedData, saveToCache,
+             getMyAttempts, limit]
     )
     useEffect(() => {
         const params = new URLSearchParams(location.search)
@@ -71,13 +72,14 @@ const MyAttemptsPage = () => {
 
         setPage(pageParam)
         fetchData(pageParam)
-    }, [location.search, fetchData, cacheVersion, navigate])
+    }, [location.search, fetchData, navigate])
     const handlePageChange = (newPage: number) => {
         params.set("page", newPage.toString())
         navigate({ search: params.toString() })
     }
     const handleUpdateButton = () => {
-        clearCache()
+        // clearCache()
+        fetchData(page)
     }
     const handleResetSearch = () => {
         // clearCache()
@@ -107,9 +109,9 @@ const MyAttemptsPage = () => {
                     {viewMode === "table" ? "Показать карточками" : "Показать таблицей"}
                 </Button>
             </div>
-            <div className="cache-info">
+            {/* <div className="cache-info">
                 <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
-            </div>
+            </div> */}
             {isFetching || !isDataLoaded ? (
                 <TableSkeleton />
             ) : emptyAttemptsPage ? (

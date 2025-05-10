@@ -9,9 +9,10 @@ import {
     TestAttemptDTO,
 } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
+import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import Loader from "@/shared/ui/Loader/Loader"
 import { Modal } from "@/shared/ui/Modal"
-import { formatDate } from "@/shared/utils/formatter"
+import { formatDate, shortenText } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import { generatePath, Link, useParams } from "react-router-dom"
@@ -58,7 +59,10 @@ const AttemptInfo = () => {
                     <div className={styles.blockContent}>
                         <div className={styles.infoRow}>
                             <span className={styles.label}>ID</span>
-                            <span className={styles.value}>{attempt.id}</span>
+                            <span className={styles.value}>
+                                {shortenText(attempt.id)}
+                                <CopyButton textToCopy={attempt.id} showOnHover />
+                            </span>
                         </div>
                         <div className={styles.infoRow}>
                             <span className={styles.label}>Статус</span>
@@ -117,9 +121,15 @@ const AttemptInfo = () => {
                                 <div className={styles.infoRow}>
                                     <span className={styles.label}>ID</span>
                                     <span className={styles.value}>
-                                        <Link to={`/admin/users/${attempt.user.id}`} className="actionLink">
-                                            {attempt.user.id}
+                                        <Link
+                                            to={
+                                                generatePath(ROUTES.ADMIN_USER_INFO, { userId: attempt.test.id })
+                                                // `/admin/users/${attempt.user.id}`
+                                            }
+                                            className="actionLink">
+                                            {shortenText(attempt.user.id)}
                                         </Link>
+                                        <CopyButton textToCopy={attempt.user.id}  />
                                     </span>
                                 </div>
 
@@ -180,13 +190,16 @@ const AttemptInfo = () => {
                                 <div className={styles.infoRow}>
                                     <span className={styles.label}>ID</span>
                                     <span className={styles.value}>
-                                        <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
-                                            {attempt.test.id}
+                                        <Link
+                                            to={generatePath(ROUTES.ADMIN_TEST_INFO, { testId: attempt.test.id })}
+                                            className="actionLink">
+                                            {shortenText(attempt.test.id)}
                                         </Link>
+                                        <CopyButton textToCopy={attempt.test.id} showOnHover />
                                     </span>
                                 </div>
                                 <div className={styles.infoRow}>
-                                    <span className={styles.label}>Тест на момент прохождения:</span>
+                                    <span className={styles.label}>Тест на момент прохождения</span>
                                     <span className={styles.value}>
                                         {/* {attempt.snapshotId} */}
                                         {/* <Link
@@ -202,12 +215,12 @@ const AttemptInfo = () => {
                                         </Button>
                                     </span>
                                 </div>
-                                <div className={styles.infoRow}>
+                                {/* <div className={styles.infoRow}>
                                     <span className={styles.label}>Название</span>
                                     <span className={styles.value}>
                                         {attempt.test.title || <span className={styles.emptyField}>—</span>}
                                     </span>
-                                </div>
+                                </div> */}
                             </>
                         ) : (
                             <div className={styles.emptyBlock}>Информация о тесте отсутствует</div>

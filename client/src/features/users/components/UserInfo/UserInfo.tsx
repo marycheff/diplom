@@ -66,7 +66,7 @@ const UserInfo = () => {
                 <Loader />
             ) : (
                 user && (
-                    <>
+                    <div className={styles.container}>
                         <div className={styles.infoBlock}>
                             <h1 className={styles.blockTitle}>Информация о пользователе</h1>
                             <div className={styles.blockContent}>
@@ -170,7 +170,7 @@ const UserInfo = () => {
                                 </table>
                             )}
                         </div> */}
-                    </>
+                    </div>
                 )
             )}
         </>

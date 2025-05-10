@@ -7,13 +7,15 @@
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 1;
     transform: translateY(0);
+    position: relative; 
+    top: -2px;
 
     &[data-visible="false"] {
         opacity: 0;
         transform: translateY(-2px);
         pointer-events: none;
     }
-    
+
     &[data-visible="true"] {
         opacity: 1;
         transform: translateY(0);
