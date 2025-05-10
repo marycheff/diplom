@@ -4,11 +4,12 @@ import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
-import { AttemptsWithSnapshotListDTO, AttemptWithSnapshotDTO, TestAttemptDTO } from "@/shared/types"
+import { AttemptWithSnapshotDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
-import { formatDate } from "@/shared/utils/formatter"
+import Select from "@/shared/ui/Select/Select"
 import { useCallback, useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import styles from "./MyAttemptsPage.module.scss"
 
@@ -32,8 +33,8 @@ const MyAttemptsPage = () => {
 
     const { getMyAttempts, isFetching } = useAttemptStore()
 
-    const toggleViewMode = () => {
-        const newViewMode = viewMode === "table" ? "cards" : "table"
+    const handleViewModeChange = (value: string) => {
+        const newViewMode = value as ViewMode
         setViewMode(newViewMode)
         localStorage.setItem("myAttemptsViewMode", newViewMode)
     }
@@ -59,7 +60,9 @@ const MyAttemptsPage = () => {
         },
         [
             // getCacheKey, getCachedData, saveToCache,
-             getMyAttempts, limit]
+            getMyAttempts,
+            limit,
+        ]
     )
     useEffect(() => {
         const params = new URLSearchParams(location.search)
@@ -92,7 +95,7 @@ const MyAttemptsPage = () => {
     const totalPages = total !== null ? Math.ceil(total / limit) : 0
     const shouldShowPagination = totalPages > 0 && page <= totalPages
     const emptyAttemptsPage = total === 0 && page === 1 && isDataLoaded
-
+    const { register, handleSubmit, formState, setValue, watch, reset, trigger } = useForm({})
     return (
         <>
             {page > totalPages && (
@@ -104,9 +107,6 @@ const MyAttemptsPage = () => {
             <div className={styles.buttonsContainer}>
                 <Button onClick={handleUpdateButton} disabled={isFetching}>
                     Обновить
-                </Button>
-                <Button onClick={toggleViewMode} disabled={isFetching}>
-                    {viewMode === "table" ? "Показать карточками" : "Показать таблицей"}
                 </Button>
             </div>
             {/* <div className="cache-info">
@@ -129,14 +129,27 @@ const MyAttemptsPage = () => {
             ) : (
                 <>
                     {shouldShowPagination ? (
-                        <>
+                        <div className={styles.contentContainer}>
+                            <div className={styles.header}>
+                                <Select
+                                    register={register}
+                                    label="Вид отображения"
+                                    name="viewMode"
+                                    options={[
+                                        { value: "table", label: "Таблицей" },
+                                        { value: "cards", label: "Карточками" },
+                                    ]}
+                                    value={viewMode}
+                                    onChange={handleViewModeChange}
+                                />
+                            </div>
                             {viewMode === "table" ? (
                                 <MyAttemptsTable attempts={attempts} total={total} />
                             ) : (
                                 <MyAttemptsCards attempts={attempts} total={total} />
                             )}
                             <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
-                        </>
+                        </div>
                     ) : (
                         <NothingFound />
                     )}

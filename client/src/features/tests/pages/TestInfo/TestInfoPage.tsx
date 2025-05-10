@@ -281,8 +281,9 @@ const TestInfoPage = () => {
                                 <span className={styles.label}>ID</span>
                                 <span className={styles.value}>
                                     <Link to={`/admin/users/${test.author.id}`} className="actionLink">
-                                        {test.author.id}
+                                        {shortenText(test.author.id)}
                                     </Link>
+                                    <CopyButton textToCopy={test.author.id} showOnHover />
                                 </span>
                             </div>
                             <div className={styles.infoRow}>

@@ -22,7 +22,7 @@ export interface TestSettingsSnapshotDTO {
     id: string
     // snapshotId: string
     requireRegistration: boolean
-    inputFields?: JsonValue
+    inputFields?: PreTestUserData[]
     showDetailedResults: boolean
     shuffleQuestions: boolean
     shuffleAnswers: boolean

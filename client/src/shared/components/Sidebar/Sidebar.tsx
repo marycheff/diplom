@@ -3,6 +3,7 @@ import { ROUTES } from "@/router/paths"
 import { ConfirmationModal } from "@/shared/ui/Modal"
 import { useEffect, useState } from "react"
 import { FiEdit, FiFileText, FiHome, FiList, FiLogOut, FiMenu, FiUser, FiUsers } from "react-icons/fi"
+import { IoAnalyticsSharp } from "react-icons/io5"
 import { MdOutlineScience } from "react-icons/md"
 import { Menu, MenuItem, Sidebar as ProSidebar, sidebarClasses } from "react-pro-sidebar"
 import { Link, useLocation, useNavigate } from "react-router-dom"
@@ -183,7 +184,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
                 {!collapsed && "Мои тесты"}
             </MenuItemWithCollapse>
             <MenuItemWithCollapse
-                icon={<FiFileText style={{ color: colors.testing }} />}
+                icon={<IoAnalyticsSharp style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.ADMIN_MY_ATTEMPTS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_MY_ATTEMPTS)}>
                 {!collapsed && "Мои результаты"}

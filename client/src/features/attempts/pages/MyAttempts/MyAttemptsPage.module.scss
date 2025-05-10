@@ -1,5 +1,14 @@
 @use "@styles/variables" as *;
 
+
+
+.header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
 .emptyState {
     display: flex;
     flex-direction: column;
@@ -49,4 +58,3 @@
     transition: background 0.2s;
     text-decoration: none;
 }
-

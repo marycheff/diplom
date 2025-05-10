@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
-import { AttemptStatus, AttemptStatusLabels, AttemptWithSnapshotDTO, TestAttemptDTO } from "@/shared/types"
+import { AttemptStatus, AttemptStatusLabels, AttemptWithSnapshotDTO } from "@/shared/types"
 import { formatDate } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
@@ -70,7 +70,7 @@ const MyAttemptsCards: FC<MyAttemptsCardsProps> = ({ attempts, total }) => {
                                     </div>
 
                                     <div className={styles.cardActions}>
-                                        <Link
+                                        {/* <Link
                                             to={
                                                 isAdmin
                                                     ? `/admin/my-attempts/${attempt.id}`
@@ -78,8 +78,30 @@ const MyAttemptsCards: FC<MyAttemptsCardsProps> = ({ attempts, total }) => {
                                             }
                                             className={styles.actionLink}>
                                             Перейти
-                                        </Link>
+                                        </Link> */}
+                                        {attempt.status === AttemptStatus.IN_PROGRESS ? (
+                                            <Link to={`/my-attempts/${attempt.id}/pass`} className={styles.actionLink}>
+                                                Продолжить выполнение
+                                            </Link>
+                                        ) : (
+                                            <Link
+                                                to={
+                                                    isAdmin
+                                                        ? `/admin/my-attempts/${attempt.id}`
+                                                        : `/my-attempts/${attempt.id}/results`
+                                                }
+                                                className={styles.actionLink}>
+                                                Перейти
+                                            </Link>
+                                        )}
                                     </div>
+                                    {isAdmin && attempt.status === AttemptStatus.IN_PROGRESS && (
+                                        <div className={styles.cardActions}>
+                                            <Link to={`/admin/my-attempts/${attempt.id}`} className={styles.actionLink}>
+                                                На страницу попытки
+                                            </Link>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
