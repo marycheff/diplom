@@ -1,7 +1,7 @@
 export const ROUTES = {
     // Публичные маршруты
     START_ATTEMPT: "/:testId/start",
-    PASS_ATTEMPT: "/my-attempts/:attemptId",
+    PASS_ATTEMPT: "/my-attempts/:attemptId/pass",
     ATTEMPT_RESULTS: "/my-attempts/:attemptId/results",
     ACTIVATION_ERROR: "/activation-error",
     ACTIVATION_SUCCESS: "/activation-success",
@@ -20,6 +20,7 @@ export const ROUTES = {
     MY_TEST_ADD_QUESTIONS: "/my-tests/:testId/add-questions",
     MY_TEST_EDIT_SETTINGS: "/my-tests/:testId/edit-settings",
     MY_ATTEMPTS: "/my-attempts",
+    MY_ATTEMPT_INFO: "/my-attempts/:attemptId",
 
     // Админские маршруты
     ADMIN: "/admin",
@@ -37,4 +38,5 @@ export const ROUTES = {
     ADMIN_MY_TESTS: "/admin/my-tests",
     ADMIN_MY_TEST_INFO: "/admin/my-tests/:testId",
     ADMIN_MY_ATTEMPTS: "/admin/my-attempts",
+    ADMIN_MY_ATTEMPT_INFO: "admin/my-attempts/:attemptId",
 }

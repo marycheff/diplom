@@ -46,6 +46,7 @@ const Breadcrumbs = () => {
         "add-questions": "Добавление вопросов",
         "edit-settings": "Редактирование вопросов",
         start: "Начать",
+        "my-attempts": "Мои попытки",
     }
 
     return (

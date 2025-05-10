@@ -3,6 +3,10 @@
     display: flex;
     gap: 8px; // Расстояние между кнопками
     align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 30px;
+    
 }
 .dots {
     margin: 0 8px;

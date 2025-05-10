@@ -38,6 +38,7 @@ export const adminRoutes = [
     { path: ROUTES.ADMIN_MY_TESTS, element: <MyTestsPage /> },
     { path: ROUTES.ADMIN_MY_TEST_INFO, element: <TestInfoPage /> },
     { path: ROUTES.ADMIN_MY_ATTEMPTS, element: <MyAttemptsPage /> },
+    { path: ROUTES.ADMIN_MY_ATTEMPT_INFO, element: <AttemptInfoPage /> },
 ]
 
 // Конфигурация пользовательских роутов (для авторизованных пользователей)

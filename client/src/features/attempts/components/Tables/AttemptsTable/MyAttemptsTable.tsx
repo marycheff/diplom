@@ -40,7 +40,7 @@ const MyAttemptsTable: FC<MyAttemptsTableProps> = ({ attempts, total }) => {
                                                 to={
                                                     isAdmin
                                                         ? `/admin/my-attempts/${attempt.id}`
-                                                        : `/my-attempts/${attempt.id}`
+                                                        : `/my-attempts/${attempt.id}/results`
                                                 }
                                                 className="actionLink">
                                                 {/* {shortenText(attempt.id)} */}
@@ -49,10 +49,15 @@ const MyAttemptsTable: FC<MyAttemptsTableProps> = ({ attempts, total }) => {
                                         </td>
 
                                         <td>
-                                            <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
-                                                {/* {shortenUuid(attempt.test.id)} */}
-                                                {attempt.test.title}
-                                            </Link>
+                                            {isAdmin ? (
+                                                <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
+                                                    {/* {shortenUuid(attempt.test.id)} */}
+                                                    {attempt.test.title}
+                                                </Link>
+                                            ) : (
+                                                attempt.test.title
+                                            )}
+
                                             {/* <br />
                                             {attempt.test.title} */}
                                         </td>
