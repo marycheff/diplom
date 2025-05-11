@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import testService from "@/services/tests/test.service"
-import { CreateTest, QuestionDTO, ShortTestInfo, TestSettingsDTO, UpdateTestDTO } from "@/types"
+import { CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types"
 
 import { NextFunction, Request, Response } from "express"
 
@@ -20,7 +20,6 @@ class TestController {
         }
     }
 
-    
     // async updateTestQuestions(req: Request, res: Response, next: NextFunction) {
     //     try {
     //         const { testId } = req.params
@@ -100,7 +99,8 @@ class TestController {
     async getTestByIdForUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { testId } = req.params
-            const test = await testService.getTestForUserById(testId)
+            const attemptId = req.query.attemptId as string
+            const test = await testService.getTestForUserById(testId, attemptId)
             res.status(200).json(test)
         } catch (error) {
             next(error)

@@ -52,7 +52,7 @@ model TestSettings {
   timeLimit           Int?     @default(0)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  shuffleAnswers      Boolean  @default(false)
+  shuffleAnswers      Boolean  @default(true)
   shuffleQuestions    Boolean  @default(false)
   test                Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
 
@@ -202,7 +202,7 @@ model TestSettingsSnapshot {
   inputFields         Json?
   showDetailedResults Boolean      @default(false)
   shuffleQuestions    Boolean      @default(false)
-  shuffleAnswers      Boolean      @default(false)
+  shuffleAnswers      Boolean      @default(true)
   timeLimit           Int?         @default(0)
   createdAt           DateTime     @default(now())
   snapshot            TestSnapshot @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)

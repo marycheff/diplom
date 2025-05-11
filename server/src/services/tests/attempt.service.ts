@@ -92,7 +92,11 @@ class AttemptService {
                 preTestUserData: settings?.requireRegistration ? null : preTestUserData,
             })
 
+            // Чтобы сбрасывалось кол-во попыток
+            await redisClient.del(`test:${testId}`)
+            await redisClient.del(`user-test:${testId}`)
             logger.debug(`[${LOG_NAMESPACE}] Попытка теста успешно начата`, { attemptId: newAttempt.id })
+
             return { attemptId: newAttempt.id }
         } catch (error) {
             if (error instanceof ApiError) {

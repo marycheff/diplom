@@ -174,12 +174,12 @@ class TestRepository {
         const settings = await client.testSettings.create({
             data: {
                 testId: createdTest.id,
-                requireRegistration: testData.settings?.requireRegistration ?? false,
-                inputFields: testData.settings?.inputFields ?? [],
-                shuffleAnswers: testData.settings?.shuffleAnswers,
-                shuffleQuestions: testData.settings?.shuffleQuestions,
-                showDetailedResults: testData.settings?.showDetailedResults ?? false,
-                timeLimit: testData.settings?.timeLimit ?? null,
+                // requireRegistration: testData.settings?.requireRegistration ?? false,
+                // inputFields: testData.settings?.inputFields ?? [],
+                // shuffleAnswers: testData.settings?.shuffleAnswers,
+                // shuffleQuestions: testData.settings?.shuffleQuestions,
+                // showDetailedResults: testData.settings?.showDetailedResults ?? false,
+                // timeLimit: testData.settings?.timeLimit ?? null,
             },
         })
 
