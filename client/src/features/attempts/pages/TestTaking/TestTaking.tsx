@@ -90,7 +90,7 @@ const TestTaking = () => {
     // Загрузка данных теста
     const fetchTest = async () => {
         if (!attempt) return
-        const fetchedTest = await getTestForUserById(attempt.testId)
+        const fetchedTest = await getTestForUserById(attempt.testId, attemptId)
         setTest(fetchedTest || null)
         setTimeLimit(fetchedTest?.settings?.timeLimit || 0)
     }

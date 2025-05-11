@@ -65,9 +65,9 @@ export const useTestStore = create<TestState>(set => {
             }
             return withFetching(operation)
         },
-        getTestForUserById: async (id: string) => {
+        getTestForUserById: async (testId, attemptId) => {
             const operation = async () => {
-                const response = await testService.getTestForUserById(id)
+                const response = await testService.getTestForUserById(testId, attemptId)
                 return response.data
             }
             return withFetching(operation)

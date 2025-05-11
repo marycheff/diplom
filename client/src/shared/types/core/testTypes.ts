@@ -17,7 +17,7 @@ export interface TestState {
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     searchMyTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     getTestById: (id: string) => Promise<TestDTO | undefined>
-    getTestForUserById: (id: string) => Promise<UserTestDTO | undefined>
+    getTestForUserById: (testId: string, attemptId?: string) => Promise<UserTestDTO | undefined>
     getMyTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     createTest: (title: string, description?: string) => Promise<TestDTO | undefined>
     generateAnswers: (data: GenerateAnswerFormData) => Promise<string[]>
@@ -63,6 +63,7 @@ export interface UserTestDTO {
     description?: string
     questions?: UserQuestionDTO[]
     settings?: UserTestSettingsDTO
+
 }
 
 export interface UpdateTestDTO {

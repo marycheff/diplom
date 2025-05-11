@@ -44,9 +44,12 @@ class TestService {
     getTestById(id: string): Promise<AxiosResponse<TestDTO>> {
         return axiosInstance.get<TestDTO>(`/tests/${id}`)
     }
-    getTestForUserById(id: string): Promise<AxiosResponse<UserTestDTO>> {
-        return axiosInstance.get<UserTestDTO>(`/tests/${id}/for-user`)
+    getTestForUserById(testId: string, attemptId?: string): Promise<AxiosResponse<UserTestDTO>> {
+        return axiosInstance.get<UserTestDTO>(`/tests/${testId}/for-user`, {
+            params: { attemptId },
+        })
     }
+
     getMyTests(page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
         return axiosInstance.get<TestsListDTO>("/tests/my-tests", {
             params: {
