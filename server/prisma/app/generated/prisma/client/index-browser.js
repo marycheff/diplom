@@ -168,7 +168,8 @@ exports.Prisma.TestScalarFieldEnum = {
   totalAttempts: 'totalAttempts',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  version: 'version'
+  version: 'version',
+  visibilityStatus: 'visibilityStatus'
 };
 
 exports.Prisma.QuestionScalarFieldEnum = {
@@ -215,14 +216,6 @@ exports.Prisma.UserAnswerScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
-exports.Prisma.BadWordScalarFieldEnum = {
-  id: 'id',
-  word: 'word',
-  addedById: 'addedById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.TestSnapshotScalarFieldEnum = {
   id: 'id',
   testId: 'testId',
@@ -230,7 +223,8 @@ exports.Prisma.TestSnapshotScalarFieldEnum = {
   description: 'description',
   status: 'status',
   createdAt: 'createdAt',
-  version: 'version'
+  version: 'version',
+  visibilityStatus: 'visibilityStatus'
 };
 
 exports.Prisma.QuestionSnapshotScalarFieldEnum = {
@@ -300,9 +294,18 @@ exports.ModerationStatus = exports.$Enums.ModerationStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.TestVisibilityStatus = exports.$Enums.TestVisibilityStatus = {
+  HIDDEN: 'HIDDEN',
+  PUBLISHED: 'PUBLISHED'
+};
+
 exports.QuestionType = exports.$Enums.QuestionType = {
   SINGLE_CHOICE: 'SINGLE_CHOICE',
-  MULTIPLE_CHOICE: 'MULTIPLE_CHOICE'
+  MULTIPLE_CHOICE: 'MULTIPLE_CHOICE',
+  TEXT_INPUT: 'TEXT_INPUT',
+  MATCHING: 'MATCHING',
+  FILL_IN_THE_BLANK: 'FILL_IN_THE_BLANK',
+  SEQUENCE: 'SEQUENCE'
 };
 
 exports.TestAttemptStatus = exports.$Enums.TestAttemptStatus = {
@@ -320,7 +323,6 @@ exports.Prisma.ModelName = {
   Answer: 'Answer',
   TestAttempt: 'TestAttempt',
   UserAnswer: 'UserAnswer',
-  BadWord: 'BadWord',
   TestSnapshot: 'TestSnapshot',
   QuestionSnapshot: 'QuestionSnapshot',
   AnswerSnapshot: 'AnswerSnapshot',

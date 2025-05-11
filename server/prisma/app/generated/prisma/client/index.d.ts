@@ -54,11 +54,6 @@ export type TestAttempt = $Result.DefaultSelection<Prisma.$TestAttemptPayload>
  */
 export type UserAnswer = $Result.DefaultSelection<Prisma.$UserAnswerPayload>
 /**
- * Model BadWord
- * 
- */
-export type BadWord = $Result.DefaultSelection<Prisma.$BadWordPayload>
-/**
  * Model TestSnapshot
  * 
  */
@@ -111,10 +106,22 @@ export type TestAttemptStatus = (typeof TestAttemptStatus)[keyof typeof TestAtte
 
 export const QuestionType: {
   SINGLE_CHOICE: 'SINGLE_CHOICE',
-  MULTIPLE_CHOICE: 'MULTIPLE_CHOICE'
+  MULTIPLE_CHOICE: 'MULTIPLE_CHOICE',
+  TEXT_INPUT: 'TEXT_INPUT',
+  MATCHING: 'MATCHING',
+  FILL_IN_THE_BLANK: 'FILL_IN_THE_BLANK',
+  SEQUENCE: 'SEQUENCE'
 };
 
 export type QuestionType = (typeof QuestionType)[keyof typeof QuestionType]
+
+
+export const TestVisibilityStatus: {
+  HIDDEN: 'HIDDEN',
+  PUBLISHED: 'PUBLISHED'
+};
+
+export type TestVisibilityStatus = (typeof TestVisibilityStatus)[keyof typeof TestVisibilityStatus]
 
 }
 
@@ -133,6 +140,10 @@ export const TestAttemptStatus: typeof $Enums.TestAttemptStatus
 export type QuestionType = $Enums.QuestionType
 
 export const QuestionType: typeof $Enums.QuestionType
+
+export type TestVisibilityStatus = $Enums.TestVisibilityStatus
+
+export const TestVisibilityStatus: typeof $Enums.TestVisibilityStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -338,16 +349,6 @@ export class PrismaClient<
     * ```
     */
   get userAnswer(): Prisma.UserAnswerDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.badWord`: Exposes CRUD operations for the **BadWord** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more BadWords
-    * const badWords = await prisma.badWord.findMany()
-    * ```
-    */
-  get badWord(): Prisma.BadWordDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.testSnapshot`: Exposes CRUD operations for the **TestSnapshot** model.
@@ -836,7 +837,6 @@ export namespace Prisma {
     Answer: 'Answer',
     TestAttempt: 'TestAttempt',
     UserAnswer: 'UserAnswer',
-    BadWord: 'BadWord',
     TestSnapshot: 'TestSnapshot',
     QuestionSnapshot: 'QuestionSnapshot',
     AnswerSnapshot: 'AnswerSnapshot',
@@ -859,7 +859,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "token" | "testSettings" | "test" | "question" | "answer" | "testAttempt" | "userAnswer" | "badWord" | "testSnapshot" | "questionSnapshot" | "answerSnapshot" | "testSettingsSnapshot"
+      modelProps: "user" | "token" | "testSettings" | "test" | "question" | "answer" | "testAttempt" | "userAnswer" | "testSnapshot" | "questionSnapshot" | "answerSnapshot" | "testSettingsSnapshot"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1455,80 +1455,6 @@ export namespace Prisma {
           }
         }
       }
-      BadWord: {
-        payload: Prisma.$BadWordPayload<ExtArgs>
-        fields: Prisma.BadWordFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.BadWordFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.BadWordFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload>
-          }
-          findFirst: {
-            args: Prisma.BadWordFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.BadWordFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload>
-          }
-          findMany: {
-            args: Prisma.BadWordFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload>[]
-          }
-          create: {
-            args: Prisma.BadWordCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload>
-          }
-          createMany: {
-            args: Prisma.BadWordCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.BadWordCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload>[]
-          }
-          delete: {
-            args: Prisma.BadWordDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload>
-          }
-          update: {
-            args: Prisma.BadWordUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload>
-          }
-          deleteMany: {
-            args: Prisma.BadWordDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.BadWordUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.BadWordUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload>[]
-          }
-          upsert: {
-            args: Prisma.BadWordUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BadWordPayload>
-          }
-          aggregate: {
-            args: Prisma.BadWordAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateBadWord>
-          }
-          groupBy: {
-            args: Prisma.BadWordGroupByArgs<ExtArgs>
-            result: $Utils.Optional<BadWordGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.BadWordCountArgs<ExtArgs>
-            result: $Utils.Optional<BadWordCountAggregateOutputType> | number
-          }
-        }
-      }
       TestSnapshot: {
         payload: Prisma.$TestSnapshotPayload<ExtArgs>
         fields: Prisma.TestSnapshotFieldRefs
@@ -1917,7 +1843,6 @@ export namespace Prisma {
     answer?: AnswerOmit
     testAttempt?: TestAttemptOmit
     userAnswer?: UserAnswerOmit
-    badWord?: BadWordOmit
     testSnapshot?: TestSnapshotOmit
     questionSnapshot?: QuestionSnapshotOmit
     answerSnapshot?: AnswerSnapshotOmit
@@ -2016,13 +1941,11 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    badWordsAdded: number
     testAttempts: number
     testsCreated: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    badWordsAdded?: boolean | UserCountOutputTypeCountBadWordsAddedArgs
     testAttempts?: boolean | UserCountOutputTypeCountTestAttemptsArgs
     testsCreated?: boolean | UserCountOutputTypeCountTestsCreatedArgs
   }
@@ -2036,13 +1959,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountBadWordsAddedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BadWordWhereInput
   }
 
   /**
@@ -2530,7 +2446,6 @@ export namespace Prisma {
     updatedAt?: boolean
     activationLinkExp?: boolean
     resetCodeExp?: boolean
-    badWordsAdded?: boolean | User$badWordsAddedArgs<ExtArgs>
     testAttempts?: boolean | User$testAttemptsArgs<ExtArgs>
     testsCreated?: boolean | User$testsCreatedArgs<ExtArgs>
     refreshToken?: boolean | User$refreshTokenArgs<ExtArgs>
@@ -2593,7 +2508,6 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "surname" | "patronymic" | "password" | "isActivated" | "role" | "activationLink" | "resetCode" | "isBlocked" | "createdAt" | "updatedAt" | "activationLinkExp" | "resetCodeExp", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    badWordsAdded?: boolean | User$badWordsAddedArgs<ExtArgs>
     testAttempts?: boolean | User$testAttemptsArgs<ExtArgs>
     testsCreated?: boolean | User$testsCreatedArgs<ExtArgs>
     refreshToken?: boolean | User$refreshTokenArgs<ExtArgs>
@@ -2605,7 +2519,6 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      badWordsAdded: Prisma.$BadWordPayload<ExtArgs>[]
       testAttempts: Prisma.$TestAttemptPayload<ExtArgs>[]
       testsCreated: Prisma.$TestPayload<ExtArgs>[]
       refreshToken: Prisma.$TokenPayload<ExtArgs> | null
@@ -3020,7 +2933,6 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    badWordsAdded<T extends User$badWordsAddedArgs<ExtArgs> = {}>(args?: Subset<T, User$badWordsAddedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     testAttempts<T extends User$testAttemptsArgs<ExtArgs> = {}>(args?: Subset<T, User$testAttemptsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TestAttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     testsCreated<T extends User$testsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$testsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     refreshToken<T extends User$refreshTokenArgs<ExtArgs> = {}>(args?: Subset<T, User$refreshTokenArgs<ExtArgs>>): Prisma__TokenClient<$Result.GetResult<Prisma.$TokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -3453,30 +3365,6 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
-  }
-
-  /**
-   * User.badWordsAdded
-   */
-  export type User$badWordsAddedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-    where?: BadWordWhereInput
-    orderBy?: BadWordOrderByWithRelationInput | BadWordOrderByWithRelationInput[]
-    cursor?: BadWordWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: BadWordScalarFieldEnum | BadWordScalarFieldEnum[]
   }
 
   /**
@@ -5808,6 +5696,7 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     version: number | null
+    visibilityStatus: $Enums.TestVisibilityStatus | null
   }
 
   export type TestMaxAggregateOutputType = {
@@ -5820,6 +5709,7 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     version: number | null
+    visibilityStatus: $Enums.TestVisibilityStatus | null
   }
 
   export type TestCountAggregateOutputType = {
@@ -5832,6 +5722,7 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     version: number
+    visibilityStatus: number
     _all: number
   }
 
@@ -5856,6 +5747,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     version?: true
+    visibilityStatus?: true
   }
 
   export type TestMaxAggregateInputType = {
@@ -5868,6 +5760,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     version?: true
+    visibilityStatus?: true
   }
 
   export type TestCountAggregateInputType = {
@@ -5880,6 +5773,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     version?: true
+    visibilityStatus?: true
     _all?: true
   }
 
@@ -5979,6 +5873,7 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     version: number
+    visibilityStatus: $Enums.TestVisibilityStatus
     _count: TestCountAggregateOutputType | null
     _avg: TestAvgAggregateOutputType | null
     _sum: TestSumAggregateOutputType | null
@@ -6010,6 +5905,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     version?: boolean
+    visibilityStatus?: boolean
     questions?: boolean | Test$questionsArgs<ExtArgs>
     testAttempts?: boolean | Test$testAttemptsArgs<ExtArgs>
     settings?: boolean | Test$settingsArgs<ExtArgs>
@@ -6028,6 +5924,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     version?: boolean
+    visibilityStatus?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["test"]>
 
@@ -6041,6 +5938,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     version?: boolean
+    visibilityStatus?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["test"]>
 
@@ -6054,9 +5952,10 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     version?: boolean
+    visibilityStatus?: boolean
   }
 
-  export type TestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "authorId" | "title" | "description" | "status" | "totalAttempts" | "createdAt" | "updatedAt" | "version", ExtArgs["result"]["test"]>
+  export type TestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "authorId" | "title" | "description" | "status" | "totalAttempts" | "createdAt" | "updatedAt" | "version" | "visibilityStatus", ExtArgs["result"]["test"]>
   export type TestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     questions?: boolean | Test$questionsArgs<ExtArgs>
     testAttempts?: boolean | Test$testAttemptsArgs<ExtArgs>
@@ -6091,6 +5990,7 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       version: number
+      visibilityStatus: $Enums.TestVisibilityStatus
     }, ExtArgs["result"]["test"]>
     composites: {}
   }
@@ -6528,6 +6428,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Test", 'DateTime'>
     readonly updatedAt: FieldRef<"Test", 'DateTime'>
     readonly version: FieldRef<"Test", 'Int'>
+    readonly visibilityStatus: FieldRef<"Test", 'TestVisibilityStatus'>
   }
     
 
@@ -11708,1064 +11609,6 @@ export namespace Prisma {
 
 
   /**
-   * Model BadWord
-   */
-
-  export type AggregateBadWord = {
-    _count: BadWordCountAggregateOutputType | null
-    _min: BadWordMinAggregateOutputType | null
-    _max: BadWordMaxAggregateOutputType | null
-  }
-
-  export type BadWordMinAggregateOutputType = {
-    id: string | null
-    word: string | null
-    addedById: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type BadWordMaxAggregateOutputType = {
-    id: string | null
-    word: string | null
-    addedById: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type BadWordCountAggregateOutputType = {
-    id: number
-    word: number
-    addedById: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type BadWordMinAggregateInputType = {
-    id?: true
-    word?: true
-    addedById?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type BadWordMaxAggregateInputType = {
-    id?: true
-    word?: true
-    addedById?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type BadWordCountAggregateInputType = {
-    id?: true
-    word?: true
-    addedById?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type BadWordAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which BadWord to aggregate.
-     */
-    where?: BadWordWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BadWords to fetch.
-     */
-    orderBy?: BadWordOrderByWithRelationInput | BadWordOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: BadWordWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BadWords from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BadWords.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned BadWords
-    **/
-    _count?: true | BadWordCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: BadWordMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: BadWordMaxAggregateInputType
-  }
-
-  export type GetBadWordAggregateType<T extends BadWordAggregateArgs> = {
-        [P in keyof T & keyof AggregateBadWord]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateBadWord[P]>
-      : GetScalarType<T[P], AggregateBadWord[P]>
-  }
-
-
-
-
-  export type BadWordGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BadWordWhereInput
-    orderBy?: BadWordOrderByWithAggregationInput | BadWordOrderByWithAggregationInput[]
-    by: BadWordScalarFieldEnum[] | BadWordScalarFieldEnum
-    having?: BadWordScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: BadWordCountAggregateInputType | true
-    _min?: BadWordMinAggregateInputType
-    _max?: BadWordMaxAggregateInputType
-  }
-
-  export type BadWordGroupByOutputType = {
-    id: string
-    word: string
-    addedById: string
-    createdAt: Date
-    updatedAt: Date
-    _count: BadWordCountAggregateOutputType | null
-    _min: BadWordMinAggregateOutputType | null
-    _max: BadWordMaxAggregateOutputType | null
-  }
-
-  type GetBadWordGroupByPayload<T extends BadWordGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<BadWordGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof BadWordGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], BadWordGroupByOutputType[P]>
-            : GetScalarType<T[P], BadWordGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type BadWordSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    word?: boolean
-    addedById?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    addedBy?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["badWord"]>
-
-  export type BadWordSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    word?: boolean
-    addedById?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    addedBy?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["badWord"]>
-
-  export type BadWordSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    word?: boolean
-    addedById?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    addedBy?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["badWord"]>
-
-  export type BadWordSelectScalar = {
-    id?: boolean
-    word?: boolean
-    addedById?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type BadWordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "word" | "addedById" | "createdAt" | "updatedAt", ExtArgs["result"]["badWord"]>
-  export type BadWordInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    addedBy?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type BadWordIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    addedBy?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type BadWordIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    addedBy?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $BadWordPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "BadWord"
-    objects: {
-      addedBy: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      word: string
-      addedById: string
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["badWord"]>
-    composites: {}
-  }
-
-  type BadWordGetPayload<S extends boolean | null | undefined | BadWordDefaultArgs> = $Result.GetResult<Prisma.$BadWordPayload, S>
-
-  type BadWordCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<BadWordFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: BadWordCountAggregateInputType | true
-    }
-
-  export interface BadWordDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BadWord'], meta: { name: 'BadWord' } }
-    /**
-     * Find zero or one BadWord that matches the filter.
-     * @param {BadWordFindUniqueArgs} args - Arguments to find a BadWord
-     * @example
-     * // Get one BadWord
-     * const badWord = await prisma.badWord.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends BadWordFindUniqueArgs>(args: SelectSubset<T, BadWordFindUniqueArgs<ExtArgs>>): Prisma__BadWordClient<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one BadWord that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {BadWordFindUniqueOrThrowArgs} args - Arguments to find a BadWord
-     * @example
-     * // Get one BadWord
-     * const badWord = await prisma.badWord.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends BadWordFindUniqueOrThrowArgs>(args: SelectSubset<T, BadWordFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BadWordClient<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first BadWord that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BadWordFindFirstArgs} args - Arguments to find a BadWord
-     * @example
-     * // Get one BadWord
-     * const badWord = await prisma.badWord.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends BadWordFindFirstArgs>(args?: SelectSubset<T, BadWordFindFirstArgs<ExtArgs>>): Prisma__BadWordClient<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first BadWord that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BadWordFindFirstOrThrowArgs} args - Arguments to find a BadWord
-     * @example
-     * // Get one BadWord
-     * const badWord = await prisma.badWord.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends BadWordFindFirstOrThrowArgs>(args?: SelectSubset<T, BadWordFindFirstOrThrowArgs<ExtArgs>>): Prisma__BadWordClient<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more BadWords that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BadWordFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all BadWords
-     * const badWords = await prisma.badWord.findMany()
-     * 
-     * // Get first 10 BadWords
-     * const badWords = await prisma.badWord.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const badWordWithIdOnly = await prisma.badWord.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends BadWordFindManyArgs>(args?: SelectSubset<T, BadWordFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a BadWord.
-     * @param {BadWordCreateArgs} args - Arguments to create a BadWord.
-     * @example
-     * // Create one BadWord
-     * const BadWord = await prisma.badWord.create({
-     *   data: {
-     *     // ... data to create a BadWord
-     *   }
-     * })
-     * 
-     */
-    create<T extends BadWordCreateArgs>(args: SelectSubset<T, BadWordCreateArgs<ExtArgs>>): Prisma__BadWordClient<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many BadWords.
-     * @param {BadWordCreateManyArgs} args - Arguments to create many BadWords.
-     * @example
-     * // Create many BadWords
-     * const badWord = await prisma.badWord.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends BadWordCreateManyArgs>(args?: SelectSubset<T, BadWordCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many BadWords and returns the data saved in the database.
-     * @param {BadWordCreateManyAndReturnArgs} args - Arguments to create many BadWords.
-     * @example
-     * // Create many BadWords
-     * const badWord = await prisma.badWord.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many BadWords and only return the `id`
-     * const badWordWithIdOnly = await prisma.badWord.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends BadWordCreateManyAndReturnArgs>(args?: SelectSubset<T, BadWordCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a BadWord.
-     * @param {BadWordDeleteArgs} args - Arguments to delete one BadWord.
-     * @example
-     * // Delete one BadWord
-     * const BadWord = await prisma.badWord.delete({
-     *   where: {
-     *     // ... filter to delete one BadWord
-     *   }
-     * })
-     * 
-     */
-    delete<T extends BadWordDeleteArgs>(args: SelectSubset<T, BadWordDeleteArgs<ExtArgs>>): Prisma__BadWordClient<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one BadWord.
-     * @param {BadWordUpdateArgs} args - Arguments to update one BadWord.
-     * @example
-     * // Update one BadWord
-     * const badWord = await prisma.badWord.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends BadWordUpdateArgs>(args: SelectSubset<T, BadWordUpdateArgs<ExtArgs>>): Prisma__BadWordClient<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more BadWords.
-     * @param {BadWordDeleteManyArgs} args - Arguments to filter BadWords to delete.
-     * @example
-     * // Delete a few BadWords
-     * const { count } = await prisma.badWord.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends BadWordDeleteManyArgs>(args?: SelectSubset<T, BadWordDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more BadWords.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BadWordUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many BadWords
-     * const badWord = await prisma.badWord.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends BadWordUpdateManyArgs>(args: SelectSubset<T, BadWordUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more BadWords and returns the data updated in the database.
-     * @param {BadWordUpdateManyAndReturnArgs} args - Arguments to update many BadWords.
-     * @example
-     * // Update many BadWords
-     * const badWord = await prisma.badWord.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more BadWords and only return the `id`
-     * const badWordWithIdOnly = await prisma.badWord.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends BadWordUpdateManyAndReturnArgs>(args: SelectSubset<T, BadWordUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one BadWord.
-     * @param {BadWordUpsertArgs} args - Arguments to update or create a BadWord.
-     * @example
-     * // Update or create a BadWord
-     * const badWord = await prisma.badWord.upsert({
-     *   create: {
-     *     // ... data to create a BadWord
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the BadWord we want to update
-     *   }
-     * })
-     */
-    upsert<T extends BadWordUpsertArgs>(args: SelectSubset<T, BadWordUpsertArgs<ExtArgs>>): Prisma__BadWordClient<$Result.GetResult<Prisma.$BadWordPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of BadWords.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BadWordCountArgs} args - Arguments to filter BadWords to count.
-     * @example
-     * // Count the number of BadWords
-     * const count = await prisma.badWord.count({
-     *   where: {
-     *     // ... the filter for the BadWords we want to count
-     *   }
-     * })
-    **/
-    count<T extends BadWordCountArgs>(
-      args?: Subset<T, BadWordCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], BadWordCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a BadWord.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BadWordAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends BadWordAggregateArgs>(args: Subset<T, BadWordAggregateArgs>): Prisma.PrismaPromise<GetBadWordAggregateType<T>>
-
-    /**
-     * Group by BadWord.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BadWordGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends BadWordGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: BadWordGroupByArgs['orderBy'] }
-        : { orderBy?: BadWordGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, BadWordGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBadWordGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the BadWord model
-   */
-  readonly fields: BadWordFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for BadWord.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__BadWordClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    addedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the BadWord model
-   */
-  interface BadWordFieldRefs {
-    readonly id: FieldRef<"BadWord", 'String'>
-    readonly word: FieldRef<"BadWord", 'String'>
-    readonly addedById: FieldRef<"BadWord", 'String'>
-    readonly createdAt: FieldRef<"BadWord", 'DateTime'>
-    readonly updatedAt: FieldRef<"BadWord", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * BadWord findUnique
-   */
-  export type BadWordFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-    /**
-     * Filter, which BadWord to fetch.
-     */
-    where: BadWordWhereUniqueInput
-  }
-
-  /**
-   * BadWord findUniqueOrThrow
-   */
-  export type BadWordFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-    /**
-     * Filter, which BadWord to fetch.
-     */
-    where: BadWordWhereUniqueInput
-  }
-
-  /**
-   * BadWord findFirst
-   */
-  export type BadWordFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-    /**
-     * Filter, which BadWord to fetch.
-     */
-    where?: BadWordWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BadWords to fetch.
-     */
-    orderBy?: BadWordOrderByWithRelationInput | BadWordOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for BadWords.
-     */
-    cursor?: BadWordWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BadWords from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BadWords.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of BadWords.
-     */
-    distinct?: BadWordScalarFieldEnum | BadWordScalarFieldEnum[]
-  }
-
-  /**
-   * BadWord findFirstOrThrow
-   */
-  export type BadWordFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-    /**
-     * Filter, which BadWord to fetch.
-     */
-    where?: BadWordWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BadWords to fetch.
-     */
-    orderBy?: BadWordOrderByWithRelationInput | BadWordOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for BadWords.
-     */
-    cursor?: BadWordWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BadWords from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BadWords.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of BadWords.
-     */
-    distinct?: BadWordScalarFieldEnum | BadWordScalarFieldEnum[]
-  }
-
-  /**
-   * BadWord findMany
-   */
-  export type BadWordFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-    /**
-     * Filter, which BadWords to fetch.
-     */
-    where?: BadWordWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BadWords to fetch.
-     */
-    orderBy?: BadWordOrderByWithRelationInput | BadWordOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing BadWords.
-     */
-    cursor?: BadWordWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BadWords from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BadWords.
-     */
-    skip?: number
-    distinct?: BadWordScalarFieldEnum | BadWordScalarFieldEnum[]
-  }
-
-  /**
-   * BadWord create
-   */
-  export type BadWordCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-    /**
-     * The data needed to create a BadWord.
-     */
-    data: XOR<BadWordCreateInput, BadWordUncheckedCreateInput>
-  }
-
-  /**
-   * BadWord createMany
-   */
-  export type BadWordCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many BadWords.
-     */
-    data: BadWordCreateManyInput | BadWordCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * BadWord createManyAndReturn
-   */
-  export type BadWordCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * The data used to create many BadWords.
-     */
-    data: BadWordCreateManyInput | BadWordCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * BadWord update
-   */
-  export type BadWordUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-    /**
-     * The data needed to update a BadWord.
-     */
-    data: XOR<BadWordUpdateInput, BadWordUncheckedUpdateInput>
-    /**
-     * Choose, which BadWord to update.
-     */
-    where: BadWordWhereUniqueInput
-  }
-
-  /**
-   * BadWord updateMany
-   */
-  export type BadWordUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update BadWords.
-     */
-    data: XOR<BadWordUpdateManyMutationInput, BadWordUncheckedUpdateManyInput>
-    /**
-     * Filter which BadWords to update
-     */
-    where?: BadWordWhereInput
-    /**
-     * Limit how many BadWords to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * BadWord updateManyAndReturn
-   */
-  export type BadWordUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * The data used to update BadWords.
-     */
-    data: XOR<BadWordUpdateManyMutationInput, BadWordUncheckedUpdateManyInput>
-    /**
-     * Filter which BadWords to update
-     */
-    where?: BadWordWhereInput
-    /**
-     * Limit how many BadWords to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * BadWord upsert
-   */
-  export type BadWordUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-    /**
-     * The filter to search for the BadWord to update in case it exists.
-     */
-    where: BadWordWhereUniqueInput
-    /**
-     * In case the BadWord found by the `where` argument doesn't exist, create a new BadWord with this data.
-     */
-    create: XOR<BadWordCreateInput, BadWordUncheckedCreateInput>
-    /**
-     * In case the BadWord was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<BadWordUpdateInput, BadWordUncheckedUpdateInput>
-  }
-
-  /**
-   * BadWord delete
-   */
-  export type BadWordDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-    /**
-     * Filter which BadWord to delete.
-     */
-    where: BadWordWhereUniqueInput
-  }
-
-  /**
-   * BadWord deleteMany
-   */
-  export type BadWordDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which BadWords to delete
-     */
-    where?: BadWordWhereInput
-    /**
-     * Limit how many BadWords to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * BadWord without action
-   */
-  export type BadWordDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BadWord
-     */
-    select?: BadWordSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BadWord
-     */
-    omit?: BadWordOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BadWordInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Model TestSnapshot
    */
 
@@ -12793,6 +11636,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus | null
     createdAt: Date | null
     version: number | null
+    visibilityStatus: $Enums.TestVisibilityStatus | null
   }
 
   export type TestSnapshotMaxAggregateOutputType = {
@@ -12803,6 +11647,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus | null
     createdAt: Date | null
     version: number | null
+    visibilityStatus: $Enums.TestVisibilityStatus | null
   }
 
   export type TestSnapshotCountAggregateOutputType = {
@@ -12813,6 +11658,7 @@ export namespace Prisma {
     status: number
     createdAt: number
     version: number
+    visibilityStatus: number
     _all: number
   }
 
@@ -12833,6 +11679,7 @@ export namespace Prisma {
     status?: true
     createdAt?: true
     version?: true
+    visibilityStatus?: true
   }
 
   export type TestSnapshotMaxAggregateInputType = {
@@ -12843,6 +11690,7 @@ export namespace Prisma {
     status?: true
     createdAt?: true
     version?: true
+    visibilityStatus?: true
   }
 
   export type TestSnapshotCountAggregateInputType = {
@@ -12853,6 +11701,7 @@ export namespace Prisma {
     status?: true
     createdAt?: true
     version?: true
+    visibilityStatus?: true
     _all?: true
   }
 
@@ -12950,6 +11799,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt: Date
     version: number
+    visibilityStatus: $Enums.TestVisibilityStatus
     _count: TestSnapshotCountAggregateOutputType | null
     _avg: TestSnapshotAvgAggregateOutputType | null
     _sum: TestSnapshotSumAggregateOutputType | null
@@ -12979,6 +11829,7 @@ export namespace Prisma {
     status?: boolean
     createdAt?: boolean
     version?: boolean
+    visibilityStatus?: boolean
     questions?: boolean | TestSnapshot$questionsArgs<ExtArgs>
     attempts?: boolean | TestSnapshot$attemptsArgs<ExtArgs>
     settings?: boolean | TestSnapshot$settingsArgs<ExtArgs>
@@ -12994,6 +11845,7 @@ export namespace Prisma {
     status?: boolean
     createdAt?: boolean
     version?: boolean
+    visibilityStatus?: boolean
     originalTest?: boolean | TestDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["testSnapshot"]>
 
@@ -13005,6 +11857,7 @@ export namespace Prisma {
     status?: boolean
     createdAt?: boolean
     version?: boolean
+    visibilityStatus?: boolean
     originalTest?: boolean | TestDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["testSnapshot"]>
 
@@ -13016,9 +11869,10 @@ export namespace Prisma {
     status?: boolean
     createdAt?: boolean
     version?: boolean
+    visibilityStatus?: boolean
   }
 
-  export type TestSnapshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "testId" | "title" | "description" | "status" | "createdAt" | "version", ExtArgs["result"]["testSnapshot"]>
+  export type TestSnapshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "testId" | "title" | "description" | "status" | "createdAt" | "version" | "visibilityStatus", ExtArgs["result"]["testSnapshot"]>
   export type TestSnapshotInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     questions?: boolean | TestSnapshot$questionsArgs<ExtArgs>
     attempts?: boolean | TestSnapshot$attemptsArgs<ExtArgs>
@@ -13049,6 +11903,7 @@ export namespace Prisma {
       status: $Enums.ModerationStatus
       createdAt: Date
       version: number
+      visibilityStatus: $Enums.TestVisibilityStatus
     }, ExtArgs["result"]["testSnapshot"]>
     composites: {}
   }
@@ -13483,6 +12338,7 @@ export namespace Prisma {
     readonly status: FieldRef<"TestSnapshot", 'ModerationStatus'>
     readonly createdAt: FieldRef<"TestSnapshot", 'DateTime'>
     readonly version: FieldRef<"TestSnapshot", 'Int'>
+    readonly visibilityStatus: FieldRef<"TestSnapshot", 'TestVisibilityStatus'>
   }
     
 
@@ -17394,7 +16250,8 @@ export namespace Prisma {
     totalAttempts: 'totalAttempts',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    version: 'version'
+    version: 'version',
+    visibilityStatus: 'visibilityStatus'
   };
 
   export type TestScalarFieldEnum = (typeof TestScalarFieldEnum)[keyof typeof TestScalarFieldEnum]
@@ -17456,17 +16313,6 @@ export namespace Prisma {
   export type UserAnswerScalarFieldEnum = (typeof UserAnswerScalarFieldEnum)[keyof typeof UserAnswerScalarFieldEnum]
 
 
-  export const BadWordScalarFieldEnum: {
-    id: 'id',
-    word: 'word',
-    addedById: 'addedById',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type BadWordScalarFieldEnum = (typeof BadWordScalarFieldEnum)[keyof typeof BadWordScalarFieldEnum]
-
-
   export const TestSnapshotScalarFieldEnum: {
     id: 'id',
     testId: 'testId',
@@ -17474,7 +16320,8 @@ export namespace Prisma {
     description: 'description',
     status: 'status',
     createdAt: 'createdAt',
-    version: 'version'
+    version: 'version',
+    visibilityStatus: 'visibilityStatus'
   };
 
   export type TestSnapshotScalarFieldEnum = (typeof TestSnapshotScalarFieldEnum)[keyof typeof TestSnapshotScalarFieldEnum]
@@ -17658,6 +16505,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'TestVisibilityStatus'
+   */
+  export type EnumTestVisibilityStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TestVisibilityStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TestVisibilityStatus[]'
+   */
+  export type ListEnumTestVisibilityStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TestVisibilityStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'QuestionType'
    */
   export type EnumQuestionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuestionType'>
@@ -17721,7 +16582,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     activationLinkExp?: DateTimeNullableFilter<"User"> | Date | string | null
     resetCodeExp?: DateTimeNullableFilter<"User"> | Date | string | null
-    badWordsAdded?: BadWordListRelationFilter
     testAttempts?: TestAttemptListRelationFilter
     testsCreated?: TestListRelationFilter
     refreshToken?: XOR<TokenNullableScalarRelationFilter, TokenWhereInput> | null
@@ -17743,7 +16603,6 @@ export namespace Prisma {
     updatedAt?: SortOrder
     activationLinkExp?: SortOrderInput | SortOrder
     resetCodeExp?: SortOrderInput | SortOrder
-    badWordsAdded?: BadWordOrderByRelationAggregateInput
     testAttempts?: TestAttemptOrderByRelationAggregateInput
     testsCreated?: TestOrderByRelationAggregateInput
     refreshToken?: TokenOrderByWithRelationInput
@@ -17768,7 +16627,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     activationLinkExp?: DateTimeNullableFilter<"User"> | Date | string | null
     resetCodeExp?: DateTimeNullableFilter<"User"> | Date | string | null
-    badWordsAdded?: BadWordListRelationFilter
     testAttempts?: TestAttemptListRelationFilter
     testsCreated?: TestListRelationFilter
     refreshToken?: XOR<TokenNullableScalarRelationFilter, TokenWhereInput> | null
@@ -17966,6 +16824,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Test"> | Date | string
     updatedAt?: DateTimeFilter<"Test"> | Date | string
     version?: IntFilter<"Test"> | number
+    visibilityStatus?: EnumTestVisibilityStatusFilter<"Test"> | $Enums.TestVisibilityStatus
     questions?: QuestionListRelationFilter
     testAttempts?: TestAttemptListRelationFilter
     settings?: XOR<TestSettingsNullableScalarRelationFilter, TestSettingsWhereInput> | null
@@ -17983,6 +16842,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     version?: SortOrder
+    visibilityStatus?: SortOrder
     questions?: QuestionOrderByRelationAggregateInput
     testAttempts?: TestAttemptOrderByRelationAggregateInput
     settings?: TestSettingsOrderByWithRelationInput
@@ -18003,6 +16863,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Test"> | Date | string
     updatedAt?: DateTimeFilter<"Test"> | Date | string
     version?: IntFilter<"Test"> | number
+    visibilityStatus?: EnumTestVisibilityStatusFilter<"Test"> | $Enums.TestVisibilityStatus
     questions?: QuestionListRelationFilter
     testAttempts?: TestAttemptListRelationFilter
     settings?: XOR<TestSettingsNullableScalarRelationFilter, TestSettingsWhereInput> | null
@@ -18020,6 +16881,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     version?: SortOrder
+    visibilityStatus?: SortOrder
     _count?: TestCountOrderByAggregateInput
     _avg?: TestAvgOrderByAggregateInput
     _max?: TestMaxOrderByAggregateInput
@@ -18040,6 +16902,7 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Test"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Test"> | Date | string
     version?: IntWithAggregatesFilter<"Test"> | number
+    visibilityStatus?: EnumTestVisibilityStatusWithAggregatesFilter<"Test"> | $Enums.TestVisibilityStatus
   }
 
   export type QuestionWhereInput = {
@@ -18352,61 +17215,6 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"UserAnswer"> | Date | string
   }
 
-  export type BadWordWhereInput = {
-    AND?: BadWordWhereInput | BadWordWhereInput[]
-    OR?: BadWordWhereInput[]
-    NOT?: BadWordWhereInput | BadWordWhereInput[]
-    id?: StringFilter<"BadWord"> | string
-    word?: StringFilter<"BadWord"> | string
-    addedById?: StringFilter<"BadWord"> | string
-    createdAt?: DateTimeFilter<"BadWord"> | Date | string
-    updatedAt?: DateTimeFilter<"BadWord"> | Date | string
-    addedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }
-
-  export type BadWordOrderByWithRelationInput = {
-    id?: SortOrder
-    word?: SortOrder
-    addedById?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    addedBy?: UserOrderByWithRelationInput
-  }
-
-  export type BadWordWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    word?: string
-    AND?: BadWordWhereInput | BadWordWhereInput[]
-    OR?: BadWordWhereInput[]
-    NOT?: BadWordWhereInput | BadWordWhereInput[]
-    addedById?: StringFilter<"BadWord"> | string
-    createdAt?: DateTimeFilter<"BadWord"> | Date | string
-    updatedAt?: DateTimeFilter<"BadWord"> | Date | string
-    addedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "word">
-
-  export type BadWordOrderByWithAggregationInput = {
-    id?: SortOrder
-    word?: SortOrder
-    addedById?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: BadWordCountOrderByAggregateInput
-    _max?: BadWordMaxOrderByAggregateInput
-    _min?: BadWordMinOrderByAggregateInput
-  }
-
-  export type BadWordScalarWhereWithAggregatesInput = {
-    AND?: BadWordScalarWhereWithAggregatesInput | BadWordScalarWhereWithAggregatesInput[]
-    OR?: BadWordScalarWhereWithAggregatesInput[]
-    NOT?: BadWordScalarWhereWithAggregatesInput | BadWordScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"BadWord"> | string
-    word?: StringWithAggregatesFilter<"BadWord"> | string
-    addedById?: StringWithAggregatesFilter<"BadWord"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"BadWord"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"BadWord"> | Date | string
-  }
-
   export type TestSnapshotWhereInput = {
     AND?: TestSnapshotWhereInput | TestSnapshotWhereInput[]
     OR?: TestSnapshotWhereInput[]
@@ -18418,6 +17226,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFilter<"TestSnapshot"> | $Enums.ModerationStatus
     createdAt?: DateTimeFilter<"TestSnapshot"> | Date | string
     version?: IntFilter<"TestSnapshot"> | number
+    visibilityStatus?: EnumTestVisibilityStatusFilter<"TestSnapshot"> | $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotListRelationFilter
     attempts?: TestAttemptListRelationFilter
     settings?: XOR<TestSettingsSnapshotNullableScalarRelationFilter, TestSettingsSnapshotWhereInput> | null
@@ -18432,6 +17241,7 @@ export namespace Prisma {
     status?: SortOrder
     createdAt?: SortOrder
     version?: SortOrder
+    visibilityStatus?: SortOrder
     questions?: QuestionSnapshotOrderByRelationAggregateInput
     attempts?: TestAttemptOrderByRelationAggregateInput
     settings?: TestSettingsSnapshotOrderByWithRelationInput
@@ -18449,6 +17259,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFilter<"TestSnapshot"> | $Enums.ModerationStatus
     createdAt?: DateTimeFilter<"TestSnapshot"> | Date | string
     version?: IntFilter<"TestSnapshot"> | number
+    visibilityStatus?: EnumTestVisibilityStatusFilter<"TestSnapshot"> | $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotListRelationFilter
     attempts?: TestAttemptListRelationFilter
     settings?: XOR<TestSettingsSnapshotNullableScalarRelationFilter, TestSettingsSnapshotWhereInput> | null
@@ -18463,6 +17274,7 @@ export namespace Prisma {
     status?: SortOrder
     createdAt?: SortOrder
     version?: SortOrder
+    visibilityStatus?: SortOrder
     _count?: TestSnapshotCountOrderByAggregateInput
     _avg?: TestSnapshotAvgOrderByAggregateInput
     _max?: TestSnapshotMaxOrderByAggregateInput
@@ -18481,6 +17293,7 @@ export namespace Prisma {
     status?: EnumModerationStatusWithAggregatesFilter<"TestSnapshot"> | $Enums.ModerationStatus
     createdAt?: DateTimeWithAggregatesFilter<"TestSnapshot"> | Date | string
     version?: IntWithAggregatesFilter<"TestSnapshot"> | number
+    visibilityStatus?: EnumTestVisibilityStatusWithAggregatesFilter<"TestSnapshot"> | $Enums.TestVisibilityStatus
   }
 
   export type QuestionSnapshotWhereInput = {
@@ -18706,7 +17519,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     activationLinkExp?: Date | string | null
     resetCodeExp?: Date | string | null
-    badWordsAdded?: BadWordCreateNestedManyWithoutAddedByInput
     testAttempts?: TestAttemptCreateNestedManyWithoutUserInput
     testsCreated?: TestCreateNestedManyWithoutAuthorInput
     refreshToken?: TokenCreateNestedOneWithoutUserInput
@@ -18728,7 +17540,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     activationLinkExp?: Date | string | null
     resetCodeExp?: Date | string | null
-    badWordsAdded?: BadWordUncheckedCreateNestedManyWithoutAddedByInput
     testAttempts?: TestAttemptUncheckedCreateNestedManyWithoutUserInput
     testsCreated?: TestUncheckedCreateNestedManyWithoutAuthorInput
     refreshToken?: TokenUncheckedCreateNestedOneWithoutUserInput
@@ -18750,7 +17561,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activationLinkExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetCodeExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    badWordsAdded?: BadWordUpdateManyWithoutAddedByNestedInput
     testAttempts?: TestAttemptUpdateManyWithoutUserNestedInput
     testsCreated?: TestUpdateManyWithoutAuthorNestedInput
     refreshToken?: TokenUpdateOneWithoutUserNestedInput
@@ -18772,7 +17582,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activationLinkExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetCodeExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    badWordsAdded?: BadWordUncheckedUpdateManyWithoutAddedByNestedInput
     testAttempts?: TestAttemptUncheckedUpdateManyWithoutUserNestedInput
     testsCreated?: TestUncheckedUpdateManyWithoutAuthorNestedInput
     refreshToken?: TokenUncheckedUpdateOneWithoutUserNestedInput
@@ -18986,6 +17795,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionCreateNestedManyWithoutTestInput
     testAttempts?: TestAttemptCreateNestedManyWithoutTestInput
     settings?: TestSettingsCreateNestedOneWithoutTestInput
@@ -19003,6 +17813,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionUncheckedCreateNestedManyWithoutTestInput
     testAttempts?: TestAttemptUncheckedCreateNestedManyWithoutTestInput
     settings?: TestSettingsUncheckedCreateNestedOneWithoutTestInput
@@ -19018,6 +17829,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionUpdateManyWithoutTestNestedInput
     testAttempts?: TestAttemptUpdateManyWithoutTestNestedInput
     settings?: TestSettingsUpdateOneWithoutTestNestedInput
@@ -19035,6 +17847,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionUncheckedUpdateManyWithoutTestNestedInput
     testAttempts?: TestAttemptUncheckedUpdateManyWithoutTestNestedInput
     settings?: TestSettingsUncheckedUpdateOneWithoutTestNestedInput
@@ -19051,6 +17864,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
   }
 
   export type TestUpdateManyMutationInput = {
@@ -19062,6 +17876,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
   }
 
   export type TestUncheckedUpdateManyInput = {
@@ -19074,6 +17889,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
   }
 
   export type QuestionCreateInput = {
@@ -19392,61 +18208,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type BadWordCreateInput = {
-    id?: string
-    word: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    addedBy: UserCreateNestedOneWithoutBadWordsAddedInput
-  }
-
-  export type BadWordUncheckedCreateInput = {
-    id?: string
-    word: string
-    addedById: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BadWordUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    word?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    addedBy?: UserUpdateOneRequiredWithoutBadWordsAddedNestedInput
-  }
-
-  export type BadWordUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    word?: StringFieldUpdateOperationsInput | string
-    addedById?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BadWordCreateManyInput = {
-    id?: string
-    word: string
-    addedById: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BadWordUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    word?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BadWordUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    word?: StringFieldUpdateOperationsInput | string
-    addedById?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type TestSnapshotCreateInput = {
     id?: string
     title: string
@@ -19454,6 +18215,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotCreateNestedManyWithoutTestSnapshotInput
     attempts?: TestAttemptCreateNestedManyWithoutSnapshotInput
     settings?: TestSettingsSnapshotCreateNestedOneWithoutSnapshotInput
@@ -19468,6 +18230,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUncheckedCreateNestedManyWithoutTestSnapshotInput
     attempts?: TestAttemptUncheckedCreateNestedManyWithoutSnapshotInput
     settings?: TestSettingsSnapshotUncheckedCreateNestedOneWithoutSnapshotInput
@@ -19480,6 +18243,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUpdateManyWithoutTestSnapshotNestedInput
     attempts?: TestAttemptUpdateManyWithoutSnapshotNestedInput
     settings?: TestSettingsSnapshotUpdateOneWithoutSnapshotNestedInput
@@ -19494,6 +18258,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUncheckedUpdateManyWithoutTestSnapshotNestedInput
     attempts?: TestAttemptUncheckedUpdateManyWithoutSnapshotNestedInput
     settings?: TestSettingsSnapshotUncheckedUpdateOneWithoutSnapshotNestedInput
@@ -19507,6 +18272,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
   }
 
   export type TestSnapshotUpdateManyMutationInput = {
@@ -19516,6 +18282,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
   }
 
   export type TestSnapshotUncheckedUpdateManyInput = {
@@ -19526,6 +18293,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
   }
 
   export type QuestionSnapshotCreateInput = {
@@ -19810,12 +18578,6 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type BadWordListRelationFilter = {
-    every?: BadWordWhereInput
-    some?: BadWordWhereInput
-    none?: BadWordWhereInput
-  }
-
   export type TestAttemptListRelationFilter = {
     every?: TestAttemptWhereInput
     some?: TestAttemptWhereInput
@@ -19836,10 +18598,6 @@ export namespace Prisma {
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
-  }
-
-  export type BadWordOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type TestAttemptOrderByRelationAggregateInput = {
@@ -20159,6 +18917,13 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type EnumTestVisibilityStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TestVisibilityStatus | EnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TestVisibilityStatus[] | ListEnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TestVisibilityStatus[] | ListEnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTestVisibilityStatusFilter<$PrismaModel> | $Enums.TestVisibilityStatus
+  }
+
   export type QuestionListRelationFilter = {
     every?: QuestionWhereInput
     some?: QuestionWhereInput
@@ -20194,6 +18959,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     version?: SortOrder
+    visibilityStatus?: SortOrder
   }
 
   export type TestAvgOrderByAggregateInput = {
@@ -20211,6 +18977,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     version?: SortOrder
+    visibilityStatus?: SortOrder
   }
 
   export type TestMinOrderByAggregateInput = {
@@ -20223,6 +18990,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     version?: SortOrder
+    visibilityStatus?: SortOrder
   }
 
   export type TestSumOrderByAggregateInput = {
@@ -20254,6 +19022,16 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EnumTestVisibilityStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TestVisibilityStatus | EnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TestVisibilityStatus[] | ListEnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TestVisibilityStatus[] | ListEnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTestVisibilityStatusWithAggregatesFilter<$PrismaModel> | $Enums.TestVisibilityStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTestVisibilityStatusFilter<$PrismaModel>
+    _max?: NestedEnumTestVisibilityStatusFilter<$PrismaModel>
   }
 
   export type EnumQuestionTypeFilter<$PrismaModel = never> = {
@@ -20516,30 +19294,6 @@ export namespace Prisma {
     timeSpent?: SortOrder
   }
 
-  export type BadWordCountOrderByAggregateInput = {
-    id?: SortOrder
-    word?: SortOrder
-    addedById?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type BadWordMaxOrderByAggregateInput = {
-    id?: SortOrder
-    word?: SortOrder
-    addedById?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type BadWordMinOrderByAggregateInput = {
-    id?: SortOrder
-    word?: SortOrder
-    addedById?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
   export type QuestionSnapshotListRelationFilter = {
     every?: QuestionSnapshotWhereInput
     some?: QuestionSnapshotWhereInput
@@ -20563,6 +19317,7 @@ export namespace Prisma {
     status?: SortOrder
     createdAt?: SortOrder
     version?: SortOrder
+    visibilityStatus?: SortOrder
   }
 
   export type TestSnapshotAvgOrderByAggregateInput = {
@@ -20577,6 +19332,7 @@ export namespace Prisma {
     status?: SortOrder
     createdAt?: SortOrder
     version?: SortOrder
+    visibilityStatus?: SortOrder
   }
 
   export type TestSnapshotMinOrderByAggregateInput = {
@@ -20587,6 +19343,7 @@ export namespace Prisma {
     status?: SortOrder
     createdAt?: SortOrder
     version?: SortOrder
+    visibilityStatus?: SortOrder
   }
 
   export type TestSnapshotSumOrderByAggregateInput = {
@@ -20720,13 +19477,6 @@ export namespace Prisma {
     timeLimit?: SortOrder
   }
 
-  export type BadWordCreateNestedManyWithoutAddedByInput = {
-    create?: XOR<BadWordCreateWithoutAddedByInput, BadWordUncheckedCreateWithoutAddedByInput> | BadWordCreateWithoutAddedByInput[] | BadWordUncheckedCreateWithoutAddedByInput[]
-    connectOrCreate?: BadWordCreateOrConnectWithoutAddedByInput | BadWordCreateOrConnectWithoutAddedByInput[]
-    createMany?: BadWordCreateManyAddedByInputEnvelope
-    connect?: BadWordWhereUniqueInput | BadWordWhereUniqueInput[]
-  }
-
   export type TestAttemptCreateNestedManyWithoutUserInput = {
     create?: XOR<TestAttemptCreateWithoutUserInput, TestAttemptUncheckedCreateWithoutUserInput> | TestAttemptCreateWithoutUserInput[] | TestAttemptUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TestAttemptCreateOrConnectWithoutUserInput | TestAttemptCreateOrConnectWithoutUserInput[]
@@ -20745,13 +19495,6 @@ export namespace Prisma {
     create?: XOR<TokenCreateWithoutUserInput, TokenUncheckedCreateWithoutUserInput>
     connectOrCreate?: TokenCreateOrConnectWithoutUserInput
     connect?: TokenWhereUniqueInput
-  }
-
-  export type BadWordUncheckedCreateNestedManyWithoutAddedByInput = {
-    create?: XOR<BadWordCreateWithoutAddedByInput, BadWordUncheckedCreateWithoutAddedByInput> | BadWordCreateWithoutAddedByInput[] | BadWordUncheckedCreateWithoutAddedByInput[]
-    connectOrCreate?: BadWordCreateOrConnectWithoutAddedByInput | BadWordCreateOrConnectWithoutAddedByInput[]
-    createMany?: BadWordCreateManyAddedByInputEnvelope
-    connect?: BadWordWhereUniqueInput | BadWordWhereUniqueInput[]
   }
 
   export type TestAttemptUncheckedCreateNestedManyWithoutUserInput = {
@@ -20798,20 +19541,6 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
-  export type BadWordUpdateManyWithoutAddedByNestedInput = {
-    create?: XOR<BadWordCreateWithoutAddedByInput, BadWordUncheckedCreateWithoutAddedByInput> | BadWordCreateWithoutAddedByInput[] | BadWordUncheckedCreateWithoutAddedByInput[]
-    connectOrCreate?: BadWordCreateOrConnectWithoutAddedByInput | BadWordCreateOrConnectWithoutAddedByInput[]
-    upsert?: BadWordUpsertWithWhereUniqueWithoutAddedByInput | BadWordUpsertWithWhereUniqueWithoutAddedByInput[]
-    createMany?: BadWordCreateManyAddedByInputEnvelope
-    set?: BadWordWhereUniqueInput | BadWordWhereUniqueInput[]
-    disconnect?: BadWordWhereUniqueInput | BadWordWhereUniqueInput[]
-    delete?: BadWordWhereUniqueInput | BadWordWhereUniqueInput[]
-    connect?: BadWordWhereUniqueInput | BadWordWhereUniqueInput[]
-    update?: BadWordUpdateWithWhereUniqueWithoutAddedByInput | BadWordUpdateWithWhereUniqueWithoutAddedByInput[]
-    updateMany?: BadWordUpdateManyWithWhereWithoutAddedByInput | BadWordUpdateManyWithWhereWithoutAddedByInput[]
-    deleteMany?: BadWordScalarWhereInput | BadWordScalarWhereInput[]
-  }
-
   export type TestAttemptUpdateManyWithoutUserNestedInput = {
     create?: XOR<TestAttemptCreateWithoutUserInput, TestAttemptUncheckedCreateWithoutUserInput> | TestAttemptCreateWithoutUserInput[] | TestAttemptUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TestAttemptCreateOrConnectWithoutUserInput | TestAttemptCreateOrConnectWithoutUserInput[]
@@ -20848,20 +19577,6 @@ export namespace Prisma {
     delete?: TokenWhereInput | boolean
     connect?: TokenWhereUniqueInput
     update?: XOR<XOR<TokenUpdateToOneWithWhereWithoutUserInput, TokenUpdateWithoutUserInput>, TokenUncheckedUpdateWithoutUserInput>
-  }
-
-  export type BadWordUncheckedUpdateManyWithoutAddedByNestedInput = {
-    create?: XOR<BadWordCreateWithoutAddedByInput, BadWordUncheckedCreateWithoutAddedByInput> | BadWordCreateWithoutAddedByInput[] | BadWordUncheckedCreateWithoutAddedByInput[]
-    connectOrCreate?: BadWordCreateOrConnectWithoutAddedByInput | BadWordCreateOrConnectWithoutAddedByInput[]
-    upsert?: BadWordUpsertWithWhereUniqueWithoutAddedByInput | BadWordUpsertWithWhereUniqueWithoutAddedByInput[]
-    createMany?: BadWordCreateManyAddedByInputEnvelope
-    set?: BadWordWhereUniqueInput | BadWordWhereUniqueInput[]
-    disconnect?: BadWordWhereUniqueInput | BadWordWhereUniqueInput[]
-    delete?: BadWordWhereUniqueInput | BadWordWhereUniqueInput[]
-    connect?: BadWordWhereUniqueInput | BadWordWhereUniqueInput[]
-    update?: BadWordUpdateWithWhereUniqueWithoutAddedByInput | BadWordUpdateWithWhereUniqueWithoutAddedByInput[]
-    updateMany?: BadWordUpdateManyWithWhereWithoutAddedByInput | BadWordUpdateManyWithWhereWithoutAddedByInput[]
-    deleteMany?: BadWordScalarWhereInput | BadWordScalarWhereInput[]
   }
 
   export type TestAttemptUncheckedUpdateManyWithoutUserNestedInput = {
@@ -21008,6 +19723,10 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type EnumTestVisibilityStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TestVisibilityStatus
   }
 
   export type QuestionUpdateManyWithoutTestNestedInput = {
@@ -21420,20 +20139,6 @@ export namespace Prisma {
     upsert?: QuestionUpsertWithoutUserAnswersInput
     connect?: QuestionWhereUniqueInput
     update?: XOR<XOR<QuestionUpdateToOneWithWhereWithoutUserAnswersInput, QuestionUpdateWithoutUserAnswersInput>, QuestionUncheckedUpdateWithoutUserAnswersInput>
-  }
-
-  export type UserCreateNestedOneWithoutBadWordsAddedInput = {
-    create?: XOR<UserCreateWithoutBadWordsAddedInput, UserUncheckedCreateWithoutBadWordsAddedInput>
-    connectOrCreate?: UserCreateOrConnectWithoutBadWordsAddedInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type UserUpdateOneRequiredWithoutBadWordsAddedNestedInput = {
-    create?: XOR<UserCreateWithoutBadWordsAddedInput, UserUncheckedCreateWithoutBadWordsAddedInput>
-    connectOrCreate?: UserCreateOrConnectWithoutBadWordsAddedInput
-    upsert?: UserUpsertWithoutBadWordsAddedInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBadWordsAddedInput, UserUpdateWithoutBadWordsAddedInput>, UserUncheckedUpdateWithoutBadWordsAddedInput>
   }
 
   export type QuestionSnapshotCreateNestedManyWithoutTestSnapshotInput = {
@@ -21871,6 +20576,13 @@ export namespace Prisma {
     not?: NestedEnumModerationStatusFilter<$PrismaModel> | $Enums.ModerationStatus
   }
 
+  export type NestedEnumTestVisibilityStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TestVisibilityStatus | EnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TestVisibilityStatus[] | ListEnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TestVisibilityStatus[] | ListEnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTestVisibilityStatusFilter<$PrismaModel> | $Enums.TestVisibilityStatus
+  }
+
   export type NestedEnumModerationStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.ModerationStatus | EnumModerationStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ModerationStatus[] | ListEnumModerationStatusFieldRefInput<$PrismaModel>
@@ -21906,6 +20618,16 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumTestVisibilityStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TestVisibilityStatus | EnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TestVisibilityStatus[] | ListEnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TestVisibilityStatus[] | ListEnumTestVisibilityStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTestVisibilityStatusWithAggregatesFilter<$PrismaModel> | $Enums.TestVisibilityStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTestVisibilityStatusFilter<$PrismaModel>
+    _max?: NestedEnumTestVisibilityStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumQuestionTypeFilter<$PrismaModel = never> = {
@@ -21958,30 +20680,6 @@ export namespace Prisma {
     _max?: NestedEnumTestAttemptStatusFilter<$PrismaModel>
   }
 
-  export type BadWordCreateWithoutAddedByInput = {
-    id?: string
-    word: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BadWordUncheckedCreateWithoutAddedByInput = {
-    id?: string
-    word: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BadWordCreateOrConnectWithoutAddedByInput = {
-    where: BadWordWhereUniqueInput
-    create: XOR<BadWordCreateWithoutAddedByInput, BadWordUncheckedCreateWithoutAddedByInput>
-  }
-
-  export type BadWordCreateManyAddedByInputEnvelope = {
-    data: BadWordCreateManyAddedByInput | BadWordCreateManyAddedByInput[]
-    skipDuplicates?: boolean
-  }
-
   export type TestAttemptCreateWithoutUserInput = {
     id?: string
     preTestUserData?: NullableJsonNullValueInput | InputJsonValue
@@ -22029,6 +20727,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionCreateNestedManyWithoutTestInput
     testAttempts?: TestAttemptCreateNestedManyWithoutTestInput
     settings?: TestSettingsCreateNestedOneWithoutTestInput
@@ -22044,6 +20743,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionUncheckedCreateNestedManyWithoutTestInput
     testAttempts?: TestAttemptUncheckedCreateNestedManyWithoutTestInput
     settings?: TestSettingsUncheckedCreateNestedOneWithoutTestInput
@@ -22077,33 +20777,6 @@ export namespace Prisma {
   export type TokenCreateOrConnectWithoutUserInput = {
     where: TokenWhereUniqueInput
     create: XOR<TokenCreateWithoutUserInput, TokenUncheckedCreateWithoutUserInput>
-  }
-
-  export type BadWordUpsertWithWhereUniqueWithoutAddedByInput = {
-    where: BadWordWhereUniqueInput
-    update: XOR<BadWordUpdateWithoutAddedByInput, BadWordUncheckedUpdateWithoutAddedByInput>
-    create: XOR<BadWordCreateWithoutAddedByInput, BadWordUncheckedCreateWithoutAddedByInput>
-  }
-
-  export type BadWordUpdateWithWhereUniqueWithoutAddedByInput = {
-    where: BadWordWhereUniqueInput
-    data: XOR<BadWordUpdateWithoutAddedByInput, BadWordUncheckedUpdateWithoutAddedByInput>
-  }
-
-  export type BadWordUpdateManyWithWhereWithoutAddedByInput = {
-    where: BadWordScalarWhereInput
-    data: XOR<BadWordUpdateManyMutationInput, BadWordUncheckedUpdateManyWithoutAddedByInput>
-  }
-
-  export type BadWordScalarWhereInput = {
-    AND?: BadWordScalarWhereInput | BadWordScalarWhereInput[]
-    OR?: BadWordScalarWhereInput[]
-    NOT?: BadWordScalarWhereInput | BadWordScalarWhereInput[]
-    id?: StringFilter<"BadWord"> | string
-    word?: StringFilter<"BadWord"> | string
-    addedById?: StringFilter<"BadWord"> | string
-    createdAt?: DateTimeFilter<"BadWord"> | Date | string
-    updatedAt?: DateTimeFilter<"BadWord"> | Date | string
   }
 
   export type TestAttemptUpsertWithWhereUniqueWithoutUserInput = {
@@ -22168,6 +20841,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Test"> | Date | string
     updatedAt?: DateTimeFilter<"Test"> | Date | string
     version?: IntFilter<"Test"> | number
+    visibilityStatus?: EnumTestVisibilityStatusFilter<"Test"> | $Enums.TestVisibilityStatus
   }
 
   export type TokenUpsertWithoutUserInput = {
@@ -22211,7 +20885,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     activationLinkExp?: Date | string | null
     resetCodeExp?: Date | string | null
-    badWordsAdded?: BadWordCreateNestedManyWithoutAddedByInput
     testAttempts?: TestAttemptCreateNestedManyWithoutUserInput
     testsCreated?: TestCreateNestedManyWithoutAuthorInput
   }
@@ -22232,7 +20905,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     activationLinkExp?: Date | string | null
     resetCodeExp?: Date | string | null
-    badWordsAdded?: BadWordUncheckedCreateNestedManyWithoutAddedByInput
     testAttempts?: TestAttemptUncheckedCreateNestedManyWithoutUserInput
     testsCreated?: TestUncheckedCreateNestedManyWithoutAuthorInput
   }
@@ -22269,7 +20941,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activationLinkExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetCodeExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    badWordsAdded?: BadWordUpdateManyWithoutAddedByNestedInput
     testAttempts?: TestAttemptUpdateManyWithoutUserNestedInput
     testsCreated?: TestUpdateManyWithoutAuthorNestedInput
   }
@@ -22290,7 +20961,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activationLinkExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetCodeExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    badWordsAdded?: BadWordUncheckedUpdateManyWithoutAddedByNestedInput
     testAttempts?: TestAttemptUncheckedUpdateManyWithoutUserNestedInput
     testsCreated?: TestUncheckedUpdateManyWithoutAuthorNestedInput
   }
@@ -22304,6 +20974,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionCreateNestedManyWithoutTestInput
     testAttempts?: TestAttemptCreateNestedManyWithoutTestInput
     snapshots?: TestSnapshotCreateNestedManyWithoutOriginalTestInput
@@ -22320,6 +20991,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionUncheckedCreateNestedManyWithoutTestInput
     testAttempts?: TestAttemptUncheckedCreateNestedManyWithoutTestInput
     snapshots?: TestSnapshotUncheckedCreateNestedManyWithoutOriginalTestInput
@@ -22350,6 +21022,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionUpdateManyWithoutTestNestedInput
     testAttempts?: TestAttemptUpdateManyWithoutTestNestedInput
     snapshots?: TestSnapshotUpdateManyWithoutOriginalTestNestedInput
@@ -22366,6 +21039,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionUncheckedUpdateManyWithoutTestNestedInput
     testAttempts?: TestAttemptUncheckedUpdateManyWithoutTestNestedInput
     snapshots?: TestSnapshotUncheckedUpdateManyWithoutOriginalTestNestedInput
@@ -22477,6 +21151,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotCreateNestedManyWithoutTestSnapshotInput
     attempts?: TestAttemptCreateNestedManyWithoutSnapshotInput
     settings?: TestSettingsSnapshotCreateNestedOneWithoutSnapshotInput
@@ -22489,6 +21164,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUncheckedCreateNestedManyWithoutTestSnapshotInput
     attempts?: TestAttemptUncheckedCreateNestedManyWithoutSnapshotInput
     settings?: TestSettingsSnapshotUncheckedCreateNestedOneWithoutSnapshotInput
@@ -22520,7 +21196,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     activationLinkExp?: Date | string | null
     resetCodeExp?: Date | string | null
-    badWordsAdded?: BadWordCreateNestedManyWithoutAddedByInput
     testAttempts?: TestAttemptCreateNestedManyWithoutUserInput
     refreshToken?: TokenCreateNestedOneWithoutUserInput
   }
@@ -22541,7 +21216,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     activationLinkExp?: Date | string | null
     resetCodeExp?: Date | string | null
-    badWordsAdded?: BadWordUncheckedCreateNestedManyWithoutAddedByInput
     testAttempts?: TestAttemptUncheckedCreateNestedManyWithoutUserInput
     refreshToken?: TokenUncheckedCreateNestedOneWithoutUserInput
   }
@@ -22658,6 +21332,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFilter<"TestSnapshot"> | $Enums.ModerationStatus
     createdAt?: DateTimeFilter<"TestSnapshot"> | Date | string
     version?: IntFilter<"TestSnapshot"> | number
+    visibilityStatus?: EnumTestVisibilityStatusFilter<"TestSnapshot"> | $Enums.TestVisibilityStatus
   }
 
   export type UserUpsertWithoutTestsCreatedInput = {
@@ -22687,7 +21362,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activationLinkExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetCodeExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    badWordsAdded?: BadWordUpdateManyWithoutAddedByNestedInput
     testAttempts?: TestAttemptUpdateManyWithoutUserNestedInput
     refreshToken?: TokenUpdateOneWithoutUserNestedInput
   }
@@ -22708,7 +21382,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activationLinkExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetCodeExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    badWordsAdded?: BadWordUncheckedUpdateManyWithoutAddedByNestedInput
     testAttempts?: TestAttemptUncheckedUpdateManyWithoutUserNestedInput
     refreshToken?: TokenUncheckedUpdateOneWithoutUserNestedInput
   }
@@ -22752,6 +21425,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     testAttempts?: TestAttemptCreateNestedManyWithoutTestInput
     settings?: TestSettingsCreateNestedOneWithoutTestInput
     snapshots?: TestSnapshotCreateNestedManyWithoutOriginalTestInput
@@ -22768,6 +21442,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     testAttempts?: TestAttemptUncheckedCreateNestedManyWithoutTestInput
     settings?: TestSettingsUncheckedCreateNestedOneWithoutTestInput
     snapshots?: TestSnapshotUncheckedCreateNestedManyWithoutOriginalTestInput
@@ -22855,6 +21530,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     testAttempts?: TestAttemptUpdateManyWithoutTestNestedInput
     settings?: TestSettingsUpdateOneWithoutTestNestedInput
     snapshots?: TestSnapshotUpdateManyWithoutOriginalTestNestedInput
@@ -22871,6 +21547,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     testAttempts?: TestAttemptUncheckedUpdateManyWithoutTestNestedInput
     settings?: TestSettingsUncheckedUpdateOneWithoutTestNestedInput
     snapshots?: TestSnapshotUncheckedUpdateManyWithoutOriginalTestNestedInput
@@ -23018,6 +21695,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionCreateNestedManyWithoutTestInput
     settings?: TestSettingsCreateNestedOneWithoutTestInput
     snapshots?: TestSnapshotCreateNestedManyWithoutOriginalTestInput
@@ -23034,6 +21712,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionUncheckedCreateNestedManyWithoutTestInput
     settings?: TestSettingsUncheckedCreateNestedOneWithoutTestInput
     snapshots?: TestSnapshotUncheckedCreateNestedManyWithoutOriginalTestInput
@@ -23051,6 +21730,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotCreateNestedManyWithoutTestSnapshotInput
     settings?: TestSettingsSnapshotCreateNestedOneWithoutSnapshotInput
     originalTest: TestCreateNestedOneWithoutSnapshotsInput
@@ -23064,6 +21744,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUncheckedCreateNestedManyWithoutTestSnapshotInput
     settings?: TestSettingsSnapshotUncheckedCreateNestedOneWithoutSnapshotInput
   }
@@ -23089,7 +21770,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     activationLinkExp?: Date | string | null
     resetCodeExp?: Date | string | null
-    badWordsAdded?: BadWordCreateNestedManyWithoutAddedByInput
     testsCreated?: TestCreateNestedManyWithoutAuthorInput
     refreshToken?: TokenCreateNestedOneWithoutUserInput
   }
@@ -23110,7 +21790,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     activationLinkExp?: Date | string | null
     resetCodeExp?: Date | string | null
-    badWordsAdded?: BadWordUncheckedCreateNestedManyWithoutAddedByInput
     testsCreated?: TestUncheckedCreateNestedManyWithoutAuthorInput
     refreshToken?: TokenUncheckedCreateNestedOneWithoutUserInput
   }
@@ -23168,6 +21847,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionUpdateManyWithoutTestNestedInput
     settings?: TestSettingsUpdateOneWithoutTestNestedInput
     snapshots?: TestSnapshotUpdateManyWithoutOriginalTestNestedInput
@@ -23184,6 +21864,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionUncheckedUpdateManyWithoutTestNestedInput
     settings?: TestSettingsUncheckedUpdateOneWithoutTestNestedInput
     snapshots?: TestSnapshotUncheckedUpdateManyWithoutOriginalTestNestedInput
@@ -23207,6 +21888,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUpdateManyWithoutTestSnapshotNestedInput
     settings?: TestSettingsSnapshotUpdateOneWithoutSnapshotNestedInput
     originalTest?: TestUpdateOneRequiredWithoutSnapshotsNestedInput
@@ -23220,6 +21902,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUncheckedUpdateManyWithoutTestSnapshotNestedInput
     settings?: TestSettingsSnapshotUncheckedUpdateOneWithoutSnapshotNestedInput
   }
@@ -23251,7 +21934,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activationLinkExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetCodeExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    badWordsAdded?: BadWordUpdateManyWithoutAddedByNestedInput
     testsCreated?: TestUpdateManyWithoutAuthorNestedInput
     refreshToken?: TokenUpdateOneWithoutUserNestedInput
   }
@@ -23272,7 +21954,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activationLinkExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetCodeExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    badWordsAdded?: BadWordUncheckedUpdateManyWithoutAddedByNestedInput
     testsCreated?: TestUncheckedUpdateManyWithoutAuthorNestedInput
     refreshToken?: TokenUncheckedUpdateOneWithoutUserNestedInput
   }
@@ -23481,106 +22162,6 @@ export namespace Prisma {
     answers?: AnswerUncheckedUpdateManyWithoutQuestionNestedInput
   }
 
-  export type UserCreateWithoutBadWordsAddedInput = {
-    id?: string
-    email: string
-    name?: string | null
-    surname?: string | null
-    patronymic?: string | null
-    password: string
-    isActivated?: boolean
-    role?: $Enums.Role
-    activationLink?: string | null
-    resetCode?: string | null
-    isBlocked?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    activationLinkExp?: Date | string | null
-    resetCodeExp?: Date | string | null
-    testAttempts?: TestAttemptCreateNestedManyWithoutUserInput
-    testsCreated?: TestCreateNestedManyWithoutAuthorInput
-    refreshToken?: TokenCreateNestedOneWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutBadWordsAddedInput = {
-    id?: string
-    email: string
-    name?: string | null
-    surname?: string | null
-    patronymic?: string | null
-    password: string
-    isActivated?: boolean
-    role?: $Enums.Role
-    activationLink?: string | null
-    resetCode?: string | null
-    isBlocked?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    activationLinkExp?: Date | string | null
-    resetCodeExp?: Date | string | null
-    testAttempts?: TestAttemptUncheckedCreateNestedManyWithoutUserInput
-    testsCreated?: TestUncheckedCreateNestedManyWithoutAuthorInput
-    refreshToken?: TokenUncheckedCreateNestedOneWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutBadWordsAddedInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutBadWordsAddedInput, UserUncheckedCreateWithoutBadWordsAddedInput>
-  }
-
-  export type UserUpsertWithoutBadWordsAddedInput = {
-    update: XOR<UserUpdateWithoutBadWordsAddedInput, UserUncheckedUpdateWithoutBadWordsAddedInput>
-    create: XOR<UserCreateWithoutBadWordsAddedInput, UserUncheckedCreateWithoutBadWordsAddedInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutBadWordsAddedInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutBadWordsAddedInput, UserUncheckedUpdateWithoutBadWordsAddedInput>
-  }
-
-  export type UserUpdateWithoutBadWordsAddedInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    surname?: NullableStringFieldUpdateOperationsInput | string | null
-    patronymic?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
-    isActivated?: BoolFieldUpdateOperationsInput | boolean
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    activationLink?: NullableStringFieldUpdateOperationsInput | string | null
-    resetCode?: NullableStringFieldUpdateOperationsInput | string | null
-    isBlocked?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    activationLinkExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    resetCodeExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    testAttempts?: TestAttemptUpdateManyWithoutUserNestedInput
-    testsCreated?: TestUpdateManyWithoutAuthorNestedInput
-    refreshToken?: TokenUpdateOneWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutBadWordsAddedInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    surname?: NullableStringFieldUpdateOperationsInput | string | null
-    patronymic?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
-    isActivated?: BoolFieldUpdateOperationsInput | boolean
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    activationLink?: NullableStringFieldUpdateOperationsInput | string | null
-    resetCode?: NullableStringFieldUpdateOperationsInput | string | null
-    isBlocked?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    activationLinkExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    resetCodeExp?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    testAttempts?: TestAttemptUncheckedUpdateManyWithoutUserNestedInput
-    testsCreated?: TestUncheckedUpdateManyWithoutAuthorNestedInput
-    refreshToken?: TokenUncheckedUpdateOneWithoutUserNestedInput
-  }
-
   export type QuestionSnapshotCreateWithoutTestSnapshotInput = {
     id?: string
     originalTestId: string
@@ -23685,6 +22266,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionCreateNestedManyWithoutTestInput
     testAttempts?: TestAttemptCreateNestedManyWithoutTestInput
     settings?: TestSettingsCreateNestedOneWithoutTestInput
@@ -23701,6 +22283,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionUncheckedCreateNestedManyWithoutTestInput
     testAttempts?: TestAttemptUncheckedCreateNestedManyWithoutTestInput
     settings?: TestSettingsUncheckedCreateNestedOneWithoutTestInput
@@ -23809,6 +22392,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionUpdateManyWithoutTestNestedInput
     testAttempts?: TestAttemptUpdateManyWithoutTestNestedInput
     settings?: TestSettingsUpdateOneWithoutTestNestedInput
@@ -23825,6 +22409,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionUncheckedUpdateManyWithoutTestNestedInput
     testAttempts?: TestAttemptUncheckedUpdateManyWithoutTestNestedInput
     settings?: TestSettingsUncheckedUpdateOneWithoutTestNestedInput
@@ -23863,6 +22448,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     attempts?: TestAttemptCreateNestedManyWithoutSnapshotInput
     settings?: TestSettingsSnapshotCreateNestedOneWithoutSnapshotInput
     originalTest: TestCreateNestedOneWithoutSnapshotsInput
@@ -23876,6 +22462,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     attempts?: TestAttemptUncheckedCreateNestedManyWithoutSnapshotInput
     settings?: TestSettingsSnapshotUncheckedCreateNestedOneWithoutSnapshotInput
   }
@@ -23931,6 +22518,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     attempts?: TestAttemptUpdateManyWithoutSnapshotNestedInput
     settings?: TestSettingsSnapshotUpdateOneWithoutSnapshotNestedInput
     originalTest?: TestUpdateOneRequiredWithoutSnapshotsNestedInput
@@ -23944,6 +22532,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     attempts?: TestAttemptUncheckedUpdateManyWithoutSnapshotNestedInput
     settings?: TestSettingsSnapshotUncheckedUpdateOneWithoutSnapshotNestedInput
   }
@@ -24011,6 +22600,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotCreateNestedManyWithoutTestSnapshotInput
     attempts?: TestAttemptCreateNestedManyWithoutSnapshotInput
     originalTest: TestCreateNestedOneWithoutSnapshotsInput
@@ -24024,6 +22614,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUncheckedCreateNestedManyWithoutTestSnapshotInput
     attempts?: TestAttemptUncheckedCreateNestedManyWithoutSnapshotInput
   }
@@ -24051,6 +22642,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUpdateManyWithoutTestSnapshotNestedInput
     attempts?: TestAttemptUpdateManyWithoutSnapshotNestedInput
     originalTest?: TestUpdateOneRequiredWithoutSnapshotsNestedInput
@@ -24064,15 +22656,9 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUncheckedUpdateManyWithoutTestSnapshotNestedInput
     attempts?: TestAttemptUncheckedUpdateManyWithoutSnapshotNestedInput
-  }
-
-  export type BadWordCreateManyAddedByInput = {
-    id?: string
-    word: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type TestAttemptCreateManyUserInput = {
@@ -24097,27 +22683,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     version?: number
-  }
-
-  export type BadWordUpdateWithoutAddedByInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    word?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BadWordUncheckedUpdateWithoutAddedByInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    word?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BadWordUncheckedUpdateManyWithoutAddedByInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    word?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visibilityStatus?: $Enums.TestVisibilityStatus
   }
 
   export type TestAttemptUpdateWithoutUserInput = {
@@ -24170,6 +22736,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionUpdateManyWithoutTestNestedInput
     testAttempts?: TestAttemptUpdateManyWithoutTestNestedInput
     settings?: TestSettingsUpdateOneWithoutTestNestedInput
@@ -24185,6 +22752,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionUncheckedUpdateManyWithoutTestNestedInput
     testAttempts?: TestAttemptUncheckedUpdateManyWithoutTestNestedInput
     settings?: TestSettingsUncheckedUpdateOneWithoutTestNestedInput
@@ -24200,6 +22768,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
   }
 
   export type QuestionCreateManyTestInput = {
@@ -24231,6 +22800,7 @@ export namespace Prisma {
     status: $Enums.ModerationStatus
     createdAt?: Date | string
     version?: number
+    visibilityStatus?: $Enums.TestVisibilityStatus
   }
 
   export type QuestionUpdateWithoutTestInput = {
@@ -24312,6 +22882,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUpdateManyWithoutTestSnapshotNestedInput
     attempts?: TestAttemptUpdateManyWithoutSnapshotNestedInput
     settings?: TestSettingsSnapshotUpdateOneWithoutSnapshotNestedInput
@@ -24324,6 +22895,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
     questions?: QuestionSnapshotUncheckedUpdateManyWithoutTestSnapshotNestedInput
     attempts?: TestAttemptUncheckedUpdateManyWithoutSnapshotNestedInput
     settings?: TestSettingsSnapshotUncheckedUpdateOneWithoutSnapshotNestedInput
@@ -24336,6 +22908,7 @@ export namespace Prisma {
     status?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: IntFieldUpdateOperationsInput | number
+    visibilityStatus?: EnumTestVisibilityStatusFieldUpdateOperationsInput | $Enums.TestVisibilityStatus
   }
 
   export type AnswerCreateManyQuestionInput = {
