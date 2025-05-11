@@ -1,4 +1,5 @@
 import ApiError from "@/exceptions/api-error"
+import attemptRepository from "@/repositories/tests/attempt.repository"
 import testRepository from "@/repositories/tests/test.repository"
 import { mapTest, mapToTestSnapshotDTO, mapUserTest } from "@/services/mappers/test.mappers"
 import {
@@ -8,10 +9,10 @@ import {
     TestDTO,
     TestSettingsDTO,
     TestsListDTO,
-    UpdateTestDTO,
     UserTestDTO,
 } from "@/types"
 import { logger } from "@/utils/logger"
+import { generateSeedFromAttemptId, shuffleArray } from "@/utils/math"
 import { executeTransaction } from "@/utils/prisma-client"
 import { redisClient } from "@/utils/redis-client"
 import { sortInputFields } from "@/utils/sort"
@@ -139,7 +140,6 @@ class TestService {
         }
     }
 
-
     async getMyTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение тестов пользователя`, { userId, page, limit })
         try {
@@ -147,9 +147,16 @@ class TestService {
             const tests = await testRepository.findByAuthor(userId, skip, limit)
             const total = await testRepository.countByAuthor(userId)
 
+            // Получение totalAttempts для каждого теста
+            const testsWithAttempts = await Promise.all(
+                tests.map(async test => {
+                    const totalAttempts = await attemptRepository.count({ testId: test.id })
+                    return { ...test, totalAttempts }
+                })
+            )
             logger.debug(`[${LOG_NAMESPACE}] Тесты пользователя успешно получены`, { userId, count: tests.length })
             return {
-                tests: tests.map(test => mapTest(test)),
+                tests: testsWithAttempts.map(test => mapTest(test)),
                 total,
             }
         } catch (error) {
@@ -173,9 +180,17 @@ class TestService {
             const tests = await testRepository.findAll(skip, limit)
             const total = await testRepository.count()
 
-            logger.debug(`[${LOG_NAMESPACE}] Все тесты успешно получены`, { count: tests.length })
+            // Получение totalAttempts для каждого теста
+            const testsWithAttempts = await Promise.all(
+                tests.map(async test => {
+                    const totalAttempts = await attemptRepository.count({ testId: test.id })
+                    return { ...test, totalAttempts }
+                })
+            )
+
+            logger.debug(`[${LOG_NAMESPACE}] Все тесты успешно получены`, { count: testsWithAttempts.length })
             return {
-                tests: tests.map(test => mapTest(test)),
+                tests: testsWithAttempts.map(test => mapTest(test)),
                 total,
             }
         } catch (error) {
@@ -226,7 +241,12 @@ class TestService {
                 throw ApiError.NotFound("Тест не найден")
             }
 
-            const testDTO = mapTest(test)
+            // Подсчет кол-ва попыток для теста
+            const totalAttempts = await attemptRepository.count({ testId })
+            // Добавление totalAttempts к объекту теста
+            const testWithAttempts = { ...test, totalAttempts }
+
+            const testDTO = mapTest(testWithAttempts)
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(testDTO))
             logger.debug(`[${LOG_NAMESPACE}] Тест успешно получен`, { testId })
             return testDTO
@@ -241,15 +261,15 @@ class TestService {
             throw ApiError.InternalError("Ошибка при получении теста по ID")
         }
     }
-
-    async getTestForUserById(testId: string): Promise<UserTestDTO> {
-        logger.debug(`[${LOG_NAMESPACE}] Получение теста для пользователя по ID`, { testId })
+    async getTestForUserById(testId: string, attemptId?: string): Promise<UserTestDTO> {
+        logger.debug(`[${LOG_NAMESPACE}] Получение теста для пользователя по ID`, { testId, attemptId })
         try {
-            const cacheKey = `user-test:${testId}`
+            const isPreview = !attemptId
+            const cacheKey = isPreview ? `user-test-basic:${testId}` : `user-test:${testId}:attempt:${attemptId}`
             const cachedTest = await redisClient.get(cacheKey)
 
             if (cachedTest) {
-                logger.debug(`[${LOG_NAMESPACE}] Тест для пользователя получен из кэша`, { testId })
+                logger.debug(`[${LOG_NAMESPACE}] Тест для попытки пользователя получен из кэша`, { testId, attemptId })
                 return JSON.parse(cachedTest)
             }
 
@@ -259,9 +279,31 @@ class TestService {
                 throw ApiError.NotFound("Тест не найден")
             }
 
-            const testDTO = mapUserTest(test)
-            await redisClient.setEx(cacheKey, 3600, JSON.stringify(testDTO))
-            logger.debug(`[${LOG_NAMESPACE}] Тест для пользователя успешно получен`, { testId })
+            let testDTO = mapUserTest(test)
+
+            if (!isPreview) {
+                // Генерация seed на основе attemptId для детерминированного перемешивания
+                const seed = generateSeedFromAttemptId(attemptId)
+
+             
+                // Перемешивание вопросов с привязкой к попытке
+                if (test.settings?.shuffleQuestions && testDTO.questions) {
+                    testDTO.questions = shuffleArray(testDTO.questions, seed)
+                }
+
+                // Перемешивание вариантов ответов с привязкой к попытке
+                if (test.settings?.shuffleAnswers && testDTO.questions) {
+                    testDTO.questions = testDTO.questions.map((question, index) => ({
+                        ...question,
+                        answers: question.answers ? shuffleArray(question.answers, seed + index) : question.answers,
+                    }))
+                }
+            }
+
+            const cacheTime = isPreview ? 3600 : 3600 * 24
+            await redisClient.setEx(cacheKey, cacheTime, JSON.stringify(testDTO))
+            logger.debug(`[${LOG_NAMESPACE}] Тест для попытки пользователя успешно получен`, { testId, attemptId })
+
             return testDTO
         } catch (error) {
             if (error instanceof ApiError) {
@@ -283,10 +325,19 @@ class TestService {
 
             const tests = await testRepository.search(query, skip, limit)
             const total = await testRepository.count(whereCondition)
-
-            logger.debug(`[${LOG_NAMESPACE}] Результаты поиска тестов получены`, { query, count: tests.length })
+            // Подсчет totalAttempts для каждого теста
+            const testsWithAttempts = await Promise.all(
+                tests.map(async test => {
+                    const totalAttempts = await attemptRepository.count({ testId: test.id })
+                    return { ...test, totalAttempts }
+                })
+            )
+            logger.debug(`[${LOG_NAMESPACE}] Результаты поиска тестов получены`, {
+                query,
+                count: testsWithAttempts.length,
+            })
             return {
-                tests: tests.map(test => mapTest(test)),
+                tests: testsWithAttempts.map(test => mapTest(test)),
                 total,
             }
         } catch (error) {
@@ -315,13 +366,21 @@ class TestService {
             const tests = await testRepository.searchUserTests(query, userId, skip, limit)
             const total = await testRepository.count(whereCondition)
 
+            // Подсчет totalAttempts для каждого теста
+            const testsWithAttempts = await Promise.all(
+                tests.map(async test => {
+                    const totalAttempts = await attemptRepository.count({ testId: test.id })
+                    return { ...test, totalAttempts }
+                })
+            )
+
             logger.debug(`[${LOG_NAMESPACE}] Результаты поиска тестов пользователя получены`, {
                 query,
                 userId,
-                count: tests.length,
+                count: testsWithAttempts.length,
             })
             return {
-                tests: tests.map(test => mapTest(test)),
+                tests: testsWithAttempts.map(test => mapTest(test)),
                 total,
             }
         } catch (error) {

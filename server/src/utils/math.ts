@@ -1,4 +1,6 @@
 import { ACTIVATION_LINK_LIFETIME_HOURS, RESET_CODE_LIFETIME_MINUTES } from "@/utils/constants"
+import seedrandom from "seedrandom"
+
 export const generateCode = (): string => {
     const min = 100000 // 6 цифр
     const max = 999999 // 6 цифр
@@ -38,4 +40,25 @@ export const calculateTestScore = (
 
     const totalQuestions = questionsWithAnswers.length
     return totalQuestions > 0 ? (correctQuestionsCount / totalQuestions) * 100 : 0
+}
+
+export const generateSeedFromAttemptId = (attemptId: string): number => {
+    let hash = 0
+    for (let i = 0; i < attemptId.length; i++) {
+        const char = attemptId.charCodeAt(i)
+        hash = (hash << 5) - hash + char
+        hash = hash & hash // Преобразование в 32-битное целое
+    }
+    return Math.abs(hash)
+}
+// Функция для перемешивания массива с использованием seed
+export const shuffleArray = <T>(array: T[], seed: number): T[] => {
+    const shuffled = [...array]
+    const random = seedrandom(seed.toString())
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(random() * (i + 1))
+        ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled
 }
