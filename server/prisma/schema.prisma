@@ -24,7 +24,6 @@ model User {
   updatedAt         DateTime      @updatedAt
   activationLinkExp DateTime?
   resetCodeExp      DateTime?
-  badWordsAdded     BadWord[]     @relation("AddedByUser")
   testAttempts      TestAttempt[] @relation("TestAttemptUser")
   testsCreated      Test[]        @relation("TestAuthor")
   refreshToken      Token?
@@ -60,20 +59,21 @@ model TestSettings {
 }
 
 model Test {
-  id            String           @id @default(uuid())
-  authorId      String
-  title         String
-  description   String?
-  status        ModerationStatus @default(PENDING)
-  totalAttempts Int              @default(0)
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
-  version       Int              @default(1)
-  questions     Question[]
-  testAttempts  TestAttempt[]
-  settings      TestSettings?
-  snapshots     TestSnapshot[]
-  author        User             @relation("TestAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  id               String               @id @default(uuid())
+  authorId         String
+  title            String
+  description      String?
+  status           ModerationStatus     @default(PENDING)
+  totalAttempts    Int                  @default(0)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  version          Int                  @default(1)
+  visibilityStatus TestVisibilityStatus @default(PUBLISHED)
+  questions        Question[]
+  testAttempts     TestAttempt[]
+  settings         TestSettings?
+  snapshots        TestSnapshot[]
+  author           User                 @relation("TestAuthor", fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("tests")
 }
@@ -142,29 +142,19 @@ model UserAnswer {
   @@map("user_answers")
 }
 
-model BadWord {
-  id        String   @id @default(uuid())
-  word      String   @unique
-  addedById String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  addedBy   User     @relation("AddedByUser", fields: [addedById], references: [id], onDelete: Cascade)
-
-  @@map("bad_words")
-}
-
 model TestSnapshot {
-  id           String                @id @default(uuid())
-  testId       String
-  title        String
-  description  String?
-  status       ModerationStatus
-  createdAt    DateTime              @default(now())
-  version      Int                   @default(1)
-  questions    QuestionSnapshot[]
-  attempts     TestAttempt[]
-  settings     TestSettingsSnapshot?
-  originalTest Test                  @relation(fields: [testId], references: [id], onDelete: Cascade)
+  id               String                @id @default(uuid())
+  testId           String
+  title            String
+  description      String?
+  status           ModerationStatus
+  createdAt        DateTime              @default(now())
+  version          Int                   @default(1)
+  visibilityStatus TestVisibilityStatus  @default(PUBLISHED)
+  questions        QuestionSnapshot[]
+  attempts         TestAttempt[]
+  settings         TestSettingsSnapshot?
+  originalTest     Test                  @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@map("test_snapshots")
 }
@@ -230,4 +220,13 @@ enum TestAttemptStatus {
 enum QuestionType {
   SINGLE_CHOICE
   MULTIPLE_CHOICE
+  TEXT_INPUT
+  MATCHING
+  FILL_IN_THE_BLANK
+  SEQUENCE
+}
+
+enum TestVisibilityStatus {
+  HIDDEN
+  PUBLISHED
 }
