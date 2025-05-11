@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import CopyTestButton from "@/features/tests/components/CopyTestButton/CopyTestButton"
 import QuestionsEditor from "@/features/tests/components/QuestionsEditor/QuestionsEditor"
 import TestInfoEditor from "@/features/tests/components/TestInfoEditor/TestInfoEditor"
 import TestSettingsEditor from "@/features/tests/components/TestSettingsEditor/TestSettingsEditor"
@@ -152,6 +153,7 @@ const TestInfoPage = () => {
                             <Button onClick={handleEditShortInfoButton} className={styles.addQuestionBtn}>
                                 ✏️
                             </Button>
+                            <CopyTestButton test={test} className={styles.addQuestionBtn} />
                         </div>
                     </div>
                     {isShortInfoUpdating ? (

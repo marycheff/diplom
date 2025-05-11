@@ -1,8 +1,9 @@
 import { PasswordInputProps } from "@/shared/ui/Input/Password/PasswordInput.props"
-import { ChangeEvent, FC, useState } from "react"
+import { ChangeEvent, FC, useEffect, useState } from "react" // Добавим useEffect
 import { RegisterOptions } from "react-hook-form"
 import { FiEye, FiEyeOff } from "react-icons/fi"
 import styles from "./PasswordInput.module.scss"
+
 const PasswordInput: FC<PasswordInputProps<any>> = ({
     name,
     placeholder,
@@ -14,34 +15,38 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
     clearable = false,
     noValidation = false,
     label,
+    trigger,
 }) => {
     const [localValue, setLocalValue] = useState("")
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+    const [wasTouched, setWasTouched] = useState(false) // Добавим состояние touched
     const inputId = `input-${name}`
 
-    // Делаем валидацию опциональной
     const passwordValidation: RegisterOptions = noValidation
         ? { required: "Пароль обязателен" }
         : {
               required: "Пароль обязателен",
               minLength: {
-                  value: 3,
-                  message: "Пароль должен содержать минимум 3 символа",
+                  value: 8,
+                  message: "Пароль должен содержать минимум 8 символов",
               },
               maxLength: {
-                  value: 32,
+                  value: 64,
                   message: "Пароль не должен превышать 32 символа",
               },
           }
 
-    // Остальной код без изменений
     const handleClear = () => {
         setValue(name, "")
         setLocalValue("")
+        setWasTouched(true)
+        trigger?.(name) // Триггерим валидацию после очистки
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setLocalValue(e.target.value)
+        setWasTouched(true)
+        if (errors) trigger(name)
     }
 
     const togglePasswordVisibility = () => {
@@ -54,9 +59,18 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
             onChange: handleChange,
             onBlur: () => {
                 setIsFocused(false)
+                trigger?.(name) // Триггерим валидацию при потере фокуса
             },
         }),
     }
+
+    // Добавим эффект для инициализации значения
+    useEffect(() => {
+        const input = document.querySelector(`input[name="${name}"]`) as HTMLInputElement
+        if (input && input.value) {
+            setLocalValue(input.value)
+        }
+    }, [name])
 
     const hasValue = localValue.length > 0
     const [isFocused, setIsFocused] = useState(false)
@@ -65,7 +79,7 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
     return (
         <div className={styles.inputWrapper}>
             <label className={styles.label}>{label}</label>
-            <div className={`${styles.inputContainer} ${isActive ? styles.active : ""}`}>
+            <div className={`${styles.inputContainer} ${isActive ? styles.active : ""} ${errors ? styles.error : ""}`}>
                 <input
                     type={isPasswordVisible ? "text" : "password"}
                     disabled={disabled}
@@ -92,8 +106,11 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
                         {isPasswordVisible ? <FiEyeOff /> : <FiEye />}
                     </button>
                 )}
+                {/* Добавим условие для отображения ошибки */}
+                {errors && errors.message && (wasTouched || isFocused) && (
+                    <div className={styles.errorTooltip}>{errors.message}</div>
+                )}
             </div>
-            {errors && <p className={styles.error}>{errors.message}</p>}
         </div>
     )
 }

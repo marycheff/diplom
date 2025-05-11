@@ -38,7 +38,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
         validate: (value: string) => {
             if (!hasText(value)) return "Вопрос должен содержать текст"
             if (!isWithinCharLimit(value, 100)) return "Вопрос не должен превышать 100 символов"
-            if (!isWithinWordCount(value, 2, 10)) return "Вопрос должен содержать от 2 до 10 слов"
+            if (!isWithinWordCount(value, 2, 100)) return "Вопрос должен содержать от 2 слов"
             return true
         },
     }

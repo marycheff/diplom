@@ -1,4 +1,4 @@
-import { FieldError, Path, UseFormRegister, UseFormSetValue } from "react-hook-form"
+import { FieldError, Path, UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form"
 export interface PasswordInputProps<T extends Record<string, any>> {
     name: Path<T>
     placeholder?: string
@@ -8,6 +8,7 @@ export interface PasswordInputProps<T extends Record<string, any>> {
     setValue: UseFormSetValue<T>
     errors?: FieldError | undefined
     clearable?: boolean
-    noValidation? : boolean
+    noValidation?: boolean
     label?: string
+    trigger: UseFormTrigger<T>
 }

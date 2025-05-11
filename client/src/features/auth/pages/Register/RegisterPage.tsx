@@ -54,6 +54,7 @@ const RegisterPage = () => {
                         name="password"
                         register={register}
                         setValue={setValue}
+                        trigger={trigger}
                         errors={errors.password}
                         placeholder="Пароль"
                     />

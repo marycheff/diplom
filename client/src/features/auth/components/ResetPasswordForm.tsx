@@ -160,6 +160,8 @@ const ResetPasswordForm: FC = () => {
                         setValue={setPasswordValue}
                         errors={passwordErrors.newPassword}
                         placeholder="Новый пароль"
+                        trigger={passwordTrigger}
+
                         // trigger={passwordTrigger}
                     />
                     <Button type="submit" disabled={isLoading}>

@@ -1,6 +1,16 @@
 // @import url("../Base/Input.module");
 @use "../Base/Input.module";
 
+.inputContainer {
+    .input {
+        transition: border-color 0.2s ease-in-out;
+    }
+
+    &.error .input {
+        border-color: #ff3b30;
+    }
+}
+
 .inputContainer:has(.clearButton) .input {
     padding-right: 30px;
 }
@@ -21,4 +31,49 @@
 .inputContainer:has(.textarea) .placeholder {
     top: 8px;
     transform: translateY(0);
+}
+
+/* Стили для тултипа с ошибкой */
+.errorTooltip {
+    position: absolute;
+    top: -34px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ff3b30;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 10;
+    white-space: nowrap;
+    // max-width: 100%;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease, top 0.2s ease;
+
+    &::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #ff3b30;
+        display: block;
+    }
+}
+
+.inputContainer.error .errorTooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Позиционирование тултипа для textarea */
+.inputContainer:has(.textarea) .errorTooltip {
+    top: -40px;
 }

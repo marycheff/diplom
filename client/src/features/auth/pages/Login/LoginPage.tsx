@@ -66,6 +66,7 @@ const LoginPage = () => {
                         setValue={setValue}
                         errors={errors.password}
                         placeholder="Пароль"
+                        trigger={trigger}
                         noValidation
                     />
                     <Button type="submit" disabled={isLoading}>

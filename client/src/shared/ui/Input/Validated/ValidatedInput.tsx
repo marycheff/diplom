@@ -26,6 +26,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
 }) => {
     const [isFocused, setIsFocused] = useState(false)
     const [inputValue, setInputValue] = useState(defaultValue)
+    const [wasTouched, setWasTouched] = useState(false)
     const inputId = `input-${name}`
 
     const { ref, onChange, onBlur, ...registeredInput } = register(name, validationRules)
@@ -33,6 +34,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         onChange(e) // Вызываем оригинальный обработчик onChange из register
         setInputValue(e.target.value)
+        setWasTouched(true)
         if (errors) trigger(name)
     }
 
@@ -59,7 +61,10 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
 
     return (
         <div className={`${styles.inputWrapper} ${className}`}>
-            <div className={`${styles.inputContainer} ${shouldFloat ? styles.active : ""}`}>
+            <div
+                className={`${styles.inputContainer} ${shouldFloat ? styles.active : ""} ${
+                    errors ? styles.error : ""
+                }`}>
                 {multiline ? (
                     <textarea
                         {...registeredInput}
@@ -135,8 +140,10 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                         ×
                     </button>
                 )}
+                {errors && errors.message && (wasTouched || isFocused) && (
+                    <div className={styles.errorTooltip}>{errors.message}</div>
+                )}
             </div>
-            {errors && errors.message && <p className={styles.error}>{errors.message}</p>}
         </div>
     )
 }

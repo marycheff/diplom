@@ -20,6 +20,7 @@ const UpdatePasswordForm = () => {
         formState: { errors },
         setValue,
         handleSubmit,
+        trigger
     } = useForm<ChangePasswordFormData>({
         mode: "onBlur",
     })
@@ -39,6 +40,7 @@ const UpdatePasswordForm = () => {
                     errors={errors.oldPassword}
                     label="Старый пароль"
                     noValidation
+                    trigger={trigger}
                 />
 
                 <PasswordInput
@@ -47,6 +49,7 @@ const UpdatePasswordForm = () => {
                     setValue={setValue}
                     errors={errors.newPassword}
                     label="Новый пароль"
+                    trigger={trigger}
                 />
                 <Button type="submit" disabled={isLoading} className={styles.updateBtn}>
                     Обновить пароль
