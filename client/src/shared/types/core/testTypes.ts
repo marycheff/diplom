@@ -13,6 +13,7 @@ export interface TestState {
     isShortInfoUpdating: boolean
     isSettingsUpdating: boolean
     isGenerating: boolean
+    isVisibilityUpdating: boolean
 
     getTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
@@ -27,6 +28,7 @@ export interface TestState {
     updateTestSettings: (testId: string, updatedSettings: TestSettingsDTO) => Promise<void>
     updateShortInfo: (testId: string, updatedShortInfo: ShortTestInfo) => Promise<void>
     getSnapshotById: (snapshotId: string) => Promise<SnapshotWithOriginalTestDTO | undefined>
+    changeVisibilityStatus: (testId: string, status: TestVisibilityStatus) => Promise<void>
 
     // CACHE
     CACHE_EXPIRATION_TIME: number
@@ -54,6 +56,7 @@ export interface TestDTO {
     description?: string
     questions?: QuestionDTO[]
     settings?: TestSettingsDTO
+    visibilityStatus: TestVisibilityStatus
     totalAttempts: number
 }
 
@@ -64,7 +67,6 @@ export interface UserTestDTO {
     description?: string
     questions?: UserQuestionDTO[]
     settings?: UserTestSettingsDTO
-
 }
 
 export interface UpdateTestDTO {
@@ -104,4 +106,12 @@ export interface TestSnapshotDTO {
     createdAt: Date
     questions: QuestionSnapshotDTO[]
     settings?: TestSettingsSnapshotDTO
+}
+export enum TestVisibilityStatus {
+    HIDDEN = "HIDDEN",
+    PUBLISHED = "PUBLISHED",
+}
+export const VisibilityStatusLabels: Record<TestVisibilityStatus, string> = {
+    [TestVisibilityStatus.HIDDEN]: "Скрыт",
+    [TestVisibilityStatus.PUBLISHED]: "Публикуется",
 }

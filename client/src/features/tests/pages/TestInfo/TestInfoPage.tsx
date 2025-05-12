@@ -12,6 +12,7 @@ import {
     ShortTestInfo,
     TestDTO,
     TestSettingsDTO,
+    TestVisibilityStatus,
     UpdateTestDTO,
 } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
@@ -37,6 +38,8 @@ const TestInfoPage = () => {
         isSettingsUpdating,
         updateTestSettings,
         updateShortInfo,
+        changeVisibilityStatus,
+        isVisibilityUpdating,
     } = useTestStore()
     const [test, setTest] = useState<TestDTO | null>(null)
     const { user: currentUser } = useAuthStore()
@@ -144,6 +147,22 @@ const TestInfoPage = () => {
             setIsEditQuestionsModalOpen(false)
         }
     }
+    const handleChangeVisibilityStatus = () => {
+        const newStatus =
+            test.visibilityStatus === TestVisibilityStatus.HIDDEN
+                ? TestVisibilityStatus.PUBLISHED
+                : TestVisibilityStatus.HIDDEN
+        changeVisibilityStatus(test.id, newStatus)
+        setTest(prev =>
+            prev
+                ? {
+                      ...prev,
+                      visibilityStatus: newStatus,
+                  }
+                : null
+        )
+        toast.success(test.visibilityStatus === TestVisibilityStatus.HIDDEN ? "Тест опубликован" : "Тест скрыт")
+    }
 
     return (
         <div className={styles.container}>
@@ -154,6 +173,15 @@ const TestInfoPage = () => {
                         <div className={styles.buttonContainer}>
                             <Button onClick={handleEditShortInfoButton} className={styles.addQuestionBtn}>
                                 ✏️
+                            </Button>
+                            <Button
+                                onClick={handleChangeVisibilityStatus}
+                                className={styles.addQuestionBtn}
+                                disabled={isVisibilityUpdating}
+                                tooltip={
+                                    test.visibilityStatus === TestVisibilityStatus.HIDDEN ? "Опубликовать" : "Скрыть"
+                                }>
+                                {test.visibilityStatus === TestVisibilityStatus.HIDDEN ? "🔒" : "🔓"}
                             </Button>
                             <CopyTestButton test={test} className={styles.addQuestionBtn} />
                         </div>

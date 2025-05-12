@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
-import { TestDTO } from "@/shared/types"
+import { TestDTO, VisibilityStatusLabels } from "@/shared/types"
 import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./MyTestsTable.module.scss"
@@ -26,6 +26,7 @@ const MyTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
                                 <tr>
                                     <th scope="col"></th>
                                     <th scope="col">Название</th>
+                                    <th scope="col">Статус публикации</th>
                                     <th scope="col">Кол-во вопросов</th>
                                     <th scope="col">Требуется регистрация</th>
                                     <th scope="col">Показывать детальные результаты</th>
@@ -43,6 +44,7 @@ const MyTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
                                             </Link>
                                         </td>
                                         <td>{test.title}</td>
+                                        <td>{VisibilityStatusLabels[test.visibilityStatus]}</td>
                                         <td>{test.questions ? test.questions.length : 0}</td>
                                         <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
                                         <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td>

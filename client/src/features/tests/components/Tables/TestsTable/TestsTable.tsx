@@ -1,4 +1,4 @@
-import { TestDTO } from "@/shared/types"
+import { TestDTO, VisibilityStatusLabels } from "@/shared/types"
 import { shortenText } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
@@ -26,6 +26,8 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                     <th scope="col">ID</th>
                                     <th scope="col">Автор</th>
                                     <th scope="col">Название</th>
+                                    <th scope="col">Статус публикации</th>
+
                                     <th scope="col">Кол-во вопросов</th>
                                     <th scope="col">Требуется регистрация</th>
                                     <th scope="col">Показывать детальные результаты</th>
@@ -53,6 +55,8 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                                 </Link>
                                             </td>
                                             <td>{shortenText(test.title, 30)}</td>
+                                            <td>{VisibilityStatusLabels[test.visibilityStatus]}</td>
+
                                             <td>{test.questions ? test.questions.length : 0}</td>
                                             <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
                                             <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td>

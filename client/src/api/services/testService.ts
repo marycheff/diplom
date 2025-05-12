@@ -7,6 +7,7 @@ import {
     TestDTO,
     TestSettingsDTO,
     TestsListDTO,
+    TestVisibilityStatus,
     UpdateTestDTO,
     UserTestDTO,
 } from "@/shared/types"
@@ -88,6 +89,10 @@ class TestService {
     upsertQuestions = (testId: string, questions: QuestionDTO[]): Promise<AxiosResponse<QuestionDTO[]>> => {
         // console.log({questions})
         return axiosInstance.put(`/tests/${testId}/questions-u`, { questions })
+    }
+
+    changeVisibilityStatus = (testId: string, status: TestVisibilityStatus): Promise<AxiosResponse<void>> => {
+        return axiosInstance.put(`/tests/${testId}/visibility`, { status })
     }
 }
 export const testService = new TestService()
