@@ -26,10 +26,10 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                     <th scope="col">ID</th>
                                     <th scope="col">Автор</th>
                                     <th scope="col">Название</th>
-                                    <th scope="col">Количество вопросов</th>
+                                    <th scope="col">Кол-во вопросов</th>
                                     <th scope="col">Требуется регистрация</th>
                                     <th scope="col">Показывать детальные результаты</th>
-                                    <th scope="col">Количество попыток</th>
+                                    <th scope="col">Кол-во попыток</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -26,11 +26,10 @@ const MyTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
                                 <tr>
                                     <th scope="col"></th>
                                     <th scope="col">Название</th>
-                                    <th scope="col">Описание</th>
-                                    <th scope="col">Количество вопросов</th>
+                                    <th scope="col">Кол-во вопросов</th>
                                     <th scope="col">Требуется регистрация</th>
                                     <th scope="col">Показывать детальные результаты</th>
-                                    <th scope="col">Количество попыток</th>
+                                    <th scope="col">Кол-во попыток</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -44,7 +43,6 @@ const MyTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
                                             </Link>
                                         </td>
                                         <td>{test.title}</td>
-                                        <td>{test.description || "–"}</td>
                                         <td>{test.questions ? test.questions.length : 0}</td>
                                         <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
                                         <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td>

@@ -34,7 +34,7 @@ const WelcomePage = () => {
                     </div>
                     <div className={styles.featureCard}>
                         <h3>Публикация в 1 клик</h3>
-                        <p>Делитесь тестами по ссылке или внедряйте на сайт.</p>
+                        <p>Быстро делитесь тестами по ссылке.</p>
                     </div>
                 </section>
             </main>
