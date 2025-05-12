@@ -7,6 +7,7 @@ import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router-dom"
 import styles from "./LoginPage.module.scss"
+import { emailValidationRules } from "@/shared/types/utils/validationRules"
 
 export type LoginFormData = {
     email: string
@@ -52,13 +53,7 @@ const LoginPage = () => {
                         setValue={setValue}
                         errors={errors.email}
                         trigger={trigger}
-                        validationRules={{
-                            required: "Email обязателен",
-                            pattern: {
-                                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                                message: "Введите корректный email",
-                            },
-                        }}
+                        validationRules={emailValidationRules}
                     />
                     <PasswordInput
                         name="password"

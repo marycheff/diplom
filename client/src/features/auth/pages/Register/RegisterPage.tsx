@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
+import { emailValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -9,6 +10,7 @@ import styles from "./RegisterPage.module.scss"
 type Register = {
     email: string
     password: string
+    confirmPassword: string
 }
 const RegisterPage = () => {
     const { registration, isLoading } = useAuthStore()
@@ -26,6 +28,10 @@ const RegisterPage = () => {
         shouldFocusError: false,
     })
     const onSubmit: SubmitHandler<Register> = async data => {
+        if (data.password !== data.confirmPassword) {
+            toast.error("Пароли не совпадают")
+            return
+        }
         await registration(data.email, data.password)
         toast.success("Успешная регистрация")
         navigate(ROUTES.HOME)
@@ -42,13 +48,7 @@ const RegisterPage = () => {
                         trigger={trigger}
                         errors={errors.email}
                         placeholder="Email"
-                        validationRules={{
-                            required: "Email обязателен",
-                            pattern: {
-                                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                                message: "Введите корректный email",
-                            },
-                        }}
+                        validationRules={emailValidationRules}
                     />
                     <PasswordInput
                         name="password"
@@ -57,6 +57,14 @@ const RegisterPage = () => {
                         trigger={trigger}
                         errors={errors.password}
                         placeholder="Пароль"
+                    />
+                    <PasswordInput
+                        name="confirmPassword"
+                        register={register}
+                        setValue={setValue}
+                        trigger={trigger}
+                        errors={errors.confirmPassword}
+                        placeholder="Подтверждение пароля"
                     />
                     <Button type="submit" disabled={isLoading}>
                         Регистрация

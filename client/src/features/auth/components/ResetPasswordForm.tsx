@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useResetPasswordStore } from "@/features/auth/store/useResetPasswordStore"
+import { emailValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 import { FC, useEffect, useState } from "react"
@@ -116,13 +117,7 @@ const ResetPasswordForm: FC = () => {
                         register={registerEmail}
                         setValue={setEmailValue}
                         errors={emailErrors.email}
-                        validationRules={{
-                            required: "Email обязателен",
-                            pattern: {
-                                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                                message: "Введите корректный email",
-                            },
-                        }}
+                        validationRules={emailValidationRules}
                     />
                     <Button type="submit" disabled={isLoading || secondsLeft > 0}>
                         Отправить код
