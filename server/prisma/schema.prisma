@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "app/generated/prisma/client"
+  // output   = "app/generated/prisma/client"
 }
 
 datasource db {
@@ -10,15 +10,15 @@ datasource db {
 
 model User {
   id                String        @id @default(uuid())
-  email             String        @unique
-  name              String?
-  surname           String?
-  patronymic        String?
-  password          String
+  email             String        @unique @db.VarChar(255)
+  name              String?       @db.VarChar(50)
+  surname           String?       @db.VarChar(50)
+  patronymic        String?       @db.VarChar(50)
+  password          String        @db.Char(60) // Для bcrypt хэша
   isActivated       Boolean       @default(false)
   role              Role          @default(USER)
-  activationLink    String?
-  resetCode         String?
+  activationLink    String?       @db.VarChar(255)
+  resetCode         String?       @db.VarChar(255)
   isBlocked         Boolean       @default(false)
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
@@ -61,14 +61,14 @@ model TestSettings {
 model Test {
   id               String               @id @default(uuid())
   authorId         String
-  title            String
-  description      String?
+  title            String               @db.VarChar(100)
+  description      String?              @db.VarChar(500)
   status           ModerationStatus     @default(PENDING)
+  visibilityStatus TestVisibilityStatus @default(PUBLISHED)
   totalAttempts    Int                  @default(0)
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
   version          Int                  @default(1)
-  visibilityStatus TestVisibilityStatus @default(PUBLISHED)
   questions        Question[]
   testAttempts     TestAttempt[]
   settings         TestSettings?
@@ -81,7 +81,7 @@ model Test {
 model Question {
   id          String       @id @default(uuid())
   testId      String
-  text        String
+  text        String       @db.VarChar(1000)
   order       Int
   type        QuestionType @default(SINGLE_CHOICE)
   createdAt   DateTime     @default(now())
@@ -96,7 +96,7 @@ model Question {
 model Answer {
   id          String       @id @default(uuid())
   questionId  String
-  text        String
+  text        String       @db.VarChar(500)
   isCorrect   Boolean      @default(false)
   isGenerated Boolean      @default(false)
   createdAt   DateTime     @default(now())
@@ -145,12 +145,12 @@ model UserAnswer {
 model TestSnapshot {
   id               String                @id @default(uuid())
   testId           String
-  title            String
-  description      String?
+  title            String                @db.VarChar(100)
+  description      String?               @db.VarChar(500)
   status           ModerationStatus
+  visibilityStatus TestVisibilityStatus  @default(PUBLISHED)
   createdAt        DateTime              @default(now())
   version          Int                   @default(1)
-  visibilityStatus TestVisibilityStatus  @default(PUBLISHED)
   questions        QuestionSnapshot[]
   attempts         TestAttempt[]
   settings         TestSettingsSnapshot?
@@ -163,7 +163,7 @@ model QuestionSnapshot {
   id             String           @id @default(uuid())
   testSnapshotId String
   originalTestId String
-  text           String
+  text           String           @db.VarChar(1000)
   order          Int
   type           QuestionType
   createdAt      DateTime         @default(now())
@@ -177,7 +177,7 @@ model AnswerSnapshot {
   id             String           @id @default(uuid())
   questionId     String
   originalTestId String
-  text           String
+  text           String           @db.VarChar(500)
   isCorrect      Boolean          @default(false)
   createdAt      DateTime         @default(now())
   question       QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
@@ -218,15 +218,17 @@ enum TestAttemptStatus {
 }
 
 enum QuestionType {
-  SINGLE_CHOICE
-  MULTIPLE_CHOICE
-  TEXT_INPUT
-  MATCHING
-  FILL_IN_THE_BLANK
-  SEQUENCE
+  SINGLE_CHOICE // Одиночный выбор 
+  MULTIPLE_CHOICE // Множественный выбор 
+  TEXT_INPUT // Текстовый ввод 
+  MATCHING // Сопоставление элементов 
+  FILL_IN_THE_BLANK // Вставка пропущенных слов 
+  SEQUENCE // Вопрос на последовательность 
 }
 
 enum TestVisibilityStatus {
   HIDDEN
   PUBLISHED
 }
+
+// 12 таблиц 3 enum
