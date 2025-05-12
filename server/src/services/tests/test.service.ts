@@ -16,6 +16,7 @@ import { generateSeedFromAttemptId, shuffleArray } from "@/utils/math"
 import { executeTransaction } from "@/utils/prisma-client"
 import { redisClient } from "@/utils/redis-client"
 import { sortInputFields } from "@/utils/sort"
+import { Test, TestVisibilityStatus } from "@prisma/client"
 
 const LOG_NAMESPACE = "TestService"
 
@@ -64,6 +65,43 @@ class TestService {
             logger.info(`[${LOG_NAMESPACE}] Настройки теста успешно обновлены`, { testId })
         } catch (error) {
             throw ApiError.InternalError("Ошибка при обновлении настроек теста")
+        }
+    }
+    async changeVisibilityStatus(testId: string, status: TestVisibilityStatus, test?: Test): Promise<void> {
+        logger.info(`[${LOG_NAMESPACE}] Изменение статуса видимости теста`, { testId, status })
+
+        try {
+            await executeTransaction(async tx => {
+                const existingTest = test ?? (await testRepository.findById(testId))
+                
+                if (!existingTest) {
+                    throw ApiError.NotFound("Тест не найден")
+                }
+
+                await testRepository.updateVisibilityStatus(testId, status, tx)
+                // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
+                // await testRepository.cleanupUnusedSnapshots(testId, tx)
+
+                // const updatedTest = await testRepository.findDetailedTestById(testId, tx)
+                // if (!updatedTest) {
+                //     throw ApiError.InternalError("Не удалось получить обновленный тест")
+                // }
+
+                // await testRepository.createSnapshot(updatedTest, tx)
+            })
+
+            await redisClient.del(`test:${testId}`)
+            await redisClient.del(`user-test:${testId}`)
+            logger.info(`[${LOG_NAMESPACE}] Статус видимости теста успешно изменен`, { testId, status })
+        } catch (error) {
+            if (error instanceof ApiError) throw error
+
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при изменении статуса видимости теста`, {
+                testId,
+                status,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при изменении статуса видимости теста")
         }
     }
 
@@ -285,7 +323,6 @@ class TestService {
                 // Генерация seed на основе attemptId для детерминированного перемешивания
                 const seed = generateSeedFromAttemptId(attemptId)
 
-             
                 // Перемешивание вопросов с привязкой к попытке
                 if (test.settings?.shuffleQuestions && testDTO.questions) {
                     testDTO.questions = shuffleArray(testDTO.questions, seed)

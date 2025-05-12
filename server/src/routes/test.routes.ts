@@ -185,5 +185,13 @@ router.get(
     validateRequest(getTestSnapshotSchema),
     testController.getTestSnapshot
 )
+// Изменение статуса видимости теста
+router.put(
+    "/:testId/visibility",
+    authMiddleware,
+    accountActivationMiddleware,
+    testOwnershipMiddleware,
+    testController.changeVisibilityStatus
+)
 
 export default router

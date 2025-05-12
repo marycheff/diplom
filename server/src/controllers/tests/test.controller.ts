@@ -1,6 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import testService from "@/services/tests/test.service"
 import { CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types"
+import { TestVisibilityStatus } from "@prisma/client"
 
 import { NextFunction, Request, Response } from "express"
 
@@ -167,6 +168,28 @@ class TestController {
             const { snapshotId } = req.params
             const snapshot = await testService.getTestSnapshot(snapshotId)
             res.json(snapshot)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async changeVisibilityStatus(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const { status } = req.body
+            const testVisibilityStatus = req.test?.visibilityStatus
+            if (!status) {
+                throw ApiError.BadRequest("Статус видимости теста не был передан")
+            }
+            if (testVisibilityStatus === status) {
+                throw ApiError.BadRequest("Статус видимости теста не изменился")
+            }
+
+            if (!Object.values(TestVisibilityStatus).includes(status)) {
+                throw ApiError.BadRequest("Некорректный статус видимости")
+            }
+
+            await testService.changeVisibilityStatus(testId, status)
+            res.status(200).json({ message: "Статус видимости теста успешно изменен" })
         } catch (error) {
             next(error)
         }

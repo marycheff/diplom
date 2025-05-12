@@ -72,6 +72,7 @@ export const mapTest = (
         title: test.title,
         description: test.description || null,
         totalAttempts: test.totalAttempts,
+        visibilityStatus: test.visibilityStatus,
         settings: test.settings
             ? {
                   requireRegistration: test.settings.requireRegistration,

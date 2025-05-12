@@ -1,4 +1,5 @@
 import { QuestionDTO, TestSettingsDTO, UserQuestionDTO } from "@/types"
+import { TestVisibilityStatus } from "@prisma/client"
 
 export interface CreateTest {
     title: string
@@ -24,6 +25,7 @@ export interface TestDTO {
     description: string | null
     questions?: QuestionDTO[]
     settings?: TestSettingsDTO
+    visibilityStatus: TestVisibilityStatus
     totalAttempts: number
 }
 
