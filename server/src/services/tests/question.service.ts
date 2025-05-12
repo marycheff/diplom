@@ -1,6 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import questionRepository from "@/repositories/tests/question.repository"
 import testRepository from "@/repositories/tests/test.repository"
+import { badWordsService } from "@/services/bad-words-service"
 import { mapQuestion, mapTest } from "@/services/mappers/test.mappers"
 import answerService from "@/services/tests/answer.service"
 import { QuestionDTO, TestDTO } from "@/types"
@@ -274,6 +275,40 @@ class QuestionService {
             throw ApiError.BadRequest("Ошибка при обновлении вопроса")
         }
     }
+    private checkForBadWords(questions: QuestionDTO[]): void {
+        logger.debug(`[${LOG_NAMESPACE}] Начало проверки вопросов на нецензурные слова`)
+
+        for (let i = 0; i < questions.length; i++) {
+            const question = questions[i]
+            const questionNumber = i + 1 // порядковый номер
+
+            // Проверка текста вопроса
+            const questionCheck = badWordsService.checkText(question.text)
+            if (questionCheck.hasBadWords) {
+                logger.warn(`[${LOG_NAMESPACE}] Обнаружены нецензурные слова в тексте вопроса`, {
+                    questionNumber,
+                    questionText: question.text,
+                    foundWords: questionCheck.foundWords,
+                })
+                throw ApiError.BadRequest(`Обнаружены нецензурные слова в тексте вопроса №${questionNumber}`)
+            }
+
+            // Проверка вариантов ответов
+            for (const answer of question.answers) {
+                const answerCheck = badWordsService.checkText(answer.text)
+                if (answerCheck.hasBadWords) {
+                    logger.warn(`[${LOG_NAMESPACE}] Обнаружены нецензурные слова в тексте ответа`, {
+                        questionNumber,
+                        answerText: answer.text,
+                        foundWords: answerCheck.foundWords,
+                    })
+                    throw ApiError.BadRequest(`Обнаружены нецензурные слова в тексте ответа вопроса №${questionNumber}`)
+                }
+            }
+        }
+
+        logger.debug(`[${LOG_NAMESPACE}] Все вопросы и ответы прошли проверку на нецензурные слова`)
+    }
 
     /**
      * Полное обновление (вставка или обновление) вопросов теста
@@ -286,6 +321,10 @@ class QuestionService {
             testId,
             questionsCount: questions.length,
         })
+
+        // Проверка на нецензурные слова перед обновлением
+        this.checkForBadWords(questions)
+
         return executeTransaction(async tx => {
             // Проверка существования теста
             const test = await testRepository.findById(testId, tx)
