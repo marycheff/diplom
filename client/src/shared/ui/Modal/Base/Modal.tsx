@@ -1,4 +1,5 @@
 import { FC, ReactNode, useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 import styles from "./Modal.module.scss"
 
 interface ModalProps {
@@ -94,7 +95,8 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen, i
     // Прерывание рендера до завершения анимации открытия
     if (!isMounted) return null
 
-    return (
+    // Используем портал для рендеринга модального окна в конце body
+    return createPortal(
         <div
             className={`${styles.modalOverlay} ${!isOpen ? styles.closing : ""}`}
             onMouseDown={onOverlayMouseDown}
@@ -119,7 +121,8 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen, i
                 {title && <h2 className={styles.modalTitle}>{title}</h2>}
                 <div className={styles.modalBody}>{children}</div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }
 
