@@ -4,6 +4,7 @@ import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
+import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
 import { formatSpaces } from "@/shared/utils/formatter"
 import {
@@ -27,16 +28,23 @@ interface QuestionsEditorProps {
     onQuestionComplete: (questions: QuestionDTO[]) => void
     onCancel: () => void
     setHasUnsavedChanges: (value: boolean) => void
+    isLoading: boolean
 }
 const DEFAULT_NUM_OF_ANSWERS = 3
 
-const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, onCancel, setHasUnsavedChanges }) => {
+const QuestionsEditor: FC<QuestionsEditorProps> = ({
+    data,
+    onQuestionComplete,
+    onCancel,
+    setHasUnsavedChanges,
+    isLoading,
+}) => {
     const [questions, setQuestions] = useState<QuestionDTO[]>(data)
     const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
     const [expandedQuestionIds, setExpandedQuestionIds] = useState<string[]>([])
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [questionToDelete, setQuestionToDelete] = useState<string | null>(null)
-    const { generateAnswers, isLoading: isGenerating } = useTestStore()
+    const { generateAnswers, isGenerating } = useTestStore()
 
     const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
         return Array(DEFAULT_NUM_OF_ANSWERS)
@@ -320,6 +328,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, o
         !currentQuestion &&
         !currentAnswer &&
         currentAnswers.every(answer => !answer.text || formatSpaces(answer.text) === "")
+    if (isLoading) {
+        return <Loader fullScreen />
+    }
     return (
         <>
             <div className={styles.container}>

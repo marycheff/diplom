@@ -8,6 +8,7 @@ const initialState = {
     isLoading: false,
     isShortInfoUpdating: false,
     isSettingsUpdating: false,
+    isGenerating: false,
     cache: {},
     MAX_CACHE_ENTRIES: 50,
     CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
@@ -18,6 +19,7 @@ export const useTestStore = create<TestState>(set => {
     const withLoading = createApiHandler(set, "isLoading")
     const withShortInfoUpdating = createApiHandler(set, "isShortInfoUpdating")
     const withSettingsUpdating = createApiHandler(set, "isSettingsUpdating")
+    const withGenerating = createApiHandler(set, "isGenerating")
 
     return {
         ...initialState,
@@ -92,7 +94,7 @@ export const useTestStore = create<TestState>(set => {
                 const response = await testService.generateAnswers(data)
                 return response.data
             }
-            return withLoading(operation)
+            return withGenerating(operation)
         },
         updateTestQuestions: async (testId, data) => {
             const operation = async () => {

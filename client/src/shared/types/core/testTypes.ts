@@ -12,6 +12,7 @@ export interface TestState {
     isLoading: boolean
     isShortInfoUpdating: boolean
     isSettingsUpdating: boolean
+    isGenerating: boolean
 
     getTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>

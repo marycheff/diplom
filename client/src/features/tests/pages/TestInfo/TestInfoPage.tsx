@@ -126,6 +126,7 @@ const TestInfoPage = () => {
             ...test,
             questions: updatedQuestions,
         }
+
         await upsertQuestions(test.id, updatedQuestions)
         if (test.questions?.length && test.questions?.length > 0) {
             toast.success("Вопросы обновлены")
@@ -133,6 +134,7 @@ const TestInfoPage = () => {
             toast.success("Вопросы добавлены")
         }
         setTest(updatedTest)
+        setIsEditQuestionsModalOpen(false)
     }
 
     const handleCloseModal = () => {
@@ -403,10 +405,10 @@ const TestInfoPage = () => {
                     data={test.questions || []}
                     onQuestionComplete={questions => {
                         handleQuestionsUpdate(questions)
-                        setIsEditQuestionsModalOpen(false)
                     }}
                     onCancel={handleCloseModal}
                     setHasUnsavedChanges={setHasUnsavedChanges}
+                    isLoading={isLoading}
                 />
             </Modal>
 
