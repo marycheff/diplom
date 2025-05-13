@@ -164,6 +164,8 @@ export const mapToTestAttemptDTO = (
         user: attempt.user ? mapUserToDto(attempt.user) : null,
         preTestUserData: attempt.preTestUserData as PreTestUserDataType,
         test: mapTest(attempt.test),
+        timeSpent: attempt.timeSpent,
+
         questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
     }
 }
@@ -182,6 +184,8 @@ export const mapToAttemptWithSnapshotDTO = (
         score: attempt.score ?? null,
         user: attempt.user ? mapUserToDto(attempt.user) : null,
         preTestUserData: attempt.preTestUserData as PreTestUserDataType,
+        timeSpent: attempt.timeSpent,
+
         snapshot: attempt.snapshot
             ? {
                   id: attempt.snapshot.id,
@@ -219,6 +223,8 @@ export const mapToAttemptWithResultsDTO = (
         startedAt: attempt.startedAt,
         completedAt: attempt.completedAt ?? null,
         score: attempt.score ?? null,
+        timeSpent: attempt.timeSpent,
+
         // snapshotId: attempt.testSnapshotId ?? "",
         // user: attempt.user ? mapUserToDto(attempt.user) : null,
         // preTestUserData: attempt.preTestUserData as PreTestUserDataType,
@@ -238,6 +244,7 @@ export const mapToTestAttemptUserDTO = (
         startedAt: attempt.startedAt,
         completedAt: attempt.completedAt ?? null,
         score: attempt.score ?? null,
+        timeSpent: attempt.timeSpent,
         answers: attempt.answers.map(answer => ({
             id: answer.id,
             attemptId: answer.attemptId,

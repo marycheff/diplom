@@ -162,7 +162,7 @@ router.get("/:testId/attempts", authMiddleware, testOwnershipMiddleware, attempt
 
 router.get("/attempts/my-attempts", authMiddleware, attemptController.getMyAttempts)
 router.get("/attempts/user-attempts", authMiddleware, adminMiddleware, attemptController.getUserAttempts)
-router.post("/attempts/:attemptId/update-time", conditionalAuthMiddleware, attemptController.updateTimeSpent)
+router.post("/attempts/:attemptId/time-spent", conditionalAuthMiddleware, attemptController.updateTimeSpent)
 
 router.get(
     "/attempts/:attemptId/",

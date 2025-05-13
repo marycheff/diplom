@@ -304,7 +304,6 @@ class TestService {
         logger.debug(`[${LOG_NAMESPACE}] Получение теста для пользователя по ID`, { testId, attemptId })
         try {
             const isPreview = !attemptId
-            console.log("isPreview", isPreview)
             const cacheKey = isPreview ? `user-test-basic:${testId}` : `user-test:${testId}:attempt:${attemptId}`
             const cachedTest = await redisClient.get(cacheKey)
 

@@ -47,6 +47,7 @@ export interface TestAttemptUserDTO {
     startedAt: Date
     completedAt: Date | null
     score: number | null
+    timeSpent: number
     answers: UserAnswerDTO[]
 }
 export interface AttemptsListDTO {

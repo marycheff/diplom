@@ -47,7 +47,6 @@ class QuestionController {
                 ...question,
                 order: index + 1,
             }))
-            console.log(questions)
             const updatedQuestions = await questionService.addQuestions(testId, questions)
             res.status(200).json({
                 questions: updatedQuestions,
