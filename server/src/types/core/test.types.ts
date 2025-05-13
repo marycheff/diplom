@@ -47,4 +47,5 @@ export interface UserTestDTO {
     description?: string
     questions?: UserQuestionDTO[]
     settings?: TestSettingsDTO
+    visibilityStatus: TestVisibilityStatus
 }

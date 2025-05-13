@@ -73,7 +73,7 @@ class TestService {
         try {
             await executeTransaction(async tx => {
                 const existingTest = test ?? (await testRepository.findById(testId))
-                
+
                 if (!existingTest) {
                     throw ApiError.NotFound("Тест не найден")
                 }
@@ -92,6 +92,7 @@ class TestService {
 
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
+            await redisClient.del(`user-test-basic:${testId}`)
             logger.info(`[${LOG_NAMESPACE}] Статус видимости теста успешно изменен`, { testId, status })
         } catch (error) {
             if (error instanceof ApiError) throw error
@@ -303,16 +304,27 @@ class TestService {
         logger.debug(`[${LOG_NAMESPACE}] Получение теста для пользователя по ID`, { testId, attemptId })
         try {
             const isPreview = !attemptId
+            console.log("isPreview", isPreview)
             const cacheKey = isPreview ? `user-test-basic:${testId}` : `user-test:${testId}:attempt:${attemptId}`
             const cachedTest = await redisClient.get(cacheKey)
 
             if (cachedTest) {
                 logger.debug(`[${LOG_NAMESPACE}] Тест для попытки пользователя получен из кэша`, { testId, attemptId })
-                return JSON.parse(cachedTest)
+
+                const parsedTest = JSON.parse(cachedTest)
+                if (parsedTest.visibilityStatus === TestVisibilityStatus.HIDDEN) {
+                    logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
+                    throw ApiError.NotFound("Тест не найден")
+                }
+                return parsedTest
             }
 
             const test = await testRepository.findDetailedTestById(testId)
             if (!test) {
+                logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
+                throw ApiError.NotFound("Тест не найден")
+            }
+            if (test.visibilityStatus === TestVisibilityStatus.HIDDEN) {
                 logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                 throw ApiError.NotFound("Тест не найден")
             }

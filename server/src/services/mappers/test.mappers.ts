@@ -313,6 +313,7 @@ export const mapUserTest = (
         id: test.id,
         title: test.title,
         description: test.description || "",
+        visibilityStatus: test.visibilityStatus,
         settings: test.settings
             ? {
                   requireRegistration: test.settings.requireRegistration,
