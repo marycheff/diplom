@@ -59,6 +59,11 @@ class AttemptService {
             },
         })
     }
+    updateTimeSpent(attemptId: string, timeSpent: number): Promise<AxiosResponse<void>> {
+        return axiosInstance.post<void>(`/tests/attempts/${attemptId}/time-spent`, {
+            timeSpent,
+        })
+    }
 }
 
 export const attemptService = new AttemptService()

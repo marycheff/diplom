@@ -3,6 +3,7 @@ import { AnswerDTO, PreTestUserData, QuestionType, TestDTO, TestSnapshotDTO, Use
 export interface AttemptState {
     isFetching: boolean
     isLoading: boolean
+    isTimeUpdating: boolean
     getTestAttempts: (testId: string, page?: number, limit?: number) => Promise<AttemptsListDTO | undefined>
     getAttemptById: (id: string) => Promise<TestAttemptDTO | undefined>
     getAttemptResults: (id: string) => Promise<TestAttemptResultDTO | undefined>
@@ -13,6 +14,7 @@ export interface AttemptState {
     startAttempt: (testId: string, preTestUserData?: any) => Promise<StartAttemptDTO | undefined>
     saveAnswers: (attemptId: string, answers: AttemptAnswer[]) => Promise<void>
     completeAttempt: (attemptId: string) => Promise<CompleteAttemptResponse>
+    updateTimeSpent: (attemptId: string, timeSpent: number) => Promise<void>
     // CACHE
     CACHE_EXPIRATION_TIME: number
     cache: Record<string, { data: AttemptsListDTO; timestamp: Date }>
@@ -33,6 +35,7 @@ export interface TestAttemptDTO {
     score: number | null
     user: UserDTO | null
     preTestUserData: Record<PreTestUserData, string> | null
+    timeSpent: number
     test: TestDTO
     questions: AttemptQuestionDTO[]
     snapshotId: string
@@ -44,6 +47,7 @@ export interface AttemptWithSnapshotDTO {
     startedAt: Date
     completedAt: Date | null
     score: number | null
+    timeSpent: number
     user: UserDTO | null
     preTestUserData: Record<PreTestUserData, string> | null
     snapshot: TestSnapshotDTO | null
@@ -60,6 +64,7 @@ export interface TestAttemptResultDTO {
     startedAt: Date
     completedAt: Date | null
     score: number | null
+    timeSpent: number
     // user: UserDTO | null
     // preTestUserData: PreTestUserDataType | null
     // test: TestDTO
@@ -70,17 +75,16 @@ export interface TestAttemptUserDTO {
     id: string
     testId: string
     status: AttemptStatus
+    score: number | null
+    timeSpent: number
+    answers: UserAnswerDTO[]
     startedAt: Date
     completedAt: Date | null
-    score: number | null
-    answers: UserAnswerDTO[]
 }
 export interface AttemptsListDTO {
     attempts: TestAttemptDTO[]
     total: number
 }
-
-
 
 export interface AttemptQuestionDTO {
     question: {

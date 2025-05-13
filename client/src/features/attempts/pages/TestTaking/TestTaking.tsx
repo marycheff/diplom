@@ -206,6 +206,7 @@ const TestTaking = () => {
     if (!test) return <div>Тест не найден</div>
     if (!test.questions?.length) return <div>В тесте нет вопросов</div>
 
+    console.log(attempt.timeSpent)
     const currentQuestion = test.questions[currentPage - 1]
     const totalPages = test.questions.length
 
@@ -216,7 +217,7 @@ const TestTaking = () => {
             )}
 
             {timeLimit > 0 && !isAttemptCompleted && (
-                <TestTimer attemptId={attemptId} defaultTime={timeLimit} onTimeExpired={handleTimeExpired} />
+                <TestTimer attemptId={attemptId} defaultTime={timeLimit} timeSpent={attempt.timeSpent} onTimeExpired={handleTimeExpired} />
             )}
 
             <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />
