@@ -52,12 +52,12 @@ class AttemptService {
             }
 
             if (settings?.inputFields && Array.isArray(settings.inputFields) && settings.inputFields.length > 0) {
-                const inputFields = settings.inputFields as PreTestUserData[]
-                if (!preTestUserData || inputFields.some(field => preTestUserData[field] == null)) {
-                    const missingLabels = inputFields.filter(field => preTestUserData?.[field] == null)
-                    const missingLabelsRu = inputFields
-                        .filter(field => preTestUserData?.[field] == null)
-                        .map(f => PreTestUserDataLabels[f])
+                const requiredFields = [PreTestUserData.LastName, PreTestUserData.City]
+
+                // Проверяем, что все обязательные поля присутствуют
+                if (!preTestUserData || requiredFields.some(field => !preTestUserData[field])) {
+                    const missingLabels = requiredFields.filter(field => !preTestUserData?.[field])
+                    const missingLabelsRu = missingLabels.map(f => PreTestUserDataLabels[f])
                     logger.warn(`[${LOG_NAMESPACE}] Не все обязательные поля заполнены`, {
                         testId,
                         missingLabels,
@@ -68,6 +68,18 @@ class AttemptService {
                             ", "
                         )})`
                     )
+                }
+
+                // Проверка на лишние поля
+                const extraFields = Object.keys(preTestUserData).filter(
+                    field => !requiredFields.includes(field as PreTestUserData)
+                )
+                if (extraFields.length > 0) {
+                    logger.warn(`[${LOG_NAMESPACE}] Обнаружены недопустимые поля`, {
+                        testId,
+                        extraFields,
+                    })
+                    throw ApiError.BadRequest(`Обнаружены недопустимые поля: ${extraFields.join(", ")}`)
                 }
             }
 
@@ -89,7 +101,7 @@ class AttemptService {
                 testId,
                 testSnapshotId: latestSnapshot.id,
                 userId,
-                preTestUserData: settings?.requireRegistration ? null : preTestUserData,
+                preTestUserData: preTestUserData,
             })
 
             // Чтобы сбрасывалось кол-во попыток
