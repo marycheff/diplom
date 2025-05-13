@@ -84,8 +84,8 @@ router.get("/:testId/for-user", validateRequest(testIdSchema), testController.ge
 
 // Добавление вопросов к тесту
 // router.put("/:testId/questions", authMiddleware, validateRequest(updateTestSchema), testController.updateTest)
-router.put("/:testId/questions", authMiddleware, testOwnershipMiddleware, questionController.addQuestions)
-router.put("/:testId/questions-u", authMiddleware, testOwnershipMiddleware, questionController.upsertQuestions)
+// router.put("/:testId/questions", authMiddleware, testOwnershipMiddleware, questionController.addQuestions)
+router.put("/:testId/questions-upsert", authMiddleware, testOwnershipMiddleware, questionController.upsertQuestions)
 
 // Получение всех вопросов теста
 router.get("/:testId/questions", authMiddleware, questionController.getTestQuestions)

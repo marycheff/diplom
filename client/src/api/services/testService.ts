@@ -87,8 +87,7 @@ class TestService {
         return axiosInstance.get<SnapshotWithOriginalTestDTO>(`/tests/snapshot/${snapshotId}`)
     }
     upsertQuestions = (testId: string, questions: QuestionDTO[]): Promise<AxiosResponse<QuestionDTO[]>> => {
-        // console.log({questions})
-        return axiosInstance.put(`/tests/${testId}/questions-u`, { questions })
+        return axiosInstance.put(`/tests/${testId}/questions-upsert`, { questions })
     }
 
     changeVisibilityStatus = (testId: string, status: TestVisibilityStatus): Promise<AxiosResponse<void>> => {
