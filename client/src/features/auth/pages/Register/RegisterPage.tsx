@@ -3,6 +3,7 @@ import { ROUTES } from "@/router/paths"
 import { emailValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
+import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { Link, useNavigate } from "react-router-dom"
@@ -15,6 +16,7 @@ type Register = {
 const RegisterPage = () => {
     const { registration, isLoading } = useAuthStore()
     const navigate = useNavigate()
+    const [searchParams] = useState(new URLSearchParams(window.location.search))
 
     const {
         register,
@@ -34,7 +36,8 @@ const RegisterPage = () => {
         }
         await registration(data.email, data.password)
         toast.success("Успешная регистрация")
-        navigate(ROUTES.HOME)
+        const returnUrl = searchParams.get("returnUrl")
+        navigate(returnUrl || ROUTES.HOME)
     }
     return (
         <div className={styles.registerContainer}>

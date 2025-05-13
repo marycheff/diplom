@@ -9,7 +9,7 @@ import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import { generatePath, useNavigate, useParams } from "react-router-dom"
+import { generatePath, Link, useNavigate, useParams } from "react-router-dom"
 import styles from "../../../tests/pages/TestInfo/TestInfoPage.module.scss"
 
 const StartAttemptPage = () => {
@@ -51,7 +51,16 @@ const StartAttemptPage = () => {
         return <div>Тест не найден</div>
     }
     if (test?.settings?.requireRegistration && !user) {
-        return <div>Тест требует регистрации</div>
+        const currentUrl = window.location.pathname
+        return (
+            <div>
+                Тест требует авторизации. Пожалуйста, войдите или зарегистрируйтесь, чтобы пройти тест.
+                <br />
+                <Link to={`${ROUTES.LOGIN}?returnUrl=${encodeURIComponent(currentUrl)}`}>Вход</Link>
+                <br />
+                <Link to={`${ROUTES.LOGIN}?returnUrl=${encodeURIComponent(currentUrl)}`}>Регистрация</Link>
+            </div>
+        )
     }
     const handleStartAttempt = async (userData?: PreTestUserDataType) => {
         if (!testId) return

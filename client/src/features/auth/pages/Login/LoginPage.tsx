@@ -1,13 +1,13 @@
 import ResetPasswordForm from "@/features/auth/components/ResetPasswordForm"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
+import { emailValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router-dom"
 import styles from "./LoginPage.module.scss"
-import { emailValidationRules } from "@/shared/types/utils/validationRules"
 
 export type LoginFormData = {
     email: string
@@ -18,6 +18,7 @@ const LoginPage = () => {
     const [isResetPasswordVisible, setIsResetPasswordVisible] = useState(false)
     const { login, isLoading } = useAuthStore()
     const navigate = useNavigate()
+    const [searchParams] = useState(new URLSearchParams(window.location.search))
 
     const {
         register,
@@ -37,7 +38,8 @@ const LoginPage = () => {
 
     const onSubmit: SubmitHandler<LoginFormData> = async data => {
         await login(data.email, data.password)
-        navigate(ROUTES.HOME)
+        const returnUrl = searchParams.get("returnUrl")
+        navigate(returnUrl || ROUTES.HOME)
     }
 
     return (
