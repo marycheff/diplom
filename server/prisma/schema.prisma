@@ -14,16 +14,18 @@ model User {
   name              String?       @db.VarChar(50)
   surname           String?       @db.VarChar(50)
   patronymic        String?       @db.VarChar(50)
-  password          String        @db.Char(60) // Для bcrypt хэша
+  password          String        @db.Char(60)
   isActivated       Boolean       @default(false)
   role              Role          @default(USER)
   activationLink    String?       @db.VarChar(255)
   resetCode         String?       @db.VarChar(255)
   isBlocked         Boolean       @default(false)
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
   activationLinkExp DateTime?
   resetCodeExp      DateTime?
+  // TIMESTAMPS
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  // RELATIONS
   testAttempts      TestAttempt[] @relation("TestAttemptUser")
   testsCreated      Test[]        @relation("TestAuthor")
   refreshToken      Token?
@@ -35,8 +37,10 @@ model Token {
   id           String   @id @default(uuid())
   userId       String   @unique
   refreshToken String   @unique
+  // TIMESTAMPS
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  // RELATIONS
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("tokens")
@@ -49,10 +53,12 @@ model TestSettings {
   inputFields         Json?
   showDetailedResults Boolean  @default(false)
   timeLimit           Int?     @default(0)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
   shuffleAnswers      Boolean  @default(true)
   shuffleQuestions    Boolean  @default(false)
+  // TIMESTAMPS
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  // Relations
   test                Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@map("test_settings")
@@ -66,9 +72,11 @@ model Test {
   status           ModerationStatus     @default(PENDING)
   visibilityStatus TestVisibilityStatus @default(PUBLISHED)
   totalAttempts    Int                  @default(0)
+  version          Int                  @default(1)
+  // TIMESTAMPS
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
-  version          Int                  @default(1)
+  // Relations
   questions        Question[]
   testAttempts     TestAttempt[]
   settings         TestSettings?
@@ -84,8 +92,10 @@ model Question {
   text        String       @db.VarChar(1000)
   order       Int
   type        QuestionType @default(SINGLE_CHOICE)
+  // TIMESTAMPS
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  // Relations
   answers     Answer[]
   test        Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
   userAnswers UserAnswer[]
@@ -99,8 +109,10 @@ model Answer {
   text        String       @db.VarChar(500)
   isCorrect   Boolean      @default(false)
   isGenerated Boolean      @default(false)
+  // TIMESTAMPS
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  // RELATIONS
   question    Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
   userAnswers UserAnswer[]
 
@@ -118,8 +130,10 @@ model TestAttempt {
   expirationTime  DateTime?
   timeSpent       Int               @default(0)
   startedAt       DateTime          @default(now())
+  // TIMESTAMPS
   updatedAt       DateTime          @updatedAt
   completedAt     DateTime?
+  // RELATIONS
   test            Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
   snapshot        TestSnapshot?     @relation(fields: [testSnapshotId], references: [id])
   user            User?             @relation("TestAttemptUser", fields: [userId], references: [id])
@@ -135,7 +149,9 @@ model UserAnswer {
   answerId   String
   answeredAt DateTime?
   timeSpent  Int?
+  // TIMESTAMPS
   createdAt  DateTime    @default(now())
+  // RELATIONS
   answer     Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
   attempt    TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
   question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
@@ -150,8 +166,10 @@ model TestSnapshot {
   description      String?               @db.VarChar(500)
   status           ModerationStatus
   visibilityStatus TestVisibilityStatus  @default(PUBLISHED)
-  createdAt        DateTime              @default(now())
   version          Int                   @default(1)
+  // TIMESTAMPS
+  createdAt        DateTime              @default(now())
+  // RELATIONS
   questions        QuestionSnapshot[]
   attempts         TestAttempt[]
   settings         TestSettingsSnapshot?
@@ -167,7 +185,9 @@ model QuestionSnapshot {
   text           String           @db.VarChar(1000)
   order          Int
   type           QuestionType
+  // TIMESTAMPS
   createdAt      DateTime         @default(now())
+  // RELATIONS
   answers        AnswerSnapshot[]
   testSnapshot   TestSnapshot     @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
 
@@ -180,7 +200,9 @@ model AnswerSnapshot {
   originalTestId String
   text           String           @db.VarChar(500)
   isCorrect      Boolean          @default(false)
+  // TIMESTAMPS
   createdAt      DateTime         @default(now())
+  // RELATIONS
   question       QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@map("answer_snapshots")
@@ -195,7 +217,9 @@ model TestSettingsSnapshot {
   shuffleQuestions    Boolean      @default(false)
   shuffleAnswers      Boolean      @default(true)
   timeLimit           Int?         @default(0)
+  // TIMESTAMPS
   createdAt           DateTime     @default(now())
+  // RELATIONS
   snapshot            TestSnapshot @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
 
   @@map("test_settings_snapshots")
