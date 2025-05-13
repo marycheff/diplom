@@ -23,6 +23,8 @@ import { formatSeconds, formatSpaces, shortenText } from "@/shared/utils/formatt
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import { FaLock, FaLockOpen, FaPlus } from "react-icons/fa"
+import { MdEdit } from "react-icons/md"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import styles from "./TestInfoPage.module.scss"
 
@@ -171,19 +173,19 @@ const TestInfoPage = () => {
                     <div className={styles.blockHeader}>
                         <h1 className={styles.blockTitle}>Информация о тесте</h1>
                         <div className={styles.buttonContainer}>
-                            <Button onClick={handleEditShortInfoButton} className={styles.addQuestionBtn}>
-                                ✏️
+                            <Button onClick={handleEditShortInfoButton} className={styles.editBtn}>
+                                <MdEdit />
                             </Button>
                             <Button
                                 onClick={handleChangeVisibilityStatus}
-                                className={styles.addQuestionBtn}
+                                className={styles.editBtn}
                                 disabled={isVisibilityUpdating}
                                 tooltip={
                                     test.visibilityStatus === TestVisibilityStatus.HIDDEN ? "Опубликовать" : "Скрыть"
                                 }>
-                                {test.visibilityStatus === TestVisibilityStatus.HIDDEN ? "🔒" : "🔓"}
+                                {test.visibilityStatus === TestVisibilityStatus.HIDDEN ? <FaLock /> : <FaLockOpen />}
                             </Button>
-                            <CopyTestButton test={test} className={styles.addQuestionBtn} />
+                            <CopyTestButton test={test} className={styles.editBtn} />
                         </div>
                     </div>
                     {isShortInfoUpdating ? (
@@ -237,8 +239,8 @@ const TestInfoPage = () => {
                     <div className={styles.blockHeader}>
                         <h1 className={styles.blockTitle}>Настройки теста</h1>
                         <div className={styles.buttonContainer}>
-                            <Button onClick={handleEditSettingsButton} className={styles.addQuestionBtn}>
-                                ✏️
+                            <Button onClick={handleEditSettingsButton} className={styles.editBtn}>
+                                <MdEdit />
                             </Button>
                         </div>
                     </div>
@@ -353,9 +355,9 @@ const TestInfoPage = () => {
                     <div className={styles.buttonContainer}>
                         <Button
                             onClick={handleEditQuestionsButton}
-                            className={styles.addQuestionBtn}
+                            className={styles.editBtn}
                             tooltip="Редактировать вопросы">
-                            {test.questions?.length && test.questions?.length > 0 ? "✏️" : "➕"}
+                            {test.questions?.length && test.questions?.length > 0 ? <MdEdit /> : <FaPlus />}
                         </Button>
                     </div>
                 </div>

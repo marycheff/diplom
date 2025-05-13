@@ -14,21 +14,26 @@ export type ChangePasswordFormData = {
 const UpdatePasswordForm = () => {
     const { user } = useAuthStore()
     const { updatePassword, isLoading } = useUserStore()
-
     const {
         register,
         formState: { errors },
         setValue,
         handleSubmit,
-        trigger
+        trigger,
+        watch,
     } = useForm<ChangePasswordFormData>({
         mode: "onBlur",
     })
+    const oldPassword = watch("oldPassword")
+    const newPassword = watch("newPassword")
 
     const onSubmit: SubmitHandler<ChangePasswordFormData> = async data => {
         await updatePassword(user?.email!, data.oldPassword, data.newPassword)
+        setValue("oldPassword", "")
+        setValue("newPassword", "")
         toast.success("Пароль успешно изменен")
     }
+    const isFormValid = oldPassword && newPassword
 
     return (
         <div className={styles.formContainer}>
@@ -51,7 +56,7 @@ const UpdatePasswordForm = () => {
                     label="Новый пароль"
                     trigger={trigger}
                 />
-                <Button type="submit" disabled={isLoading} className={styles.updateBtn}>
+                <Button type="submit" disabled={isLoading || !isFormValid} className={styles.updateBtn}>
                     Обновить пароль
                 </Button>
             </form>

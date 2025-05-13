@@ -6,6 +6,7 @@ import { Button } from "@/shared/ui/Button"
 import ConfirmationModal from "@/shared/ui/Modal/Confirmation/ConfirmationModal"
 import { useState } from "react"
 import toast from "react-hot-toast"
+import { FaCopy } from "react-icons/fa"
 import { generatePath, useNavigate } from "react-router-dom"
 
 interface CopyTestButtonProps {
@@ -54,7 +55,7 @@ const CopyTestButton = ({ test, className }: CopyTestButtonProps) => {
     return (
         <>
             <Button onClick={() => setIsCopyModalOpen(true)} className={className} tooltip="Создать копию теста">
-                📋
+                <FaCopy />
             </Button>
 
             <ConfirmationModal

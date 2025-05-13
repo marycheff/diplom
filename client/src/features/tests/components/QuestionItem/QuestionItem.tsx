@@ -5,6 +5,7 @@ import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import clsx from "clsx"
 import { FC, useRef } from "react"
+import { FaAngleDown, FaAngleUp, FaTrash } from "react-icons/fa"
 import styles from "./QuestionItem.module.scss"
 
 interface QuestionItemProps {
@@ -52,10 +53,13 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
                         ✏️
                     </Button> */}
                     <Button onClick={onDelete} title="Удалить">
-                        🗑️
+                        <FaTrash />
                     </Button>
-                    <Button onClick={onToggle} title={expanded ? "Свернуть" : "Развернуть"}>
-                        {expanded ? "▲" : "▼"}
+                    <Button
+                        onClick={onToggle}
+                        title={expanded ? "Свернуть" : "Развернуть"}
+                        className={styles.toggleButton}>
+                        {expanded ? <FaAngleUp /> : <FaAngleDown />}
                     </Button>
                 </div>
             </div>
