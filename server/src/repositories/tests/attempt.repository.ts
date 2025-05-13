@@ -283,7 +283,7 @@ class AttemptRepository {
             where: { userId },
             include: {
                 user: true,
-                snapshot: true
+                snapshot: true,
             },
             orderBy: { startedAt: "desc" },
         })
@@ -305,10 +305,16 @@ class AttemptRepository {
         })
     }
 
-    async updateAttemptsStatus(attemptIds: string[], status: TestAttemptStatus) {
+    async updateStatuses(attemptIds: string[], status: TestAttemptStatus) {
         return prisma.testAttempt.updateMany({
             where: { id: { in: attemptIds } },
             data: { status },
+        })
+    }
+    async updateTimeSpent(attemptId: string, timeSpent: number) {
+        return prisma.testAttempt.update({
+            where: { id: attemptId },
+            data: { timeSpent: timeSpent },
         })
     }
 }

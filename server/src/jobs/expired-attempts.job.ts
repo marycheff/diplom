@@ -53,7 +53,7 @@ class ExpiredAttemptsJob {
                 const attemptIds = expiredAttempts.map(attempt => attempt.id)
 
                 // Обновление статус в базе данных
-                await attemptRepository.updateAttemptsStatus(attemptIds, TestAttemptStatus.EXPIRED)
+                await attemptRepository.updateStatuses(attemptIds, TestAttemptStatus.EXPIRED)
 
                 // Очистка кеша в Redis для каждой просроченной попытки
                 const redisPromises = []

@@ -52,12 +52,17 @@ class AttemptService {
             }
 
             if (settings?.inputFields && Array.isArray(settings.inputFields) && settings.inputFields.length > 0) {
-                const requiredFields = [PreTestUserData.LastName, PreTestUserData.City]
+                const requiredFields = settings.inputFields
 
                 // Проверяем, что все обязательные поля присутствуют
-                if (!preTestUserData || requiredFields.some(field => !preTestUserData[field])) {
-                    const missingLabels = requiredFields.filter(field => !preTestUserData?.[field])
-                    const missingLabelsRu = missingLabels.map(f => PreTestUserDataLabels[f])
+                if (
+                    !preTestUserData ||
+                    requiredFields.some(field => !preTestUserData[field as keyof PreTestUserDataType])
+                ) {
+                    const missingLabels = requiredFields.filter(
+                        field => !preTestUserData?.[field as keyof PreTestUserDataType]
+                    )
+                    const missingLabelsRu = missingLabels.map(f => PreTestUserDataLabels[f as PreTestUserData])
                     logger.warn(`[${LOG_NAMESPACE}] Не все обязательные поля заполнены`, {
                         testId,
                         missingLabels,
@@ -71,9 +76,7 @@ class AttemptService {
                 }
 
                 // Проверка на лишние поля
-                const extraFields = Object.keys(preTestUserData).filter(
-                    field => !requiredFields.includes(field as PreTestUserData)
-                )
+                const extraFields = Object.keys(preTestUserData).filter(field => !requiredFields.includes(field))
                 if (extraFields.length > 0) {
                     logger.warn(`[${LOG_NAMESPACE}] Обнаружены недопустимые поля`, {
                         testId,
@@ -441,6 +444,21 @@ class AttemptService {
                 error: error instanceof Error ? error.message : String(error),
             })
             throw ApiError.InternalError("Ошибка при получении попытки")
+        }
+    }
+    async updateTimeSpent(attemptId: string, timeSpent: number): Promise<void> {
+        logger.debug(`[${LOG_NAMESPACE}] Обновление общего времени попытки`, { attemptId })
+        try {
+            await attemptRepository.updateTimeSpent(attemptId, timeSpent)
+            await redisClient.del(`attempt:${attemptId}`)
+            await redisClient.del(`user-attempt:${attemptId}`)
+            logger.debug(`[${LOG_NAMESPACE}] Общее время попытки обновлено`, { attemptId })
+        } catch (error) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка обновления общего времени`, {
+                attemptId,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка обновления общего времени")
         }
     }
 }

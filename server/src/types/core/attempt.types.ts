@@ -4,25 +4,27 @@ import { QuestionType, TestAttemptStatus } from "@prisma/client"
 export interface TestAttemptDTO {
     id: string
     status: TestAttemptStatus
-    startedAt: Date
-    completedAt: Date | null
     score: number | null
     user: UserDTO | null
     preTestUserData: PreTestUserDataType | null
     test: TestDTO
     questions: AttemptQuestionDTO[]
+    timeSpent: number | null
+    startedAt: Date
+    completedAt: Date | null
     snapshotId: string
 }
 
 export interface AttemptWithSnapshotDTO {
     id: string
     status: TestAttemptStatus
-    startedAt: Date
-    completedAt: Date | null
     score: number | null
     user: UserDTO | null
     preTestUserData: PreTestUserDataType | null
+    timeSpent: number | null
     snapshot: TestSnapshotDTO | null
+    startedAt: Date
+    completedAt: Date | null
 }
 
 export interface TestAttemptResultDTO {
@@ -31,6 +33,7 @@ export interface TestAttemptResultDTO {
     startedAt: Date
     completedAt: Date | null
     score: number | null
+    timeSpent: number | null
     // user: UserDTO | null
     // preTestUserData: PreTestUserDataType | null
     // test: TestDTO

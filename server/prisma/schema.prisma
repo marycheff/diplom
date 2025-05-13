@@ -113,12 +113,13 @@ model TestAttempt {
   userId          String?
   preTestUserData Json?
   score           Float?
-  startedAt       DateTime          @default(now())
-  completedAt     DateTime?
   status          TestAttemptStatus
-  updatedAt       DateTime          @updatedAt
   testSnapshotId  String?
   expirationTime  DateTime?
+  timeSpent       Int               @default(0)
+  startedAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  completedAt     DateTime?
   test            Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
   snapshot        TestSnapshot?     @relation(fields: [testSnapshotId], references: [id])
   user            User?             @relation("TestAttemptUser", fields: [userId], references: [id])
