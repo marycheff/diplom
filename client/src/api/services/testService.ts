@@ -23,6 +23,14 @@ class TestService {
             },
         })
     }
+    getUnmoderatedTests(page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
+        return axiosInstance.get<TestsListDTO>("/tests/all-unmoderated-tests", {
+            params: {
+                page,
+                limit,
+            },
+        })
+    }
 
     searchTests(query: string, page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
         return axiosInstance.get<TestsListDTO>("/tests/search", {

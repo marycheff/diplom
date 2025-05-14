@@ -95,7 +95,7 @@ const MyAttemptsPage = () => {
     const totalPages = total !== null ? Math.ceil(total / limit) : 0
     const shouldShowPagination = totalPages > 0 && page <= totalPages
     const emptyAttemptsPage = total === 0 && page === 1 && isDataLoaded
-    const { register, handleSubmit, formState, setValue, watch, reset, trigger } = useForm({})
+    const { register} = useForm()
     return (
         <>
             {page > totalPages && (

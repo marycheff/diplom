@@ -9,7 +9,7 @@ interface TooltipProps {
     delay?: number
 }
 
-const Tooltip: FC<TooltipProps> = ({ content, position = "auto", targetRef, delay = 300 }) => {
+const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay = 300 }) => {
     const [visible, setVisible] = useState(false)
     const tooltipRef = useRef<HTMLDivElement>(null)
     const timeoutRef = useRef<NodeJS.Timeout | null>(null)

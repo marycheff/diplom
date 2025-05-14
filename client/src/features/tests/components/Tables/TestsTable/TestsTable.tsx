@@ -27,10 +27,10 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                     <th scope="col">Автор</th>
                                     <th scope="col">Название</th>
                                     <th scope="col">Статус публикации</th>
-
                                     <th scope="col">Кол-во вопросов</th>
-                                    <th scope="col">Требуется регистрация</th>
-                                    <th scope="col">Показывать детальные результаты</th>
+                                    <th scope="col">Модерирован</th>
+                                    {/* <th scope="col">Требуется регистрация</th>
+                                    <th scope="col">Показывать детальные результаты</th> */}
                                     <th scope="col">Кол-во попыток</th>
                                 </tr>
                             </thead>
@@ -58,8 +58,9 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                             <td>{VisibilityStatusLabels[test.visibilityStatus]}</td>
 
                                             <td>{test.questions ? test.questions.length : 0}</td>
-                                            <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
-                                            <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td>
+                                            {/* <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
+                                            <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td> */}
+                                            <td>{test.moderatedAt ? "Да" : "Нет"}</td>
                                             <td>
                                                 {test.totalAttempts === 0 ? (
                                                     "0"

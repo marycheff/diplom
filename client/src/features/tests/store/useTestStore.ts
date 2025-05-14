@@ -50,6 +50,13 @@ export const useTestStore = create<TestState>(set => {
             }
             return withFetching(operation)
         },
+        getUnmoderatedTests: async (page = 1, limit = 10) => {
+            const operation = async () => {
+                const response = await testService.getUnmoderatedTests(page, limit)
+                return response.data
+            }
+            return withFetching(operation)
+        },
         searchTests: async (query, page = 1, limit = 10) => {
             const operation = async () => {
                 const response = await testService.searchTests(query, page, limit)

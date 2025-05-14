@@ -196,7 +196,10 @@ const TestInfoPage = () => {
                     <div className={styles.blockHeader}>
                         <h1 className={styles.blockTitle}>Информация о тесте</h1>
                         <div className={styles.buttonContainer}>
-                            <Button onClick={handleEditShortInfoButton} className={styles.editBtn}>
+                            <Button
+                                onClick={handleEditShortInfoButton}
+                                className={styles.editBtn}
+                                tooltip="Редактировать">
                                 <MdEdit />
                             </Button>
                             <Button
@@ -228,9 +231,10 @@ const TestInfoPage = () => {
                                     <div className={styles.infoRow}>
                                         <span className={styles.label}>Статус модерации </span>
                                         <span className={styles.value}>
-                                            {ModerationStatusLabels[test.moderationStatus]}
-                                            {" "}
-                                            <Button onClick={() => setIsModerationStatusModalOpen(true)}>
+                                            {ModerationStatusLabels[test.moderationStatus]}{" "}
+                                            <Button
+                                                onClick={() => setIsModerationStatusModalOpen(true)}
+                                                tooltip="Редактировать">
                                                 <MdEdit />
                                             </Button>
                                         </span>
@@ -282,7 +286,10 @@ const TestInfoPage = () => {
                     <div className={styles.blockHeader}>
                         <h1 className={styles.blockTitle}>Настройки теста</h1>
                         <div className={styles.buttonContainer}>
-                            <Button onClick={handleEditSettingsButton} className={styles.editBtn}>
+                            <Button
+                                onClick={handleEditSettingsButton}
+                                className={styles.editBtn}
+                                tooltip="Редактировать">
                                 <MdEdit />
                             </Button>
                         </div>
@@ -399,7 +406,11 @@ const TestInfoPage = () => {
                         <Button
                             onClick={handleEditQuestionsButton}
                             className={styles.editBtn}
-                            tooltip="Редактировать вопросы">
+                            tooltip={
+                                test.questions?.length && test.questions?.length > 0
+                                    ? "Редактировать"
+                                    : "Добавить вопросы"
+                            }>
                             {test.questions?.length && test.questions?.length > 0 ? <MdEdit /> : <FaPlus />}
                         </Button>
                     </div>

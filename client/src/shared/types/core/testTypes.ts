@@ -17,6 +17,7 @@ export interface TestState {
     isModerationStatusUpdating: boolean
 
     getTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
+    getUnmoderatedTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     searchMyTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     getTestById: (id: string) => Promise<TestDTO | undefined>
@@ -60,6 +61,8 @@ export interface TestDTO {
     settings?: TestSettingsDTO
     visibilityStatus: TestVisibilityStatus
     moderationStatus: ModerationStatus
+    moderatedBy: string | null
+    moderatedAt: Date | null
     totalAttempts: number
 }
 
