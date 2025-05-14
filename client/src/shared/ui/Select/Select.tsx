@@ -14,8 +14,11 @@ const Select: FC<SelectProps> = ({
     onChange,
 }: SelectProps) => {
     const [isOpen, setOpen] = useState(false)
-    const [selected, setSelected] = useState(value || options[0]?.value || "") // Устанавливаем начальное значение
+    const [selected, setSelected] = useState(value || options[0]?.value || "")
+    const [maxWidth, setMaxWidth] = useState<number | undefined>(undefined)
+
     const selectRef = useRef<HTMLDivElement>(null)
+    const ghostRef = useRef<HTMLDivElement>(null)
 
     useOutsideClick(selectRef, () => setOpen(false))
 
@@ -30,21 +33,30 @@ const Select: FC<SelectProps> = ({
         }
     }, [selected, onChange])
 
+    useEffect(() => {
+        if (!ghostRef.current) return
+
+        const items = ghostRef.current.querySelectorAll("span")
+        let max = 0
+        items.forEach(el => {
+            const width = (el as HTMLElement).offsetWidth
+            if (width > max) max = width
+        })
+
+        setMaxWidth(max)
+    }, [options])
+
     const containerClasses = [styles.container, isOpen ? styles.open : "", error ? styles.error : ""].join(" ")
 
     return (
         <div className={containerClasses}>
-            {/* Лейбл для селекта */}
             {label && <label htmlFor={name}>{label}</label>}
 
-            {/* Скрытый нативный селект для react-hook-form */}
             <select
                 id={name}
                 {...register(name, { required })}
                 className={styles.htmlSelect}
-                style={{ display: "none" }} // Скрываем нативный селект
-                // onChange={handleChange}
-                >
+                style={{ display: "none" }}>
                 {options.map(item => (
                     <option key={item.value} value={item.value}>
                         {item.label || item.value}
@@ -52,8 +64,12 @@ const Select: FC<SelectProps> = ({
                 ))}
             </select>
 
-            {/* Кастомный селект */}
-            <div ref={selectRef} onClick={() => setOpen(!isOpen)} className={styles.customSelectWrapper}>
+            {/* 👇 Применяем вычисленную ширину */}
+            <div
+                ref={selectRef}
+                onClick={() => setOpen(!isOpen)}
+                className={styles.customSelectWrapper}
+                style={{ width: maxWidth ? `${maxWidth}px` : "auto" }}>
                 <div className={`${styles.customSelect} ${isOpen ? styles.open : ""}`}>
                     <div className={styles.customSelectTrigger}>
                         <span>
@@ -68,11 +84,11 @@ const Select: FC<SelectProps> = ({
                             <div
                                 key={item.value}
                                 onClick={() => {
-                                    setSelected(item.value) // Устанавливаем выбранное значение
+                                    setSelected(item.value)
                                     const element = document.getElementById(name) as HTMLInputElement
                                     if (element) {
-                                        element.value = item.value // Обновляем значение скрытого селекта
-                                        element.dispatchEvent(new Event("change", { bubbles: true })) // Триггерим событие change
+                                        element.value = item.value
+                                        element.dispatchEvent(new Event("change", { bubbles: true }))
                                     }
                                 }}
                                 className={styles.optionContainer}>
@@ -87,6 +103,15 @@ const Select: FC<SelectProps> = ({
                         ))}
                     </div>
                 </div>
+            </div>
+
+            {/* 👇 Скрытый элемент для измерения ширины */}
+            <div ref={ghostRef} className={styles.ghostMeasure}>
+                {options.map(item => (
+                    <span key={item.value} className={styles.ghostItem}>
+                        {item.label || item.value}
+                    </span>
+                ))}
             </div>
         </div>
     )

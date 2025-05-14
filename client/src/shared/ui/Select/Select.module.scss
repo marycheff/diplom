@@ -144,7 +144,24 @@
             transform: rotate(45deg);
         }
     }
-    label{
+    label {
         margin-right: 7px;
     }
+}
+.ghostMeasure {
+    position: absolute;
+    visibility: hidden;
+    white-space: nowrap;
+    pointer-events: none;
+    height: 0;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 14px;
+    font-family: inherit;
+    font-weight: normal;
+}
+.ghostItem {
+    display: inline-block;
+    padding: 7px 32px 7px 8px; // точно как .customSelect
+    border: 1px solid transparent; // имитация рамки
 }
