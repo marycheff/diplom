@@ -62,6 +62,8 @@ class TestService {
 
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
+            await redisClient.del(`user-test-basic:${testId}`)
+            
             logger.info(`[${LOG_NAMESPACE}] Настройки теста успешно обновлены`, { testId })
         } catch (error) {
             throw ApiError.InternalError("Ошибка при обновлении настроек теста")
