@@ -61,7 +61,7 @@ const AttemptInfo = () => {
                             <span className={styles.label}>ID</span>
                             <span className={styles.value}>
                                 {shortenText(attempt.id)}
-                                <CopyButton textToCopy={attempt.id} showOnHover />
+                                <CopyButton textToCopy={attempt.id}  />
                             </span>
                         </div>
                         <div className={styles.infoRow}>
@@ -195,7 +195,7 @@ const AttemptInfo = () => {
                                             className="actionLink">
                                             {shortenText(attempt.test.id)}
                                         </Link>
-                                        <CopyButton textToCopy={attempt.test.id} showOnHover />
+                                        <CopyButton textToCopy={attempt.test.id}  />
                                     </span>
                                 </div>
                                 <div className={styles.infoRow}>

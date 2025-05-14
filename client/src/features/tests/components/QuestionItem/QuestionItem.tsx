@@ -52,12 +52,12 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
                     {/* <Button onClick={onEdit} tooltip="Редактировать">
                         ✏️
                     </Button> */}
-                    <Button onClick={onDelete} title="Удалить">
+                    <Button onClick={onDelete} tooltip="Удалить">
                         <FaTrash />
                     </Button>
                     <Button
                         onClick={onToggle}
-                        title={expanded ? "Свернуть" : "Развернуть"}
+                        tooltip={expanded ? "Свернуть" : "Развернуть"}
                         className={styles.toggleButton}>
                         {expanded ? <FaAngleUp /> : <FaAngleDown />}
                     </Button>

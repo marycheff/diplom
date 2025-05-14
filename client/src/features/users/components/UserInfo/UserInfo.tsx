@@ -75,7 +75,7 @@ const UserInfo = () => {
                                     {/* <span className={styles.value}>{user.id}</span> */}
                                     <span className={styles.value}>
                                         {shortenText(user.id)}
-                                        <CopyButton textToCopy={user.id} showOnHover />
+                                        <CopyButton textToCopy={user.id}  />
                                     </span>
                                 </div>
                                 <div className={styles.infoRow}>

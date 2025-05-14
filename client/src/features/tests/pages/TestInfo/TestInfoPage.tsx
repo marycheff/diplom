@@ -197,14 +197,21 @@ const TestInfoPage = () => {
                                     <span className={styles.label}>ID:</span>
                                     <span className={styles.value}>
                                         {shortenText(test.id)}
-                                        <CopyButton textToCopy={test.id} showOnHover />
+                                        <CopyButton textToCopy={test.id} />
                                     </span>
                                 </div>
                             )}
                             <div className={styles.infoRow}>
-                                <span className={styles.label}>Ссылка</span>
+                                <span className={styles.label}>Ссылка для прохождения</span>
                                 <span className={styles.value}>
-                                    <CopyButton textToCopy={`http://localhost:3000/${test.id}/start`} variant="text" />
+                                    {test.visibilityStatus === TestVisibilityStatus.PUBLISHED ? (
+                                        <CopyButton
+                                            textToCopy={`http://localhost:3000/${test.id}/start`}
+                                            variant="text"
+                                        />
+                                    ) : (
+                                        <span className={styles.emptyField}>Тест скрыт</span>
+                                    )}
                                 </span>
                             </div>
                             <div className={styles.infoRow}>
@@ -317,7 +324,7 @@ const TestInfoPage = () => {
                                     <Link to={`/admin/users/${test.author.id}`} className="actionLink">
                                         {shortenText(test.author.id)}
                                     </Link>
-                                    <CopyButton textToCopy={test.author.id} showOnHover />
+                                    <CopyButton textToCopy={test.author.id} />
                                 </span>
                             </div>
                             <div className={styles.infoRow}>

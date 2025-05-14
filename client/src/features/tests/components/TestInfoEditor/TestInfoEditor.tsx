@@ -45,6 +45,8 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
 
     return (
         <div>
+            <br />
+
             <form onSubmit={handleSubmit(onSubmit)}>
                 {/* Название (обязательно) */}
                 <ValidatedInput
