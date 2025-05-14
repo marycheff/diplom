@@ -209,8 +209,12 @@ class TestController {
             if (!Object.values(ModerationStatus).includes(status)) {
                 throw ApiError.BadRequest("Некорректный статус модерации")
             }
+            const userId = req.user?.id
+            if (!userId) {
+                throw ApiError.Unauthorized()
+            }
 
-            await testService.changeModerationStatus(testId, status)
+            await testService.changeModerationStatus(testId, status, userId)
             res.status(200).json({ message: "Статус модерации теста успешно изменен" })
         } catch (error) {
             next(error)

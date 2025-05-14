@@ -557,11 +557,16 @@ class TestRepository {
         })
     }
 
-    async updateModerationStatus(testId: string, status: ModerationStatus, tx?: Prisma.TransactionClient) {
+    async updateModerationStatus(
+        testId: string,
+        status: ModerationStatus,
+        moderatorId: string,
+        tx?: Prisma.TransactionClient
+    ) {
         const client = tx || prisma
         return client.test.update({
             where: { id: testId },
-            data: { moderationStatus: status },
+            data: { moderationStatus: status, moderatedAt: new Date(), moderatedBy: moderatorId },
             include: {
                 questions: {
                     include: {

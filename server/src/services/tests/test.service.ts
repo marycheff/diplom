@@ -107,7 +107,12 @@ class TestService {
             throw ApiError.InternalError("Ошибка при изменении статуса видимости теста")
         }
     }
-    async changeModerationStatus(testId: string, status: ModerationStatus, test?: Test): Promise<void> {
+    async changeModerationStatus(
+        testId: string,
+        status: ModerationStatus,
+        moderatorId: string,
+        test?: Test
+    ): Promise<void> {
         logger.info(`[${LOG_NAMESPACE}] Изменение статуса модерации теста`, { testId, status })
 
         try {
@@ -118,7 +123,7 @@ class TestService {
                     throw ApiError.NotFound("Тест не найден")
                 }
 
-                await testRepository.updateModerationStatus(testId, status, tx)
+                await testRepository.updateModerationStatus(testId, status, moderatorId, tx)
                 // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
                 // await testRepository.cleanupUnusedSnapshots(testId, tx)
 
@@ -369,8 +374,8 @@ class TestService {
             }
             if (
                 test.visibilityStatus === TestVisibilityStatus.HIDDEN ||
-                test.status === ModerationStatus.PENDING ||
-                test.status === ModerationStatus.REJECTED
+                test.moderationStatus === ModerationStatus.PENDING ||
+                test.moderationStatus === ModerationStatus.REJECTED
             ) {
                 logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                 throw ApiError.NotFound("Тест не найден")
