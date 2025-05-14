@@ -32,15 +32,6 @@ class AttemptRepository {
                 },
             })
 
-            await tx.test.update({
-                where: { id: data.testId },
-                data: {
-                    totalAttempts: {
-                        increment: 1,
-                    },
-                },
-            })
-
             return attempt
         })
     }

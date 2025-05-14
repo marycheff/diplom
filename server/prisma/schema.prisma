@@ -71,7 +71,6 @@ model Test {
   description      String?              @db.VarChar(500)
   status           ModerationStatus     @default(PENDING)
   visibilityStatus TestVisibilityStatus @default(PUBLISHED)
-  totalAttempts    Int                  @default(0)
   version          Int                  @default(1)
   // TIMESTAMPS
   createdAt        DateTime             @default(now())

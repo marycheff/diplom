@@ -58,6 +58,7 @@ export const mapTest = (
             surname?: string | null
             patronymic?: string | null
         }
+        totalAttempts?: number
     }
 ): TestDTO => {
     return {
@@ -71,7 +72,7 @@ export const mapTest = (
         },
         title: test.title,
         description: test.description || null,
-        totalAttempts: test.totalAttempts,
+        totalAttempts: test.totalAttempts || 0,
         visibilityStatus: test.visibilityStatus,
         settings: test.settings
             ? {
