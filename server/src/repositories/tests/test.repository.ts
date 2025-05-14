@@ -1,7 +1,7 @@
 import { CreateAnswerDTO, CreateQuestionDTO, CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types"
 import { prisma } from "@/utils/prisma-client"
 import { isValidUUID } from "@/utils/validator"
-import { Answer, Prisma, Question, Test, TestSettings, TestVisibilityStatus } from "@prisma/client"
+import { Answer, ModerationStatus, Prisma, Question, Test, TestSettings, TestVisibilityStatus } from "@prisma/client"
 
 type TestWithQuestionsAndSettings = Test & {
     questions: (Question & { answers: Answer[] })[]
@@ -537,6 +537,31 @@ class TestRepository {
         return client.test.update({
             where: { id: testId },
             data: { visibilityStatus: status },
+            include: {
+                questions: {
+                    include: {
+                        answers: true,
+                    },
+                },
+                settings: true,
+                author: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        surname: true,
+                        patronymic: true,
+                    },
+                },
+            },
+        })
+    }
+
+    async updateModerationStatus(testId: string, status: ModerationStatus, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.test.update({
+            where: { id: testId },
+            data: { status },
             include: {
                 questions: {
                     include: {

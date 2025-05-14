@@ -16,7 +16,7 @@ import { generateSeedFromAttemptId, shuffleArray } from "@/utils/math"
 import { executeTransaction } from "@/utils/prisma-client"
 import { redisClient } from "@/utils/redis-client"
 import { sortInputFields } from "@/utils/sort"
-import { Test, TestVisibilityStatus } from "@prisma/client"
+import { ModerationStatus, Test, TestVisibilityStatus } from "@prisma/client"
 
 const LOG_NAMESPACE = "TestService"
 
@@ -103,6 +103,46 @@ class TestService {
                 error: error instanceof Error ? error.message : String(error),
             })
             throw ApiError.InternalError("Ошибка при изменении статуса видимости теста")
+        }
+    }
+    async changeModerationStatus(testId: string, status: ModerationStatus, test?: Test): Promise<void> {
+        logger.info(`[${LOG_NAMESPACE}] Изменение статуса модерации теста`, { testId, status })
+
+        try {
+            await executeTransaction(async tx => {
+                const existingTest = test ?? (await testRepository.findById(testId))
+
+                if (!existingTest) {
+                    throw ApiError.NotFound("Тест не найден")
+                }
+
+
+
+                await testRepository.updateModerationStatus(testId, status, tx)
+                // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
+                // await testRepository.cleanupUnusedSnapshots(testId, tx)
+
+                // const updatedTest = await testRepository.findDetailedTestById(testId, tx)
+                // if (!updatedTest) {
+                //     throw ApiError.InternalError("Не удалось получить обновленный тест")
+                // }
+
+                // await testRepository.createSnapshot(updatedTest, tx)
+            })
+
+            await redisClient.del(`test:${testId}`)
+            await redisClient.del(`user-test:${testId}`)
+            await redisClient.del(`user-test-basic:${testId}`)
+            logger.info(`[${LOG_NAMESPACE}] Статус модерации теста успешно изменен`, { testId, status })
+        } catch (error) {
+            if (error instanceof ApiError) throw error
+
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при изменении статуса модерации теста`, {
+                testId,
+                status,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при изменении статуса модерации теста")
         }
     }
 

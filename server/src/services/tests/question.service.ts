@@ -276,7 +276,7 @@ class QuestionService {
         }
     }
     private checkForBadWords(questions: QuestionDTO[]): void {
-        logger.debug(`[${LOG_NAMESPACE}] Начало проверки вопросов на нецензурные слова`)
+        logger.debug(`[${LOG_NAMESPACE}] Начало проверки вопросов на недопустимые слова`)
 
         for (let i = 0; i < questions.length; i++) {
             const question = questions[i]
@@ -285,29 +285,31 @@ class QuestionService {
             // Проверка текста вопроса
             const questionCheck = badWordsService.checkText(question.text)
             if (questionCheck.hasBadWords) {
-                logger.warn(`[${LOG_NAMESPACE}] Обнаружены нецензурные слова в тексте вопроса`, {
+                logger.warn(`[${LOG_NAMESPACE}] Обнаружены недопустимые слова в тексте вопроса`, {
                     questionNumber,
                     questionText: question.text,
                     foundWords: questionCheck.foundWords,
                 })
-                throw ApiError.BadRequest(`Обнаружены нецензурные слова в тексте вопроса №${questionNumber}`)
+                throw ApiError.BadRequest(`Обнаружены недопустимые слова в тексте вопроса №${questionNumber}`)
             }
 
             // Проверка вариантов ответов
             for (const answer of question.answers) {
                 const answerCheck = badWordsService.checkText(answer.text)
                 if (answerCheck.hasBadWords) {
-                    logger.warn(`[${LOG_NAMESPACE}] Обнаружены нецензурные слова в тексте ответа`, {
+                    logger.warn(`[${LOG_NAMESPACE}] Обнаружены недопустимые слова в тексте ответа`, {
                         questionNumber,
                         answerText: answer.text,
                         foundWords: answerCheck.foundWords,
                     })
-                    throw ApiError.BadRequest(`Обнаружены нецензурные слова в тексте ответа вопроса №${questionNumber}`)
+                    throw ApiError.BadRequest(
+                        `Обнаружены недопустимые слова в тексте ответа вопроса №${questionNumber}`
+                    )
                 }
             }
         }
 
-        logger.debug(`[${LOG_NAMESPACE}] Все вопросы и ответы прошли проверку на нецензурные слова`)
+        logger.debug(`[${LOG_NAMESPACE}] Все вопросы и ответы прошли проверку на недопустимые слова`)
     }
 
     /**
@@ -322,7 +324,7 @@ class QuestionService {
             questionsCount: questions.length,
         })
 
-        // Проверка на нецензурные слова перед обновлением
+        // Проверка на недопустимые слова перед обновлением
         this.checkForBadWords(questions)
 
         return executeTransaction(async tx => {

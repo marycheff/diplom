@@ -187,6 +187,7 @@ router.get(
     testController.getTestSnapshot
 )
 // Изменение статуса видимости теста
+// Изменение статуса Модерации теста
 router.put(
     "/:testId/visibility",
     authMiddleware,
@@ -194,5 +195,6 @@ router.put(
     testOwnershipMiddleware,
     testController.changeVisibilityStatus
 )
+router.put("/:testId/moderation-status", authMiddleware, adminMiddleware, testController.changeModerationStatus)
 
 export default router
