@@ -146,6 +146,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                 />
             </div>
             <div>
+                <br />
                 <span className={styles.label}>Поля ввода ({inputFields.length}):</span>
                 <div className={styles.checkboxGroup}>
                     {Object.entries(PreTestUserDataLabels).map(([key, label]) => (
@@ -160,6 +161,8 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                 </div>
             </div>
             <div>
+                <br />
+
                 <span className={styles.label}>Лимит времени:</span>
                 <div className={styles.timeInputs}>
                     Часы
@@ -168,7 +171,6 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                         // floatingLabel={false}
                         name="hours"
                         trigger={trigger}
-                        placeholder="Часы"
                         register={register}
                         setValue={setValue}
                         errors={errors.hours}

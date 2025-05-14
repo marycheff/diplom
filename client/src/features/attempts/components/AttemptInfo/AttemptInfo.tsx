@@ -94,21 +94,21 @@ const AttemptInfo = () => {
                                 )}
                             </span>
                         </div>
-                        {attempt.status !== AttemptStatus.IN_PROGRESS && (
+                        {/* {attempt.status !== AttemptStatus.IN_PROGRESS && (
                             <Link
                                 target="_blank"
                                 to={generatePath(ROUTES.PASS_ATTEMPT, { attemptId: attempt.id })}
                                 className="actionLink">
                                 Перейти к попытке
                             </Link>
-                        )}
+                        )} */}
 
-                        <Link
+                        {/* <Link
                             target="_blank"
                             to={generatePath(ROUTES.ATTEMPT_RESULTS, { attemptId: attempt.id })}
                             className="actionLink">
                             Перейти к результатам
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
 

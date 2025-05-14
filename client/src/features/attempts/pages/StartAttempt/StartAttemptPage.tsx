@@ -45,9 +45,6 @@ const StartAttemptPage = () => {
         fetchTest()
     }, [testId, getTestForUserById, navigate])
     
-    // Предотвращение случайного закрытия страницы
-    usePreventLeave()
-
     if (isFetching || isLoading) {
         return <Loader fullScreen />
     }
