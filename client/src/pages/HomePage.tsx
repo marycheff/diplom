@@ -1,27 +1,30 @@
-import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import { Link } from "react-router-dom"
+import styles from "./HomePage.module.scss"
 import { ROUTES } from "@/router/paths"
-import { Button } from "@/shared/ui/Button"
-import { useNavigate } from "react-router-dom"
+import { FiEdit, FiFileText, FiUser } from "react-icons/fi"
 
 const HomePage = () => {
-    const navigate = useNavigate()
-    const { user, logout, isAdmin } = useAuthStore()
+    const items = [
+        { to: ROUTES.PROFILE, icon: <FiUser />, label: "Профиль", color: "green-400" },
+        { to: ROUTES.CREATE_TEST, icon: <FiEdit />, label: "Создать тест", color: "accent-secondary" },
+        { to: ROUTES.MY_TESTS, icon: <FiFileText />, label: "Мои тесты", color: "accent-secondary" },
+        { to: ROUTES.MY_ATTEMPTS, icon: <FiFileText />, label: "Мои результаты", color: "accent-secondary" },
+    ]
 
     return (
-        <>
-            <div>
-                <h1>{user?.isActivated ? "Аккаунт активирован" : "Аккаунт Не активирован!!!"}</h1>
-
-                {!isAdmin && <h1>Не админ</h1>}
-
-                <Button onClick={() => navigate(ROUTES.PROFILE)}>Профиль</Button>
-                <Button onClick={() => navigate(ROUTES.CREATE_TEST)}>Создать Тест</Button>
-                <Button onClick={() => navigate(ROUTES.MY_TESTS)}>Мои тесты</Button>
-                <br />
-                <br />
-                <Button onClick={() => logout()}>Выйти</Button>
+        <div className={styles.pageWrapper}>
+            <div className={styles.content}>
+                {/* <h1 className={styles.title}>Домашняя страница</h1> */}
+                <div className={styles.grid}>
+                    {items.map((item, index) => (
+                        <Link to={item.to} key={index} className={styles.card}>
+                            <div className={`${styles.icon} ${styles[item.color]}`}>{item.icon}</div>
+                            <span>{item.label}</span>
+                        </Link>
+                    ))}
+                </div>
             </div>
-        </>
+        </div>
     )
 }
 
