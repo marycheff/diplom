@@ -14,6 +14,7 @@ export interface TestState {
     isSettingsUpdating: boolean
     isGenerating: boolean
     isVisibilityUpdating: boolean
+    isModerationStatusUpdating: boolean
 
     getTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
@@ -29,6 +30,7 @@ export interface TestState {
     updateShortInfo: (testId: string, updatedShortInfo: ShortTestInfo) => Promise<void>
     getSnapshotById: (snapshotId: string) => Promise<SnapshotWithOriginalTestDTO | undefined>
     changeVisibilityStatus: (testId: string, status: TestVisibilityStatus) => Promise<void>
+    changeModerationStatus: (testId: string, status: ModerationStatus) => Promise<void>
 
     // CACHE
     CACHE_EXPIRATION_TIME: number
@@ -57,6 +59,7 @@ export interface TestDTO {
     questions?: QuestionDTO[]
     settings?: TestSettingsDTO
     visibilityStatus: TestVisibilityStatus
+    moderationStatus: ModerationStatus
     totalAttempts: number
 }
 
@@ -114,4 +117,15 @@ export enum TestVisibilityStatus {
 export const VisibilityStatusLabels: Record<TestVisibilityStatus, string> = {
     [TestVisibilityStatus.HIDDEN]: "Скрыт",
     [TestVisibilityStatus.PUBLISHED]: "Публикуется",
+}
+
+export enum ModerationStatus {
+    PENDING = "PENDING",
+    APPROVED = "APPROVED",
+    REJECTED = "REJECTED",
+}
+export const ModerationStatusLabels: Record<ModerationStatus, string> = {
+    [ModerationStatus.PENDING]: "В обработке",
+    [ModerationStatus.APPROVED]: "Одобрен",
+    [ModerationStatus.REJECTED]: "Отклонен",
 }

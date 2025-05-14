@@ -1,6 +1,7 @@
 import axiosInstance from "@/api"
 import {
     GenerateAnswerFormData,
+    ModerationStatus,
     QuestionDTO,
     ShortTestInfo,
     SnapshotWithOriginalTestDTO,
@@ -92,6 +93,9 @@ class TestService {
 
     changeVisibilityStatus = (testId: string, status: TestVisibilityStatus): Promise<AxiosResponse<void>> => {
         return axiosInstance.put(`/tests/${testId}/visibility`, { status })
+    }
+    changeModerationStatus = (testId: string, status: ModerationStatus): Promise<AxiosResponse<void>> => {
+        return axiosInstance.put(`/tests/${testId}/moderation-status`, { status })
     }
 }
 export const testService = new TestService()

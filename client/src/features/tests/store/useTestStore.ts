@@ -10,6 +10,7 @@ const initialState = {
     isSettingsUpdating: false,
     isGenerating: false,
     isVisibilityUpdating: false,
+    isModerationStatusUpdating: false,
     cache: {},
     MAX_CACHE_ENTRIES: 50,
     CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
@@ -22,6 +23,7 @@ export const useTestStore = create<TestState>(set => {
     const withSettingsUpdating = createApiHandler(set, "isSettingsUpdating")
     const withGenerating = createApiHandler(set, "isGenerating")
     const withVisibilityUpdating = createApiHandler(set, "isVisibilityUpdating")
+    const withModerationStatusUpdating = createApiHandler(set, "isModerationStatusUpdating")
 
     return {
         ...initialState,
@@ -135,6 +137,12 @@ export const useTestStore = create<TestState>(set => {
                 await testService.changeVisibilityStatus(testId, status)
             }
             return withVisibilityUpdating(operation)
+        },
+        changeModerationStatus: async (testId, status) => {
+            const operation = async () => {
+                await testService.changeModerationStatus(testId, status)
+            }
+            return withModerationStatusUpdating(operation)
         },
     }
 })

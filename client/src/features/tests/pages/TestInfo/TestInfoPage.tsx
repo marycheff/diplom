@@ -1,14 +1,16 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import CopyTestButton from "@/features/tests/components/CopyTestButton/CopyTestButton"
+import ModerationStatusEditor from "@/features/tests/components/ModerationStatusEditor/ModerationStatusEditor"
 import QuestionsEditor from "@/features/tests/components/QuestionsEditor/QuestionsEditor"
 import TestInfoEditor from "@/features/tests/components/TestInfoEditor/TestInfoEditor"
 import TestSettingsEditor from "@/features/tests/components/TestSettingsEditor/TestSettingsEditor"
 import InfoRowSkeleton from "@/features/tests/components/TestSettingsSkeleton/TestSettingsSkeleton"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import {
+    ModerationStatus,
+    ModerationStatusLabels,
     PreTestUserDataLabels,
     QuestionDTO,
-    Role,
     ShortTestInfo,
     TestDTO,
     TestSettingsDTO,
@@ -22,6 +24,7 @@ import { ConfirmationModal, Modal } from "@/shared/ui/Modal"
 import { formatSeconds, formatSpaces, shortenText } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { FaLock, FaLockOpen, FaPlus } from "react-icons/fa"
 import { MdEdit } from "react-icons/md"
@@ -42,9 +45,12 @@ const TestInfoPage = () => {
         updateShortInfo,
         changeVisibilityStatus,
         isVisibilityUpdating,
+        changeModerationStatus,
+        isModerationStatusUpdating,
     } = useTestStore()
     const [test, setTest] = useState<TestDTO | null>(null)
-    const { user: currentUser } = useAuthStore()
+    const { user: currentUser, isAdmin } = useAuthStore()
+
     const navigate = useNavigate()
     const location = useLocation()
     const [isEditQuestionsModalOpen, setIsEditQuestionsModalOpen] = useState(
@@ -52,6 +58,7 @@ const TestInfoPage = () => {
     )
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(location.pathname.endsWith("/edit-settings"))
     const [isShortInfoModalOpen, setIsShortInfModalOpen] = useState(location.pathname.endsWith("/edit-info"))
+    const [isModerationStatusModalOpen, setIsModerationStatusModalOpen] = useState(false)
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
 
@@ -71,6 +78,8 @@ const TestInfoPage = () => {
     useEffect(() => {
         fetchTest()
     }, [testId, getTestById])
+
+    const { register } = useForm()
 
     if (isFetching) {
         return <Loader fullScreen />
@@ -149,12 +158,12 @@ const TestInfoPage = () => {
             setIsEditQuestionsModalOpen(false)
         }
     }
-    const handleChangeVisibilityStatus = () => {
+    const handleChangeVisibilityStatus = async () => {
         const newStatus =
             test.visibilityStatus === TestVisibilityStatus.HIDDEN
                 ? TestVisibilityStatus.PUBLISHED
                 : TestVisibilityStatus.HIDDEN
-        changeVisibilityStatus(test.id, newStatus)
+        await changeVisibilityStatus(test.id, newStatus)
         setTest(prev =>
             prev
                 ? {
@@ -164,6 +173,20 @@ const TestInfoPage = () => {
                 : null
         )
         toast.success(test.visibilityStatus === TestVisibilityStatus.HIDDEN ? "Тест опубликован" : "Тест скрыт")
+    }
+
+    const handleChangeModerationStatus = async (status: ModerationStatus) => {
+        await changeModerationStatus(test.id, status)
+        setTest(prev =>
+            prev
+                ? {
+                      ...prev,
+                      moderationStatus: status,
+                  }
+                : null
+        )
+        toast.success("Статус модерации обновлен")
+        setIsModerationStatusModalOpen(false)
     }
 
     return (
@@ -192,14 +215,27 @@ const TestInfoPage = () => {
                         <InfoRowSkeleton rows={4} />
                     ) : (
                         <div className={styles.blockContent}>
-                            {currentUser?.role === Role.ADMIN && (
-                                <div className={styles.infoRow}>
-                                    <span className={styles.label}>ID:</span>
-                                    <span className={styles.value}>
-                                        {shortenText(test.id)}
-                                        <CopyButton textToCopy={test.id} />
-                                    </span>
-                                </div>
+                            {isAdmin && (
+                                <>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.label}>ID:</span>
+                                        <span className={styles.value}>
+                                            {shortenText(test.id)}
+                                            <CopyButton textToCopy={test.id} />
+                                        </span>
+                                    </div>
+
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.label}>Статус модерации </span>
+                                        <span className={styles.value}>
+                                            {ModerationStatusLabels[test.moderationStatus]}
+                                            {" "}
+                                            <Button onClick={() => setIsModerationStatusModalOpen(true)}>
+                                                <MdEdit />
+                                            </Button>
+                                        </span>
+                                    </div>
+                                </>
                             )}
                             <div className={styles.infoRow}>
                                 <span className={styles.label}>Ссылка для прохождения</span>
@@ -461,6 +497,17 @@ const TestInfoPage = () => {
                 cancelText="Нет">
                 У вас есть несохраненные изменения. Вы уверены, что хотите закрыть редактор?
             </ConfirmationModal>
+
+            <Modal
+                isOpen={isModerationStatusModalOpen}
+                onClose={() => setIsModerationStatusModalOpen(false)}
+                title="Изменение статуса модерации">
+                <ModerationStatusEditor
+                    currentStatus={test.moderationStatus}
+                    onChangingComplete={handleChangeModerationStatus}
+                    onCancel={() => setIsModerationStatusModalOpen(false)}
+                />
+            </Modal>
         </div>
     )
 }
