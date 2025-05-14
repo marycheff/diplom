@@ -1,4 +1,4 @@
-@keyframes slideIn {
+@keyframes slideInTop {
     from {
         transform: translateY(10px);
         opacity: 0;
@@ -9,13 +9,35 @@
     }
 }
 
-@keyframes slideOut {
+@keyframes slideInRight {
+    from {
+        transform: translateX(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutTop {
     from {
         transform: translateY(0);
         opacity: 1;
     }
     to {
         transform: translateY(10px);
+        opacity: 0;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-10px);
         opacity: 0;
     }
 }
@@ -37,9 +59,17 @@
 
 .visible {
     opacity: 1;
-    animation: slideIn 0.2s ease forwards;
+    animation: slideInTop 0.2s ease forwards;
+
+    &[data-position="right"] {
+        animation: slideInRight 0.2s ease forwards;
+    }
 }
 
 .hidden {
-    animation: slideOut 0.2s ease forwards;
+    animation: slideOutTop 0.2s ease forwards;
+
+    &[data-position="right"] {
+        animation: slideOutRight 0.2s ease forwards;
+    }
 }

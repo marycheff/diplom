@@ -1,7 +1,8 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
 import { ConfirmationModal } from "@/shared/ui/Modal"
-import { useEffect, useState } from "react"
+import Tooltip from "@/shared/ui/Tooltip/Tooltip"
+import { useEffect, useRef, useState } from "react"
 import { FiEdit, FiFileText, FiHome, FiList, FiLogOut, FiMenu, FiUser, FiUsers } from "react-icons/fi"
 import { IoAnalyticsSharp } from "react-icons/io5"
 import { MdOutlineScience } from "react-icons/md"
@@ -135,10 +136,30 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
             }}
         />
     )
+    const MenuItemWithTooltip = ({ tooltipText, icon, children, ...props }: any) => {
+        const menuItemRef = useRef<HTMLDivElement>(null)
+
+        return (
+            <div ref={menuItemRef} style={{ position: "relative" }}>
+                <MenuItemWithCollapse
+                    {...props}
+                    icon={icon}
+                    onClick={(e: any) => {
+                        handleMenuItemClick()
+                        props.onClick?.(e)
+                    }}>
+                    {children}
+                </MenuItemWithCollapse>
+
+                {collapsed && <Tooltip targetRef={menuItemRef} content={tooltipText} position="right" delay={200} />}
+            </div>
+        )
+    }
 
     const adminMenuItems = (
         <>
-            <MenuItemWithCollapse
+            <MenuItemWithTooltip
+                tooltipText="Главная"
                 icon={<FiHome style={{ color: colors.primary }} />}
                 component={<Link to={ROUTES.ADMIN} />}
                 active={currentPath === ROUTES.ADMIN}
@@ -148,60 +169,68 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
                     paddingBottom: "8px",
                 }}>
                 {!collapsed && "Главная"}
-            </MenuItemWithCollapse>
+            </MenuItemWithTooltip>
             <CategoryHeader title="Управление" color={colors.management} />
-            <MenuItemWithCollapse
+            <MenuItemWithTooltip
+                tooltipText="Пользователи"
                 icon={<FiUsers style={{ color: colors.management }} />}
                 component={<Link to={ROUTES.ADMIN_USERS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_USERS)}>
                 {!collapsed && "Пользователи"}
-            </MenuItemWithCollapse>
+            </MenuItemWithTooltip>
 
-            <MenuItemWithCollapse
+            <MenuItemWithTooltip
+                tooltipText="Тесты"
                 icon={<MdOutlineScience style={{ color: colors.management }} />}
                 component={<Link to={ROUTES.ADMIN_TESTS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_TESTS)}>
                 {!collapsed && "Тесты"}
-            </MenuItemWithCollapse>
-            <MenuItemWithCollapse
+            </MenuItemWithTooltip>
+            <MenuItemWithTooltip
+                tooltipText="Попытки"
                 icon={<FiList style={{ color: colors.management }} />}
                 component={<Link to={ROUTES.ADMIN_ALL_ATTEMPTS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_ALL_ATTEMPTS)}>
                 {!collapsed && "Попытки"}
-            </MenuItemWithCollapse>
+            </MenuItemWithTooltip>
 
             <CategoryHeader title="Тестирование" color={colors.testing} />
-            <MenuItemWithCollapse
+            <MenuItemWithTooltip
+                tooltipText="Создать тест"
                 icon={<FiEdit style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.ADMIN_CREATE_TEST} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_CREATE_TEST)}>
                 {!collapsed && "Создать тест"}
-            </MenuItemWithCollapse>
-            <MenuItemWithCollapse
+            </MenuItemWithTooltip>
+            <MenuItemWithTooltip
+                tooltipText="Мои тесты"
                 icon={<FiFileText style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.ADMIN_MY_TESTS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_MY_TESTS)}>
                 {!collapsed && "Мои тесты"}
-            </MenuItemWithCollapse>
-            <MenuItemWithCollapse
+            </MenuItemWithTooltip>
+            <MenuItemWithTooltip
+                tooltipText="Мои результаты"
                 icon={<IoAnalyticsSharp style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.ADMIN_MY_ATTEMPTS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_MY_ATTEMPTS)}>
                 {!collapsed && "Мои результаты"}
-            </MenuItemWithCollapse>
+            </MenuItemWithTooltip>
             <CategoryHeader title="Профиль" color={colors.profile} />
-            <MenuItemWithCollapse
+            <MenuItemWithTooltip
+                tooltipText="Профиль"
                 icon={<FiUser style={{ color: colors.profile }} />}
                 component={<Link to={ROUTES.ADMIN_PROFILE} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_PROFILE)}>
                 {!collapsed && "Профиль"}
-            </MenuItemWithCollapse>
+            </MenuItemWithTooltip>
         </>
     )
 
     const userMenuItems = (
         <>
-            <MenuItemWithCollapse
+            <MenuItemWithTooltip
+                tooltipText="Главная"
                 icon={<FiHome style={{ color: colors.primary }} />}
                 component={<Link to={ROUTES.HOME} />}
                 active={currentPath === ROUTES.HOME}
@@ -211,34 +240,38 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
                     paddingBottom: "8px",
                 }}>
                 {!collapsed && "Главная"}
-            </MenuItemWithCollapse>
+            </MenuItemWithTooltip>
             <CategoryHeader title="Профиль" color={colors.profile} />
-            <MenuItemWithCollapse
+            <MenuItemWithTooltip
+                tooltipText="Профиль"
                 icon={<FiUser style={{ color: colors.profile }} />}
                 component={<Link to={ROUTES.PROFILE} />}
                 active={currentPath.startsWith(ROUTES.PROFILE)}>
                 {!collapsed && "Профиль"}
-            </MenuItemWithCollapse>
+            </MenuItemWithTooltip>
 
             <CategoryHeader title="Тестирование" color={colors.testing} />
-            <MenuItemWithCollapse
+            <MenuItemWithTooltip
+                tooltipText="Создать тест"
                 icon={<FiEdit style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.CREATE_TEST} />}
                 active={currentPath.startsWith(ROUTES.CREATE_TEST)}>
                 {!collapsed && "Создать тест"}
-            </MenuItemWithCollapse>
-            <MenuItemWithCollapse
+            </MenuItemWithTooltip>
+            <MenuItemWithTooltip
+                tooltipText="Мои тесты"
                 icon={<FiFileText style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.MY_TESTS} />}
                 active={currentPath.startsWith(ROUTES.MY_TESTS)}>
                 {!collapsed && "Мои тесты"}
-            </MenuItemWithCollapse>
-            <MenuItemWithCollapse
+            </MenuItemWithTooltip>
+            <MenuItemWithTooltip
+                tooltipText="Мои результаты"
                 icon={<FiFileText style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.MY_ATTEMPTS} />}
                 active={currentPath.startsWith(ROUTES.MY_ATTEMPTS)}>
                 {!collapsed && "Мои результаты"}
-            </MenuItemWithCollapse>
+            </MenuItemWithTooltip>
         </>
     )
 
