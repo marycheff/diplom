@@ -74,7 +74,7 @@ export const mapTest = (
         description: test.description || null,
         totalAttempts: test.totalAttempts || 0,
         visibilityStatus: test.visibilityStatus,
-        moderationStatus: test.status,
+        moderationStatus: test.moderationStatus,
         settings: test.settings
             ? {
                   requireRegistration: test.settings.requireRegistration,
@@ -194,7 +194,7 @@ export const mapToAttemptWithSnapshotDTO = (
                   testId: attempt.snapshot.testId,
                   title: attempt.snapshot.title,
                   description: attempt.snapshot.description,
-                  status: attempt.snapshot.status,
+                  status: attempt.snapshot.moderationStatus,
                   createdAt: attempt.snapshot.createdAt,
               }
             : null,
@@ -270,7 +270,7 @@ export const mapToTestSnapshotDTO = (
         testId: snapshot.testId,
         title: snapshot.title,
         description: snapshot.description || null,
-        status: snapshot.status,
+        status: snapshot.moderationStatus,
         createdAt: snapshot.createdAt,
         settings: snapshot.settings
             ? {

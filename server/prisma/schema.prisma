@@ -69,7 +69,7 @@ model Test {
   authorId         String
   title            String               @db.VarChar(100)
   description      String?              @db.VarChar(500)
-  status           ModerationStatus     @default(PENDING)
+  moderationStatus ModerationStatus     @default(PENDING)
   visibilityStatus TestVisibilityStatus @default(PUBLISHED)
   version          Int                  @default(1)
   // TIMESTAMPS
@@ -163,7 +163,7 @@ model TestSnapshot {
   testId           String
   title            String                @db.VarChar(100)
   description      String?               @db.VarChar(500)
-  status           ModerationStatus
+  moderationStatus ModerationStatus
   visibilityStatus TestVisibilityStatus  @default(PUBLISHED)
   version          Int                   @default(1)
   // TIMESTAMPS

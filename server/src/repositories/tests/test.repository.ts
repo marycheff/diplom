@@ -68,7 +68,7 @@ class TestRepository {
                 version: test.version,
                 title: test.title,
                 description: test.description,
-                status: test.status,
+                moderationStatus: test.moderationStatus,
             },
         })
 
@@ -561,7 +561,7 @@ class TestRepository {
         const client = tx || prisma
         return client.test.update({
             where: { id: testId },
-            data: { status },
+            data: { moderationStatus: status },
             include: {
                 questions: {
                     include: {
