@@ -2,6 +2,7 @@ import TestTimer from "@/features/attempts/components/Timer/TestTimer"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
+import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
 import { AttemptAnswer, AttemptStatus, QuestionType, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
@@ -111,6 +112,11 @@ const TestTaking = () => {
             setSelectedAnswers(allAnswers[currentQuestion.id] || [])
         }
     }, [currentPage, test, allAnswers])
+    
+    // Предотвращение случайного закрытия страницы
+    usePreventLeave({
+        shouldPrevent: !isAttemptCompleted && Object.keys(allAnswers).length > 0,
+    })
 
     // Обработчики событий
 
@@ -217,7 +223,12 @@ const TestTaking = () => {
             )}
 
             {timeLimit > 0 && !isAttemptCompleted && (
-                <TestTimer attemptId={attemptId} defaultTime={timeLimit} timeSpent={attempt.timeSpent} onTimeExpired={handleTimeExpired} />
+                <TestTimer
+                    attemptId={attemptId}
+                    defaultTime={timeLimit}
+                    timeSpent={attempt.timeSpent}
+                    onTimeExpired={handleTimeExpired}
+                />
             )}
 
             <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />

@@ -2,6 +2,7 @@ import AnswersList from "@/features/attempts/components/AnswersList/AnswersList"
 import QuestionForm from "@/features/tests/components/QuestionForm/QuestionForm"
 import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
 import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -144,14 +145,18 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
         currentAnswer !== initialFormState.answer ||
         JSON.stringify(currentAnswers) !== JSON.stringify(initialAnswers)
 
+    // Состояние для отслеживания изменений в списке вопросов
+    const [questionsChanged, setQuestionsChanged] = useState(false)
+
     useEffect(() => {
-        const questionsChanged = JSON.stringify(data) !== JSON.stringify(questions)
+        const hasQuestionsChanged = JSON.stringify(data) !== JSON.stringify(questions)
+        setQuestionsChanged(hasQuestionsChanged)
 
         // Проверяем, заполнена ли форма (любой текст в полях)
         const isFormFilled = Boolean(currentQuestion || currentAnswer)
 
         // Устанавливаем флаг несохраненных изменений, если есть изменения в вопросах или в форме
-        const hasUnsavedChanges = questionsChanged || (hasFormChanges && isFormFilled)
+        const hasUnsavedChanges = hasQuestionsChanged || (hasFormChanges && isFormFilled)
 
         setHasUnsavedChanges(hasUnsavedChanges)
     }, [
@@ -328,6 +333,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
         !currentQuestion &&
         !currentAnswer &&
         currentAnswers.every(answer => !answer.text || formatSpaces(answer.text) === "")
+    // Предотвращение случайного закрытия страницы
+    usePreventLeave({ shouldPrevent: hasFormChanges && Boolean(currentQuestion || currentAnswer) })
+
     if (isLoading) {
         return <Loader fullScreen />
     }
@@ -346,7 +354,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                         </Button>
                         <Button
                             onClick={handleSubmitQuestions}
-                            disabled={hasFormChanges && Boolean(currentQuestion || currentAnswer)}>
+                            disabled={
+                                !questionsChanged || (hasFormChanges && Boolean(currentQuestion || currentAnswer))
+                            }>
                             Сохранить все
                         </Button>
                         <div>Всего вопросов: {questions.length}</div>
@@ -411,7 +421,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                             </Button>
                         )}
                         {/* TODO: КНОПКА ОТМЕНИТЬ ИЗМЕНЕНИЯ */}
-                        {editingQuestion && (
+                        {/* {editingQuestion && (
                             <Button
                                 className={styles.cancelButton}
                                 onClick={() => {
@@ -420,7 +430,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                                 }}>
                                 Отменить изменения
                             </Button>
-                        )}
+                        )} */}
                     </div>
                 </div>
             </div>
