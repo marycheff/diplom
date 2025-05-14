@@ -27,6 +27,8 @@ export interface TestDTO {
     settings?: TestSettingsDTO
     visibilityStatus: TestVisibilityStatus
     moderationStatus: ModerationStatus
+    moderatedBy: string | null
+    moderatedAt: Date | null
     totalAttempts: number
 }
 

@@ -278,10 +278,11 @@ class TestRepository {
         })
     }
 
-    async findAll(skip: number, limit: number) {
+    async findAll(skip: number, limit: number, where?: Prisma.TestWhereInput) {
         return prisma.test.findMany({
             skip,
             take: limit,
+            where,
             include: {
                 questions: {
                     include: {

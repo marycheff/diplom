@@ -289,6 +289,40 @@ class TestService {
             throw ApiError.InternalError("Ошибка при получении всех тестов")
         }
     }
+    async getAllUnmoderatedTests(page = 1, limit = 10): Promise<TestsListDTO> {
+        logger.debug(`[${LOG_NAMESPACE}] Получение всех тестов`, { page, limit })
+        try {
+            const skip = (page - 1) * limit
+            const tests = await testRepository.findAll(skip, limit, { moderatedAt: null })
+            const total = await testRepository.count({ moderatedAt: null })
+
+            // Получение totalAttempts для каждого теста
+            const testsWithAttempts = await Promise.all(
+                tests.map(async test => {
+                    const totalAttempts = await attemptRepository.count({ testId: test.id })
+                    return { ...test, totalAttempts }
+                })
+            )
+
+            logger.debug(`[${LOG_NAMESPACE}] Все немодерированные тесты успешно получены`, {
+                count: testsWithAttempts.length,
+            })
+            return {
+                tests: testsWithAttempts.map(test => mapTest(test)),
+                total,
+            }
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при получении всех немодерированных тестов`, {
+                page,
+                limit,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при получении всех немодерированных тестов")
+        }
+    }
 
     async deleteTest(testId: string): Promise<void> {
         logger.info(`[${LOG_NAMESPACE}] Удаление теста`, { testId })

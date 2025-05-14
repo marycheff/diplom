@@ -45,6 +45,8 @@ router.get("/my-tests", authMiddleware, testController.getMyTests)
 
 // Получение всех тестов (админ)
 router.get("/all-tests", authMiddleware, adminMiddleware, testController.getAllTests)
+// Получение всех немодерированных тестов (админ)
+router.get("/all-unmoderated-tests", authMiddleware, adminMiddleware, testController.getAllUnmoderatedTests)
 
 // Удаление теста
 router.delete("/:testId", authMiddleware, testOwnershipMiddleware, testController.deleteTest)
