@@ -11,7 +11,7 @@ const WelcomePage = () => {
             <header className={styles.header}>
                 <div className={styles.logo}>НейроТест</div>
                 <div className={styles.authButtons}>
-                    <Button onClick={() => navigate(ROUTES.LOGIN)}>Войти</Button>
+                    <Button onClick={() => navigate(ROUTES.LOGIN)}>Авторизация</Button>
                     <Button onClick={() => navigate(ROUTES.REGISTER)}>Регистрация</Button>
                 </div>
             </header>

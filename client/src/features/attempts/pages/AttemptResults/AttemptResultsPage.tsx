@@ -82,7 +82,7 @@ const AttemptResultsPage = () => {
     // Состояния загрузки
     if (isAttemptFetching || isTestFetching) return <Loader fullScreen />
     if (!attemptForUser) return <div>Попытка не найдена</div>
-    if (attemptForUser.status !== AttemptStatus.COMPLETED) {
+    if (attemptForUser.status === AttemptStatus.IN_PROGRESS) {
         return <div>Попытка не завершена</div>
     }
     if (!test) return <div>Тест не найден</div>

@@ -63,7 +63,7 @@ class TestService {
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
             await redisClient.del(`user-test-basic:${testId}`)
-            
+
             logger.info(`[${LOG_NAMESPACE}] Настройки теста успешно обновлены`, { testId })
         } catch (error) {
             throw ApiError.InternalError("Ошибка при обновлении настроек теста")
@@ -117,8 +117,6 @@ class TestService {
                 if (!existingTest) {
                     throw ApiError.NotFound("Тест не найден")
                 }
-
-
 
                 await testRepository.updateModerationStatus(testId, status, tx)
                 // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
@@ -353,7 +351,11 @@ class TestService {
                 logger.debug(`[${LOG_NAMESPACE}] Тест для попытки пользователя получен из кэша`, { testId, attemptId })
 
                 const parsedTest = JSON.parse(cachedTest)
-                if (parsedTest.visibilityStatus === TestVisibilityStatus.HIDDEN) {
+                if (
+                    parsedTest.visibilityStatus === TestVisibilityStatus.HIDDEN ||
+                    parsedTest?.status === ModerationStatus.REJECTED ||
+                    parsedTest?.status === ModerationStatus.PENDING
+                ) {
                     logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                     throw ApiError.NotFound("Тест не найден")
                 }
@@ -365,7 +367,11 @@ class TestService {
                 logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                 throw ApiError.NotFound("Тест не найден")
             }
-            if (test.visibilityStatus === TestVisibilityStatus.HIDDEN) {
+            if (
+                test.visibilityStatus === TestVisibilityStatus.HIDDEN ||
+                test.status === ModerationStatus.PENDING ||
+                test.status === ModerationStatus.REJECTED
+            ) {
                 logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                 throw ApiError.NotFound("Тест не найден")
             }
