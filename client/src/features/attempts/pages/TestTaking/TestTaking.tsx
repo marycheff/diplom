@@ -10,6 +10,7 @@ import { AttemptAnswer, AttemptStatus, QuestionType, TestAttemptUserDTO, UserTes
 import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import Loader from "@/shared/ui/Loader/Loader"
+import { ConfirmationModal } from "@/shared/ui/Modal"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
 import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
 import { isValidUUID } from "@/shared/utils/validator"
@@ -133,9 +134,9 @@ const TestTaking = () => {
         setCurrentPage(newPage)
     }
     // Обработчик истечения времени
-    const handleTimeExpired = () => {
+    const handleTimeExpired = async () => {
         toast.error("Время закончилось. Ваши ответы будут отправлены автоматически.")
-        handleSubmitAnswers()
+        await submitAnswers()
     }
     // Обработчик клика на ответ
     const handleAnswerOptionClick = (answerId: string, isSingleChoice: boolean) => () => {
@@ -181,10 +182,28 @@ const TestTaking = () => {
         saveEncryptedTime(timeKey, currentTime)
     }
 
+    // Состояние для модального окна подтверждения
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+    const [pendingSubmit, setPendingSubmit] = useState(false)
+
     // Отправка результатов
     const handleSubmitAnswers = async () => {
         saveCurrentQuestionAnswers()
 
+        // Проверка, что не на все вопросы есть заполненные ответы
+        const hasUnansweredQuestions = test?.questions?.some(
+            question => !allAnswers[question.id] || allAnswers[question.id].length === 0
+        )
+        if (hasUnansweredQuestions) {
+            setPendingSubmit(true)
+            setShowConfirmationModal(true)
+            return
+        }
+
+        await submitAnswers()
+    }
+
+    const submitAnswers = async () => {
         const formattedAnswers: AttemptAnswer[] = Object.entries(allAnswers).map(([questionId, answersIds]) => {
             const timeKey = `answer_time_${attemptId}_${questionId}`
             const answeredAt = getDecryptedTime(timeKey)
@@ -203,7 +222,6 @@ const TestTaking = () => {
         Object.keys(allAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
 
         toast.success("Ответы успешно отправлены. Попытка завершена.")
-        // navigate(ROUTES.HOME)
         if (attempt) {
             navigate(generatePath(ROUTES.ATTEMPT_RESULTS, { attemptId: attempt.id }))
         } else {
@@ -298,6 +316,24 @@ const TestTaking = () => {
                     Следующий вопрос
                 </Button>
             )}
+
+            <ConfirmationModal
+                isOpen={showConfirmationModal}
+                onClose={() => {
+                    setShowConfirmationModal(false)
+                    setPendingSubmit(false)
+                }}
+                onConfirm={() => {
+                    setShowConfirmationModal(false)
+                    if (pendingSubmit) {
+                        submitAnswers()
+                    }
+                }}
+                title="Подтверждение отправки"
+                confirmText="Отправить"
+                cancelText="Отмена">
+                <p>Вы ответили не на все вопросы. Вы уверены, что хотите отправить ответы?</p>
+            </ConfirmationModal>
         </div>
     )
 }
