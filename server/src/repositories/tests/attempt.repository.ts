@@ -96,13 +96,17 @@ class AttemptRepository {
                         },
                     })
 
-                    // Создаем запись ответа пользователя с текстовым ответом
+                    // Определяем, правильный ли ответ 
+                    const isCorrect = correctAnswer?.text.toLowerCase() === textAnswer?.toLowerCase()
+
+                    // Создаем запись ответа пользователя с текстовым ответом и флагом правильности
                     await tx.userAnswer.create({
                         data: {
                             attemptId,
                             questionId,
                             answerId: correctAnswer?.id || "", // Связываем с правильным ответом
                             textAnswer, // Сохраняем текстовый ответ пользователя
+                            isCorrect, // Добавить это поле в модель UserAnswer
                             timeSpent,
                             answeredAt: answeredAt || new Date(),
                         },
@@ -201,6 +205,7 @@ class AttemptRepository {
                         questionId: true,
                         answerId: true,
                         textAnswer: true,
+                        isCorrect: true,
                         answeredAt: true,
                         timeSpent: true,
                         createdAt: true,
@@ -238,6 +243,7 @@ class AttemptRepository {
                         questionId: true,
                         textAnswer: true,
                         answerId: true,
+                        isCorrect: true,
                         answeredAt: true,
                         timeSpent: true,
                         createdAt: true,

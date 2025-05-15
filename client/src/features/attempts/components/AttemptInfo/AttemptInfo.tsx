@@ -7,6 +7,7 @@ import {
     AttemptStatusLabels,
     PreTestUserData,
     PreTestUserDataLabels,
+    QuestionType,
     QuestionTypeLabels,
     TestAttemptDTO,
 } from "@/shared/types"
@@ -246,9 +247,42 @@ const AttemptInfo = () => {
                                             Тип: {QuestionTypeLabels[question.question.type]}
                                         </span>
                                     </div>
+                                    {/* Вердикт по вопросу */}
+                                    {question.userAnswers &&
+                                        question.userAnswers.answers &&
+                                        (() => {
+                                            const correctAnswerIds = question.answers
+                                                .filter(answer => answer.isCorrect)
+                                                .map(answer => answer.id)
+                                            const userAnswerIds = question.userAnswers.answers.map(
+                                                answer => answer.answer.id
+                                            )
+                                            const isCorrect =
+                                                question.question.type === QuestionType.TEXT_INPUT
+                                                    ? question.userAnswers.isCorrect
+                                                    : correctAnswerIds.length === userAnswerIds.length &&
+                                                      correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
+                                                      userAnswerIds.every(id => correctAnswerIds.includes(id))
+
+                                            return (
+                                                <div
+                                                    className={`${styles.questionVerdict} ${
+                                                        isCorrect ? styles.correctVerdict : styles.incorrectVerdict
+                                                    }`}>
+                                                    <span className={styles.verdictLabel}>Вердикт:</span>
+                                                    <span className={styles.verdictValue}>
+                                                        {isCorrect ? "Ответ верный" : "Ответ неверный"}
+                                                    </span>
+                                                </div>
+                                            )
+                                        })()}
                                     <div className={styles.answersList}>
                                         <div className={styles.answerSection}>
-                                            <h3 className={styles.answerTitle}>Варианты ответов:</h3>
+                                            <h3 className={styles.answerTitle}>
+                                                {question.question.type === QuestionType.TEXT_INPUT
+                                                    ? "Ответ:"
+                                                    : "Варианты ответов:"}
+                                            </h3>
                                             {question.answers.map(answer => (
                                                 <div
                                                     key={answer.id}
@@ -263,45 +297,58 @@ const AttemptInfo = () => {
                                             ))}
                                         </div>
                                         <div className={styles.answerSection}>
-                                            <h3 className={styles.answerTitle}>Ответы пользователя:</h3>
-                                            {question.userAnswers && question.userAnswers.answers.length > 0 ? (
+                                            <h3 className={styles.answerTitle}>
+                                                {question.question.type === QuestionType.TEXT_INPUT
+                                                    ? "Ответ пользователя:"
+                                                    : "Ответы пользователя:"}
+                                            </h3>
+                                            {question.userAnswers &&
+                                            (question.userAnswers.answers.length > 0 ||
+                                                question.question.type === QuestionType.TEXT_INPUT) ? (
                                                 <>
-                                                    {question.userAnswers.answers.map(userAnswer => (
-                                                        <div
-                                                            key={userAnswer.userAnswerId}
-                                                            className={styles.answerItemWrapper}>
+                                                    {question.question.type === QuestionType.TEXT_INPUT ? (
+                                                        <div className={styles.answerItemWrapper}>
                                                             <div
                                                                 className={`${styles.answerItem} ${
-                                                                    userAnswer.answer.isCorrect
+                                                                    question.userAnswers.isCorrect
                                                                         ? styles.correctAnswer
                                                                         : styles.incorrectAnswer
                                                                 }`}>
                                                                 <span className={styles.answerText}>
-                                                                    {userAnswer.answer.text}
+                                                                    {question.userAnswers.textAnswer}
                                                                 </span>
                                                                 <span className={styles.answerStatus}>
-                                                                    {userAnswer.answer.isCorrect
+                                                                    {question.userAnswers.isCorrect
                                                                         ? "✓ Верно"
                                                                         : "✗ Неверно"}
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                    ))}
-                                                    {/* Show time and date info once after all answers */}
-                                                    <div className={styles.answerMeta}>
-                                                        {/* <div className={styles.metaItem}>
-                                                            <span className={styles.metaLabel}>Затраченное время:</span>
-                                                            <span className={styles.metaValue}>
-                                                                {question.userAnswers &&
-                                                                question.userAnswers.timeSpent ? (
-                                                                    `${formatSeconds(question.userAnswers.timeSpent)}`
-                                                                ) : (
-                                                                    <span className={styles.emptyField}>
-                                                                        не указано
+                                                    ) : (
+                                                        question.userAnswers.answers.map(userAnswer => (
+                                                            <div
+                                                                key={userAnswer.userAnswerId}
+                                                                className={styles.answerItemWrapper}>
+                                                                <div
+                                                                    className={`${styles.answerItem} ${
+                                                                        userAnswer.answer.isCorrect
+                                                                            ? styles.correctAnswer
+                                                                            : styles.incorrectAnswer
+                                                                    }`}>
+                                                                    <span className={styles.answerText}>
+                                                                        {userAnswer.answer.text}
                                                                     </span>
-                                                                )}
-                                                            </span>
-                                                        </div> */}
+                                                                    <span className={styles.answerStatus}>
+                                                                        {userAnswer.answer.isCorrect
+                                                                            ? "✓ Верно"
+                                                                            : "✗ Неверно"}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    )}
+
+                                                    <div className={styles.answerMeta}>
                                                         <div className={styles.metaItem}>
                                                             <span className={styles.metaLabel}>Дата ответа:</span>
                                                             <span className={styles.metaValue}>
@@ -334,8 +381,6 @@ const AttemptInfo = () => {
                 fullScreen
                 isOpen={isSnapshotModalOpen}
                 onClose={() => {
-                    // navigate(-1)
-                    // setIsEditQuestionsModalOpen(false)
                     setIsSnapshotModalOpen(false)
                 }}
                 title="Тест на момент прохождения">

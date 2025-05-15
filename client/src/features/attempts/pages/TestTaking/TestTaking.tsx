@@ -13,6 +13,7 @@ import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
 import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
+import { formatSpaces } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
@@ -194,7 +195,7 @@ const TestTaking = () => {
     const saveCurrentQuestionAnswers = () => {
         if (!currentQuestion) return
         if (currentQuestion.type === QuestionType.TEXT_INPUT) {
-            setAllTextAnswers(prev => ({ ...prev, [currentQuestion.id]: textAnswer }))
+            setAllTextAnswers(prev => ({ ...prev, [currentQuestion.id]: formatSpaces(textAnswer) }))
         } else {
             setAllAnswers(prev => ({ ...prev, [currentQuestion.id]: selectedAnswers }))
         }
@@ -215,9 +216,12 @@ const TestTaking = () => {
         saveCurrentQuestionAnswers()
 
         // Проверка, что не на все вопросы есть заполненные ответы
-        const hasUnansweredQuestions = test?.questions?.some(
-            question => !allAnswers[question.id] || allAnswers[question.id].length === 0
-        )
+        const hasUnansweredQuestions = test?.questions?.some(question => {
+            if (question.type === QuestionType.TEXT_INPUT) {
+                return !allTextAnswers[question.id] || allTextAnswers[question.id].trim() === ""
+            }
+            return !allAnswers[question.id] || allAnswers[question.id].length === 0
+        })
         if (hasUnansweredQuestions) {
             setPendingSubmit(true)
             setShowConfirmationModal(true)

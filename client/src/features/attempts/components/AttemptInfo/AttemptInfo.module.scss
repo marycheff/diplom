@@ -318,3 +318,34 @@
         margin: 16px 0 10px;
     }
 }
+
+
+.questionVerdict {
+    margin-left: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.correctVerdict {
+    background-color: rgba(color($primary, 400), 0.1);
+    border-left: 4px solid color($primary, 400);
+}
+
+.incorrectVerdict {
+    background-color: rgba(color($error, 400), 0.1);
+    border-left: 4px solid color($error, 400);
+}
+
+.verdictLabel {
+    font-weight: 600;
+    color: color($secondary, 600);
+}
+
+.verdictValue {
+    font-weight: 600;
+}

@@ -284,6 +284,7 @@ class AttemptService {
 
             const questionsWithAnswers = await attemptRepository.getQuestionsWithCorrectAnswers(attempt.testId)
             const score = calculateTestScore(questionsWithAnswers, attempt.answers)
+            console.log(score)
 
             await attemptRepository.updateAttemptScore(attemptId, score)
             await redisClient.del(`attempt:${attemptId}`)

@@ -1,4 +1,5 @@
 import { ACTIVATION_LINK_LIFETIME_HOURS, RESET_CODE_LIFETIME_MINUTES } from "@/utils/constants"
+import { QuestionType } from "@prisma/client"
 import seedrandom from "seedrandom"
 
 export const generateCode = (): string => {
@@ -18,29 +19,49 @@ export const getResetCodeExpDate = (): Date => {
     return expirationDate
 }
 
-export const calculateTestScore = (
-    questionsWithAnswers: { id: string; answers: { id: string }[] }[],
-    userAnswers: { questionId: string; answerId: string }[]
-): number => {
+type QuestionWithAnswers = {
+    id: string
+    type: QuestionType
+    answers: { id: string }[]
+}
+
+type UserAnswer = {
+    questionId: string
+    answerId: string
+    isCorrect?: boolean | null
+}
+
+export const calculateTestScore = (questionsWithAnswers: QuestionWithAnswers[], userAnswers: UserAnswer[]): number => {
     let correctQuestionsCount = 0
 
     for (const question of questionsWithAnswers) {
         const userAnswersForQuestion = userAnswers.filter(a => a.questionId === question.id)
-        const correctAnswerIds = question.answers.map(a => a.id)
-        const userAnswerIds = userAnswersForQuestion.map(a => a.answerId)
 
-        if (
-            correctAnswerIds.length === userAnswerIds.length &&
-            correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
-            userAnswerIds.every(id => correctAnswerIds.includes(id))
-        ) {
-            correctQuestionsCount++
+        if (question.type === "TEXT_INPUT") {
+            const allCorrect =
+                userAnswersForQuestion.length > 0 && userAnswersForQuestion.every(a => a.isCorrect === true)
+
+            if (allCorrect) correctQuestionsCount++
+        } else {
+            const correctAnswerIds = question.answers.map(a => a.id)
+            const userAnswerIds = userAnswersForQuestion.map(a => a.answerId)
+
+            const allMatch =
+                correctAnswerIds.length === userAnswerIds.length &&
+                correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
+                userAnswerIds.every(id => correctAnswerIds.includes(id))
+
+            if (allMatch) correctQuestionsCount++
         }
     }
 
     const totalQuestions = questionsWithAnswers.length
+    console.log("totalQuestions", totalQuestions)
+    console.log("correctQuestionsCount", correctQuestionsCount)
+    console.log("score", (correctQuestionsCount / totalQuestions) * 100)
     return totalQuestions > 0 ? (correctQuestionsCount / totalQuestions) * 100 : 0
 }
+
 
 export const generateSeedFromAttemptId = (attemptId: string): number => {
     let hash = 0

@@ -73,6 +73,8 @@ export interface AttemptQuestionDTO {
             answer: AnswerDTO
         }>
         textAnswer: string | null
+        isCorrect: boolean | null
+
         timeSpent: number | null
         answeredAt: Date | null
         createdAt: Date
@@ -85,6 +87,8 @@ export interface UserAnswerDTO {
     questionId: string
     answerId: string
     textAnswer: string | null
+    isCorrect: boolean | null
+
     answeredAt: Date | null
     timeSpent: number | null
     createdAt: Date
@@ -93,6 +97,8 @@ export interface AttemptAnswer {
     questionId: string
     answersIds: string[]
     textAnswer: string | null
+    isCorrect: boolean | null
+
     timeSpent?: number
     answeredAt?: Date
 }

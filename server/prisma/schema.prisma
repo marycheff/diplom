@@ -151,6 +151,7 @@ model UserAnswer {
   textAnswer String?     @db.VarChar(1000)
   answeredAt DateTime?
   timeSpent  Int?
+  isCorrect  Boolean?
   // TIMESTAMPS
   createdAt  DateTime    @default(now())
   // RELATIONS

@@ -4,14 +4,15 @@ import { ROUTES } from "@/router/paths"
 import { ShortTestInfo } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
+import { formatSpaces } from "@/shared/utils/formatter"
 import { SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { Link, useNavigate } from "react-router-dom"
+import { generatePath, Link, useNavigate } from "react-router-dom"
 import styles from "./CreateTestPage.module.scss"
 
 const CreateTestPage = () => {
     const navigate = useNavigate()
-    const { user } = useAuthStore()
+    const { user, isAdmin } = useAuthStore()
 
     const { isLoading, createTest } = useTestStore()
     const {
@@ -27,9 +28,11 @@ const CreateTestPage = () => {
     })
 
     const onSubmit: SubmitHandler<ShortTestInfo> = async data => {
-        const response = await createTest(data.title, data.description)
+        const response = await createTest(formatSpaces(data.title), formatSpaces(data.description))
         toast.success(`Тест создан`)
-        navigate(`/my-tests/${response?.id}`)
+        isAdmin
+            ? navigate(generatePath(ROUTES.ADMIN_MY_TEST_INFO, { testId: response?.id }))
+            : navigate(generatePath(ROUTES.MY_TEST_INFO, { testId: response?.id }))
     }
 
     if (!user?.isActivated) {

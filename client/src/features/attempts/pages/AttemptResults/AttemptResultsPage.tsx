@@ -4,7 +4,14 @@ import { useTestStore } from "@/features/tests/store/useTestStore"
 import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
-import { AttemptStatus, QuestionType, QuestionTypeLabels, TestAttemptResultDTO, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
+import {
+    AttemptStatus,
+    QuestionType,
+    QuestionTypeLabels,
+    TestAttemptResultDTO,
+    TestAttemptUserDTO,
+    UserTestDTO,
+} from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -65,14 +72,25 @@ const AttemptResultsPage = () => {
     }, [attemptForUser])
 
     // Подсчет количества правильных ответов
+    // TODO: перенести в math
     const countCorrectAnswers = () => {
         if (!attempt || !attempt.questions) return 0
 
         let correctCount = 0
+
         attempt.questions.forEach(question => {
-            if (question.userAnswers && question.userAnswers.answers) {
+            const userAnswers = question.userAnswers?.answers ?? []
+
+            if (question.question.type === QuestionType.TEXT_INPUT) {
+                if (question.userAnswers?.isCorrect) {
+                    correctCount++
+                }
+            } else {
+                // Для SINGLE_CHOICE и MULTIPLE_CHOICE сравниваем ID
                 const correctAnswerIds = question.answers.filter(answer => answer.isCorrect).map(answer => answer.id)
-                const userAnswerIds = question.userAnswers.answers.map(answer => answer.answer.id)
+
+                const userAnswerIds = userAnswers.map(a => a.answer.id)
+
                 if (
                     correctAnswerIds.length === userAnswerIds.length &&
                     correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
@@ -150,9 +168,13 @@ const AttemptResultsPage = () => {
                                                         answer => answer.answer.id
                                                     )
                                                     const isCorrect =
-                                                        correctAnswerIds.length === userAnswerIds.length &&
-                                                        correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
-                                                        userAnswerIds.every(id => correctAnswerIds.includes(id))
+                                                        question.question.type === QuestionType.TEXT_INPUT
+                                                            ? question.userAnswers.isCorrect
+                                                            : correctAnswerIds.length === userAnswerIds.length &&
+                                                              correctAnswerIds.every(id =>
+                                                                  userAnswerIds.includes(id)
+                                                              ) &&
+                                                              userAnswerIds.every(id => correctAnswerIds.includes(id))
 
                                                     return (
                                                         <div
@@ -170,7 +192,11 @@ const AttemptResultsPage = () => {
                                                 })()}
                                             <div className={styles.answersList}>
                                                 <div className={styles.answerSection}>
-                                                    <h3 className={styles.answerTitle}>Варианты ответов:</h3>
+                                                    <h3 className={styles.answerTitle}>
+                                                        {question.question.type === QuestionType.TEXT_INPUT
+                                                            ? "Ответ:"
+                                                            : "Варианты ответов:"}
+                                                    </h3>
                                                     {question.answers.map(answer => (
                                                         <div
                                                             key={answer.id}
@@ -187,30 +213,56 @@ const AttemptResultsPage = () => {
                                                     ))}
                                                 </div>
                                                 <div className={styles.answerSection}>
-                                                    <h3 className={styles.answerTitle}>Ваши ответы:</h3>
-                                                    {question.userAnswers && question.userAnswers.answers.length > 0 ? (
+                                                    <h3 className={styles.answerTitle}>
+                                                        {question.question.type === QuestionType.TEXT_INPUT
+                                                            ? "Ваш ответ:"
+                                                            : "Ваши ответы:"}
+                                                    </h3>
+                                                    {question.userAnswers &&
+                                                    (question.userAnswers.answers.length > 0 ||
+                                                        question.question.type === QuestionType.TEXT_INPUT) ? (
                                                         <>
-                                                            {question.userAnswers.answers.map(userAnswer => (
-                                                                <div
-                                                                    key={userAnswer.userAnswerId}
-                                                                    className={styles.answerItemWrapper}>
+                                                            {question.question.type === QuestionType.TEXT_INPUT ? (
+                                                                <div className={styles.answerItemWrapper}>
                                                                     <div
                                                                         className={`${styles.answerItem} ${
-                                                                            userAnswer.answer.isCorrect
+                                                                            question.userAnswers.isCorrect
                                                                                 ? styles.correctAnswer
                                                                                 : styles.incorrectAnswer
                                                                         }`}>
                                                                         <span className={styles.answerText}>
-                                                                            {userAnswer.answer.text}
+                                                                            {question.userAnswers.textAnswer}
                                                                         </span>
                                                                         <span className={styles.answerStatus}>
-                                                                            {userAnswer.answer.isCorrect
+                                                                            {question.userAnswers.isCorrect
                                                                                 ? "✓ Верно"
                                                                                 : "✗ Неверно"}
                                                                         </span>
                                                                     </div>
                                                                 </div>
-                                                            ))}
+                                                            ) : (
+                                                                question.userAnswers.answers.map(userAnswer => (
+                                                                    <div
+                                                                        key={userAnswer.userAnswerId}
+                                                                        className={styles.answerItemWrapper}>
+                                                                        <div
+                                                                            className={`${styles.answerItem} ${
+                                                                                userAnswer.answer.isCorrect
+                                                                                    ? styles.correctAnswer
+                                                                                    : styles.incorrectAnswer
+                                                                            }`}>
+                                                                            <span className={styles.answerText}>
+                                                                                {userAnswer.answer.text}
+                                                                            </span>
+                                                                            <span className={styles.answerStatus}>
+                                                                                {userAnswer.answer.isCorrect
+                                                                                    ? "✓ Верно"
+                                                                                    : "✗ Неверно"}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                ))
+                                                            )}
 
                                                             {/* Показываем пропущенные правильные ответы для вопросов с множественным выбором */}
                                                             {question.question.type ===

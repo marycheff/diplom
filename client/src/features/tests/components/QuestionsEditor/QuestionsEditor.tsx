@@ -206,14 +206,14 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
             const textInputAnswer: AnswerDTO[] = [
                 {
                     id: `temp-${Date.now()}-0`,
-                    text: data.answer,
+                    text: formatSpaces(data.answer),
                     isCorrect: true,
                 },
             ]
 
             const newQuestion: QuestionDTO = {
                 id: editingQuestion?.id || `temp-${Date.now()}`,
-                text: data.question,
+                text: formatSpaces(data.question),
                 type: QuestionType.TEXT_INPUT,
                 answers: textInputAnswer,
             }
@@ -235,7 +235,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                 .fill(null)
                 .map((_, index) => ({
                     id: `temp-${Date.now()}-${index}`,
-                    text: index === 0 ? data.answer : "",
+                    text: index === 0 ? formatSpaces(data.answer) : "",
                     isCorrect: index === 0,
                 }))
             setCurrentAnswers(initialAnswers)
@@ -247,7 +247,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
 
         const newQuestion: QuestionDTO = {
             id: editingQuestion?.id || `temp-${Date.now()}`,
-            text: data.question,
+            text: formatSpaces(data.question),
             type: numOfCorrectAnswers === 1 ? QuestionType.SINGLE_CHOICE : QuestionType.MULTIPLE_CHOICE,
             answers: validAnswers,
         }

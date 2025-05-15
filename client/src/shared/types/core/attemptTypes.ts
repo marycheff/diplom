@@ -101,6 +101,8 @@ export interface AttemptQuestionDTO {
         }>
         timeSpent: number | null
         answeredAt: Date | null
+        textAnswer: string | null
+        isCorrect: boolean | null
         createdAt: Date
     } | null
 }
@@ -108,6 +110,7 @@ export interface AttemptAnswer {
     questionId: string
     answersIds: string[]
     textAnswer: string | null
+    isCorrect?: boolean | null
     timeSpent?: number
     answeredAt?: Date
 }
@@ -121,6 +124,7 @@ export interface UserAnswerDTO {
     questionId: string
     answerId: string
     textAnswer: string | null
+    isCorrect: boolean | null
     answeredAt: Date | null
     timeSpent: number | null
     createdAt: Date

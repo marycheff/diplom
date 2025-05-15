@@ -134,6 +134,7 @@ export const mapToAttemptQuestionDTO = (
                 }
             }),
             textAnswer: firstAnswer.textAnswer,
+            isCorrect: firstAnswer.isCorrect,
             timeSpent: firstAnswer.timeSpent,
             answeredAt: firstAnswer.answeredAt,
             createdAt: firstAnswer.createdAt,
@@ -256,6 +257,7 @@ export const mapToTestAttemptUserDTO = (
             answerId: answer.answerId,
             textAnswer: answer.textAnswer,
             timeSpent: answer.timeSpent,
+            isCorrect: answer.isCorrect,
             answeredAt: answer.answeredAt,
             createdAt: answer.createdAt,
         })),

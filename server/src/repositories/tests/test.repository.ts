@@ -154,10 +154,8 @@ class TestRepository {
         const createdTest = await client.test.create({
             data: {
                 title: testData.title,
-                description: testData.description || "",
+                description: testData.description,
                 authorId: authorId,
-                // status: "PENDING",
-                status: "APPROVED",
             },
             include: {
                 author: {

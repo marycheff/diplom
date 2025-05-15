@@ -16,6 +16,7 @@ export const calculateTestScore = (
         ) {
             correctQuestionsCount++
         }
+        // if(question.)
     }
 
     const totalQuestions = questionsWithAnswers.length
