@@ -2,6 +2,18 @@ export enum QuestionType {
     SINGLE_CHOICE = "SINGLE_CHOICE",
     MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
     TEXT_INPUT = "TEXT_INPUT",
+    MATCHING = "MATCHING",
+    FILL_IN_THE_BLANK = "FILL_IN_THE_BLANK",
+    SEQUENCE = "SEQUENCE",
+}
+
+export const QuestionTypeLabels: Record<QuestionType, string> = {
+    [QuestionType.SINGLE_CHOICE]: "Одиночный выбор",
+    [QuestionType.MULTIPLE_CHOICE]: "Множественный выбор",
+    [QuestionType.TEXT_INPUT]: "Текстовый ввод",
+    [QuestionType.MATCHING]: "Сопоставление",
+    [QuestionType.FILL_IN_THE_BLANK]: "Заполнение пропусков",
+    [QuestionType.SEQUENCE]: "Последовательность",
 }
 
 export interface QuestionDTO {

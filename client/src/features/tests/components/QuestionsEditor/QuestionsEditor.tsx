@@ -1,12 +1,14 @@
 import AnswersList from "@/features/attempts/components/AnswersList/AnswersList"
 import QuestionForm from "@/features/tests/components/QuestionForm/QuestionForm"
 import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
+import TextInputQuestionForm from "@/features/tests/components/TextInputQuestionForm/TextInputQuestionForm"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
 import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
+import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
 import {
     closestCorners,
@@ -33,6 +35,11 @@ interface QuestionsEditorProps {
 }
 const DEFAULT_NUM_OF_ANSWERS = 3
 
+interface TextInputFormData {
+    question: string
+    answer: string
+}
+
 const QuestionsEditor: FC<QuestionsEditorProps> = ({
     data,
     onQuestionComplete,
@@ -45,6 +52,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
     const [expandedQuestionIds, setExpandedQuestionIds] = useState<string[]>([])
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [questionToDelete, setQuestionToDelete] = useState<string | null>(null)
+    const [questionType, setQuestionType] = useState<QuestionType>(QuestionType.MULTIPLE_CHOICE)
     const { generateAnswers, isGenerating } = useTestStore()
 
     const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(() => {
@@ -67,7 +75,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
     // Добавляем состояние для отслеживания изначальных ответов
     const [initialAnswers, setInitialAnswers] = useState<AnswerDTO[]>(currentAnswers)
 
-    const { register, handleSubmit, formState, setValue, watch, reset, trigger } = useForm<GenerateAnswerFormData>({
+    const { register, handleSubmit, formState, setValue, watch, reset, trigger } = useForm<
+        GenerateAnswerFormData & TextInputFormData
+    >({
         mode: "onSubmit",
         reValidateMode: "onChange",
         shouldFocusError: false,
@@ -80,7 +90,8 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
     const currentAnswer = watch("answer")
     const hasErrors = Object.keys(formState.errors).length > 0
     const hasCorrectAnswer = currentAnswers.some(answer => answer.isCorrect)
-    const isFormValid = currentQuestion && currentAnswer && !hasErrors && hasCorrectAnswer
+    const isFormValid =
+        currentQuestion && currentAnswer && !hasErrors && (questionType === QuestionType.TEXT_INPUT || hasCorrectAnswer)
 
     const askQuestion = async (data: GenerateAnswerFormData) => {
         const res = await generateAnswers(data)
@@ -116,6 +127,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
             setValue("answer", editingQuestion.answers.find(a => a.isCorrect)?.text || "")
             setValue("numOfAnswers", DEFAULT_NUM_OF_ANSWERS)
             setCurrentAnswers(editingQuestion.answers)
+            setQuestionType(editingQuestion.type)
 
             // Устанавливаем начальное состояние при редактировании
             setInitialFormState({
@@ -188,7 +200,36 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
         setCurrentAnswers(prev => [...prev, { id: `temp-${Date.now()}`, text: "", isCorrect: false }])
     }
 
-    const handleAddQuestion = (data: GenerateAnswerFormData) => {
+    const handleAddQuestion = (data: GenerateAnswerFormData & TextInputFormData) => {
+        if (questionType === QuestionType.TEXT_INPUT) {
+            // Для TEXT_INPUT создаем только один ответ, который является правильным
+            const textInputAnswer: AnswerDTO[] = [
+                {
+                    id: `temp-${Date.now()}-0`,
+                    text: data.answer,
+                    isCorrect: true,
+                },
+            ]
+
+            const newQuestion: QuestionDTO = {
+                id: editingQuestion?.id || `temp-${Date.now()}`,
+                text: data.question,
+                type: QuestionType.TEXT_INPUT,
+                answers: textInputAnswer,
+            }
+
+            if (editingQuestion) {
+                setQuestions(prev => prev.map(q => (q.id === editingQuestion.id ? newQuestion : q)))
+            } else {
+                setQuestions(prev => [...prev, newQuestion])
+            }
+
+            reset()
+            setEditingQuestion(null)
+            return
+        }
+
+        // Для SINGLE_CHOICE и MULTIPLE_CHOICE
         if (currentAnswers.length === 0) {
             const initialAnswers = Array(DEFAULT_NUM_OF_ANSWERS)
                 .fill(null)
@@ -267,6 +308,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                 isCorrect: index === 0,
             }))
         setCurrentAnswers(newAnswers)
+        setQuestionType(QuestionType.SINGLE_CHOICE)
 
         // Сбрасываем начальное состояние формы
         setInitialFormState({
@@ -391,30 +433,59 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                 <div className={styles.newQuestionForm}>
                     <div className={styles.formContent}>
                         <h3>{editingQuestion ? "Редактирование вопроса" : "Новый вопрос"}</h3>
-                        <div>
-                            <QuestionForm
+                        <div className={styles.questionTypeSelector}>
+                            <Select
+                                name="questionType"
+                                label="Тип вопроса:"
+                                value={questionType}
                                 register={register}
-                                setValue={setValue}
-                                errors={formState.errors}
-                                trigger={trigger}
-                                isGenerating={isGenerating}
-                                isButtonDisabled={!isFormValid}
-                                onSubmit={handleSubmit(askQuestion)}
+                                options={[
+                                    { value: QuestionType.MULTIPLE_CHOICE, label: "Варианты ответа" },
+                                    { value: QuestionType.TEXT_INPUT, label: "Текстовый ввод" },
+                                ]}
+                                onChange={value => setQuestionType(value as QuestionType)}
                             />
-                            <AnswersList
-                                answers={currentAnswers}
-                                handleAnswerChange={handleAnswerChange}
-                                handleCorrectChange={handleCorrectChange}
-                                removeAnswer={removeAnswer}
-                                addAnswer={addAnswer}
-                                correctAnswer={currentAnswer}
-                            />
+                        </div>
+                        <div>
+                            {questionType === QuestionType.TEXT_INPUT ? (
+                                <TextInputQuestionForm
+                                    register={register}
+                                    setValue={setValue}
+                                    errors={formState.errors}
+                                    trigger={trigger}
+                                    isButtonDisabled={!isFormValid}
+                                    onSubmit={handleSubmit(handleAddQuestion)}
+                                    buttonText={editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
+                                />
+                            ) : (
+                                <>
+                                    <QuestionForm
+                                        register={register}
+                                        setValue={setValue}
+                                        errors={formState.errors}
+                                        trigger={trigger}
+                                        isGenerating={isGenerating}
+                                        isButtonDisabled={!isFormValid}
+                                        onSubmit={handleSubmit(askQuestion)}
+                                    />
+                                    <AnswersList
+                                        answers={currentAnswers}
+                                        handleAnswerChange={handleAnswerChange}
+                                        handleCorrectChange={handleCorrectChange}
+                                        removeAnswer={removeAnswer}
+                                        addAnswer={addAnswer}
+                                        correctAnswer={currentAnswer}
+                                    />
+                                </>
+                            )}
                         </div>
                     </div>
                     <div className={styles.formActions}>
-                        <Button onClick={handleSubmit(handleAddQuestion)} disabled={!isFormValid}>
-                            {editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
-                        </Button>
+                        {questionType !== QuestionType.TEXT_INPUT && (
+                            <Button onClick={handleSubmit(handleAddQuestion)} disabled={!isFormValid}>
+                                {editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
+                            </Button>
+                        )}
                         {!editingQuestion && (
                             <Button className={styles.cancelButton} onClick={resetForm} disabled={isFormEmpty}>
                                 Очистить форму

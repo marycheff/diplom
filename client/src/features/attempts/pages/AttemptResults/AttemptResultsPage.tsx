@@ -4,7 +4,7 @@ import { useTestStore } from "@/features/tests/store/useTestStore"
 import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
-import { AttemptStatus, QuestionType, TestAttemptResultDTO, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
+import { AttemptStatus, QuestionType, QuestionTypeLabels, TestAttemptResultDTO, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -136,7 +136,7 @@ const AttemptResultsPage = () => {
                                                 <span className={styles.questionNumber}>{index + 1}</span>
                                                 <span className={styles.questionText}>{question.question.text}</span>
                                                 <span className={styles.questionType}>
-                                                    Тип: {question.question.type}
+                                                    Тип: {QuestionTypeLabels[question.question.type]}
                                                 </span>
                                             </div>
                                             {/* Вердикт по вопросу */}

@@ -13,6 +13,7 @@ import {
     ModerationStatusLabels,
     PreTestUserDataLabels,
     QuestionDTO,
+    QuestionTypeLabels,
     ShortTestInfo,
     TestDTO,
     TestSettingsDTO,
@@ -428,7 +429,9 @@ const TestInfoPage = () => {
                                         <div className={styles.questionHeader}>
                                             <span className={styles.questionNumber}>{index + 1}</span>
                                             <span className={styles.questionText}>{question.text}</span>
-                                            <span className={styles.questionType}>Тип: {question.type}</span>
+                                            <span className={styles.questionType}>
+                                                Тип: {QuestionTypeLabels[question.type]}
+                                            </span>
                                         </div>
                                         <div className={styles.answersList}>
                                             {question.answers.map(answer => (

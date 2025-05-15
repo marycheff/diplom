@@ -3,7 +3,13 @@ import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
 import { ROUTES } from "@/router/paths"
 import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
-import { AttemptStatusLabels, PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
+import {
+    AttemptStatusLabels,
+    PreTestUserData,
+    PreTestUserDataLabels,
+    QuestionTypeLabels,
+    TestAttemptDTO,
+} from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -236,7 +242,9 @@ const AttemptInfo = () => {
                                     <div className={styles.questionHeader}>
                                         <span className={styles.questionNumber}>{index + 1}</span>
                                         <span className={styles.questionText}>{question.question.text}</span>
-                                        <span className={styles.questionType}>Тип: {question.question.type}</span>
+                                        <span className={styles.questionType}>
+                                            Тип: {QuestionTypeLabels[question.question.type]}
+                                        </span>
                                     </div>
                                     <div className={styles.answersList}>
                                         <div className={styles.answerSection}>
