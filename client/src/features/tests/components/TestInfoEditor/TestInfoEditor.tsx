@@ -4,7 +4,7 @@ import { ValidatedInput } from "@/shared/ui/Input"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
-
+import styles from "./TestInfoEditor.module.scss"
 interface TestInfoEditorProps {
     data: ShortTestInfo
     onChangingComplete: (data: ShortTestInfo) => void
@@ -44,41 +44,44 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
     const isFormValid = !hasErrors || !hasChanged
 
     return (
-        <div>
-            <br />
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+            <div className={styles.formContentWrapper}>
+                <div className={styles.formContent}>
+                    {/* Секция с основными полями */}
+                    <div className={styles.section}>
+                        <ValidatedInput
+                            trigger={trigger}
+                            name="title"
+                            placeholder="Название теста*"
+                            register={register}
+                            setValue={setValue}
+                            errors={errors.title}
+                            validationRules={{
+                                required: "Название теста обязательно",
+                            }}
+                            className={styles.titleInput}
+                        />
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {/* Название (обязательно) */}
-                <ValidatedInput
-                    trigger={trigger}
-                    // floatingLabel={false}
-                    clearable
-                    name="title"
-                    placeholder="Название (обязательно)"
-                    register={register}
-                    setValue={setValue}
-                    errors={errors.title}
-                    validationRules={{
-                        required: "Название теста обязательно",
-                    }}
-                />
-                <br />
-                {/* Описание */}
-                <ValidatedInput
-                    trigger={trigger}
-                    // floatingLabel={false}
-                    multiline
-                    clearable
-                    name="description"
-                    placeholder="Описание"
-                    register={register}
-                    setValue={setValue}
-                />
-                <Button type="submit" disabled={!isFormValid || !hasChanged}>
-                    Сохранить
-                </Button>
-            </form>
-        </div>
+                        <ValidatedInput
+                            trigger={trigger}
+                            multiline
+                            name="description"
+                            placeholder="Описание теста"
+                            register={register}
+                            setValue={setValue}
+                            className={styles.descriptionInput}
+                            rows={4}
+                        />
+                    </div>
+                </div>
+
+                <div className={styles.formActions}>
+                    <Button type="submit" disabled={!isFormValid || !hasChanged} className={styles.submitButton}>
+                        Сохранить
+                    </Button>
+                </div>
+            </div>
+        </form>
     )
 }
 

@@ -59,6 +59,7 @@ const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus
                     placeholder="Сообщение автору теста"
                     register={register}
                     setValue={setValue}
+                    disabled
                 />
                 <br />
                 <br />

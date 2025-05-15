@@ -23,7 +23,7 @@ const AnswersList: FC<AnswersListProps> = ({
 }) => {
     return (
         <div className={styles.wrapper}>
-            <h3 className={styles.title}>Ответы</h3>
+            {/* <h3 className={styles.title}>Ответы</h3> */}
             {answers.map((answer, index) => (
                 <div key={answer.id} className={styles.answerRow}>
                     <Input
@@ -35,7 +35,6 @@ const AnswersList: FC<AnswersListProps> = ({
                         name={`answer_${index}`}
                         className={styles.input}
                         tabIndex={0}
-    
                     />
                     <label className={styles.checkboxWrapper}>
                         <Checkbox

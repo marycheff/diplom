@@ -96,132 +96,137 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div>
-                <Select
-                    register={register}
-                    label="Требуется регистрация: "
-                    name="requireRegistration"
-                    options={[
-                        { value: "Да", label: "Да" },
-                        { value: "Нет", label: "Нет" },
-                    ]}
-                    value={settings.requireRegistration ? "Да" : "Нет"}
-                />
-            </div>
-            <div>
-                <Select
-                    register={register}
-                    label="Показывать детальные результаты: "
-                    name="showDetailedResults"
-                    options={[
-                        { value: "Да", label: "Да" },
-                        { value: "Нет", label: "Нет" },
-                    ]}
-                    value={settings.showDetailedResults ? "Да" : "Нет"}
-                />
-            </div>
-            <div>
-                <Select
-                    register={register}
-                    label="Перемешивать вопросы: "
-                    name="shuffleQuestions"
-                    options={[
-                        { value: "Да", label: "Да" },
-                        { value: "Нет", label: "Нет" },
-                    ]}
-                    value={settings.shuffleQuestions ? "Да" : "Нет"}
-                />
-            </div>
-            <div>
-                <Select
-                    register={register}
-                    label="Перемешивать варианты ответов: "
-                    name="shuffleAnswers"
-                    options={[
-                        { value: "Да", label: "Да" },
-                        { value: "Нет", label: "Нет" },
-                    ]}
-                    value={settings.shuffleAnswers ? "Да" : "Нет"}
-                />
-            </div>
-            <div>
-                <br />
-                <span className={styles.label}>Поля ввода ({inputFields.length}):</span>
-                <div className={styles.checkboxGroup}>
-                    {Object.entries(PreTestUserDataLabels).map(([key, label]) => (
-                        <Checkbox
-                            key={key}
-                            id={`inputField-${key}`}
-                            label={label}
-                            checked={inputFields.includes(key as PreTestUserData)}
-                            onChange={handleCheckboxChange(key as PreTestUserData)}
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+            <div className={styles.formContentWrapper}>
+                <div className={styles.formContent}>
+                    {/* Блок 1: Настройки переключателей */}
+                    <div className={styles.section}>
+                        <Select
+                            register={register}
+                            label="Требуется регистрация: "
+                            name="requireRegistration"
+                            options={[
+                                { value: "Да", label: "Да" },
+                                { value: "Нет", label: "Нет" },
+                            ]}
+                            value={settings.requireRegistration ? "Да" : "Нет"}
                         />
-                    ))}
-                </div>
-            </div>
-            <div>
-                <br />
+                        <Select
+                            register={register}
+                            label="Показывать детальные результаты: "
+                            name="showDetailedResults"
+                            options={[
+                                { value: "Да", label: "Да" },
+                                { value: "Нет", label: "Нет" },
+                            ]}
+                            value={settings.showDetailedResults ? "Да" : "Нет"}
+                        />
+                        <Select
+                            register={register}
+                            label="Перемешивать вопросы: "
+                            name="shuffleQuestions"
+                            options={[
+                                { value: "Да", label: "Да" },
+                                { value: "Нет", label: "Нет" },
+                            ]}
+                            value={settings.shuffleQuestions ? "Да" : "Нет"}
+                        />
+                        <Select
+                            register={register}
+                            label="Перемешивать варианты ответов: "
+                            name="shuffleAnswers"
+                            options={[
+                                { value: "Да", label: "Да" },
+                                { value: "Нет", label: "Нет" },
+                            ]}
+                            value={settings.shuffleAnswers ? "Да" : "Нет"}
+                        />
+                    </div>
 
-                <span className={styles.label}>Лимит времени:</span>
-                <div className={styles.timeInputs}>
-                    Часы
-                    <ValidatedInput
-                        className={styles.timeInput}
-                        // floatingLabel={false}
-                        name="hours"
-                        trigger={trigger}
-                        register={register}
-                        setValue={setValue}
-                        errors={errors.hours}
-                        validationRules={{
-                            required: "Обязательное поле",
-                            min: { value: 0, message: "Минимум 0 часов" },
-                            max: { value: 4, message: "Максимум 4 часа" },
-                            validate: value => !isNaN(Number(value)) || "Некорректное значение",
-                        }}
-                    />
-                    Минуты
-                    <ValidatedInput
-                        className={styles.timeInput}
-                        floatingLabel={false}
-                        name="minutes"
-                        placeholder="Минуты"
-                        register={register}
-                        trigger={trigger}
-                        setValue={setValue}
-                        errors={errors.minutes}
-                        validationRules={{
-                            required: "Обязательное поле",
-                            min: { value: 0, message: "Минимум 0 минут" },
-                            max: { value: 59, message: "Максимум 59 минут" },
-                            validate: value => !isNaN(Number(value)) || "Некорректное значение",
-                        }}
-                    />
-                    Секунды
-                    <ValidatedInput
-                        className={styles.timeInput}
-                        floatingLabel={false}
-                        name="seconds"
-                        trigger={trigger}
-                        placeholder="Секунды"
-                        register={register}
-                        setValue={setValue}
-                        errors={errors.seconds}
-                        validationRules={{
-                            required: "Обязательное поле",
-                            min: { value: 0, message: "Минимум 0 секунд" },
-                            max: { value: 59, message: "Максимум 59 секунд" },
-                            validate: value => !isNaN(Number(value)) || "Некорректное значение",
-                        }}
-                    />
+                    {/* Блок 2: Поля ввода */}
+                    <div className={styles.section}>
+                        <span className={styles.sectionLabel}>Поля ввода ({inputFields.length}):</span>
+                        <div className={styles.checkboxGroup}>
+                            {Object.entries(PreTestUserDataLabels).map(([key, label]) => (
+                                <Checkbox
+                                    key={key}
+                                    id={`inputField-${key}`}
+                                    label={label}
+                                    checked={inputFields.includes(key as PreTestUserData)}
+                                    onChange={handleCheckboxChange(key as PreTestUserData)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Блок 3: Лимит времени */}
+                    <div className={styles.section}>
+                        <span className={styles.sectionLabel}>Лимит времени:</span>
+                        <div className={styles.timeInputs}>
+                            <div className={styles.timeInputWrapper}>
+                                <span className={styles.timeLabel}>Часы</span>
+                                <ValidatedInput
+                                    className={styles.timeInput}
+                                    name="hours"
+                                    trigger={trigger}
+                                    register={register}
+                                    setValue={setValue}
+                                    errors={errors.hours}
+                                    validationRules={{
+                                        required: "Обязательное поле",
+                                        min: { value: 0, message: "Минимум 0 часов" },
+                                        max: { value: 4, message: "Максимум 4 часа" },
+                                        validate: value => !isNaN(Number(value)) || "Некорректное значение",
+                                    }}
+                                />
+                            </div>
+                            <div className={styles.timeInputWrapper}>
+                                <span className={styles.timeLabel}>Минуты</span>
+                                <ValidatedInput
+                                    className={styles.timeInput}
+                                    name="minutes"
+                                    register={register}
+                                    trigger={trigger}
+                                    setValue={setValue}
+                                    errors={errors.minutes}
+                                    validationRules={{
+                                        required: "Обязательное поле",
+                                        min: { value: 0, message: "Минимум 0 минут" },
+                                        max: { value: 59, message: "Максимум 59 минут" },
+                                        validate: value => !isNaN(Number(value)) || "Некорректное значение",
+                                    }}
+                                />
+                            </div>
+                            <div className={styles.timeInputWrapper}>
+                                <span className={styles.timeLabel}>Секунды</span>
+                                <ValidatedInput
+                                    className={styles.timeInput}
+                                    name="seconds"
+                                    trigger={trigger}
+                                    register={register}
+                                    setValue={setValue}
+                                    errors={errors.seconds}
+                                    validationRules={{
+                                        required: "Обязательное поле",
+                                        min: { value: 0, message: "Минимум 0 секунд" },
+                                        max: { value: 59, message: "Максимум 59 секунд" },
+                                        validate: value => !isNaN(Number(value)) || "Некорректное значение",
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.formActions}>
+                    <Button type="button" onClick={onCancel}>
+                        Отмена
+                    </Button>
+                    <Button type="submit" disabled={!isChanged}>
+                        Сохранить
+                    </Button>
                 </div>
             </div>
-            <br />
-            <br />
-            <Button type="submit" disabled={!isChanged}>
-                Сохранить
-            </Button>
         </form>
     )
 }

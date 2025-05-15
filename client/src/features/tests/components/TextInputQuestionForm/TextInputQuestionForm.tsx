@@ -18,7 +18,7 @@ interface TextInputQuestionFormProps {
     isButtonDisabled: boolean
     setValue: UseFormSetValue<GenerateAnswerFormData & TextInputFormData>
     trigger: UseFormTrigger<GenerateAnswerFormData & TextInputFormData>
-    buttonText: string
+    buttonText?: string
 }
 
 const TextInputQuestionForm: FC<TextInputQuestionFormProps> = ({
@@ -78,10 +78,6 @@ const TextInputQuestionForm: FC<TextInputQuestionFormProps> = ({
                 errors={errors?.answer}
                 validationRules={answerValidation}
             />
-
-            <Button type="submit" disabled={isButtonDisabled}>
-                {buttonText}
-            </Button>
         </form>
     )
 }

@@ -179,7 +179,10 @@ const TestInfoPage = () => {
     }
 
     const handleChangeModerationStatus = async (status: ModerationStatus) => {
+        setIsModerationStatusModalOpen(false)
+
         await changeModerationStatus(test.id, status)
+
         setTest(prev =>
             prev
                 ? {
@@ -189,7 +192,6 @@ const TestInfoPage = () => {
                 : null
         )
         toast.success("Статус модерации обновлен")
-        setIsModerationStatusModalOpen(false)
     }
 
     return (
@@ -217,7 +219,7 @@ const TestInfoPage = () => {
                             <CopyTestButton test={test} className={styles.editBtn} />
                         </div>
                     </div>
-                    {isShortInfoUpdating ? (
+                    {isShortInfoUpdating || isModerationStatusUpdating ? (
                         <InfoRowSkeleton rows={4} />
                     ) : (
                         <div className={styles.blockContent}>

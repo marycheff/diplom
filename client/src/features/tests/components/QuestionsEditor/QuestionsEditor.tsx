@@ -8,7 +8,6 @@ import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
-import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
 import {
     closestCorners,
@@ -126,6 +125,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
             setValue("question", editingQuestion.text)
             setValue("answer", editingQuestion.answers.find(a => a.isCorrect)?.text || "")
             setValue("numOfAnswers", DEFAULT_NUM_OF_ANSWERS)
+            setQuestionType(editingQuestion.type)
             setCurrentAnswers(editingQuestion.answers)
             setQuestionType(editingQuestion.type)
 
@@ -331,6 +331,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
 
     const editQuestion = (question: QuestionDTO) => {
         setEditingQuestion(question)
+        setQuestionType(question.type)
     }
 
     const deleteQuestion = (questionId: string) => {
@@ -432,19 +433,22 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
 
                 <div className={styles.newQuestionForm}>
                     <div className={styles.formContent}>
-                        <h3>{editingQuestion ? "Редактирование вопроса" : "Новый вопрос"}</h3>
+                        <h3 className={styles.title}>
+                            {editingQuestion ? "Редактирование вопроса" : "Новый вопрос"}
+                        </h3>
                         <div className={styles.questionTypeSelector}>
-                            <Select
-                                name="questionType"
-                                label="Тип вопроса:"
+                            <label htmlFor="questionType">Тип вопроса:</label>
+                            <select
+                                id="questionType"
                                 value={questionType}
-                                register={register}
-                                options={[
-                                    { value: QuestionType.MULTIPLE_CHOICE, label: "Варианты ответа" },
-                                    { value: QuestionType.TEXT_INPUT, label: "Текстовый ввод" },
-                                ]}
-                                onChange={value => setQuestionType(value as QuestionType)}
-                            />
+                                onChange={e => {
+                                    setQuestionType(e.target.value as QuestionType)
+                                    // Дополнительная логика при изменении типа
+                                }}
+                                className={styles.selectInput}>
+                                <option value={QuestionType.MULTIPLE_CHOICE}>Варианты ответа</option>
+                                <option value={QuestionType.TEXT_INPUT}>Текстовый ввод</option>
+                            </select>
                         </div>
                         <div>
                             {questionType === QuestionType.TEXT_INPUT ? (
@@ -455,7 +459,6 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                                     trigger={trigger}
                                     isButtonDisabled={!isFormValid}
                                     onSubmit={handleSubmit(handleAddQuestion)}
-                                    buttonText={editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
                                 />
                             ) : (
                                 <>
@@ -481,11 +484,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                         </div>
                     </div>
                     <div className={styles.formActions}>
-                        {questionType !== QuestionType.TEXT_INPUT && (
-                            <Button onClick={handleSubmit(handleAddQuestion)} disabled={!isFormValid}>
-                                {editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
-                            </Button>
-                        )}
+                        <Button onClick={handleSubmit(handleAddQuestion)} disabled={!isFormValid}>
+                            {editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
+                        </Button>
                         {!editingQuestion && (
                             <Button className={styles.cancelButton} onClick={resetForm} disabled={isFormEmpty}>
                                 Очистить форму
