@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useUserStore } from "@/features/users/store/useUserStore"
 import { ROUTES } from "@/router/paths"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { UserDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
@@ -15,10 +16,10 @@ const UserInfo = () => {
     const { userId } = useParams<{ userId: string }>()
 
     if (!userId) {
-        return <div>ID пользователя не указан</div>
+        return <NothingFound title="ID пользователя не указан" />
     }
     if (!isValidUUID(userId)) {
-        return <div>Невалидный Id</div>
+        return <NothingFound title="Невалидный ID пользователя" />
     }
 
     const { getUserById, isLoading, blockUser, unblockUser, deleteUser, isFetching } = useUserStore()
@@ -57,7 +58,7 @@ const UserInfo = () => {
         return <Loader />
     }
     if (Object.keys(user).length === 0) {
-        return <div>Пользователь не найден</div>
+        return <NothingFound title="Пользователь не найден" />
     }
 
     return (
@@ -75,7 +76,7 @@ const UserInfo = () => {
                                     {/* <span className={styles.value}>{user.id}</span> */}
                                     <span className={styles.value}>
                                         {shortenText(user.id)}
-                                        <CopyButton textToCopy={user.id}  />
+                                        <CopyButton textToCopy={user.id} />
                                     </span>
                                 </div>
                                 <div className={styles.infoRow}>

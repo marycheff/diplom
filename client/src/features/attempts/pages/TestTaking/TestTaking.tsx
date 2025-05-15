@@ -2,6 +2,9 @@ import TestTimer from "@/features/attempts/components/Timer/TestTimer"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
+import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
+import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
 import { AttemptAnswer, AttemptStatus, QuestionType, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
@@ -39,8 +42,12 @@ const TestTaking = () => {
     } = useAttemptStore()
 
     // Проверка валидности attemptId
-    if (!attemptId) return <div>ID попытки не указан</div>
-    if (!isValidUUID(attemptId)) return <div>Невалидный Id</div>
+    if (!attemptId) {
+        return <NothingFound title="ID попытки не указан" />
+    }
+    if (!isValidUUID(attemptId)) {
+        return <NothingFound title="Невалидный ID попытки" />
+    }
 
     // Проверка, завершена ли попытка
     const isAttemptCompleted = attempt && attempt.status !== AttemptStatus.IN_PROGRESS
@@ -112,7 +119,7 @@ const TestTaking = () => {
             setSelectedAnswers(allAnswers[currentQuestion.id] || [])
         }
     }, [currentPage, test, allAnswers])
-    
+
     // Предотвращение случайного закрытия страницы
     usePreventLeave({
         shouldPrevent: !isAttemptCompleted && Object.keys(allAnswers).length > 0,
@@ -208,11 +215,17 @@ const TestTaking = () => {
 
     // Состояния загрузки
     if (isAttemptFetching || isTestFetching) return <Loader fullScreen />
-    if (!attempt) return <div>Попытка не найдена</div>
-    if (!test) return <div>Тест не найден</div>
-    if (!test.questions?.length) return <div>В тесте нет вопросов</div>
+    if (!attempt) return <AttemptNotFound />
+    if (!test) return <TestNotFound />
+    if (!test.questions?.length) {
+        return (
+            <NothingFound
+                title="В тесте нет вопросов"
+                description="Данный тест не доступен для прохождения, так как в нем нет вопросов"
+            />
+        )
+    }
 
-    console.log(attempt.timeSpent)
     const currentQuestion = test.questions[currentPage - 1]
     const totalPages = test.questions.length
 

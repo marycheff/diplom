@@ -97,7 +97,6 @@ export const useAttemptStore = create<AttemptState>(set => {
             return withFetching(operation)
         },
         updateTimeSpent: async (attemptId, timeSpent) => {
-            console.log("timeSpent", timeSpent)
             const operation = async () => {
                 await attemptService.updateTimeSpent(attemptId, timeSpent)
             }

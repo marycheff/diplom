@@ -6,6 +6,8 @@ import TestInfoEditor from "@/features/tests/components/TestInfoEditor/TestInfoE
 import TestSettingsEditor from "@/features/tests/components/TestSettingsEditor/TestSettingsEditor"
 import InfoRowSkeleton from "@/features/tests/components/TestSettingsSkeleton/TestSettingsSkeleton"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
+import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import {
     ModerationStatus,
     ModerationStatusLabels,
@@ -63,10 +65,10 @@ const TestInfoPage = () => {
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
 
     if (!testId) {
-        return <div>ID теста не указан</div>
+        return <NothingFound title="ID теста не указан" />
     }
     if (!isValidUUID(testId)) {
-        return <div>Невалидный Id</div>
+        return <NothingFound title="Невалидный ID теста" />
     }
     const fetchTest = async () => {
         const fetchedTest = await getTestById(testId)
@@ -85,7 +87,7 @@ const TestInfoPage = () => {
         return <Loader fullScreen />
     }
     if (!test) {
-        return <div>Тест не найден</div>
+        return <TestNotFound />
     }
 
     const handleAddQuestions = async (newQuestions: QuestionDTO[]) => {

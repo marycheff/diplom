@@ -5,6 +5,7 @@ import { formatSeconds } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { FC, useEffect, useState } from "react"
 import styles from "./Snapshot.module.scss"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
 
 interface SnapshotProps {
     snapshotId: string
@@ -16,10 +17,10 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
     const [snapshot, setSnapshot] = useState<TestSnapshotDTO | null>(null)
 
     if (!snapshotId) {
-        return <div>ID теста не указан</div>
+       return <NothingFound title="ID снимка теста не указан" />
     }
     if (!isValidUUID(snapshotId)) {
-        return <div>Невалидный Id</div>
+       return <NothingFound title="Невалидный ID снимка теста" />
     }
     const fetchSnapshot = async () => {
         const fetchedSnapshot = await getSnapshotById(snapshotId)
@@ -36,7 +37,7 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
     }
 
     if (!snapshot) {
-        return <div>Снимок не найден</div>
+        return <NothingFound title="Снимок теста не найден" />
     }
 
     return (

@@ -11,7 +11,7 @@ import SearchBar from "@/shared/ui/SearchBar/SearchBar"
 import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-
+import styles from "./AllTestsPage.module.scss"
 const AllTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
     const { getTests, searchTests, isFetching } = useTestStore()
@@ -113,16 +113,19 @@ const AllTestsPage = () => {
                 placeholder="Поиск"
             />
 
-            <Button onClick={handleResetSearch} disabled={isFetching || !isSearchActive}>
-                Сбросить
-            </Button>
+            <div className={styles.controls}>
+                <div className={styles.buttons}>
+                    <Button onClick={handleResetSearch} disabled={isFetching || !isSearchActive}>
+                        Сбросить
+                    </Button>
+                    <Button onClick={handleUpdateButton} disabled={isFetching}>
+                        Обновить
+                    </Button>
+                </div>
 
-            <Button onClick={handleUpdateButton} disabled={isFetching}>
-                Обновить
-            </Button>
-
-            <div className="cache-info">
-                <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+                <div className={styles.cacheInfo}>
+                    <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+                </div>
             </div>
 
             {isFetching || !isDataLoaded ? (

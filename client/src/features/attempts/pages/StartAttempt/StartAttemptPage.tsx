@@ -3,7 +3,7 @@ import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
-import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
+import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import { PreTestUserDataType, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -44,12 +44,12 @@ const StartAttemptPage = () => {
         }
         fetchTest()
     }, [testId, getTestForUserById, navigate])
-    
+
     if (isFetching || isLoading) {
         return <Loader fullScreen />
     }
     if (!test && !isFetching) {
-        return <div>Тест не найден</div>
+        return <TestNotFound />
     }
     if (test?.settings?.requireRegistration && !user) {
         const currentUrl = window.location.pathname

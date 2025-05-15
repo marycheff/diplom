@@ -1,13 +1,9 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
 import { ROUTES } from "@/router/paths"
-import {
-    AttemptStatus,
-    AttemptStatusLabels,
-    PreTestUserData,
-    PreTestUserDataLabels,
-    TestAttemptDTO,
-} from "@/shared/types"
+import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
+import { AttemptStatusLabels, PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -22,10 +18,10 @@ const AttemptInfo = () => {
     const { attemptId } = useParams<{ attemptId: string }>()
 
     if (!attemptId) {
-        return <div>ID пользователя не указан</div>
+        return <NothingFound title="ID попытки не указан" />
     }
     if (!isValidUUID(attemptId)) {
-        return <div>Невалидный Id</div>
+        return <NothingFound title="Невалидный ID попытки" />
     }
 
     const { isFetching, getAttemptById } = useAttemptStore()
@@ -47,7 +43,7 @@ const AttemptInfo = () => {
     }
 
     if (!attempt) {
-        return <div>Попытка не найдена</div>
+        return <AttemptNotFound />
     }
 
     return (
@@ -61,7 +57,7 @@ const AttemptInfo = () => {
                             <span className={styles.label}>ID</span>
                             <span className={styles.value}>
                                 {shortenText(attempt.id)}
-                                <CopyButton textToCopy={attempt.id}  />
+                                <CopyButton textToCopy={attempt.id} />
                             </span>
                         </div>
                         <div className={styles.infoRow}>
@@ -129,7 +125,7 @@ const AttemptInfo = () => {
                                             className="actionLink">
                                             {shortenText(attempt.user.id)}
                                         </Link>
-                                        <CopyButton textToCopy={attempt.user.id}  />
+                                        <CopyButton textToCopy={attempt.user.id} />
                                     </span>
                                 </div>
 
@@ -195,7 +191,7 @@ const AttemptInfo = () => {
                                             className="actionLink">
                                             {shortenText(attempt.test.id)}
                                         </Link>
-                                        <CopyButton textToCopy={attempt.test.id}  />
+                                        <CopyButton textToCopy={attempt.test.id} />
                                     </span>
                                 </div>
                                 <div className={styles.infoRow}>

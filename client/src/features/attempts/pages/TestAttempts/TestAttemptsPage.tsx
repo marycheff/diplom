@@ -1,6 +1,7 @@
 import AttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/AttemptsTable"
 import { useAttemptsCache } from "@/features/attempts/hooks/useAttemptsCache"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { TestAttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
@@ -22,10 +23,10 @@ const TestAttemptsPage = () => {
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useAttemptsCache()
 
     if (!testId) {
-        return <div>ID теста не указан</div>
+        return <NothingFound title="ID теста не указан" />
     }
     if (!isValidUUID(testId)) {
-        return <div>Невалидный Id</div>
+        return <NothingFound title="Невалидный ID теста" />
     }
 
     const fetchData = useCallback(

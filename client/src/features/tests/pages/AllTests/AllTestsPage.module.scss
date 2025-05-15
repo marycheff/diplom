@@ -1,0 +1,32 @@
+@use "@styles/variables" as *;
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+
+  button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+}
+
+.cacheInfo {
+  font-size: 0.95rem;
+  color: $text-secondary;
+  background-color: $bg-secondary;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  box-shadow: $shadow-medium;
+  white-space: nowrap;
+}

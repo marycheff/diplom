@@ -24,7 +24,6 @@ const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus
     const onSubmit = (data: { status: ModerationStatus }) => {
         onChangingComplete(data.status)
     }
-    console.log(currentStatus)
 
     return (
         <div>

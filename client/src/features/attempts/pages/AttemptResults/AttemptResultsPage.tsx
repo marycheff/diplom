@@ -1,7 +1,10 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { AttemptStatus, QuestionType, TestAttemptDTO, TestAttemptResultDTO, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
+import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
+import NothingFound from "@/shared/components/NotFound/NothingFound"
+import TestNotFound from "@/shared/components/NotFound/TestNotFound"
+import { AttemptStatus, QuestionType, TestAttemptResultDTO, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -26,8 +29,12 @@ const AttemptResultsPage = () => {
         isLoading,
     } = useAttemptStore()
     // Проверка валидности attemptId
-    if (!attemptId) return <div>ID попытки не указан</div>
-    if (!isValidUUID(attemptId)) return <div>Невалидный Id</div>
+    if (!attemptId) {
+        return <NothingFound title="ID попытки не указан" />
+    }
+    if (!isValidUUID(attemptId)) {
+        return <NothingFound title="Невалидный ID попытки" />
+    }
 
     // Загрузка данных попытки
     const fetchAttemptForUser = async () => {
@@ -81,12 +88,12 @@ const AttemptResultsPage = () => {
 
     // Состояния загрузки
     if (isAttemptFetching || isTestFetching) return <Loader fullScreen />
-    if (!attemptForUser) return <div>Попытка не найдена</div>
+    if (!attemptForUser) return <AttemptNotFound />
     if (attemptForUser.status === AttemptStatus.IN_PROGRESS) {
-        return <div>Попытка не завершена</div>
+        return <NothingFound title="Попытка не завершения" description="Завершите попытку и вернитесь позже" />
     }
-    if (!test) return <div>Тест не найден</div>
-    if (!attempt) return <div>Попытка не найдена</div>
+    if (!test) return <TestNotFound />
+    if (!attempt) return <AttemptNotFound />
 
     const correctAnswers = countCorrectAnswers()
     const totalQuestions = attempt.questions?.length || 0
