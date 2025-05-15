@@ -200,7 +200,7 @@ class AttemptService {
             }
 
             for (const answer of answers) {
-                const { questionId, answersIds, timeSpent = 0 } = answer
+                const { questionId, answersIds, textAnswer, timeSpent = 0 } = answer
 
                 const question = await testRepository.getQuestionWithAnswers(questionId)
                 if (!question || question.testId !== attempt.testId) {
@@ -209,6 +209,22 @@ class AttemptService {
                         testId: attempt.testId,
                     })
                     throw ApiError.BadRequest(`Вопрос ${questionId} не принадлежит тесту`)
+                }
+
+                // Для TEXT_INPUT не требуются answersIds, но должен быть textAnswer
+                if (question.type === "TEXT_INPUT") {
+                    if (!textAnswer && textAnswer !== "") {
+                        logger.warn(
+                            `[${LOG_NAMESPACE}] Для вопроса с текстовым вводом должен быть указан текстовый ответ`,
+                            {
+                                questionId,
+                            }
+                        )
+                        throw ApiError.BadRequest(
+                            `Для вопроса ${questionId} с текстовым вводом должен быть указан текстовый ответ`
+                        )
+                    }
+                    continue // Пропускаем дальнейшие проверки для TEXT_INPUT
                 }
 
                 if (question.type === "SINGLE_CHOICE" && answersIds.length > 1) {

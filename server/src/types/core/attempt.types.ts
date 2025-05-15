@@ -72,6 +72,7 @@ export interface AttemptQuestionDTO {
             userAnswerId: string
             answer: AnswerDTO
         }>
+        textAnswer: string | null
         timeSpent: number | null
         answeredAt: Date | null
         createdAt: Date
@@ -83,6 +84,7 @@ export interface UserAnswerDTO {
     attemptId: string
     questionId: string
     answerId: string
+    textAnswer: string | null
     answeredAt: Date | null
     timeSpent: number | null
     createdAt: Date
@@ -90,6 +92,7 @@ export interface UserAnswerDTO {
 export interface AttemptAnswer {
     questionId: string
     answersIds: string[]
+    textAnswer: string | null
     timeSpent?: number
     answeredAt?: Date
 }

@@ -73,15 +73,43 @@ class AttemptRepository {
     async saveUserAnswers(attemptId: string, answers: AttemptAnswer[]) {
         return prisma.$transaction(async tx => {
             for (const answer of answers) {
-                const { questionId, answersIds, timeSpent = 0, answeredAt } = answer
+                const { questionId, answersIds, textAnswer, timeSpent = 0, answeredAt } = answer
+
+                // Получаем тип вопроса
+                const question = await tx.question.findUnique({
+                    where: { id: questionId },
+                    select: { type: true },
+                })
 
                 // Удаляем предыдущие ответы на этот вопрос
                 await tx.userAnswer.deleteMany({
                     where: { attemptId, questionId },
                 })
 
-                // Создаем новые ответы
-                if (answersIds.length > 0) {
+                // Для вопросов с текстовым вводом
+                if (question?.type === "TEXT_INPUT" && textAnswer !== undefined) {
+                    // Получаем правильный ответ из теста
+                    const correctAnswer = await tx.answer.findFirst({
+                        where: {
+                            questionId,
+                            isCorrect: true,
+                        },
+                    })
+
+                    // Создаем запись ответа пользователя с текстовым ответом
+                    await tx.userAnswer.create({
+                        data: {
+                            attemptId,
+                            questionId,
+                            answerId: correctAnswer?.id || "", // Связываем с правильным ответом
+                            textAnswer, // Сохраняем текстовый ответ пользователя
+                            timeSpent,
+                            answeredAt: answeredAt || new Date(),
+                        },
+                    })
+                }
+                // Для вопросов с выбором ответов
+                else if (answersIds.length > 0) {
                     await tx.userAnswer.createMany({
                         data: answersIds.map(answerId => ({
                             attemptId,
@@ -172,6 +200,7 @@ class AttemptRepository {
                         attemptId: true,
                         questionId: true,
                         answerId: true,
+                        textAnswer: true,
                         answeredAt: true,
                         timeSpent: true,
                         createdAt: true,
@@ -207,6 +236,7 @@ class AttemptRepository {
                         id: true,
                         attemptId: true,
                         questionId: true,
+                        textAnswer: true,
                         answerId: true,
                         answeredAt: true,
                         timeSpent: true,

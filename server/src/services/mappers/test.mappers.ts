@@ -133,6 +133,7 @@ export const mapToAttemptQuestionDTO = (
                     answer: mapAnswer(answer),
                 }
             }),
+            textAnswer: firstAnswer.textAnswer,
             timeSpent: firstAnswer.timeSpent,
             answeredAt: firstAnswer.answeredAt,
             createdAt: firstAnswer.createdAt,
@@ -169,7 +170,6 @@ export const mapToTestAttemptDTO = (
         preTestUserData: attempt.preTestUserData as PreTestUserDataType,
         test: mapTest(attempt.test),
         timeSpent: attempt.timeSpent,
-
         questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
     }
 }
@@ -254,6 +254,7 @@ export const mapToTestAttemptUserDTO = (
             attemptId: answer.attemptId,
             questionId: answer.questionId,
             answerId: answer.answerId,
+            textAnswer: answer.textAnswer,
             timeSpent: answer.timeSpent,
             answeredAt: answer.answeredAt,
             createdAt: answer.createdAt,

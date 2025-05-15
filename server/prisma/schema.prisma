@@ -148,6 +148,7 @@ model UserAnswer {
   attemptId  String
   questionId String
   answerId   String
+  textAnswer String?     @db.VarChar(1000)
   answeredAt DateTime?
   timeSpent  Int?
   // TIMESTAMPS

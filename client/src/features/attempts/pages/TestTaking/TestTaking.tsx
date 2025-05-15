@@ -25,7 +25,9 @@ const TestTaking = () => {
 
     // Состояния компонента
     const [selectedAnswers, setSelectedAnswers] = useState<string[]>([])
+    const [textAnswer, setTextAnswer] = useState<string>("")
     const [allAnswers, setAllAnswers] = useState<Record<string, string[]>>({})
+    const [allTextAnswers, setAllTextAnswers] = useState<Record<string, string>>({})
     const [test, setTest] = useState<UserTestDTO | null>(null)
     const [attempt, setAttempt] = useState<TestAttemptUserDTO | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
@@ -58,8 +60,12 @@ const TestTaking = () => {
         const loadSavedAnswers = async () => {
             try {
                 const savedAnswers = localStorage.getItem(`test_answers_${attemptId}`)
+                const savedTextAnswers = localStorage.getItem(`test_text_answers_${attemptId}`)
                 if (savedAnswers) {
                     setAllAnswers(JSON.parse(savedAnswers))
+                }
+                if (savedTextAnswers) {
+                    setAllTextAnswers(JSON.parse(savedTextAnswers))
                 }
             } catch {
                 toast.error("Ошибка в получении сохраненных ответов")
@@ -83,12 +89,17 @@ const TestTaking = () => {
         }
     }, [attempt, isAttemptCompleted])
 
-    // Сохранение ответов в localStorage при изменении allAnswers
+    // Сохранение ответов в localStorage при изменении allAnswers и allTextAnswers
     useEffect(() => {
-        if (!isAttemptCompleted && attemptId && Object.keys(allAnswers).length > 0) {
-            localStorage.setItem(`test_answers_${attemptId}`, JSON.stringify(allAnswers))
+        if (!isAttemptCompleted && attemptId) {
+            if (Object.keys(allAnswers).length > 0) {
+                localStorage.setItem(`test_answers_${attemptId}`, JSON.stringify(allAnswers))
+            }
+            if (Object.keys(allTextAnswers).length > 0) {
+                localStorage.setItem(`test_text_answers_${attemptId}`, JSON.stringify(allTextAnswers))
+            }
         }
-    }, [allAnswers, attemptId])
+    }, [allAnswers, allTextAnswers, attemptId])
 
     // Загрузка данных попытки
     const fetchAttempt = async () => {
@@ -117,9 +128,13 @@ const TestTaking = () => {
     useEffect(() => {
         if (test?.questions?.length) {
             const currentQuestion = test.questions[currentPage - 1]
-            setSelectedAnswers(allAnswers[currentQuestion.id] || [])
+            if (currentQuestion.type === QuestionType.TEXT_INPUT) {
+                setTextAnswer(allTextAnswers[currentQuestion.id] || "")
+            } else {
+                setSelectedAnswers(allAnswers[currentQuestion.id] || [])
+            }
         }
-    }, [currentPage, test, allAnswers])
+    }, [currentPage, test, allAnswers, allTextAnswers])
 
     // Предотвращение случайного закрытия страницы
     usePreventLeave({
@@ -170,8 +185,17 @@ const TestTaking = () => {
         updateAnswerTime(currentQuestion.id)
     }
 
+    const updateTextAnswerState = (newAnswer: string) => {
+        if (!currentQuestion) return
+        setAllTextAnswers(prev => ({ ...prev, [currentQuestion.id]: newAnswer }))
+        updateAnswerTime(currentQuestion.id)
+    }
+
     const saveCurrentQuestionAnswers = () => {
-        if (currentQuestion) {
+        if (!currentQuestion) return
+        if (currentQuestion.type === QuestionType.TEXT_INPUT) {
+            setAllTextAnswers(prev => ({ ...prev, [currentQuestion.id]: textAnswer }))
+        } else {
             setAllAnswers(prev => ({ ...prev, [currentQuestion.id]: selectedAnswers }))
         }
     }
@@ -204,14 +228,30 @@ const TestTaking = () => {
     }
 
     const submitAnswers = async () => {
-        const formattedAnswers: AttemptAnswer[] = Object.entries(allAnswers).map(([questionId, answersIds]) => {
+        const formattedAnswers: AttemptAnswer[] = []
+
+        // Форматирование обычных ответов
+        Object.entries(allAnswers).forEach(([questionId, answersIds]) => {
             const timeKey = `answer_time_${attemptId}_${questionId}`
             const answeredAt = getDecryptedTime(timeKey)
-            return {
+            formattedAnswers.push({
                 questionId,
                 answersIds,
+                textAnswer: null,
                 answeredAt,
-            }
+            })
+        })
+
+        // Форматирование текстовых ответов
+        Object.entries(allTextAnswers).forEach(([questionId, textAnswer]) => {
+            const timeKey = `answer_time_${attemptId}_${questionId}`
+            const answeredAt = getDecryptedTime(timeKey)
+            formattedAnswers.push({
+                questionId,
+                answersIds: [],
+                textAnswer,
+                answeredAt,
+            })
         })
 
         await saveAnswers(attemptId, formattedAnswers)
@@ -219,7 +259,9 @@ const TestTaking = () => {
 
         // Очистка localStorage
         localStorage.removeItem(`test_answers_${attemptId}`)
+        localStorage.removeItem(`test_text_answers_${attemptId}`)
         Object.keys(allAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
+        Object.keys(allTextAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
 
         toast.success("Ответы успешно отправлены. Попытка завершена.")
         if (attempt) {
@@ -229,6 +271,7 @@ const TestTaking = () => {
         }
 
         setAllAnswers({})
+        setAllTextAnswers({})
     }
 
     // Состояния загрузки
@@ -274,32 +317,45 @@ const TestTaking = () => {
                 <h3>{currentQuestion.text}</h3>
 
                 <div className={styles.answerOptions}>
-                    {currentQuestion.answers?.map((answer, index) => (
-                        <div
-                            key={answer.id}
-                            className={`${styles.answerOption} ${isAttemptCompleted ? styles.disabled : ""}`}
-                            onClick={handleAnswerOptionClick(
-                                answer.id,
-                                currentQuestion.type === QuestionType.SINGLE_CHOICE
-                            )}>
-                            {currentQuestion.type === QuestionType.SINGLE_CHOICE ? (
-                                <input
-                                    type="radio"
-                                    checked={selectedAnswers.includes(answer.id)}
-                                    readOnly
-                                    disabled={isAttemptCompleted!}
-                                />
-                            ) : (
-                                <Checkbox
-                                    id={`checkbox-${index}`}
-                                    checked={selectedAnswers.includes(answer.id)}
-                                    onChange={handleCheckboxChange(answer.id)}
-                                    disabled={isAttemptCompleted!}
-                                />
-                            )}
-                            <label>{answer.text}</label>
-                        </div>
-                    ))}
+                    {currentQuestion.type === QuestionType.TEXT_INPUT ? (
+                        <textarea
+                            className={styles.textInput}
+                            value={textAnswer}
+                            onChange={e => {
+                                setTextAnswer(e.target.value)
+                                updateTextAnswerState(e.target.value)
+                            }}
+                            disabled={isAttemptCompleted!}
+                            placeholder="Введите ваш ответ..."
+                        />
+                    ) : (
+                        currentQuestion.answers?.map((answer, index) => (
+                            <div
+                                key={answer.id}
+                                className={`${styles.answerOption} ${isAttemptCompleted ? styles.disabled : ""}`}
+                                onClick={handleAnswerOptionClick(
+                                    answer.id,
+                                    currentQuestion.type === QuestionType.SINGLE_CHOICE
+                                )}>
+                                {currentQuestion.type === QuestionType.SINGLE_CHOICE ? (
+                                    <input
+                                        type="radio"
+                                        checked={selectedAnswers.includes(answer.id)}
+                                        readOnly
+                                        disabled={isAttemptCompleted!}
+                                    />
+                                ) : (
+                                    <Checkbox
+                                        id={`checkbox-${index}`}
+                                        checked={selectedAnswers.includes(answer.id)}
+                                        onChange={handleCheckboxChange(answer.id)}
+                                        disabled={isAttemptCompleted!}
+                                    />
+                                )}
+                                <label>{answer.text}</label>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
 

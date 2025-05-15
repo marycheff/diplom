@@ -107,6 +107,7 @@ export interface AttemptQuestionDTO {
 export interface AttemptAnswer {
     questionId: string
     answersIds: string[]
+    textAnswer: string | null
     timeSpent?: number
     answeredAt?: Date
 }
@@ -119,6 +120,7 @@ export interface UserAnswerDTO {
     attemptId: string
     questionId: string
     answerId: string
+    textAnswer: string | null
     answeredAt: Date | null
     timeSpent: number | null
     createdAt: Date

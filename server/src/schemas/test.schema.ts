@@ -151,7 +151,8 @@ export const saveAnswersSchema = z.object({
                     )
                     .refine(val => new Set(val).size === val.length, {
                         message: "Массив answersIds содержит дублирующиеся идентификаторы",
-                    }),
+                    }).optional(),
+                textAnswer: z.string().optional(),
                 timeSpent: z.number().optional().default(0),
                 answeredAt: z
                     .string()

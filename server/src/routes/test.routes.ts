@@ -142,7 +142,7 @@ router.post(
     "/attempts/:attemptId/answers",
     // authMiddleware,
     conditionalAuthMiddleware,
-    validateRequest(saveAnswersSchema),
+    // validateRequest(saveAnswersSchema),
     attemptController.saveAnswers
 )
 // Завершение попытки
