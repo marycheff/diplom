@@ -1,4 +1,5 @@
 import { TestDTO, VisibilityStatusLabels } from "@/shared/types"
+import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import { shortenText } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
@@ -24,11 +25,11 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                             <thead>
                                 <tr>
                                     <th scope="col">ID</th>
+                                    <th scope="col">Модерирован</th>
                                     <th scope="col">Автор</th>
                                     <th scope="col">Название</th>
                                     <th scope="col">Статус публикации</th>
                                     <th scope="col">Кол-во вопросов</th>
-                                    <th scope="col">Модерирован</th>
                                     {/* <th scope="col">Требуется регистрация</th>
                                     <th scope="col">Показывать детальные результаты</th> */}
                                     <th scope="col">Кол-во попыток</th>
@@ -46,6 +47,7 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                                     {shortenText(test.id)}
                                                 </Link>
                                             </td>
+                                            <td>{test.moderatedAt ? "Да" : "Нет"}</td>
                                             <td>
                                                 <Link
                                                     to={`/admin/users/${test.author.id}`}
@@ -60,7 +62,7 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                             <td>{test.questions ? test.questions.length : 0}</td>
                                             {/* <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
                                             <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td> */}
-                                            <td>{test.moderatedAt ? "Да" : "Нет"}</td>
+
                                             <td>
                                                 {test.totalAttempts === 0 ? (
                                                     "0"

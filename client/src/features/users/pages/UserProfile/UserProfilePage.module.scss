@@ -1,3 +1,4 @@
+@use "@styles/variables" as *;
 $primary-color: #2563eb;
 $secondary-color: #6b7280;
 $success-color: #10b981;
@@ -20,15 +21,15 @@ $transition: all 0.3s ease;
 .section {
     margin-bottom: 2rem;
     padding: 2rem;
-    background: #f3f4f6;
+    background: $bg-surface;
     // background: color($background, 200);
     border-radius: $border-radius;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: $shadow-medium;
     transition: $transition;
 
-    &:hover {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+    // &:hover {
+    //     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    // }
 
     h2 {
         font-size: 1.5rem;

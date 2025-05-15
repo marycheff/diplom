@@ -1,10 +1,11 @@
-import { InputProps } from "@/shared/ui/Input"
 import { FC, KeyboardEvent } from "react"
-import styles from "./SearchBar.module.scss" // Импортируем стили
+import { InputProps } from "@/shared/ui/Input"
+import { FiSearch } from "react-icons/fi"
+import styles from "./SearchBar.module.scss"
 
 export interface SearchBarProps extends InputProps {
-    handleSearch: () => void // Функция для выполнения поиска
-    onClearSearch: () => void // Функция для очистки поиска
+    handleSearch: () => void
+    onClearSearch: () => void
 }
 
 const SearchBar: FC<SearchBarProps> = ({
@@ -15,17 +16,15 @@ const SearchBar: FC<SearchBarProps> = ({
     placeholder = "Поиск",
     ...rest
 }) => {
-    // Обработка нажатия клавиши Enter
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
             handleSearch()
-            ;(event.target as HTMLInputElement).blur() // Убрать фокус со строки поиска
+            ;(event.target as HTMLInputElement).blur()
         }
     }
 
     return (
         <div className={styles.searchBar}>
-            {/* Используем ваш компонент Input */}
             <input
                 type="text"
                 value={value}
@@ -36,16 +35,18 @@ const SearchBar: FC<SearchBarProps> = ({
                 {...rest}
             />
 
-            {/* Кнопка очистки */}
             {value && (
-                <button type="button" onClick={onClearSearch} className={styles.clearButton}>
+                <button
+                    type="button"
+                    onClick={onClearSearch}
+                    className={styles.clearButton}
+                    aria-label="Очистить поиск">
                     &times;
                 </button>
             )}
 
-            {/* Кнопка поиска */}
-            <button type="button" onClick={handleSearch} className={styles.searchButton}>
-                Найти
+            <button type="button" onClick={handleSearch} className={styles.searchButton} aria-label="Найти">
+                <FiSearch size={18} />
             </button>
         </div>
     )

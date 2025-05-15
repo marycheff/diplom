@@ -1,5 +1,6 @@
 import AttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/AttemptsTable"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import styles from "@/features/tests/pages/AllTests/AllTestsPage.module.scss"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { useCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
@@ -10,7 +11,6 @@ import Pagination from "@/shared/ui/Pagination/Pagination"
 import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-
 const AllAttemptsPage = () => {
     const { getAllAttempts, isFetching } = useAttemptStore()
     const [attempts, setAttempts] = useState<TestAttemptDTO[]>([])
@@ -79,17 +79,21 @@ const AllAttemptsPage = () => {
 
     return (
         <>
-            {page > totalPages && (
-                <Button onClick={handleResetSearch} disabled={isFetching}>
-                    Сбросить
-                </Button>
-            )}
+            <div className={styles.controls}>
+                <div className={styles.buttons}>
+                    {page > totalPages && (
+                        <Button onClick={handleResetSearch} disabled={isFetching}>
+                            Сбросить
+                        </Button>
+                    )}
+                    <Button onClick={handleUpdateButton} disabled={isFetching}>
+                        Обновить
+                    </Button>
+                </div>
 
-            <Button onClick={handleUpdateButton} disabled={isFetching}>
-                Обновить
-            </Button>
-            <div className="cache-info">
-                <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+                <div className={styles.cacheInfo}>
+                    <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+                </div>
             </div>
             {isFetching || !isDataLoaded ? (
                 <TableSkeleton />

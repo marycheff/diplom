@@ -3,6 +3,7 @@ import { ROUTES } from "@/router/paths"
 import { isValidUUID } from "@/shared/utils/validator"
 import { Link, matchPath, useLocation } from "react-router-dom"
 import styles from "./Breadcrumbs.module.scss"
+import { shortenText } from "@/shared/utils/formatter"
 
 const Breadcrumbs = () => {
     const location = useLocation()
@@ -31,6 +32,7 @@ const Breadcrumbs = () => {
     if (!shouldDisplayBreadcrumbs) {
         return null
     }
+ 
 
     const pathnames = location.pathname.split("/").filter(x => x) // Разбиваем URL на части
     // Словарь для статических названий
@@ -77,7 +79,7 @@ const Breadcrumbs = () => {
                 const to = `/${pathnames.slice(0, index + 1).join("/")}`
                 const isLast = index === pathnames.length - 1
                 const isId = isValidUUID(value)
-                const label = isId ? value : labels[value] || value
+                const label = isId ? shortenText(value) : labels[value] || value
 
                 return (
                     <span key={to} className={styles.item}>

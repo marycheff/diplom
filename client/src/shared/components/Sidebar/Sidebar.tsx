@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
+import { useIsMobile } from "@/shared/hooks/useIsMobile"
 import { ConfirmationModal } from "@/shared/ui/Modal"
 import Tooltip from "@/shared/ui/Tooltip/Tooltip"
 import { useEffect, useRef, useState } from "react"
@@ -7,46 +8,32 @@ import { FiEdit, FiFileText, FiHome, FiList, FiLogOut, FiMenu, FiUser, FiUsers }
 import { IoAnalyticsSharp } from "react-icons/io5"
 import { MdOutlineScience } from "react-icons/md"
 import { Menu, MenuItem, Sidebar as ProSidebar, sidebarClasses } from "react-pro-sidebar"
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 interface SidebarProps {
     onAnimationStart?: () => void
     onAnimationEnd?: () => void
 }
 
 export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
+    const isMobile = useIsMobile()
     const { logout, isAdmin } = useAuthStore()
-    const navigate = useNavigate()
     const [collapsed, setCollapsed] = useState(() => {
         const savedCollapsed = localStorage.getItem("sidebarCollapsed")
-        return savedCollapsed ? JSON.parse(savedCollapsed) : window.innerWidth < 768
+        return savedCollapsed ? JSON.parse(savedCollapsed) : isMobile
     })
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
-    const [isAnimating, setIsAnimating] = useState(false)
+
     const location = useLocation()
     const currentPath = location.pathname
 
-    // Отслеживание размера экрана для адаптивного сворачивания сайдбара
     useEffect(() => {
-        const handleResize = () => {
-            // Если ширина экрана меньше 768px, сворачиваем сайдбар
-            if (window.innerWidth < 768) {
-                setCollapsed(true)
-                localStorage.setItem("sidebarCollapsed", "true")
-            }
+        if (isMobile) {
+            setCollapsed(true)
+            localStorage.setItem("sidebarCollapsed", "true")
         }
+    }, [isMobile])
 
-        // Добавляем слушатель события resize
-        window.addEventListener("resize", handleResize)
-
-        // Удаляем слушатель при размонтировании компонента
-        return () => {
-            window.removeEventListener("resize", handleResize)
-        }
-    }, []) // Убрана зависимость от collapsed
-
-    // Функция для анимированного сворачивания сайдбара
     const toggleCollapse = () => {
-        setIsAnimating(true)
         onAnimationStart?.()
         setCollapsed((prev: boolean) => {
             const newCollapsed = !prev
@@ -54,26 +41,20 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
             return newCollapsed
         })
         setTimeout(() => {
-            setIsAnimating(false)
             onAnimationEnd?.()
-        }, 300) // Время анимации из transition
+        }, 300)
     }
 
-    // Функция обработки клика по пункту меню
     const handleMenuItemClick = () => {
-        // Если устройство мобильное и сайдбар развёрнут, сворачиваем его
-        if (window.innerWidth < 768 && !collapsed) {
-            setIsAnimating(true)
+        if (isMobile && !collapsed) {
             onAnimationStart?.()
             setCollapsed(true)
             localStorage.setItem("sidebarCollapsed", "true")
             setTimeout(() => {
-                setIsAnimating(false)
                 onAnimationEnd?.()
             }, 300)
         }
     }
-
     // Цветовая схема
     const colors = {
         primary: "#3f51b5", // Основной синий

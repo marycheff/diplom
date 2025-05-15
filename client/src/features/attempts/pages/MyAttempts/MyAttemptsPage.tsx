@@ -2,6 +2,7 @@ import MyAttemptsCards from "@/features/attempts/components/Cards/AttemptsCards/
 import MyAttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/MyAttemptsTable"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
+import { useIsMobile } from "@/shared/hooks/useIsMobile"
 import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { AttemptWithSnapshotDTO } from "@/shared/types"
@@ -76,6 +77,15 @@ const MyAttemptsPage = () => {
         setPage(pageParam)
         fetchData(pageParam)
     }, [location.search, fetchData, navigate])
+
+    const isMobile = useIsMobile()
+
+    // Авто-установка table-режима при малом экране
+    useEffect(() => {
+        if (isMobile && viewMode !== "cards") {
+            setViewMode("cards")
+        }
+    }, [isMobile, viewMode])
     const handlePageChange = (newPage: number) => {
         params.set("page", newPage.toString())
         navigate({ search: params.toString() })
@@ -95,7 +105,7 @@ const MyAttemptsPage = () => {
     const totalPages = total !== null ? Math.ceil(total / limit) : 0
     const shouldShowPagination = totalPages > 0 && page <= totalPages
     const emptyAttemptsPage = total === 0 && page === 1 && isDataLoaded
-    const { register} = useForm()
+    const { register } = useForm()
     return (
         <>
             {page > totalPages && (
@@ -130,19 +140,21 @@ const MyAttemptsPage = () => {
                 <>
                     {shouldShowPagination ? (
                         <div className={styles.contentContainer}>
-                            <div className={styles.header}>
-                                <Select
-                                    register={register}
-                                    label="Вид отображения"
-                                    name="viewMode"
-                                    options={[
-                                        { value: "table", label: "Таблицей" },
-                                        { value: "cards", label: "Карточками" },
-                                    ]}
-                                    value={viewMode}
-                                    onChange={handleViewModeChange}
-                                />
-                            </div>
+                            {!isMobile && (
+                                <div className={styles.header}>
+                                    <Select
+                                        register={register}
+                                        label="Вид отображения"
+                                        name="viewMode"
+                                        options={[
+                                            { value: "table", label: "Таблицей" },
+                                            { value: "cards", label: "Карточками" },
+                                        ]}
+                                        value={viewMode}
+                                        onChange={handleViewModeChange}
+                                    />
+                                </div>
+                            )}
                             {viewMode === "table" ? (
                                 <MyAttemptsTable attempts={attempts} total={total} />
                             ) : (

@@ -13,6 +13,7 @@ import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import styles from "./MyTestsPage.module.scss"
+
 const MyTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
     const { getMyTests, searchMyTests, isFetching } = useTestStore()
@@ -114,16 +115,19 @@ const MyTestsPage = () => {
                 placeholder="Поиск"
             />
 
-            <Button onClick={handleResetSearch} disabled={isFetching || !isSearchActive}>
-                Сбросить
-            </Button>
+            <div className={styles.controls}>
+                <div className={styles.buttons}>
+                    <Button onClick={handleResetSearch} disabled={isFetching || !isSearchActive}>
+                        Сбросить
+                    </Button>
+                    <Button onClick={handleUpdateButton} disabled={isFetching}>
+                        Обновить
+                    </Button>
+                </div>
 
-            <Button onClick={handleUpdateButton} disabled={isFetching}>
-                Обновить
-            </Button>
-
-            <div className="cache-info">
-                <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+                <div className={styles.cacheInfo}>
+                    <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+                </div>
             </div>
 
             {isFetching || !isDataLoaded ? (

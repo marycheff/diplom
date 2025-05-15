@@ -1,5 +1,5 @@
 @use "@styles/variables" as *;
-
+@use "@/features/tests/pages/AllTests/AllTestsPage.module" as common;
 .emptyState {
     display: flex;
     flex-direction: column;

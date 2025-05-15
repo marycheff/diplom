@@ -1,33 +1,47 @@
+@use "@styles/variables" as *;
+
 .searchBar {
     display: flex;
     align-items: center;
     width: 100%;
-    max-width: 400px; // Адаптивная ширина
-    padding: 8px 12px;
-    background-color: #f3f4f6; // Цвет фона
-    border-radius: 8px; // Скругление углов
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Тень
+    max-width: 480px;
+    padding: 0.5rem 0.75rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: $shadow-medium;
+    border: 1px solid $border-secondary;
+    transition: box-shadow 0.1s ease;
+
+    &:focus-within {
+        box-shadow: 0 0 0 1px $accent-primary-hover;
+    }
 }
 
 .input {
     flex-grow: 1;
     border: none;
     background-color: transparent;
-    font-size: 14px;
+    font-size: 15px;
+    color: $text-primary;
     outline: none;
-    padding: 8px 0;
+    padding: 0.5rem 0;
+
+    &::placeholder {
+        color: $text-secondary;
+    }
 }
 
 .clearButton {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 16px;
-    color: #6b7280; // Цвет текста
-    margin-right: 8px;
+    font-size: 20px;
+    color: $accent-red;
+    margin-right: 0.5rem;
+    transition: color 0.1s ease;
 
     &:hover {
-        color: #000; // Цвет при наведении
+        color: $accent-red-hover;
     }
 }
 
@@ -35,13 +49,14 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 14px;
-    color: #3b82f6; // Цвет текста
-    padding: 8px 12px;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+    color: $accent-primary;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.1s ease;
 
     &:hover {
-        background-color: #e0f2fe; // Цвет фона при наведении
+        color: $accent-primary-hover;
     }
 }

@@ -1,3 +1,4 @@
+import styles from "@/features/tests/pages/AllTests/AllTestsPage.module.scss"
 import UsersTable from "@/features/users/components/Tables/UsersTable/UsersTable"
 import { useUserStore } from "@/features/users/store/useUserStore"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
@@ -109,17 +110,20 @@ const AllUsersPage = () => {
                 placeholder="Поиск"
             />
 
-            <Button onClick={handleResetSearch} disabled={isFetching || !isSearchActive}>
-                Сбросить
-            </Button>
-            <Button onClick={handleUpdateButton} disabled={isFetching}>
-                Обновить
-            </Button>
+            <div className={styles.controls}>
+                <div className={styles.buttons}>
+                    <Button onClick={handleResetSearch} disabled={isFetching || !isSearchActive}>
+                        Сбросить
+                    </Button>
+                    <Button onClick={handleUpdateButton} disabled={isFetching}>
+                        Обновить
+                    </Button>
+                </div>
 
-            <div className="cache-info">
-                <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+                <div className={styles.cacheInfo}>
+                    <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+                </div>
             </div>
-
             {isFetching || !isDataLoaded ? (
                 <TableSkeleton />
             ) : (
