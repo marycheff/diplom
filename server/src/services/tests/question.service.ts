@@ -434,11 +434,21 @@ class QuestionService {
         for (const question of questions) {
             if (question.type === "FILL_IN_THE_BLANK") {
                 // Проверяем наличие маркера {blank} в тексте вопроса
-                if (!question.text.includes("{blank}")) {
+                const blankCount = (question.text.match(/{blank}/g) || []).length
+                if (blankCount === 0) {
                     logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK отсутствует маркер {blank}`, {
                         questionId: question.id,
                     })
                     throw ApiError.BadRequest("В вопросе с пропуском должен быть указан маркер {blank}")
+                }
+                if (blankCount > 1) {
+                    logger.warn(
+                        `[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK должно быть только одно поле {blank}`,
+                        {
+                            questionId: question.id,
+                        }
+                    )
+                    throw ApiError.BadRequest("В вопросе с пропуском должно быть только одно поле {blank}")
                 }
 
                 // Проверяем количество правильных ответов (должен быть только один)
