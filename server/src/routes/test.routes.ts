@@ -17,11 +17,11 @@ import {
     getAttemptSchema,
     getTestSnapshotSchema,
     saveAnswerSchema,
-    saveAnswersSchema,
     shortInfoSchema,
     startTestAttemptSchema,
     testIdSchema,
     testSettingsSchema,
+    upsertQuestionsSchema,
 } from "@/schemas/test.schema"
 import express from "express"
 
@@ -87,7 +87,13 @@ router.get("/:testId/for-user", validateRequest(testIdSchema), testController.ge
 // Добавление вопросов к тесту
 // router.put("/:testId/questions", authMiddleware, validateRequest(updateTestSchema), testController.updateTest)
 // router.put("/:testId/questions", authMiddleware, testOwnershipMiddleware, questionController.addQuestions)
-router.put("/:testId/questions-upsert", authMiddleware, testOwnershipMiddleware, questionController.upsertQuestions)
+router.put(
+    "/:testId/questions-upsert",
+    authMiddleware,
+    testOwnershipMiddleware,
+    validateRequest(upsertQuestionsSchema),
+    questionController.upsertQuestions
+)
 
 // Получение всех вопросов теста
 router.get("/:testId/questions", authMiddleware, questionController.getTestQuestions)

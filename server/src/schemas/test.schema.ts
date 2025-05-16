@@ -24,27 +24,28 @@ export const answerSchema = z.object({
 
 export const questionSchema = z.object({
     text: z.string().min(1, "Текст вопроса обязателен").max(500, "Максимальная длина 500 символов"),
+    type: z.enum(["SINGLE_CHOICE", "MULTIPLE_CHOICE", "TEXT_INPUT"]),
     answers: z
         .array(answerSchema)
         .min(1, "Должен быть хотя бы один ответ")
+        .max(10, "В одном вопросе может быть максимум 10 вариантов ответов")
         .refine(answers => answers.some(a => a.isCorrect), { message: "Хотя бы один ответ должен быть правильным" }),
 })
+const questionsSchema = z.array(questionSchema).max(60, "Максимум 60 вопросов")
+// .min(1, "Должен быть хотя бы один вопрос")
 
+// Полная схема для upsert операции
+export const upsertQuestionsSchema = z.object({
+    params: z.object({
+        testId: z.string().uuid("Некорректный ID теста"),
+    }),
+    body: z.object({
+        questions: questionsSchema,
+    }),
+})
 export const updateTestSchema = z.object({
     body: z.object({
         questions: z.array(questionSchema).min(1, "Должен быть введен хотя бы 1 вопрос"),
-    }),
-})
-
-export const updateQuestionSchema = z.object({
-    body: z.object({
-        text: z.string().min(1, "Текст вопроса обязателен").max(500, "Максимальная длина 500 символов"),
-        answers: z
-            .array(answerSchema)
-            .min(1, "Должен быть хотя бы один ответ")
-            .refine(answers => answers.some(a => a.isCorrect), {
-                message: "Хотя бы один ответ должен быть правильным",
-            }),
     }),
 })
 
@@ -151,7 +152,8 @@ export const saveAnswersSchema = z.object({
                     )
                     .refine(val => new Set(val).size === val.length, {
                         message: "Массив answersIds содержит дублирующиеся идентификаторы",
-                    }).optional(),
+                    })
+                    .optional(),
                 textAnswer: z.string().optional(),
                 timeSpent: z.number().optional().default(0),
                 answeredAt: z
@@ -220,6 +222,10 @@ export const getUserAttemptsSchema = z.object({
         }),
     }),
 })
+// Схема для ответа
+
+// Схема вопроса с уточнениями в зависимости от типа
+
 // export const testSettingsSchema = z
 //     .object({
 //         requireRegistration: z.boolean().optional(),
