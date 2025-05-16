@@ -90,7 +90,7 @@ model Test {
 model Question {
   id          String       @id @default(uuid())
   testId      String
-  text        String       @db.VarChar(1000)
+  text        String       @db.VarChar(500)
   order       Int
   type        QuestionType @default(SINGLE_CHOICE)
   // TIMESTAMPS
@@ -107,7 +107,7 @@ model Question {
 model Answer {
   id          String       @id @default(uuid())
   questionId  String
-  text        String       @db.VarChar(500)
+  text        String       @db.VarChar(255)
   isCorrect   Boolean      @default(false)
   isGenerated Boolean      @default(false)
   // TIMESTAMPS
@@ -148,7 +148,7 @@ model UserAnswer {
   attemptId  String
   questionId String
   answerId   String
-  textAnswer String?     @db.VarChar(1000)
+  textAnswer String?     @db.VarChar(255)
   answeredAt DateTime?
   timeSpent  Int?
   isCorrect  Boolean?
@@ -185,7 +185,7 @@ model QuestionSnapshot {
   id             String           @id @default(uuid())
   testSnapshotId String
   originalTestId String
-  text           String           @db.VarChar(1000)
+  text           String           @db.VarChar(500)
   order          Int
   type           QuestionType
   // TIMESTAMPS
@@ -201,7 +201,7 @@ model AnswerSnapshot {
   id             String           @id @default(uuid())
   questionId     String
   originalTestId String
-  text           String           @db.VarChar(500)
+  text           String           @db.VarChar(255)
   isCorrect      Boolean          @default(false)
   // TIMESTAMPS
   createdAt      DateTime         @default(now())
@@ -250,7 +250,7 @@ enum QuestionType {
   MULTIPLE_CHOICE // Множественный выбор 
   TEXT_INPUT // Текстовый ввод 
   MATCHING // Сопоставление элементов 
-  FILL_IN_THE_BLANK // Вставка пропущенных слов 
+  FILL_IN_THE_BLANK // Вставка пропущенного слова
   SEQUENCE // Вопрос на последовательность 
 }
 

@@ -12,13 +12,13 @@ export const testIdSchema = z.object({
 
 export const shortInfoSchema = z.object({
     body: z.object({
-        title: z.string().min(1, "Название теста обязательно").max(255, "Максимальная длина 255 символов"),
-        description: z.string().max(1000, "Максимальная длина 1000 символов").optional(),
+        title: z.string().min(1, "Название теста обязательно").max(100, "Максимальная длина названия 100 символов"),
+        description: z.string().max(500, "Максимальная длина описания 500 символов").optional(),
     }),
 })
 
 export const answerSchema = z.object({
-    text: z.string().min(1, "Текст ответа обязателен").max(255, "Максимальная длина 255 символов"),
+    text: z.string().min(1, "Текст ответа обязателен").max(255, "Максимальная длина ответа 255 символов"),
     isCorrect: z.boolean(),
 })
 
