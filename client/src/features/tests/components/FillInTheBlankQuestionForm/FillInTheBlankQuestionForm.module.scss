@@ -1,0 +1,47 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.questionInputContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.blankButtonsContainer {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.insertBlankButton,
+.removeBlankButton {
+    align-self: flex-start;
+    padding: 6px 12px;
+    font-size: 14px;
+
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.previewContainer {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.previewLabel {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.previewContent {
+    padding: 5px;
+    line-height: 1.5;
+}

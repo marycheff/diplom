@@ -17,7 +17,7 @@
 
 .textarea {
     resize: vertical;
-    min-height: 100px;
+    min-height: 70px;
     width: 100%;
     font-family: inherit;
 }
@@ -35,6 +35,7 @@
 
 /* Стили для тултипа с ошибкой */
 .errorTooltip {
+    cursor: pointer;
     position: absolute;
     top: -34px;
     left: 50%;
@@ -65,6 +66,9 @@
         border-right: 5px solid transparent;
         border-top: 5px solid #ff3b30;
         display: block;
+    }
+    &:hover {
+         background-color: #ec473e;
     }
 }
 

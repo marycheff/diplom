@@ -6,7 +6,7 @@ const HomeButton = () => {
     const goHome = () => {
         navigate("/home")
     }
-    return <Button onClick={goHome}>Домой</Button>
+    return <Button onClick={goHome}>На главную</Button>
 }
 
 export default HomeButton

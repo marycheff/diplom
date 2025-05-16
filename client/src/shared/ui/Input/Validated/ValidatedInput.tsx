@@ -23,10 +23,12 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
     maskChar = "_",
     control,
     trigger,
+    inputRef,
 }) => {
     const [isFocused, setIsFocused] = useState(false)
     const [inputValue, setInputValue] = useState(defaultValue)
     const [wasTouched, setWasTouched] = useState(false)
+    const [isTooltipVisible, setIsTooltipVisible] = useState(true)
     const inputId = `input-${name}`
 
     const { ref, onChange, onBlur, ...registeredInput } = register(name, validationRules)
@@ -35,7 +37,10 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
         onChange(e) // Вызываем оригинальный обработчик onChange из register
         setInputValue(e.target.value)
         setWasTouched(true)
-        if (errors) trigger(name)
+        if (errors) {
+            trigger(name)
+            setIsTooltipVisible(true)
+        }
     }
 
     const handleBlur = (e: any) => {
@@ -73,6 +78,10 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                                 setInputValue(element.value)
                             }
                             ref(element)
+                            // Передаем ссылку на элемент через inputRef, если он предоставлен
+                            if (inputRef) {
+                                inputRef(element)
+                            }
                         }}
                         id={inputId}
                         disabled={disabled}
@@ -119,6 +128,10 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                                 setInputValue(element.value)
                             }
                             ref(element)
+                            // Передаем ссылку на элемент через inputRef, если он предоставлен
+                            if (inputRef) {
+                                inputRef(element)
+                            }
                         }}
                         id={inputId}
                         type={type}
@@ -140,8 +153,10 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                         ×
                     </button>
                 )}
-                {errors && errors.message && (wasTouched || isFocused) && (
-                    <div className={styles.errorTooltip}>{errors.message}</div>
+                {errors && errors.message && (wasTouched || isFocused) && isTooltipVisible && (
+                    <div className={styles.errorTooltip} onClick={() => setIsTooltipVisible(false)}>
+                        {errors.message}
+                    </div>
                 )}
             </div>
         </div>

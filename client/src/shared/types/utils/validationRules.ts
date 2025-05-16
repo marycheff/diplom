@@ -1,3 +1,4 @@
+import { formatSpaces } from "@/shared/utils/formatter"
 import { RegisterOptions } from "react-hook-form"
 
 export const emailValidationRules: RegisterOptions = {
@@ -7,3 +8,44 @@ export const emailValidationRules: RegisterOptions = {
         message: "Введите корректный email",
     },
 }
+
+export const questionValidationRules: RegisterOptions = {
+    required: "Вопрос обязателен",
+    validate: (value: string) => {
+        if (!hasText(value)) return "Вопрос должен содержать текст"
+        if (!isWithinCharLimit(value, 500)) return "Вопрос не должен превышать 500 символов"
+        if (!isWithinWordCount(value, 2, 100)) return "Вопрос должен содержать от 2 слов"
+        return true
+    },
+}
+export const answerValidationRules: RegisterOptions = {
+    required: "Ответ обязателен",
+    validate: (value: string) => {
+        if (!isWithinCharLimit(value, 255)) return "Ответ не должен превышать 255 символов"
+        if (!isWithinWordCount(value, 1, 5)) return "Ответ должен содержать от 1 до 5 слов"
+        return true
+    },
+}
+export const questionValidationFillInTextRules = {
+    required: "Вопрос обязателен",
+    validate: {
+        hasText: (value: string) => hasText(value) || "Вопрос должен содержать текст",
+        withinCharLimit: (value: string) => isWithinCharLimit(value, 500) || "Вопрос не должен превышать 500 символов",
+        withinWordCount: (value: string) => isWithinWordCount(value, 2, 100) || "Вопрос должен содержать от 2 слов",
+        hasBlankMarker: (value: string) => hasBlankMarker(value) || "Вопрос должен содержать маркер {blank}",
+        singleBlankMarker: (value: string) =>
+            countBlankMarkers(value) <= 1 || "Вопрос должен содержать только один маркер {blank}",
+    },
+}
+
+const hasText = (value: string): boolean => /[a-zA-Zа-яА-Я]/.test(value)
+const isWithinWordCount = (value: string, min: number, max: number): boolean => {
+    const wordCount = formatSpaces(value).split(/\s+/).length
+    return wordCount >= min && wordCount <= max
+}
+const isWithinCharLimit = (value: string, max: number): boolean => value.length <= max
+const countBlankMarkers = (value: string): number => {
+    const matches = value.match(/{blank}/g)
+    return matches ? matches.length : 0
+}
+const hasBlankMarker = (value: string): boolean => countBlankMarkers(value) > 0

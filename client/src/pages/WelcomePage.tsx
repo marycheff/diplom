@@ -12,7 +12,7 @@ const WelcomePage = () => {
                 <div className={styles.logo}>НейроТест</div>
                 <div className={styles.authButtons}>
                     <Button onClick={() => navigate(ROUTES.LOGIN)}>Авторизация</Button>
-                    <Button onClick={() => navigate(ROUTES.REGISTER)}>Регистрация</Button>
+                    <Button onClick={() => navigate(ROUTES.REGISTER)} variant="secondary">Регистрация</Button>
                 </div>
             </header>
 

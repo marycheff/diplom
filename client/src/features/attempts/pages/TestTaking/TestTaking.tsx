@@ -7,7 +7,7 @@ import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
 import { AttemptAnswer, AttemptStatus, QuestionType, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
-import { Button } from "@/shared/ui/Button"
+import { Button, HomeButton } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
@@ -15,7 +15,7 @@ import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination
 import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { generatePath, useNavigate, useParams } from "react-router-dom"
 import styles from "./TestTaking.module.scss"
@@ -129,7 +129,10 @@ const TestTaking = () => {
     useEffect(() => {
         if (test?.questions?.length) {
             const currentQuestion = test.questions[currentPage - 1]
-            if (currentQuestion.type === QuestionType.TEXT_INPUT) {
+            if (
+                currentQuestion.type === QuestionType.TEXT_INPUT ||
+                currentQuestion.type === QuestionType.FILL_IN_THE_BLANK
+            ) {
                 setTextAnswer(allTextAnswers[currentQuestion.id] || "")
             } else {
                 setSelectedAnswers(allAnswers[currentQuestion.id] || [])
@@ -194,7 +197,10 @@ const TestTaking = () => {
 
     const saveCurrentQuestionAnswers = () => {
         if (!currentQuestion) return
-        if (currentQuestion.type === QuestionType.TEXT_INPUT) {
+        if (
+            currentQuestion.type === QuestionType.TEXT_INPUT ||
+            currentQuestion.type === QuestionType.FILL_IN_THE_BLANK
+        ) {
             setAllTextAnswers(prev => ({ ...prev, [currentQuestion.id]: formatSpaces(textAnswer) }))
         } else {
             setAllAnswers(prev => ({ ...prev, [currentQuestion.id]: selectedAnswers }))
@@ -217,7 +223,7 @@ const TestTaking = () => {
 
         // Проверка, что не на все вопросы есть заполненные ответы
         const hasUnansweredQuestions = test?.questions?.some(question => {
-            if (question.type === QuestionType.TEXT_INPUT) {
+            if (question.type === QuestionType.TEXT_INPUT || question.type === QuestionType.FILL_IN_THE_BLANK) {
                 return !allTextAnswers[question.id] || allTextAnswers[question.id].trim() === ""
             }
             return !allAnswers[question.id] || allAnswers[question.id].length === 0
@@ -295,106 +301,137 @@ const TestTaking = () => {
     const totalPages = test.questions.length
 
     return (
-        <div className={styles.questionsContainer}>
-            {isAttemptCompleted && (
-                <div className={styles.completedBanner}>Попытка завершена. Изменение ответов недоступно.</div>
-            )}
+        <>
+            <HomeButton />
+            <div className={styles.questionsContainer}>
+                {isAttemptCompleted && (
+                    <div className={styles.completedBanner}>Попытка завершена. Изменение ответов недоступно.</div>
+                )}
 
-            {timeLimit > 0 && !isAttemptCompleted && (
-                <TestTimer
-                    attemptId={attemptId}
-                    defaultTime={timeLimit}
-                    timeSpent={attempt.timeSpent}
-                    onTimeExpired={handleTimeExpired}
-                />
-            )}
+                {timeLimit > 0 && !isAttemptCompleted && (
+                    <TestTimer
+                        attemptId={attemptId}
+                        defaultTime={timeLimit}
+                        timeSpent={attempt.timeSpent}
+                        onTimeExpired={handleTimeExpired}
+                    />
+                )}
 
-            <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />
+                <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />
 
-            <div className={styles.questionHeader}>
-                <h2>
-                    Вопрос {currentPage} из {totalPages}
-                </h2>
-            </div>
-
-            <div className={styles.questionContent}>
-                <h3>{currentQuestion.text}</h3>
-
-                <div className={styles.answerOptions}>
-                    {currentQuestion.type === QuestionType.TEXT_INPUT ? (
-                        <textarea
-                            className={styles.textInput}
-                            value={textAnswer}
-                            onChange={e => {
-                                setTextAnswer(e.target.value)
-                                updateTextAnswerState(e.target.value)
-                            }}
-                            disabled={isAttemptCompleted!}
-                            placeholder="Введите ваш ответ..."
-                        />
-                    ) : (
-                        currentQuestion.answers?.map((answer, index) => (
-                            <div
-                                key={answer.id}
-                                className={`${styles.answerOption} ${isAttemptCompleted ? styles.disabled : ""}`}
-                                onClick={handleAnswerOptionClick(
-                                    answer.id,
-                                    currentQuestion.type === QuestionType.SINGLE_CHOICE
-                                )}>
-                                {currentQuestion.type === QuestionType.SINGLE_CHOICE ? (
-                                    <input
-                                        type="radio"
-                                        checked={selectedAnswers.includes(answer.id)}
-                                        readOnly
-                                        disabled={isAttemptCompleted!}
-                                    />
-                                ) : (
-                                    <Checkbox
-                                        id={`checkbox-${index}`}
-                                        checked={selectedAnswers.includes(answer.id)}
-                                        onChange={handleCheckboxChange(answer.id)}
-                                        disabled={isAttemptCompleted!}
-                                    />
-                                )}
-                                <label>{answer.text}</label>
-                            </div>
-                        ))
-                    )}
+                <div className={styles.questionHeader}>
+                    <h2>
+                        Вопрос {currentPage} из {totalPages}
+                    </h2>
                 </div>
+
+                <div className={styles.questionContent}>
+                    {currentQuestion.type !== QuestionType.FILL_IN_THE_BLANK ? (
+                        <h3>{currentQuestion.text}</h3>
+                    ) : (
+                        <h3>Заполните пропуск</h3>
+                    )}
+
+                    <div className={styles.answerOptions}>
+                        {currentQuestion.type === QuestionType.TEXT_INPUT ? (
+                            <textarea
+                                className={styles.textInput}
+                                value={textAnswer}
+                                onChange={e => {
+                                    setTextAnswer(e.target.value)
+                                    updateTextAnswerState(e.target.value)
+                                }}
+                                disabled={isAttemptCompleted!}
+                                placeholder="Введите ваш ответ..."
+                            />
+                        ) : currentQuestion.type === QuestionType.FILL_IN_THE_BLANK ? (
+                            <div className={styles.fillInTheBlankContainer}>
+                                <div className={styles.questionWithBlank}>
+                                    {currentQuestion.text.split("{blank}").map((part, index, array) => (
+                                        <React.Fragment key={index}>
+                                            {part}
+                                            {index < array.length - 1 && (
+                                                <>
+                                                    <input
+                                                        type="text"
+                                                        className={styles.blankInput}
+                                                        value={textAnswer}
+                                                        onChange={e => {
+                                                            setTextAnswer(e.target.value)
+                                                            updateTextAnswerState(e.target.value)
+                                                        }}
+                                                        disabled={isAttemptCompleted!}
+                                                    />
+                                                </>
+                                            )}
+                                        </React.Fragment>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            currentQuestion.answers?.map((answer, index) => (
+                                <div
+                                    key={answer.id}
+                                    className={`${styles.answerOption} ${isAttemptCompleted ? styles.disabled : ""}`}
+                                    onClick={handleAnswerOptionClick(
+                                        answer.id,
+                                        currentQuestion.type === QuestionType.SINGLE_CHOICE
+                                    )}>
+                                    {currentQuestion.type === QuestionType.SINGLE_CHOICE ? (
+                                        <input
+                                            type="radio"
+                                            checked={selectedAnswers.includes(answer.id)}
+                                            readOnly
+                                            disabled={isAttemptCompleted!}
+                                        />
+                                    ) : (
+                                        <Checkbox
+                                            id={`checkbox-${index}`}
+                                            checked={selectedAnswers.includes(answer.id)}
+                                            onChange={handleCheckboxChange(answer.id)}
+                                            disabled={isAttemptCompleted!}
+                                        />
+                                    )}
+                                    <label>{answer.text}</label>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                {currentPage === totalPages && !isAttemptCompleted && (
+                    <Button
+                        onClick={handleSubmitAnswers}
+                        disabled={isLoading || !Object.keys(allAnswers).length}
+                        className={styles.submitButton}>
+                        {isLoading ? "Отправка..." : "Отправить ответы"}
+                    </Button>
+                )}
+                {currentPage !== totalPages && !isAttemptCompleted && (
+                    <Button onClick={() => setCurrentPage(currentPage + 1)} className={styles.submitButton}>
+                        Следующий вопрос
+                    </Button>
+                )}
+
+                <ConfirmationModal
+                    isOpen={showConfirmationModal}
+                    onClose={() => {
+                        setShowConfirmationModal(false)
+                        setPendingSubmit(false)
+                    }}
+                    onConfirm={() => {
+                        setShowConfirmationModal(false)
+                        if (pendingSubmit) {
+                            submitAnswers()
+                        }
+                    }}
+                    title="Подтверждение отправки"
+                    confirmText="Отправить"
+                    cancelText="Отмена">
+                    <p>Вы ответили не на все вопросы. Вы уверены, что хотите отправить ответы?</p>
+                </ConfirmationModal>
             </div>
-
-            {currentPage === totalPages && !isAttemptCompleted && (
-                <Button
-                    onClick={handleSubmitAnswers}
-                    disabled={isLoading || !Object.keys(allAnswers).length}
-                    className={styles.submitButton}>
-                    {isLoading ? "Отправка..." : "Отправить ответы"}
-                </Button>
-            )}
-            {currentPage !== totalPages && !isAttemptCompleted && (
-                <Button onClick={() => setCurrentPage(currentPage + 1)} className={styles.submitButton}>
-                    Следующий вопрос
-                </Button>
-            )}
-
-            <ConfirmationModal
-                isOpen={showConfirmationModal}
-                onClose={() => {
-                    setShowConfirmationModal(false)
-                    setPendingSubmit(false)
-                }}
-                onConfirm={() => {
-                    setShowConfirmationModal(false)
-                    if (pendingSubmit) {
-                        submitAnswers()
-                    }
-                }}
-                title="Подтверждение отправки"
-                confirmText="Отправить"
-                cancelText="Отмена">
-                <p>Вы ответили не на все вопросы. Вы уверены, что хотите отправить ответы?</p>
-            </ConfirmationModal>
-        </div>
+        </>
     )
 }
 

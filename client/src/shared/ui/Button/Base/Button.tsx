@@ -14,6 +14,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             onClick,
             loadingText = "Загрузка...",
             className,
+            variant = "primary",
             ...restProps
         },
         forwardedRef
@@ -29,7 +30,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     type={type}
                     disabled={isLoading || disabled}
                     onClick={onClick}
-                    className={`${styles.button} ${className || ""}`}
+                    className={`${styles.button} ${variant === "secondary" ? styles["button--secondary"] : ""} ${
+                        className || ""
+                    }`}
                     {...restProps}
                     aria-describedby={tooltip ? "tooltip" : undefined} // Для доступности
                 >

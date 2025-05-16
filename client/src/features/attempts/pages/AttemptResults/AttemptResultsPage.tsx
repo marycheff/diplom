@@ -81,7 +81,10 @@ const AttemptResultsPage = () => {
         attempt.questions.forEach(question => {
             const userAnswers = question.userAnswers?.answers ?? []
 
-            if (question.question.type === QuestionType.TEXT_INPUT) {
+            if (
+                question.question.type === QuestionType.TEXT_INPUT ||
+                question.question.type === QuestionType.FILL_IN_THE_BLANK
+            ) {
                 if (question.userAnswers?.isCorrect) {
                     correctCount++
                 }
@@ -168,7 +171,8 @@ const AttemptResultsPage = () => {
                                                         answer => answer.answer.id
                                                     )
                                                     const isCorrect =
-                                                        question.question.type === QuestionType.TEXT_INPUT
+                                                        question.question.type === QuestionType.TEXT_INPUT ||
+                                                        question.question.type === QuestionType.FILL_IN_THE_BLANK
                                                             ? question.userAnswers.isCorrect
                                                             : correctAnswerIds.length === userAnswerIds.length &&
                                                               correctAnswerIds.every(id =>
@@ -193,7 +197,8 @@ const AttemptResultsPage = () => {
                                             <div className={styles.answersList}>
                                                 <div className={styles.answerSection}>
                                                     <h3 className={styles.answerTitle}>
-                                                        {question.question.type === QuestionType.TEXT_INPUT
+                                                        {question.question.type === QuestionType.TEXT_INPUT ||
+                                                        question.question.type === QuestionType.FILL_IN_THE_BLANK
                                                             ? "Ответ:"
                                                             : "Варианты ответов:"}
                                                     </h3>
@@ -214,15 +219,19 @@ const AttemptResultsPage = () => {
                                                 </div>
                                                 <div className={styles.answerSection}>
                                                     <h3 className={styles.answerTitle}>
-                                                        {question.question.type === QuestionType.TEXT_INPUT
+                                                        {question.question.type === QuestionType.TEXT_INPUT ||
+                                                        question.question.type === QuestionType.FILL_IN_THE_BLANK
                                                             ? "Ваш ответ:"
                                                             : "Ваши ответы:"}
                                                     </h3>
                                                     {question.userAnswers &&
                                                     (question.userAnswers.answers.length > 0 ||
-                                                        question.question.type === QuestionType.TEXT_INPUT) ? (
+                                                        question.question.type === QuestionType.TEXT_INPUT ||
+                                                        question.question.type === QuestionType.FILL_IN_THE_BLANK) ? (
                                                         <>
-                                                            {question.question.type === QuestionType.TEXT_INPUT ? (
+                                                            {question.question.type === QuestionType.TEXT_INPUT ||
+                                                            question.question.type ===
+                                                                QuestionType.FILL_IN_THE_BLANK ? (
                                                                 <div className={styles.answerItemWrapper}>
                                                                     <div
                                                                         className={`${styles.answerItem} ${
@@ -369,9 +378,12 @@ const AttemptResultsPage = () => {
                                             answer => answer.answer.id
                                         )
                                         const isCorrect =
-                                            correctAnswerIds.length === userAnswerIds.length &&
-                                            correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
-                                            userAnswerIds.every(id => correctAnswerIds.includes(id))
+                                            question.question.type === QuestionType.TEXT_INPUT ||
+                                            question.question.type === QuestionType.FILL_IN_THE_BLANK
+                                                ? question.userAnswers.isCorrect
+                                                : correctAnswerIds.length === userAnswerIds.length &&
+                                                  correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
+                                                  userAnswerIds.every(id => correctAnswerIds.includes(id))
 
                                         return (
                                             <div

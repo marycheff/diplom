@@ -1,5 +1,13 @@
 import { InputProps } from "@/shared/ui/Input/Base/Input.props"
-import { Control, FieldError, Path, RegisterOptions, UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form"
+import {
+    Control,
+    FieldError,
+    Path,
+    RegisterOptions,
+    UseFormRegister,
+    UseFormSetValue,
+    UseFormTrigger,
+} from "react-hook-form"
 
 export interface ValidatedInputProps<T extends Record<string, any>> extends Omit<InputProps, "value" | "onChange"> {
     register: UseFormRegister<T>
@@ -14,4 +22,5 @@ export interface ValidatedInputProps<T extends Record<string, any>> extends Omit
     maskChar?: string
     control?: Control<T>
     trigger: UseFormTrigger<T>
+    inputRef?: (element: HTMLInputElement | HTMLTextAreaElement | null) => void
 }

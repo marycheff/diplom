@@ -1,4 +1,5 @@
 import AnswersList from "@/features/attempts/components/AnswersList/AnswersList"
+import FillInTheBlankQuestionForm from "@/features/tests/components/FillInTheBlankQuestionForm"
 import QuestionForm from "@/features/tests/components/QuestionForm/QuestionForm"
 import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
 import TextInputQuestionForm from "@/features/tests/components/TextInputQuestionForm/TextInputQuestionForm"
@@ -201,8 +202,8 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
     }
 
     const handleAddQuestion = (data: GenerateAnswerFormData & TextInputFormData) => {
-        if (questionType === QuestionType.TEXT_INPUT) {
-            // Для TEXT_INPUT создаем только один ответ, который является правильным
+        if (questionType === QuestionType.TEXT_INPUT || questionType === QuestionType.FILL_IN_THE_BLANK) {
+            // Для TEXT_INPUT и FILL_IN_THE_BLANK создаем только один ответ, который является правильным
             const textInputAnswer: AnswerDTO[] = [
                 {
                     id: `temp-${Date.now()}-0`,
@@ -214,7 +215,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
             const newQuestion: QuestionDTO = {
                 id: editingQuestion?.id || `temp-${Date.now()}`,
                 text: formatSpaces(data.question),
-                type: QuestionType.TEXT_INPUT,
+                type: questionType,
                 answers: textInputAnswer,
             }
 
@@ -343,6 +344,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
             setQuestions(prev => prev.filter(q => q.id !== questionToDelete))
             setExpandedQuestionIds(prev => prev.filter(id => id !== questionToDelete))
             setQuestionToDelete(null)
+            resetForm()
         }
     }
 
@@ -433,14 +435,13 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
 
                 <div className={styles.newQuestionForm}>
                     <div className={styles.formContent}>
-                        <h3 className={styles.title}>
-                            {editingQuestion ? "Редактирование вопроса" : "Новый вопрос"}
-                        </h3>
+                        <h3 className={styles.title}>{editingQuestion ? "Редактирование вопроса" : "Новый вопрос"}</h3>
                         <div className={styles.questionTypeSelector}>
                             <label htmlFor="questionType">Тип вопроса:</label>
                             <select
                                 id="questionType"
                                 value={questionType}
+                                disabled={editingQuestion !== null}
                                 onChange={e => {
                                     setQuestionType(e.target.value as QuestionType)
                                     // Дополнительная логика при изменении типа
@@ -448,6 +449,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                                 className={styles.selectInput}>
                                 <option value={QuestionType.MULTIPLE_CHOICE}>Варианты ответа</option>
                                 <option value={QuestionType.TEXT_INPUT}>Текстовый ввод</option>
+                                <option value={QuestionType.FILL_IN_THE_BLANK}>Заполнить пропуск</option>
                             </select>
                         </div>
                         <div>
@@ -457,8 +459,16 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
                                     setValue={setValue}
                                     errors={formState.errors}
                                     trigger={trigger}
-                                    isButtonDisabled={!isFormValid}
                                     onSubmit={handleSubmit(handleAddQuestion)}
+                                />
+                            ) : questionType === QuestionType.FILL_IN_THE_BLANK ? (
+                                <FillInTheBlankQuestionForm
+                                    register={register}
+                                    setValue={setValue}
+                                    errors={formState.errors}
+                                    trigger={trigger}
+                                    onSubmit={handleSubmit(handleAddQuestion)}
+                                    isEditing={!!editingQuestion}
                                 />
                             ) : (
                                 <>

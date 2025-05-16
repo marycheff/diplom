@@ -16,7 +16,7 @@ const AIButton: FC<AIButtonProps> = ({ generating = false, type = "button", onCl
                 generating ? "ai-button--generating" : ""
             }`}
             type={type}
-            disabled={disabled}
+            disabled={disabled || generating}
             onClick={onClick}>
             {generating ? (
                 <>

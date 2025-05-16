@@ -1,4 +1,5 @@
 import { GenerateAnswerFormData } from "@/shared/types"
+import { answerValidationRules, questionValidationRules } from "@/shared/types/utils/validationRules"
 import { AIButton } from "@/shared/ui/Button"
 
 import { ValidatedInput } from "@/shared/ui/Input"
@@ -33,36 +34,20 @@ const QuestionForm: FC<QuestionFormProps> = ({
     }
     const isWithinCharLimit = (value: string, max: number): boolean => value.length <= max
 
-    const questionValidation: RegisterOptions = {
-        required: "Вопрос обязателен",
-        validate: (value: string) => {
-            if (!hasText(value)) return "Вопрос должен содержать текст"
-            if (!isWithinCharLimit(value, 100)) return "Вопрос не должен превышать 100 символов"
-            if (!isWithinWordCount(value, 2, 100)) return "Вопрос должен содержать от 2 слов"
-            return true
-        },
-    }
-    const answerValidation: RegisterOptions = {
-        required: "Ответ обязателен",
-        validate: (value: string) => {
-            if (!isWithinCharLimit(value, 100)) return "Ответ не должен превышать 100 символов"
-            if (!isWithinWordCount(value, 1, 5)) return "Ответ должен содержать от 1 до 5 слов"
-            return true
-        },
-    }
+   
 
     return (
         <form onSubmit={onSubmit}>
             {/* {isLoading && <Loader delay={300} />} */}
             <ValidatedInput
-                clearable
                 placeholder="Вопрос"
                 name="question"
                 trigger={trigger}
                 register={register}
                 setValue={setValue}
                 errors={errors?.question}
-                validationRules={questionValidation}
+                validationRules={questionValidationRules}
+                multiline
             />
             <br />
             <ValidatedInput
@@ -73,7 +58,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 register={register}
                 setValue={setValue}
                 errors={errors?.answer}
-                validationRules={answerValidation}
+                validationRules={answerValidationRules}
             />
 
             <Select

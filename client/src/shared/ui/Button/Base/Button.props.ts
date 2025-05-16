@@ -9,4 +9,5 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     type?: "button" | "reset" | "submit"
     tooltip?: string
     className?: string
+    variant?: "primary" | "secondary"
 }
