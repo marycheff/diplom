@@ -37,7 +37,7 @@ export const calculateTestScore = (questionsWithAnswers: QuestionWithAnswers[], 
     for (const question of questionsWithAnswers) {
         const userAnswersForQuestion = userAnswers.filter(a => a.questionId === question.id)
 
-        if (question.type === "TEXT_INPUT") {
+        if (question.type === "TEXT_INPUT" || question.type === "FILL_IN_THE_BLANK") {
             const allCorrect =
                 userAnswersForQuestion.length > 0 && userAnswersForQuestion.every(a => a.isCorrect === true)
 
@@ -61,7 +61,6 @@ export const calculateTestScore = (questionsWithAnswers: QuestionWithAnswers[], 
     console.log("score", (correctQuestionsCount / totalQuestions) * 100)
     return totalQuestions > 0 ? (correctQuestionsCount / totalQuestions) * 100 : 0
 }
-
 
 export const generateSeedFromAttemptId = (attemptId: string): number => {
     let hash = 0

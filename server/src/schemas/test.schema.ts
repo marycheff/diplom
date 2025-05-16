@@ -24,7 +24,7 @@ export const answerSchema = z.object({
 
 export const questionSchema = z.object({
     text: z.string().min(1, "Текст вопроса обязателен").max(500, "Максимальная длина 500 символов"),
-    type: z.enum(["SINGLE_CHOICE", "MULTIPLE_CHOICE", "TEXT_INPUT"]),
+    type: z.enum(["SINGLE_CHOICE", "MULTIPLE_CHOICE", "TEXT_INPUT", "FILL_IN_THE_BLANK"]),
     answers: z
         .array(answerSchema)
         .min(1, "Должен быть хотя бы один ответ")

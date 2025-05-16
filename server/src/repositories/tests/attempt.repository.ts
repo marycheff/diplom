@@ -86,8 +86,11 @@ class AttemptRepository {
                     where: { attemptId, questionId },
                 })
 
-                // Для вопросов с текстовым вводом
-                if (question?.type === "TEXT_INPUT" && textAnswer !== undefined) {
+                // Для вопросов с текстовым вводом и вопросов с пропусками
+                if (
+                    (question?.type === "TEXT_INPUT" || question?.type === "FILL_IN_THE_BLANK") &&
+                    textAnswer !== undefined
+                ) {
                     // Получаем правильный ответ из теста
                     const correctAnswer = await tx.answer.findFirst({
                         where: {
@@ -96,7 +99,7 @@ class AttemptRepository {
                         },
                     })
 
-                    // Определяем, правильный ли ответ 
+                    // Определяем, правильный ли ответ
                     const isCorrect = correctAnswer?.text.toLowerCase() === textAnswer?.toLowerCase()
 
                     // Создаем запись ответа пользователя с текстовым ответом и флагом правильности

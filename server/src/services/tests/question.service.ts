@@ -326,7 +326,7 @@ class QuestionService {
 
         // Проверка на недопустимые слова перед обновлением
         this.checkForBadWords(questions)
-
+        this.validateFillInTheBlankQuestions(questions)
         return executeTransaction(async tx => {
             // Проверка существования теста
             const test = await testRepository.findById(testId, tx)
@@ -429,6 +429,31 @@ class QuestionService {
             await redisClient.del(`user-test:${testId}`)
             return processedQuestions
         })
+    }
+    private validateFillInTheBlankQuestions(questions: QuestionDTO[]): void {
+        for (const question of questions) {
+            if (question.type === "FILL_IN_THE_BLANK") {
+                // Проверяем наличие маркера {blank} в тексте вопроса
+                if (!question.text.includes("{blank}")) {
+                    logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK отсутствует маркер {blank}`, {
+                        questionId: question.id,
+                    })
+                    throw ApiError.BadRequest("В вопросе с пропуском должен быть указан маркер {blank}")
+                }
+
+                // Проверяем количество правильных ответов (должен быть только один)
+                const correctAnswers = question.answers.filter(answer => answer.isCorrect)
+                if (correctAnswers.length !== 1) {
+                    logger.warn(
+                        `[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK должен быть ровно один правильный ответ`,
+                        {
+                            questionId: question.id,
+                        }
+                    )
+                    throw ApiError.BadRequest("В вопросе с пропуском должен быть ровно один правильный ответ")
+                }
+            }
+        }
     }
 }
 
