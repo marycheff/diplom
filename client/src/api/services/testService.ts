@@ -23,6 +23,9 @@ class TestService {
             },
         })
     }
+    deleteTest(testId: string): Promise<AxiosResponse<void>> {
+        return axiosInstance.delete<void>(`/tests/${testId}`)
+    }
     getUnmoderatedTests(page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
         return axiosInstance.get<TestsListDTO>("/tests/all-unmoderated-tests", {
             params: {

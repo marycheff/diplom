@@ -330,6 +330,8 @@ class TestService {
             await testRepository.deleteById(testId)
             await redisClient.del(`test:${testId}`)
             await redisClient.del(`user-test:${testId}`)
+            await redisClient.del(`user-test-basic:${testId}`)
+
             logger.info(`[${LOG_NAMESPACE}] Тест успешно удален`, { testId })
         } catch (error) {
             if (error instanceof ApiError) {

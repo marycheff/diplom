@@ -158,5 +158,12 @@ export const useTestStore = create<TestState>(set => {
             }
             return withModerationStatusUpdating(operation)
         },
+
+        deleteTest: async id => {
+            const operation = async () => {
+                await testService.deleteTest(id)
+            }
+            return withLoading(operation)
+        },
     }
 })

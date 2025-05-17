@@ -18,7 +18,6 @@ import {
     TestDTO,
     TestSettingsDTO,
     TestVisibilityStatus,
-    UpdateTestDTO,
 } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
@@ -27,9 +26,8 @@ import { ConfirmationModal, Modal } from "@/shared/ui/Modal"
 import { formatSeconds, formatSpaces, shortenText } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { FaLock, FaLockOpen, FaPlus } from "react-icons/fa"
+import { FaLock, FaLockOpen, FaPlus, FaTrash } from "react-icons/fa"
 import { MdEdit } from "react-icons/md"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import styles from "./TestInfoPage.module.scss"
@@ -50,6 +48,7 @@ const TestInfoPage = () => {
         isVisibilityUpdating,
         changeModerationStatus,
         isModerationStatusUpdating,
+        deleteTest,
     } = useTestStore()
     const [test, setTest] = useState<TestDTO | null>(null)
     const { user: currentUser, isAdmin } = useAuthStore()
@@ -62,6 +61,7 @@ const TestInfoPage = () => {
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(location.pathname.endsWith("/edit-settings"))
     const [isShortInfoModalOpen, setIsShortInfModalOpen] = useState(location.pathname.endsWith("/edit-info"))
     const [isModerationStatusModalOpen, setIsModerationStatusModalOpen] = useState(false)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
 
@@ -82,8 +82,6 @@ const TestInfoPage = () => {
         fetchTest()
     }, [testId, getTestById])
 
-    const { register } = useForm()
-
     if (isFetching) {
         return <Loader fullScreen />
     }
@@ -91,21 +89,6 @@ const TestInfoPage = () => {
         return <TestNotFound />
     }
 
-    const handleAddQuestions = async (newQuestions: QuestionDTO[]) => {
-        if (!test) return
-
-        const updatedTest = {
-            ...test,
-            questions: [...(test.questions || []), ...newQuestions],
-        }
-
-        const data: UpdateTestDTO = {
-            questions: newQuestions,
-        }
-        await updateTestQuestions(test.id, data)
-        toast.success("Вопрос(ы) добавлены")
-        setTest(updatedTest)
-    }
     const handleEditQuestionsButton = () => {
         setIsEditQuestionsModalOpen(true)
     }
@@ -136,7 +119,7 @@ const TestInfoPage = () => {
         setTest(updatedTest)
     }
 
-    const handleQuestionsUpdate = async (updatedQuestions: QuestionDTO[]) => {
+    const handleQuestionsUpsert = async (updatedQuestions: QuestionDTO[]) => {
         if (!test) return
 
         const updatedTest = {
@@ -202,11 +185,12 @@ const TestInfoPage = () => {
                         <h1 className={styles.blockTitle}>Информация о тесте</h1>
                         <div className={styles.buttonContainer}>
                             <Button
-                                onClick={handleEditShortInfoButton}
+                                onClick={() => setIsDeleteModalOpen(true)}
                                 className={styles.editBtn}
-                                tooltip="Редактировать">
-                                <MdEdit />
+                                tooltip="Удалить тест">
+                                <FaTrash />
                             </Button>
+                            <CopyTestButton test={test} className={styles.editBtn} />
                             <Button
                                 onClick={handleChangeVisibilityStatus}
                                 className={styles.editBtn}
@@ -216,7 +200,12 @@ const TestInfoPage = () => {
                                 }>
                                 {test.visibilityStatus === TestVisibilityStatus.HIDDEN ? <FaLock /> : <FaLockOpen />}
                             </Button>
-                            <CopyTestButton test={test} className={styles.editBtn} />
+                            <Button
+                                onClick={handleEditShortInfoButton}
+                                className={styles.editBtn}
+                                tooltip="Редактировать">
+                                <MdEdit />
+                            </Button>
                         </div>
                     </div>
                     {isShortInfoUpdating || isModerationStatusUpdating ? (
@@ -495,7 +484,7 @@ const TestInfoPage = () => {
                 <QuestionsEditor
                     data={test.questions || []}
                     onQuestionComplete={questions => {
-                        handleQuestionsUpdate(questions)
+                        handleQuestionsUpsert(questions)
                     }}
                     onCancel={handleCloseModal}
                     setHasUnsavedChanges={setHasUnsavedChanges}
@@ -526,6 +515,20 @@ const TestInfoPage = () => {
                     onCancel={() => setIsModerationStatusModalOpen(false)}
                 />
             </Modal>
+
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={async () => {
+                    await deleteTest(test.id)
+                    toast.success("Тест удалён")
+                    navigate("/admin/tests")
+                }}
+                title="Удаление теста"
+                confirmText="Удалить"
+                cancelText="Отмена">
+                <p>Вы уверены, что хотите удалить этот тест?</p>
+            </ConfirmationModal>
         </div>
     )
 }

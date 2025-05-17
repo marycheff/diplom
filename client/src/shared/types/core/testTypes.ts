@@ -33,6 +33,7 @@ export interface TestState {
     getSnapshotById: (snapshotId: string) => Promise<SnapshotWithOriginalTestDTO | undefined>
     changeVisibilityStatus: (testId: string, status: TestVisibilityStatus) => Promise<void>
     changeModerationStatus: (testId: string, status: ModerationStatus) => Promise<void>
+    deleteTest: (id: string) => Promise<void>
 
     // CACHE
     CACHE_EXPIRATION_TIME: number
