@@ -42,6 +42,8 @@ router.post(
 
 // Получение всех тестов пользователя (только свои)
 router.get("/my-tests", authMiddleware, testController.getMyTests)
+// Получение всех тестов пользователя
+router.get("/users/:userId", authMiddleware, adminMiddleware, testController.getUserTests)
 
 // Получение всех тестов (админ)
 router.get("/all-tests", authMiddleware, adminMiddleware, testController.getAllTests)
@@ -169,7 +171,7 @@ router.get(
 router.get("/:testId/attempts", authMiddleware, testOwnershipMiddleware, attemptController.getTestAttempts)
 
 router.get("/attempts/my-attempts", authMiddleware, attemptController.getMyAttempts)
-router.get("/attempts/user-attempts", authMiddleware, adminMiddleware, attemptController.getUserAttempts)
+router.get("/attempts/users/:userId", attemptController.getUserAttempts)
 router.post("/attempts/:attemptId/time-spent", conditionalAuthMiddleware, attemptController.updateTimeSpent)
 
 router.get(
@@ -194,7 +196,6 @@ router.get(
     validateRequest(getTestSnapshotSchema),
     testController.getTestSnapshot
 )
-// Изменение статуса видимости теста
 // Изменение статуса Модерации теста
 router.put(
     "/:testId/visibility",

@@ -224,7 +224,7 @@ class TestService {
         }
     }
 
-    async getMyTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
+    async getUserTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение тестов пользователя`, { userId, page, limit })
         try {
             const skip = (page - 1) * limit

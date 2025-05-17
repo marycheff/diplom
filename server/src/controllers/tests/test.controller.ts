@@ -58,7 +58,25 @@ class TestController {
             if (page < 1 || limit < 1) {
                 throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
             }
-            const tests = await testService.getMyTests(userId, page, limit)
+            const tests = await testService.getUserTests(userId, page, limit)
+            res.json(tests)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async getUserTests(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { userId } = req.params
+            if (!userId) {
+                throw ApiError.Unauthorized()
+            }
+            const page = parseInt(req.query.page as string) || 1
+            const limit = parseInt(req.query.limit as string) || 10
+
+            if (page < 1 || limit < 1) {
+                throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
+            }
+            const tests = await testService.getUserTests(userId, page, limit)
             res.json(tests)
         } catch (error) {
             next(error)
