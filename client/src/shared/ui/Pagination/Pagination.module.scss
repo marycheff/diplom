@@ -6,7 +6,6 @@
     justify-content: center;
     width: 100%;
     margin-bottom: 30px;
-    
 }
 .dots {
     margin: 0 8px;
@@ -38,18 +37,18 @@
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: color($secondary, 200);
+    background-color: $secondary-200;
 }
 .buttonSymbol {
     // font-size: 13px;
     font-weight: bold;
 }
 .pageCurrent {
-    background-color: color($secondary, 600);
+    background-color: $secondary-600;
     color: white;
 }
 
 .page:hover {
-    background-color: color($secondary, 400);
+    background-color: $secondary-400;
     color: white;
 }

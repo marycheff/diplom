@@ -1,6 +1,6 @@
 .wrapper {
     min-height: 100vh;
-    background-color: color($background, 200);
+    background-color: $background-200;
     display: flex;
     flex-direction: column;
 }
@@ -10,7 +10,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 2rem;
-    background-color: color($primary, 600);
+    background-color: $primary-600;
     color: white;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     border-bottom-left-radius: 16px;
@@ -32,9 +32,7 @@
         border: none;
         border-radius: 8px;
         font-size: 1rem;
-       
     }
-   
 }
 
 .main {
@@ -53,13 +51,13 @@
 
     h1 {
         font-size: 3rem;
-        color: color($primary, 600);
+        color: $primary-600;
         margin-bottom: 1rem;
     }
 
     p {
         font-size: 1.25rem;
-        color: color($secondary, 400);
+        color: $secondary-400;
         margin-bottom: 2rem;
     }
 }
@@ -72,7 +70,7 @@
 }
 
 .featureCard {
-    background-color: color($background, 100);
+    background-color: $background-100;
     padding: 2rem;
     border-radius: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
@@ -85,17 +83,17 @@
     }
 
     h3 {
-        color: color($primary, 600);
+        color: $primary-600;
         margin-bottom: 0.5rem;
     }
 
     p {
-        color: color($secondary, 600);
+        color: $secondary-600;
     }
 }
 
 .footer {
-    background-color: color($primary, 800);
+    background-color: $primary-800;
     color: white;
     padding: 1.5rem 2rem;
     display: flex;

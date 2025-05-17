@@ -25,7 +25,7 @@
     }
 
     label {
-        color: color($secondary, 400);
+        color: $secondary-400;
         line-height: var(--size);
         cursor: pointer;
         position: relative;
@@ -40,14 +40,14 @@
             width: var(--size);
             margin-right: 8px;
             float: left;
-            border: 2px solid color($secondary, 400);
+            border: 2px solid $secondary-400;
             border-radius: 3px;
             transition: 0.15s all ease-out;
         }
     }
 
     svg {
-        stroke: color($secondary, 400);
+        stroke: $secondary-400;
         stroke-width: 5px;
         height: 0;
         width: calc(var(--size) * 0.6);

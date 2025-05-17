@@ -2,7 +2,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    // background-color: color($background, 200);
+    // background-color: $background-200;
 }
 .actionLink {
     text-decoration: none;
@@ -80,7 +80,7 @@
 }
 
 .infoBlock {
-    background-color: color($background, 100);
+    background-color: $background-100;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
@@ -94,8 +94,8 @@
 }
 
 .blockTitle {
-    background-color: color($primary, 400);
-    color: color($background, 100);
+    background-color: $primary-400;
+    color: $background-100;
     padding: 15px 20px;
     margin: 0;
     font-size: 18px;
@@ -113,7 +113,7 @@
     display: flex;
     margin-bottom: 10px;
     padding: 8px 0;
-    border-bottom: 1px solid color($background, 600);
+    border-bottom: 1px solid $background-600;
 
     &:last-child {
         border-bottom: none;
@@ -131,7 +131,7 @@
 
 .label {
     font-weight: 600;
-    color: color($secondary, 600);
+    color: $secondary-600;
     // width: 35%;
     width: 40%;
     min-width: 120px;
@@ -142,7 +142,7 @@
 }
 
 .value {
-    color: color($primary, 600);
+    color: $primary-600;
     flex: 1;
     margin-left: 15px;
     width: 60%;
@@ -150,13 +150,13 @@
 }
 
 .emptyField {
-    color: color($secondary, 400);
+    color: $secondary-400;
     font-style: italic;
 }
 
 .emptyBlock {
     text-align: center;
-    color: color($secondary, 400);
+    color: $secondary-400;
     font-style: italic;
     padding: 20px 0;
     flex-grow: 1;
@@ -172,10 +172,10 @@
 }
 
 .questionBlock {
-    background-color: color($background, 400);
+    background-color: $background-400;
     border-radius: 12px;
     padding: 15px;
-    border-left: 4px solid color($primary, 400);
+    border-left: 4px solid $primary-400;
 }
 
 .questionHeader {
@@ -194,8 +194,8 @@
 }
 
 .questionNumber {
-    background-color: color($primary, 400);
-    color: color($background, 100);
+    background-color: $primary-400;
+    color: $background-100;
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -210,12 +210,12 @@
     font-weight: 600;
     font-size: 16px;
     flex: 1;
-    color: color($primary, 600);
+    color: $primary-600;
 }
 
 .questionType {
-    background-color: color($background, 600);
-    color: color($secondary, 800);
+    background-color: $background-600;
+    color: $secondary-800;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 12px;
@@ -234,16 +234,16 @@
 }
 
 .answerItem {
-    background-color: color($background, 200);
+    background-color: $background-200;
     border-radius: 8px;
     padding: 10px 15px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border: 1px solid color($background, 600);
+    border: 1px solid $background-600;
 
     &:hover {
-        background-color: color($background, 400);
+        background-color: $background-400;
     }
 
     @media screen and (max-width: 480px) {
@@ -258,17 +258,17 @@
 }
 
 .correctAnswer {
-    border-left: 4px solid color($primary, 400);
+    border-left: 4px solid $primary-400;
 }
 
 .answerText {
     flex: 1;
-    color: color($primary, 600);
+    color: $primary-600;
 }
 
 .correctBadge {
-    background-color: color($primary, 400);
-    color: color($background, 100);
+    background-color: $primary-400;
+    color: $background-100;
     padding: 3px 8px;
     border-radius: 4px;
     font-size: 12px;
@@ -281,8 +281,8 @@
 }
 
 .blockTitle {
-    background-color: color($primary, 400);
-    color: color($background, 100);
+    background-color: $primary-400;
+    color: $background-100;
     padding: 15px 20px;
     margin: 0;
     font-size: 18px;
@@ -297,7 +297,7 @@
     transform: translateY(-50%);
 }
 .editBtn {
-    // background-color: color($primary, 200);
+    // background-color: $primary-200;
     background-color: #00000000;
     // background-color: #4e6554;
     font-size: 17px;
@@ -305,7 +305,7 @@
 }
 
 .authBlock {
-    background-color: color($background, 100);
+    background-color: $background-100;
     border-radius: 20px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
     padding: 32px;
@@ -326,7 +326,7 @@
 
     div {
         margin-bottom: 24px;
-        color: color($primary, 600);
+        color: $primary-600;
         line-height: 1.6;
     }
 
@@ -339,11 +339,11 @@
         padding: 12px 24px;
         margin: 12px;
         border-radius: 12px;
-        background-color: color($secondary, 600);
+        background-color: $secondary-600;
         transition: all 0.2s ease-in-out;
 
         &:hover {
-            background-color: color($secondary, 400);
+            background-color: $secondary-400;
         }
     }
 

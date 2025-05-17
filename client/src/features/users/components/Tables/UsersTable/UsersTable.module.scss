@@ -30,7 +30,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            border: 2px solid color($secondary, 600);
+            border: 2px solid $secondary-600;
 
             th,
             td {
@@ -44,7 +44,7 @@
             }
 
             th {
-                background-color: color($secondary, 600);
+                background-color: $secondary-600;
 
                 color: white;
                 font-weight: 600;

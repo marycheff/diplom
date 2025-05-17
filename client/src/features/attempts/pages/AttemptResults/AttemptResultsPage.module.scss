@@ -5,7 +5,7 @@
 }
 
 .infoBlock {
-    background-color: color($background, 100);
+    background-color: $background-100;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
@@ -14,8 +14,8 @@
 }
 
 .blockTitle {
-    background-color: color($primary, 400);
-    color: color($background, 100);
+    background-color: $primary-400;
+    color: $background-100;
     padding: 15px 20px;
     margin: 0;
     font-size: 18px;
@@ -32,7 +32,7 @@
     display: flex;
     margin-bottom: 10px;
     padding: 8px 0;
-    border-bottom: 1px solid color($background, 600);
+    border-bottom: 1px solid $background-600;
 
     &:last-child {
         border-bottom: none;
@@ -50,7 +50,7 @@
 
 .label {
     font-weight: 600;
-    color: color($secondary, 600);
+    color: $secondary-600;
     width: 35%;
     min-width: 120px;
 
@@ -60,20 +60,20 @@
 }
 
 .value {
-    color: color($primary, 600);
+    color: $primary-600;
     flex: 1;
     width: 65%;
     word-break: break-word;
 }
 
 .emptyField {
-    color: color($secondary, 400);
+    color: $secondary-400;
     font-style: italic;
 }
 
 .emptyBlock {
     text-align: center;
-    color: color($secondary, 400);
+    color: $secondary-400;
     font-style: italic;
     padding: 20px 0;
     flex-grow: 1;
@@ -89,10 +89,10 @@
 }
 
 .questionBlock {
-    background-color: color($background, 400);
+    background-color: $background-400;
     border-radius: 12px;
     padding: 15px;
-    border-left: 4px solid color($primary, 400);
+    border-left: 4px solid $primary-400;
 }
 
 .questionHeader {
@@ -111,8 +111,8 @@
 }
 
 .questionNumber {
-    background-color: color($primary, 400);
-    color: color($background, 100);
+    background-color: $primary-400;
+    color: $background-100;
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -127,12 +127,12 @@
     font-weight: 600;
     font-size: 16px;
     flex: 1;
-    color: color($primary, 600);
+    color: $primary-600;
 }
 
 .questionType {
-    background-color: color($background, 600);
-    color: color($secondary, 800);
+    background-color: $background-600;
+    color: $secondary-800;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 12px;
@@ -151,18 +151,18 @@
 }
 
 .correctVerdict {
-    background-color: rgba(color($primary, 400), 0.1);
-    border-left: 4px solid color($primary, 400);
+    background-color: rgba($primary-400, 0.1);
+    border-left: 4px solid $primary-400;
 }
 
 .incorrectVerdict {
-    background-color: rgba(color($error, 400), 0.1);
-    border-left: 4px solid color($error, 400);
+    background-color: rgba($red-400, 0.1);
+    border-left: 4px solid $red-400;
 }
 
 .verdictLabel {
     font-weight: 600;
-    color: color($secondary, 600);
+    color: $secondary-600;
 }
 
 .verdictValue {
@@ -184,22 +184,22 @@
 }
 
 .answerTitle {
-    color: color($secondary, 600);
+    color: $secondary-600;
     margin-bottom: 10px;
     font-size: 14px;
 }
 
 .answerItem {
-    background-color: color($background, 200);
+    background-color: $background-200;
     border-radius: 8px;
     padding: 10px 15px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border: 1px solid color($background, 600);
+    border: 1px solid $background-600;
 
     &:hover {
-        background-color: color($background, 400);
+        background-color: $background-400;
     }
 
     @media screen and (max-width: 480px) {
@@ -219,22 +219,22 @@
 }
 
 .correctAnswer {
-    border-left: 4px solid color($primary, 400);
+    border-left: 4px solid $primary-400;
 }
 
 .incorrectAnswer {
-    border-left: 4px solid color($error, 400);
+    border-left: 4px solid $red-400;
 }
 
 .answerText {
     flex: 1;
-    color: color($primary, 600);
+    color: $primary-600;
 }
 
 .correctBadge,
 .answerStatus {
-    background-color: color($primary, 400);
-    color: color($background, 100);
+    background-color: $primary-400;
+    color: $background-100;
     padding: 3px 8px;
     border-radius: 4px;
     font-size: 12px;
@@ -242,8 +242,8 @@
 }
 
 .statusBadge {
-    background-color: color($primary, 400);
-    color: color($background, 100);
+    background-color: $primary-400;
+    color: $background-100;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 14px;
@@ -252,7 +252,7 @@
 .answerMeta {
     margin-top: 12px;
     padding: 10px;
-    background-color: color($background, 200);
+    background-color: $background-200;
     border-radius: 8px;
 }
 
@@ -266,31 +266,31 @@
 
 .metaLabel {
     font-weight: 600;
-    color: color($secondary, 600);
+    color: $secondary-600;
     min-width: 150px;
 }
 
 .metaValue {
-    color: color($primary, 600);
+    color: $primary-600;
 }
 
 .missedAnswersSection {
     margin-top: 15px;
     padding: 10px;
-    background-color: color($background, 200);
+    background-color: $background-200;
     border-radius: 8px;
-    border-left: 4px solid color($error, 400);
+    border-left: 4px solid $red-400;
 }
 
 .missedAnswersTitle {
-    color: color($error, 600);
+    color: $red-600;
     margin-bottom: 10px;
     font-size: 14px;
     font-weight: 600;
 }
 
 .missedAnswer {
-    border-left: 4px solid color($error, 400);
+    border-left: 4px solid $red-400;
     margin-bottom: 8px;
     &:last-child {
         margin-bottom: 0;
@@ -298,8 +298,8 @@
 }
 
 .missedBadge {
-    background-color: color($error, 400);
-    color: color($background, 100);
+    background-color: $red-400;
+    color: $background-100;
     padding: 3px 8px;
     border-radius: 4px;
     font-size: 12px;

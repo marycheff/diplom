@@ -24,13 +24,13 @@
     padding: 8px 16px;
     border-radius: 6px;
     background: transparent;
-    border: 1px solid color($secondary, 200);
-    color: color($secondary, 400);
+    border: 1px solid $secondary-200;
+    color: $secondary-400;
     font-weight: 500;
 
-     &:hover {
-        background-color: color($background, 200);
-        color: color($secondary, 600);
+    &:hover {
+        background-color: $background-200;
+        color: $secondary-600;
     }
 }
 

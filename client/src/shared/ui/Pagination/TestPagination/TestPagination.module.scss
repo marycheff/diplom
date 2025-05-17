@@ -43,18 +43,18 @@
 .page {
     padding: 6px 12px;
     border-radius: 50px;
-    background-color: color($secondary, 200);
+    background-color: $secondary-200;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .page:hover {
-    background-color: color($secondary, 400);
+    background-color: $secondary-400;
     color: white;
 }
 
 .pageCurrent {
-    background-color: color($secondary, 600);
+    background-color: $secondary-600;
     color: white;
 }

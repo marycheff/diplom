@@ -1,8 +1,7 @@
-@use "@styles/variables" as *;
 $primary-color: #2563eb;
 $secondary-color: #6b7280;
 $success-color: #10b981;
-$error-color: #ef4444;
+$red-color: #ef4444;
 $border-radius: 16px;
 $transition: all 0.3s ease;
 
@@ -22,7 +21,7 @@ $transition: all 0.3s ease;
     margin-bottom: 2rem;
     padding: 2rem;
     background: $bg-surface;
-    // background: color($background, 200);
+    // background: $background-200;
     border-radius: $border-radius;
     box-shadow: $shadow-medium;
     transition: $transition;
@@ -64,7 +63,7 @@ $transition: all 0.3s ease;
                 color: $success-color;
             }
             &.notActivated {
-                color: $error-color;
+                color: $red-color;
             }
         }
     }

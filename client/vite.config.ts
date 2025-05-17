@@ -5,7 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths"
 export default defineConfig({
     plugins: [react(), tsconfigPaths()],
     server: {
-        // host: "0.0.0.0", 
+        // host: "0.0.0.0",
     },
     build: {
         outDir: "dist",
@@ -21,7 +21,7 @@ export default defineConfig({
     css: {
         preprocessorOptions: {
             scss: {
-                additionalData: `@use "@styles/_variables" as *;`,
+                additionalData: `@use "@styles/variables" as *;`,
             },
         },
     },

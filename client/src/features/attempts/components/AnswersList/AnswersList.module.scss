@@ -43,14 +43,14 @@
 }
 
 .deleteButton {
-    background-color: color($error, 400);
+    background-color: $red-400;
     color: white;
     border-radius: 4px;
     font-size: 1.25rem;
     padding: 4px 10px;
 
     &:hover {
-        background-color: color($error, 200);
+        background-color: $red-600;
     }
 }
 

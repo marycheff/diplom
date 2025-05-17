@@ -1,4 +1,3 @@
-
 .connectionOverlay {
     position: fixed;
     top: 0;
@@ -13,7 +12,7 @@
 }
 
 .connectionMessage {
-    background-color: color($background, 200);
+    background-color: $background-200;
     border-radius: 8px;
     padding: 24px;
     max-width: 400px;
@@ -29,16 +28,16 @@
 
 .connectionMessage h2 {
     margin: 0 0 12px;
-    color: color($primary, 600);
+    color: $primary-600;
     font-size: 20px;
 }
 
 .connectionMessage p {
     margin: 0;
-    color: color($secondary, 800);
+    color: $secondary-800;
     font-size: 16px;
 }
 
 .headerH2 {
-    color: color($error, 400);
+    color: $red-400;
 }
