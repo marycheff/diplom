@@ -1,6 +1,21 @@
 import { formatSpaces } from "@/shared/utils/formatter"
 import { RegisterOptions } from "react-hook-form"
 
+export const testTitleValidationRules: RegisterOptions = {
+    required: "Название теста обязательно",
+    maxLength: {
+        value: 100,
+        message: "Название теста не должно превышать 100 символов",
+    },
+}
+
+export const testDescriptionValidationRules: RegisterOptions = {
+    maxLength: {
+        value: 500,
+        message: "Описание теста не должно превышать 500 символов",
+    },
+}
+
 export const emailValidationRules: RegisterOptions = {
     required: "Email обязателен",
     pattern: {

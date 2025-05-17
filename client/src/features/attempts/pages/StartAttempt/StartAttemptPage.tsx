@@ -35,13 +35,15 @@ const StartAttemptPage = () => {
         }
 
         const fetchTest = async () => {
-            const fetchedTest = await getTestForUserById(testId)
-            if (fetchedTest) {
-                setTest(fetchedTest)
+            try {
+                const fetchedTest = await getTestForUserById(testId)
+                if (fetchedTest) {
+                    setTest(fetchedTest)
+                }
                 setIsDataLoaded(true)
-            } else {
-                toast.error("Тест не найден")
-                navigate("/", { replace: true })
+            } catch (error) {
+                setIsDataLoaded(true)
+                return <TestNotFound />
             }
         }
         fetchTest()

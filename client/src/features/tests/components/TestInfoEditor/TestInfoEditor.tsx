@@ -1,4 +1,5 @@
 import { ShortTestInfo } from "@/shared/types"
+import { testDescriptionValidationRules, testTitleValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
 import { formatSpaces } from "@/shared/utils/formatter"
@@ -49,6 +50,7 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
                 <div className={styles.formContent}>
                     {/* Секция с основными полями */}
                     <div className={styles.section}>
+                     
                         <ValidatedInput
                             trigger={trigger}
                             name="title"
@@ -56,9 +58,7 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
                             register={register}
                             setValue={setValue}
                             errors={errors.title}
-                            validationRules={{
-                                required: "Название теста обязательно",
-                            }}
+                            validationRules={testTitleValidationRules}
                             className={styles.titleInput}
                         />
 
@@ -70,6 +70,7 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
                             register={register}
                             setValue={setValue}
                             className={styles.descriptionInput}
+                            validationRules={testDescriptionValidationRules}
                             rows={4}
                         />
                     </div>

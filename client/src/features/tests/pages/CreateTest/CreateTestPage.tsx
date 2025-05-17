@@ -2,6 +2,7 @@ import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
 import { ShortTestInfo } from "@/shared/types"
+import { testDescriptionValidationRules, testTitleValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
 import { formatSpaces } from "@/shared/utils/formatter"
@@ -21,6 +22,7 @@ const CreateTestPage = () => {
         formState: { errors },
         setValue,
         trigger,
+        watch,
     } = useForm<ShortTestInfo>({
         mode: "onBlur",
         reValidateMode: "onChange",
@@ -34,6 +36,7 @@ const CreateTestPage = () => {
             ? navigate(generatePath(ROUTES.ADMIN_MY_TEST_INFO, { testId: response?.id }))
             : navigate(generatePath(ROUTES.MY_TEST_INFO, { testId: response?.id }))
     }
+    const title = watch("title")
 
     if (!user?.isActivated) {
         return (
@@ -69,36 +72,38 @@ const CreateTestPage = () => {
 
     return (
         <div className={styles.pageWrapper}>
-            <div className={styles.container}>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <ValidatedInput
-                        trigger={trigger}
-                        clearable
-                        name="title"
-                        placeholder="Название (обязательно)"
-                        register={register}
-                        setValue={setValue}
-                        errors={errors.title}
-                        validationRules={{
-                            required: "Название теста обязательно",
-                        }}
-                    />
-                    <br />
-                    <ValidatedInput
-                        name="description"
-                        multiline
-                        // clearable
-                        trigger={trigger}
-                        errors={errors.description}
-                        placeholder="Описание"
-                        register={register}
-                        setValue={setValue}
-                    />
-                    <br />
-                    <Button type="submit" disabled={isLoading}>
-                        Создать тест
-                    </Button>
-                </form>
+            <div className={styles.content}>
+                <h1 className={styles.title}>Создание теста</h1>
+                <div className={styles.container}>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <ValidatedInput
+                            trigger={trigger}
+                            clearable
+                            name="title"
+                            placeholder="Название (обязательно)"
+                            register={register}
+                            setValue={setValue}
+                            errors={errors.title}
+                            validationRules={testTitleValidationRules}
+                        />
+
+                        <ValidatedInput
+                            name="description"
+                            multiline
+                            // clearable
+                            trigger={trigger}
+                            errors={errors.description}
+                            placeholder="Описание"
+                            register={register}
+                            setValue={setValue}
+                            validationRules={testDescriptionValidationRules}
+                        />
+
+                        <Button type="submit" disabled={isLoading || !title}>
+                            Создать тест
+                        </Button>
+                    </form>
+                </div>
             </div>
         </div>
     )

@@ -30,7 +30,6 @@ const AdminPage = () => {
         <div className={styles.pageWrapper}>
             <div className={styles.content}>
                 <h1 className={styles.title}>Админ-панель</h1>
-
                 {sections.map((section, index) => (
                     <section key={index} className={styles.section}>
                         <h2 className={styles.sectionTitle}>{section.title}</h2>
