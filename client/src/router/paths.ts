@@ -27,6 +27,7 @@ export const ROUTES = {
     ADMIN_USERS: "/admin/users",
     ADMIN_USER_INFO: "/admin/users/:userId",
     ADMIN_TESTS: "/admin/tests",
+    ADMIN_UNMODERATED_TESTS: "/admin/tests/unmoderated",
     ADMIN_TEST_INFO: "/admin/tests/:testId",
     ADMIN_TEST_ATTEMPTS: "/admin/tests/:testId/attempts",
     ADMIN_ATTEMPT_INFO: "/admin/attempts/:attemptId",

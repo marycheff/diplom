@@ -27,15 +27,17 @@ const UserInfo = () => {
     const { getUserById, isLoading, blockUser, unblockUser, deleteUser, isFetching } = useUserStore()
     const [user, setUser] = useState<UserDTO>({} as UserDTO)
     const navigate = useNavigate()
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+    const [blockModalOpen, setBlockModalOpen] = useState(false)
+    const [isDataLoaded, setIsDataLoaded] = useState(false)
 
     const fetchUser = async () => {
         const user = await getUserById(userId)
         if (user !== undefined) {
             setUser(user)
         }
+        setIsDataLoaded(true)
     }
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-    const [blockModalOpen, setBlockModalOpen] = useState(false)
     const handleDeleteUser = async (id: string) => {
         setDeleteModalOpen(true)
     }
@@ -67,7 +69,7 @@ const UserInfo = () => {
     useEffect(() => {
         fetchUser()
     }, [userId, getUserById])
-    if (isFetching) {
+    if (isFetching || !isDataLoaded) {
         return <Loader fullScreen />
     }
     if (Object.keys(user).length === 0) {

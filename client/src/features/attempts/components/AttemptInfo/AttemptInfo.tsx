@@ -35,18 +35,21 @@ const AttemptInfo = () => {
     const { isFetching, getAttemptById } = useAttemptStore()
     const [attempt, setAttempt] = useState<TestAttemptDTO | null>(null)
     const [isSnapshotModalOpen, setIsSnapshotModalOpen] = useState(false)
+    const [isDataLoaded, setIsDataLoaded] = useState(false)
+
     const fetchAttempt = async () => {
         const fetchedAttempt = await getAttemptById(attemptId)
         if (fetchedAttempt) {
             setAttempt(fetchedAttempt)
         }
+        setIsDataLoaded(true)
     }
 
     useEffect(() => {
         fetchAttempt()
     }, [attemptId])
 
-    if (isFetching) {
+    if (isFetching || !isDataLoaded) {
         return <Loader fullScreen />
     }
 

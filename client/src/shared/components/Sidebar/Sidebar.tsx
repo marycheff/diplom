@@ -4,9 +4,8 @@ import { useIsMobile } from "@/shared/hooks/useIsMobile"
 import { ConfirmationModal } from "@/shared/ui/Modal"
 import Tooltip from "@/shared/ui/Tooltip/Tooltip"
 import { useEffect, useRef, useState } from "react"
-import { FiEdit, FiFileText, FiHome, FiList, FiLogOut, FiMenu, FiUser, FiUsers } from "react-icons/fi"
+import { FiArchive, FiEdit, FiFileText, FiHome, FiList, FiLogOut, FiMenu, FiUser, FiUsers } from "react-icons/fi"
 import { IoAnalyticsSharp } from "react-icons/io5"
-import { MdOutlineScience } from "react-icons/md"
 import { Menu, MenuItem, Sidebar as ProSidebar, sidebarClasses } from "react-pro-sidebar"
 import { Link, useLocation } from "react-router-dom"
 interface SidebarProps {
@@ -162,7 +161,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 
             <MenuItemWithTooltip
                 tooltipText="Тесты"
-                icon={<MdOutlineScience style={{ color: colors.management }} />}
+                icon={<FiFileText style={{ color: colors.management }} />}
                 component={<Link to={ROUTES.ADMIN_TESTS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_TESTS)}>
                 {!collapsed && "Тесты"}
@@ -185,7 +184,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
             </MenuItemWithTooltip>
             <MenuItemWithTooltip
                 tooltipText="Мои тесты"
-                icon={<FiFileText style={{ color: colors.testing }} />}
+                icon={<FiArchive style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.ADMIN_MY_TESTS} />}
                 active={currentPath.startsWith(ROUTES.ADMIN_MY_TESTS)}>
                 {!collapsed && "Мои тесты"}
@@ -241,7 +240,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
             </MenuItemWithTooltip>
             <MenuItemWithTooltip
                 tooltipText="Мои тесты"
-                icon={<FiFileText style={{ color: colors.testing }} />}
+                icon={<FiArchive style={{ color: colors.testing }} />}
                 component={<Link to={ROUTES.MY_TESTS} />}
                 active={currentPath.startsWith(ROUTES.MY_TESTS)}>
                 {!collapsed && "Мои тесты"}

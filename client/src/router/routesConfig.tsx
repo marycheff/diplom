@@ -11,6 +11,7 @@ import ActivationSuccessPage from "@/features/auth/pages/ActivationSuccess"
 import LoginPage from "@/features/auth/pages/Login/LoginPage"
 import RegisterPage from "@/features/auth/pages/Register/RegisterPage"
 import AllTestsPage from "@/features/tests/pages/AllTests/AllTestsPage"
+import UnmoderatedTestsPage from "@/features/tests/pages/AllTests/UnmoderatedTestsPage"
 import CreateTestPage from "@/features/tests/pages/CreateTest/CreateTestPage"
 import MyTestsPage from "@/features/tests/pages/MyTests/MyTestsPage"
 import TestInfoPage from "@/features/tests/pages/TestInfo/TestInfoPage"
@@ -27,6 +28,7 @@ export const adminRoutes = [
     { path: ROUTES.ADMIN_USERS, element: <AllUsersPage /> },
     { path: ROUTES.ADMIN_USER_INFO, element: <UserInfoPage /> },
     { path: ROUTES.ADMIN_TESTS, element: <AllTestsPage /> },
+    { path: ROUTES.ADMIN_UNMODERATED_TESTS, element: <UnmoderatedTestsPage /> },
     { path: ROUTES.ADMIN_TEST_INFO, element: <TestInfoPage /> },
     { path: ROUTES.ADMIN_TEST_ATTEMPTS, element: <TestAttemptsPage /> },
     { path: ROUTES.ADMIN_ATTEMPT_INFO, element: <AttemptInfoPage /> },

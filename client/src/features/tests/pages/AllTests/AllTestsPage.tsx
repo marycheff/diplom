@@ -1,5 +1,6 @@
 import TestsTable from "@/features/tests/components/Tables/TestsTable/TestsTable"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import { ROUTES } from "@/router/paths"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { useCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
@@ -8,14 +9,14 @@ import { TestDTO, TestsListDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import SearchBar from "@/shared/ui/SearchBar/SearchBar"
+import { TABLE_LIMIT } from "@/shared/utils/constants"
 import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import styles from "./AllTestsPage.module.scss"
-import { TABLE_LIMIT } from "@/shared/utils/constants"
 const AllTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
-    const { getTests, searchTests, isFetching } = useTestStore()
+    const { getTests, searchTests, getUnmoderatedTests, isFetching } = useTestStore()
     const [total, setTotal] = useState<number | null>(null)
     const [limit] = useState<number>(TABLE_LIMIT)
     const [page, setPage] = useState<number>(1)
@@ -123,7 +124,9 @@ const AllTestsPage = () => {
                         Обновить
                     </Button>
                 </div>
-
+                <Link to={ROUTES.ADMIN_UNMODERATED_TESTS}>
+                    <Button className={styles.navigationButton}>Немодерированные тесты</Button>
+                </Link>
                 <div className={styles.cacheInfo}>
                     <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
                 </div>

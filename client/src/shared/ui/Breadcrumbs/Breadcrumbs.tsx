@@ -1,9 +1,9 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
+import { shortenText } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { Link, matchPath, useLocation } from "react-router-dom"
 import styles from "./Breadcrumbs.module.scss"
-import { shortenText } from "@/shared/utils/formatter"
 
 const Breadcrumbs = () => {
     const location = useLocation()
@@ -32,7 +32,6 @@ const Breadcrumbs = () => {
     if (!shouldDisplayBreadcrumbs) {
         return null
     }
- 
 
     const pathnames = location.pathname.split("/").filter(x => x) // Разбиваем URL на части
     // Словарь для статических названий
@@ -43,11 +42,12 @@ const Breadcrumbs = () => {
         attempts: "Попытки прохождения",
         profile: "Профиль",
         home: "Главная",
+        start: "Начать",
+        unmoderated: "Не модерированные",
         "create-test": "Создание теста",
         "my-tests": "Мои тесты",
         "add-questions": "Добавление вопросов",
         "edit-settings": "Редактирование вопросов",
-        start: "Начать",
         "my-attempts": "Мои попытки",
     }
 

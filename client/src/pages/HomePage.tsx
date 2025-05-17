@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom"
-import styles from "./HomePage.module.scss"
 import { ROUTES } from "@/router/paths"
 import { FiEdit, FiFileText, FiUser } from "react-icons/fi"
+import { Link } from "react-router-dom"
+import styles from "./HomePage.module.scss"
 
 const HomePage = () => {
     const items = [
-        { to: ROUTES.PROFILE, icon: <FiUser />, label: "Профиль", color: "green-400" },
+        { to: ROUTES.PROFILE, icon: <FiUser />, label: "Профиль", color: "accent-secondary" },
         { to: ROUTES.CREATE_TEST, icon: <FiEdit />, label: "Создать тест", color: "accent-secondary" },
         { to: ROUTES.MY_TESTS, icon: <FiFileText />, label: "Мои тесты", color: "accent-secondary" },
         { to: ROUTES.MY_ATTEMPTS, icon: <FiFileText />, label: "Мои результаты", color: "accent-secondary" },

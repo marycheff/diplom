@@ -11,7 +11,7 @@ import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom"
-import styles from "../../../tests/pages/TestInfo/TestInfoPage.module.scss"
+import styles from "./StartAttemptPage.module.scss"
 
 const StartAttemptPage = () => {
     const navigate = useNavigate()
@@ -20,6 +20,7 @@ const StartAttemptPage = () => {
     const { isFetching, getTestForUserById } = useTestStore()
     const [test, setTest] = useState<UserTestDTO | null>(null)
     const { user } = useAuthStore()
+    const [isDataLoaded, setIsDataLoaded] = useState(false)
 
     useEffect(() => {
         if (!testId) {
@@ -37,6 +38,7 @@ const StartAttemptPage = () => {
             const fetchedTest = await getTestForUserById(testId)
             if (fetchedTest) {
                 setTest(fetchedTest)
+                setIsDataLoaded(true)
             } else {
                 toast.error("Тест не найден")
                 navigate("/", { replace: true })
@@ -45,7 +47,7 @@ const StartAttemptPage = () => {
         fetchTest()
     }, [testId, getTestForUserById, navigate])
 
-    if (isFetching || isLoading) {
+    if (isFetching || isLoading || !isDataLoaded) {
         return <Loader fullScreen />
     }
     if (!test && !isFetching) {
@@ -78,8 +80,7 @@ const StartAttemptPage = () => {
     const hasRequiredFields = test?.settings?.inputFields && test.settings.inputFields.length > 0
 
     return (
-        <div>
-            {/* НАЗВАНИЕ ТЕСТА */}
+        <div className={styles.container}>
             <div className={styles.blockContent}>
                 <div className={styles.infoRow}>
                     <span className={styles.label}>Название:</span>
@@ -101,7 +102,9 @@ const StartAttemptPage = () => {
                     isLoading={isLoading}
                 />
             ) : (
-                <Button onClick={() => handleStartAttempt()}>Начать попытку</Button>
+                <div className={styles.blockContent}>
+                    <Button onClick={() => handleStartAttempt()}>Начать попытку</Button>
+                </div>
             )}
         </div>
     )

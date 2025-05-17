@@ -1,19 +1,17 @@
-import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
 import classNames from "classnames"
-import { FiCheckSquare, FiEdit, FiFileText, FiUser, FiUsers } from "react-icons/fi"
+import { FiArchive, FiCheckSquare, FiEdit, FiFileText, FiFolder, FiList, FiUser, FiUsers } from "react-icons/fi"
+import { MdOutlineScience } from "react-icons/md"
 import { useNavigate } from "react-router-dom"
 import styles from "./AdminPage.module.scss"
 
 const AdminPage = () => {
     const navigate = useNavigate()
-    const { logout } = useAuthStore()
-
     const sections = [
         {
             title: "Управление",
             items: [
-                { to: ROUTES.ADMIN_USERS, label: "Пользователи", icon: <FiUsers />, color: "green-400" },
+                { to: ROUTES.ADMIN_USERS, label: "Пользователи", icon: <FiUsers />, color: "accent-secondary" },
                 { to: ROUTES.ADMIN_TESTS, label: "Тесты", icon: <FiFileText />, color: "accent-secondary" },
                 { to: ROUTES.ADMIN_ALL_ATTEMPTS, label: "Попытки", icon: <FiCheckSquare />, color: "accent-secondary" },
             ],
@@ -21,9 +19,9 @@ const AdminPage = () => {
         {
             title: "Тестирование",
             items: [
-                { to: ROUTES.ADMIN_PROFILE, label: "Профиль", icon: <FiUser />, color: "green-400" },
+                { to: ROUTES.ADMIN_PROFILE, label: "Профиль", icon: <FiUser />, color: "accent-secondary" },
                 { to: ROUTES.ADMIN_CREATE_TEST, label: "Создать тест", icon: <FiEdit />, color: "accent-secondary" },
-                { to: ROUTES.ADMIN_MY_TESTS, label: "Мои тесты", icon: <FiFileText />, color: "accent-secondary" },
+                { to: ROUTES.ADMIN_MY_TESTS, label: "Мои тесты", icon: <FiArchive />, color: "accent-secondary" },
             ],
         },
     ]
