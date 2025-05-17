@@ -1,4 +1,10 @@
-import { AttemptStatusLabels, PreTestUserData, PreTestUserDataLabels, TestAttemptDTO } from "@/shared/types"
+import {
+    AttemptStatusLabels,
+    GenderLabels,
+    PreTestUserData,
+    PreTestUserDataLabels,
+    TestAttemptDTO,
+} from "@/shared/types"
 import { formatDate, shortenText } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
@@ -55,7 +61,11 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                                         .map(([key, value]) => {
                                                             const label =
                                                                 PreTestUserDataLabels[key as PreTestUserData] || key
-                                                            return `${label}: ${value}`
+                                                            const displayValue =
+                                                                key === PreTestUserData.Gender && value
+                                                                    ? GenderLabels[value.toString()] || value
+                                                                    : value
+                                                            return `${label}: ${displayValue}`
                                                         })
                                                         .join(", ")}
                                                 </span>

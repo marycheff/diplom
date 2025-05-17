@@ -6,6 +6,7 @@ import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { TestAttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
+import { TABLE_LIMIT } from "@/shared/utils/constants"
 import { formatDate } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useCallback, useEffect, useState } from "react"
@@ -16,7 +17,7 @@ const TestAttemptsPage = () => {
     const { getTestAttempts, isFetching } = useAttemptStore()
     const [attempts, setAttempts] = useState<TestAttemptDTO[]>([])
     const [total, setTotal] = useState<number>(0)
-    const [limit] = useState<number>(10)
+    const [limit] = useState<number>(TABLE_LIMIT)
     const [page, setPage] = useState<number>(1)
     const navigate = useNavigate()
     const location = useLocation()

@@ -5,6 +5,7 @@ import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import {
     AttemptStatusLabels,
+    GenderLabels,
     PreTestUserData,
     PreTestUserDataLabels,
     QuestionType,
@@ -154,7 +155,9 @@ const AttemptInfo = () => {
                                                     {PreTestUserDataLabels[key as PreTestUserData] || key}
                                                 </span>
                                                 <span className={styles.value}>
-                                                    {value || <span className={styles.emptyField}>—</span>}
+                                                    {key === PreTestUserData.Gender && value
+                                                        ? GenderLabels[value] || value
+                                                        : value || <span className={styles.emptyField}>—</span>}
                                                 </span>
                                             </div>
                                         ))}
@@ -172,7 +175,9 @@ const AttemptInfo = () => {
                                                 {PreTestUserDataLabels[key as PreTestUserData] || key}
                                             </span>
                                             <span className={styles.value}>
-                                                {value || <span className={styles.emptyField}>—</span>}
+                                                {key === PreTestUserData.Gender && value
+                                                    ? GenderLabels[value] || value
+                                                    : value || <span className={styles.emptyField}>—</span>}
                                             </span>
                                         </div>
                                     ))

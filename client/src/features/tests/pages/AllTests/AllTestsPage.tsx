@@ -12,11 +12,12 @@ import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import styles from "./AllTestsPage.module.scss"
+import { TABLE_LIMIT } from "@/shared/utils/constants"
 const AllTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
     const { getTests, searchTests, isFetching } = useTestStore()
     const [total, setTotal] = useState<number | null>(null)
-    const [limit] = useState<number>(10)
+    const [limit] = useState<number>(TABLE_LIMIT)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()

@@ -8,6 +8,7 @@ import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { AttemptsListDTO, TestAttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
+import { TABLE_LIMIT } from "@/shared/utils/constants"
 import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
@@ -15,7 +16,7 @@ const AllAttemptsPage = () => {
     const { getAllAttempts, isFetching } = useAttemptStore()
     const [attempts, setAttempts] = useState<TestAttemptDTO[]>([])
     const [total, setTotal] = useState<number | null>(null)
-    const [limit] = useState<number>(10)
+    const [limit] = useState<number>(TABLE_LIMIT)
     const [page, setPage] = useState<number>(1)
     const navigate = useNavigate()
     const location = useLocation()

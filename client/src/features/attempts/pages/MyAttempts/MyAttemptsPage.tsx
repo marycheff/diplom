@@ -13,13 +13,14 @@ import { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import styles from "./MyAttemptsPage.module.scss"
+import { TABLE_LIMIT } from "@/shared/utils/constants"
 
 type ViewMode = "table" | "cards"
 
 const MyAttemptsPage = () => {
     const [attempts, setAttempts] = useState<AttemptWithSnapshotDTO[]>([])
     const [total, setTotal] = useState<number | null>(null)
-    const [limit] = useState<number>(10)
+    const [limit] = useState<number>(TABLE_LIMIT)
     const [page, setPage] = useState<number>(1)
     const [viewMode, setViewMode] = useState<ViewMode>(() => {
         const savedViewMode = localStorage.getItem("myAttemptsViewMode")

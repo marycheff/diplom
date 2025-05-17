@@ -1,2 +1,3 @@
 export const RESET_PASSWORD_TIMEOUT_MINUTES = 5
 export const DEFAULT_TEST_TIME_MINUTES = 5
+export const TABLE_LIMIT = 15

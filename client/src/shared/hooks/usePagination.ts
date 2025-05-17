@@ -16,10 +16,10 @@ export const usePagination = (totalPages: number, currentPage: number) => {
         }
 
         if (currentPage >= totalPages - 2) {
-            return [...range(totalPages - 3, totalPages)]
+            return [1, "...", ...range(totalPages - 3, totalPages)]
         }
 
-        return [...range(currentPage - 1, currentPage + 1), "...", totalPages]
+        return [1, "...", ...range(currentPage - 1, currentPage + 1), "...", totalPages]
     }, [totalPages, currentPage])
 
     return pagesArray

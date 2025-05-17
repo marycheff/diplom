@@ -9,6 +9,7 @@ import { UserDTO, UsersListDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import SearchBar from "@/shared/ui/SearchBar/SearchBar"
+import { TABLE_LIMIT } from "@/shared/utils/constants"
 import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
@@ -17,7 +18,7 @@ const AllUsersPage = () => {
     const [users, setUsers] = useState<UserDTO[]>([])
     const { getUsers, searchUser, isFetching } = useUserStore()
     const [total, setTotal] = useState<number | null>(null)
-    const [limit] = useState<number>(10)
+    const [limit] = useState<number>(TABLE_LIMIT)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate()

@@ -44,6 +44,11 @@ export const PreTestUserDataLabels: Record<PreTestUserData, string> = {
 //     grade?: string
 //     group?: string
 // }
+export const GenderLabels: Record<string, string> = {
+    male: "Мужской",
+    female: "Женский",
+}
+
 export interface PreTestUserDataType {
     [key: string]: string | number | boolean | null | undefined
 }
