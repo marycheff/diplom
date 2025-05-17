@@ -7,7 +7,7 @@ import answerService from "@/services/tests/answer.service"
 import { QuestionDTO, TestDTO } from "@/types"
 import { logger } from "@/utils/logger"
 import { executeTransaction } from "@/utils/prisma-client"
-import { redisClient } from "@/utils/redis-client"
+import { deleteTestCache } from "@/utils/redis.utils"
 import { isValidUUID } from "@/utils/validator"
 
 const LOG_NAMESPACE = "QuestionService"
@@ -83,8 +83,8 @@ class QuestionService {
                 await testRepository.createSnapshot(testWithUpdatedQuestions, tx)
                 return { updatedTest: test, questions: validQuestions }
             })
-            await redisClient.del(`test:${testId}`)
-            await redisClient.del(`user-test:${testId}`)
+
+            await deleteTestCache(testId)
             logger.info(`[${LOG_NAMESPACE}] Вопросы успешно добавлены к тесту`, { testId })
             return mapTest({
                 ...updatedTest,
@@ -425,8 +425,8 @@ class QuestionService {
                 await questionRepository.delete(questionToDelete.id, tx)
             }
             // Очистка кэша
-            await redisClient.del(`test:${testId}`)
-            await redisClient.del(`user-test:${testId}`)
+            await deleteTestCache(testId)
+
             return processedQuestions
         })
     }

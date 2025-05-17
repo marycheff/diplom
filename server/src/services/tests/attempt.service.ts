@@ -22,6 +22,7 @@ import {
 import { logger } from "@/utils/logger"
 import { calculateTestScore } from "@/utils/math"
 import { redisClient } from "@/utils/redis-client"
+import { deleteAttemptCache, deleteTestCache } from "@/utils/redis.utils"
 import { Role, TestAttemptStatus } from "@prisma/client"
 
 const LOG_NAMESPACE = "AttemptService"
@@ -108,8 +109,7 @@ class AttemptService {
             })
 
             // Чтобы сбрасывалось кол-во попыток
-            await redisClient.del(`test:${testId}`)
-            await redisClient.del(`user-test:${testId}`)
+            await deleteTestCache(testId)
             logger.debug(`[${LOG_NAMESPACE}] Попытка теста успешно начата`, { attemptId: newAttempt.id })
 
             return { attemptId: newAttempt.id }
@@ -169,8 +169,8 @@ class AttemptService {
                 }
 
                 await attemptRepository.saveUserAnswer(attemptId, questionId, answersIds, timeSpent)
-                await redisClient.del(`attempt:${attemptId}`)
-                await redisClient.del(`user-attempt:${attemptId}`)
+                await deleteAttemptCache(attemptId)
+
                 logger.debug(`[${LOG_NAMESPACE}] Ответ успешно сохранен`, { attemptId, questionId })
             }
         } catch (error) {
@@ -253,8 +253,8 @@ class AttemptService {
             }
 
             await attemptRepository.saveUserAnswers(attemptId, answers)
-            await redisClient.del(`attempt:${attemptId}`)
-            await redisClient.del(`user-attempt:${attemptId}`)
+            await deleteAttemptCache(attemptId)
+
             logger.debug(`[${LOG_NAMESPACE}] Все ответы успешно сохранены`, { attemptId })
         } catch (error) {
             if (error instanceof ApiError) {
@@ -287,8 +287,8 @@ class AttemptService {
             console.log(score)
 
             await attemptRepository.updateAttemptScore(attemptId, score)
-            await redisClient.del(`attempt:${attemptId}`)
-            await redisClient.del(`user-attempt:${attemptId}`)
+            await deleteAttemptCache(attemptId)
+
             logger.debug(`[${LOG_NAMESPACE}] Попытка теста успешно завершена`, { attemptId, score })
 
             return { score }
@@ -467,8 +467,8 @@ class AttemptService {
         logger.debug(`[${LOG_NAMESPACE}] Обновление общего времени попытки`, { attemptId })
         try {
             await attemptRepository.updateTimeSpent(attemptId, timeSpent)
-            await redisClient.del(`attempt:${attemptId}`)
-            await redisClient.del(`user-attempt:${attemptId}`)
+
+            await deleteAttemptCache(attemptId)
             logger.debug(`[${LOG_NAMESPACE}] Общее время попытки обновлено`, { attemptId })
         } catch (error) {
             logger.error(`[${LOG_NAMESPACE}] Ошибка обновления общего времени`, {

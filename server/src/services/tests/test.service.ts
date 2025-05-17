@@ -15,6 +15,7 @@ import { logger } from "@/utils/logger"
 import { generateSeedFromAttemptId, shuffleArray } from "@/utils/math"
 import { executeTransaction } from "@/utils/prisma-client"
 import { redisClient } from "@/utils/redis-client"
+import { deleteTestCache } from "@/utils/redis.utils"
 import { sortInputFields } from "@/utils/sort"
 import { ModerationStatus, Test, TestVisibilityStatus } from "@prisma/client"
 
@@ -135,9 +136,7 @@ class TestService {
                 // await testRepository.createSnapshot(updatedTest, tx)
             })
 
-            await redisClient.del(`test:${testId}`)
-            await redisClient.del(`user-test:${testId}`)
-            await redisClient.del(`user-test-basic:${testId}`)
+            await deleteTestCache(testId)
             logger.info(`[${LOG_NAMESPACE}] Статус модерации теста успешно изменен`, { testId, status })
         } catch (error) {
             if (error instanceof ApiError) throw error
@@ -168,8 +167,7 @@ class TestService {
                 return true
             })
 
-            await redisClient.del(`test:${testId}`)
-            await redisClient.del(`user-test:${testId}`)
+           await deleteTestCache(testId)
             logger.info(`[${LOG_NAMESPACE}] Краткая информация о тесте успешно обновлена`, { testId })
         } catch (error) {
             if (error instanceof ApiError) {
@@ -328,10 +326,8 @@ class TestService {
         logger.info(`[${LOG_NAMESPACE}] Удаление теста`, { testId })
         try {
             await testRepository.deleteById(testId)
-            await redisClient.del(`test:${testId}`)
-            await redisClient.del(`user-test:${testId}`)
-            await redisClient.del(`user-test-basic:${testId}`)
 
+           await deleteTestCache(testId)
             logger.info(`[${LOG_NAMESPACE}] Тест успешно удален`, { testId })
         } catch (error) {
             if (error instanceof ApiError) {
