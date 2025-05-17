@@ -54,12 +54,13 @@ const StartAttemptPage = () => {
     if (test?.settings?.requireRegistration && !user) {
         const currentUrl = window.location.pathname
         return (
-            <div>
-                Тест требует авторизации. Пожалуйста, войдите или зарегистрируйтесь, чтобы пройти тест.
+            <div className={styles.authBlock}>
+                <h2>Тест требует авторизации.</h2>
+                Пожалуйста, войдите или зарегистрируйтесь, чтобы пройти тест.
+                <br />
                 <br />
                 <Link to={`${ROUTES.LOGIN}?returnUrl=${encodeURIComponent(currentUrl)}`}>Вход</Link>
-                <br />
-                <Link to={`${ROUTES.LOGIN}?returnUrl=${encodeURIComponent(currentUrl)}`}>Регистрация</Link>
+                <Link to={`${ROUTES.REGISTER}?returnUrl=${encodeURIComponent(currentUrl)}`}>Регистрация</Link>
             </div>
         )
     }

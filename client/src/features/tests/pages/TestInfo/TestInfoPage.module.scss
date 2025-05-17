@@ -303,3 +303,57 @@
     font-size: 17px;
     line-height: 15px;
 }
+
+.authBlock {
+    background-color: color($background, 100);
+    border-radius: 20px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    padding: 32px;
+    text-align: center;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 800px;
+    width: 100%;
+    font-size: 20px;
+    line-height: 1.6;
+    h2 {
+        font-size: 25px;
+        font-weight: bold;
+        margin-bottom: 40px;
+    }
+
+    div {
+        margin-bottom: 24px;
+        color: color($primary, 600);
+        line-height: 1.6;
+    }
+
+    a {
+        display: inline-block;
+        text-decoration: none;
+        color: #fff;
+        font-weight: 600;
+        font-size: 18px;
+        padding: 12px 24px;
+        margin: 12px;
+        border-radius: 12px;
+        background-color: color($secondary, 600);
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            background-color: color($secondary, 400);
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        margin: 20px;
+        padding: 28px;
+
+        a {
+            display: block;
+            margin: 12px 0;
+        }
+    }
+}

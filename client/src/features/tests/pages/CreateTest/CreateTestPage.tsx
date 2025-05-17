@@ -83,16 +83,18 @@ const CreateTestPage = () => {
                             required: "Название теста обязательно",
                         }}
                     />
+                    <br />
                     <ValidatedInput
                         name="description"
                         multiline
-                        clearable
+                        // clearable
                         trigger={trigger}
                         errors={errors.description}
                         placeholder="Описание"
                         register={register}
                         setValue={setValue}
                     />
+                    <br />
                     <Button type="submit" disabled={isLoading}>
                         Создать тест
                     </Button>
