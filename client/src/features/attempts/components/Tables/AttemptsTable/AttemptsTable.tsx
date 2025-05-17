@@ -70,7 +70,7 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                                         .join(", ")}
                                                 </span>
                                             ) : (
-                                                "—"
+                                                <span className={styles.emptyField}>аноним</span>
                                             )}
                                         </td>
 

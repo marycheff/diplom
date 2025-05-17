@@ -96,6 +96,13 @@ export const useAttemptStore = create<AttemptState>(set => {
             }
             return withFetching(operation)
         },
+        getUserAttempts: async (userId, page = 1, limit = 10) => {
+            const operation = async () => {
+                const response = await attemptService.getUserAttempts(userId, page, limit)
+                return response.data
+            }
+            return withFetching(operation)
+        },
         updateTimeSpent: async (attemptId, timeSpent) => {
             const operation = async () => {
                 await attemptService.updateTimeSpent(attemptId, timeSpent)

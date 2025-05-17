@@ -1,4 +1,4 @@
-import MyTestsTable from "@/features/tests/components/Tables/MyTestsTable/MyTestsTable"
+import UserTestsTable from "@/features/tests/components/Tables/UserTestsTable/UserTestsTable"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
@@ -9,11 +9,11 @@ import { TestDTO, TestsListDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import SearchBar from "@/shared/ui/SearchBar/SearchBar"
+import { TABLE_LIMIT } from "@/shared/utils/constants"
 import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import styles from "./MyTestsPage.module.scss"
-import { TABLE_LIMIT } from "@/shared/utils/constants"
 
 const MyTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
@@ -137,7 +137,7 @@ const MyTestsPage = () => {
                 <>
                     {shouldShowPagination ? (
                         <>
-                            <MyTestsTable tests={tests} total={total} />
+                            <UserTestsTable tests={tests} total={total} />
                             <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
                         </>
                     ) : noTestsFoundInSearch ? (

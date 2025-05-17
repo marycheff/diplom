@@ -68,6 +68,14 @@ class TestService {
             },
         })
     }
+    getUserTests(userId: string, page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
+        return axiosInstance.get<TestsListDTO>(`/tests/users/${userId}`, {
+            params: {
+                page,
+                limit,
+            },
+        })
+    }
 
     createTest(title: string, description?: string): Promise<AxiosResponse<TestDTO>> {
         return axiosInstance.post<TestDTO>("/tests/create", { title, description })

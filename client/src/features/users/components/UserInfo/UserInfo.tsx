@@ -1,4 +1,5 @@
-import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import UserAttempts from "@/features/attempts/components/UserAttempts/UserAttempts"
+import UserTests from "@/features/tests/components/UserTests/UserTests"
 import { useUserStore } from "@/features/users/store/useUserStore"
 import { ROUTES } from "@/router/paths"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
@@ -6,6 +7,7 @@ import { UserDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import Loader from "@/shared/ui/Loader/Loader"
+import { ConfirmationModal } from "@/shared/ui/Modal"
 import { shortenText } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -24,7 +26,6 @@ const UserInfo = () => {
 
     const { getUserById, isLoading, blockUser, unblockUser, deleteUser, isFetching } = useUserStore()
     const [user, setUser] = useState<UserDTO>({} as UserDTO)
-    const { user: currentUser } = useAuthStore()
     const navigate = useNavigate()
 
     const fetchUser = async () => {
@@ -33,16 +34,28 @@ const UserInfo = () => {
             setUser(user)
         }
     }
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+    const [blockModalOpen, setBlockModalOpen] = useState(false)
     const handleDeleteUser = async (id: string) => {
-        await deleteUser(id)
+        setDeleteModalOpen(true)
+    }
+
+    const confirmDeleteUser = async () => {
+        await deleteUser(user.id)
         toast.success("Пользователь удален")
         navigate(ROUTES.ADMIN)
+        setDeleteModalOpen(false)
     }
 
     const handleBlockUser = async (id: string) => {
-        await blockUser(id)
+        setBlockModalOpen(true)
+    }
+
+    const confirmBlockUser = async () => {
+        await blockUser(user.id)
         setUser({ ...user, isBlocked: true })
         toast.success("Пользователь заблокирован")
+        setBlockModalOpen(false)
     }
 
     const handleUnblockUser = async (id: string) => {
@@ -55,7 +68,7 @@ const UserInfo = () => {
         fetchUser()
     }, [userId, getUserById])
     if (isFetching) {
-        return <Loader />
+        return <Loader fullScreen />
     }
     if (Object.keys(user).length === 0) {
         return <NothingFound title="Пользователь не найден" />
@@ -119,61 +132,35 @@ const UserInfo = () => {
                                 </div>
                             </div>
                         </div>
-                        {/* <div>
-                            {" "}
-                            {user.id === currentUser?.id ? (
-                                <div>{user.email} (Вы)</div>
-                            ) : (
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Email</th>
-                                            <th>Имя</th>
-                                            <th>Фамилия</th>
-                                            <th>Отчество</th>
-                                            <th>Активирован</th>
-                                            <th>Заблокирован</th>
-                                            <th>ID</th>
-                                            <th>Действия</th>
-                                            <th>Роль</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{user.email}</td>
-                                            <td>{user.name || "<Пусто>"}</td>
-                                            <td>{user.surname || "<Пусто>"}</td>
-                                            <td>{user.patronymic || "<Пусто>"}</td>
-                                            <td>{String(user.isActivated)}</td>
-                                            <td>{String(user.isBlocked)}</td>
-                                            <td>{user.id}</td>
-                                            <td>
-                                                {user.isBlocked ? (
-                                                    <Button
-                                                        onClick={() => handleUnblockUser(user.id)}
-                                                        disabled={isLoading}>
-                                                        Разблокировать
-                                                    </Button>
-                                                ) : (
-                                                    <Button
-                                                        onClick={() => handleBlockUser(user.id)}
-                                                        disabled={isLoading}>
-                                                        Заблокировать
-                                                    </Button>
-                                                )}
-                                                <Button onClick={() => handleDeleteUser(user.id)} disabled={isLoading}>
-                                                    Удалить
-                                                </Button>
-                                            </td>
-                                            <td>{RoleLabels[user.role]}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            )}
-                        </div> */}
+                        <div className={styles.infoBlock}>
+                            <h1 className={styles.blockTitle}>Попытки пользователя</h1>
+                            <UserAttempts />
+                        </div>
+                        <div className={styles.infoBlock}>
+                            <h1 className={styles.blockTitle}>Тесты пользователя</h1>
+                            <UserTests />
+                        </div>
                     </div>
                 )
             )}
+            <ConfirmationModal
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={confirmDeleteUser}
+                title="Удаление пользователя"
+                confirmText="Удалить"
+                cancelText="Отмена">
+                <p>Вы уверены, что хотите удалить этого пользователя?</p>
+            </ConfirmationModal>
+            <ConfirmationModal
+                isOpen={blockModalOpen}
+                onClose={() => setBlockModalOpen(false)}
+                onConfirm={confirmBlockUser}
+                title="Блокировка пользователя"
+                confirmText="Заблокировать"
+                cancelText="Отмена">
+                <p>Вы уверены, что хотите заблокировать этого пользователя?</p>
+            </ConfirmationModal>
         </>
     )
 }

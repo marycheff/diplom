@@ -59,6 +59,14 @@ class AttemptService {
             },
         })
     }
+    getUserAttempts(userId: string, page = 1, limit = 10): Promise<AxiosResponse<AttemptsWithSnapshotListDTO>> {
+        return axiosInstance.get<AttemptsWithSnapshotListDTO>(`/tests/attempts/users/${userId}`, {
+            params: {
+                page,
+                limit,
+            },
+        })
+    }
     updateTimeSpent(attemptId: string, timeSpent: number): Promise<AxiosResponse<void>> {
         return axiosInstance.post<void>(`/tests/attempts/${attemptId}/time-spent`, {
             timeSpent,

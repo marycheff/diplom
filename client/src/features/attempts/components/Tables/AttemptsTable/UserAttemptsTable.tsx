@@ -4,11 +4,11 @@ import { formatDate } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { Link } from "react-router-dom"
 import styles from "./AttemptsTable.module.scss"
-interface MyAttemptsTableProps {
+interface UserAttemptsTableProps {
     attempts: AttemptWithSnapshotDTO[] | undefined
     total: number
 }
-const MyAttemptsTable: FC<MyAttemptsTableProps> = ({ attempts, total }) => {
+const UserAttemptsTable: FC<UserAttemptsTableProps> = ({ attempts, total }) => {
     const { isAdmin } = useAuthStore()
 
     return (
@@ -39,7 +39,7 @@ const MyAttemptsTable: FC<MyAttemptsTableProps> = ({ attempts, total }) => {
                                             <Link
                                                 to={
                                                     isAdmin
-                                                        ? `/admin/my-attempts/${attempt.id}`
+                                                        ? `/admin/attempts/${attempt.id}`
                                                         : `/my-attempts/${attempt.id}/results`
                                                 }
                                                 className="actionLink">
@@ -57,7 +57,6 @@ const MyAttemptsTable: FC<MyAttemptsTableProps> = ({ attempts, total }) => {
                                                     {/* {attempt.test.title} */}
                                                     {/* Перейти */}
                                                     {attempt.snapshot?.title}
-                                                
                                                 </Link>
                                             ) : (
                                                 attempt.snapshot?.title
@@ -87,4 +86,4 @@ const MyAttemptsTable: FC<MyAttemptsTableProps> = ({ attempts, total }) => {
     )
 }
 
-export default MyAttemptsTable
+export default UserAttemptsTable

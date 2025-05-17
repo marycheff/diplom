@@ -92,6 +92,13 @@ export const useTestStore = create<TestState>(set => {
             }
             return withFetching(operation)
         },
+        getUserTests: async (userId, page = 1, limit = 10) => {
+            const operation = async () => {
+                const response = await testService.getUserTests(userId, page, limit)
+                return response.data
+            }
+            return withFetching(operation)
+        },
 
         createTest: async (title, description) => {
             const operation = async () => {

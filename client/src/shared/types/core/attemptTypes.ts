@@ -1,4 +1,12 @@
-import { AnswerDTO, PreTestUserData, QuestionType, TestDTO, TestSnapshotDTO, UserDTO } from "@/shared/types"
+import {
+    AnswerDTO,
+    PreTestUserData,
+    PreTestUserDataType,
+    QuestionType,
+    TestDTO,
+    TestSnapshotDTO,
+    UserDTO,
+} from "@/shared/types"
 
 export interface AttemptState {
     isFetching: boolean
@@ -10,8 +18,9 @@ export interface AttemptState {
     getAttemptForUserById: (id: string) => Promise<TestAttemptUserDTO | undefined>
     getAllAttempts: (page: number, limit: number) => Promise<AttemptsListDTO | undefined>
     getMyAttempts: (page: number, limit: number) => Promise<AttemptsWithSnapshotListDTO | undefined>
+    getUserAttempts: (userId: string, page: number, limit: number) => Promise<AttemptsWithSnapshotListDTO | undefined>
     // TODO: исправить any
-    startAttempt: (testId: string, preTestUserData?: any) => Promise<StartAttemptDTO | undefined>
+    startAttempt: (testId: string, preTestUserData?: PreTestUserDataType) => Promise<StartAttemptDTO | undefined>
     saveAnswers: (attemptId: string, answers: AttemptAnswer[]) => Promise<void>
     completeAttempt: (attemptId: string) => Promise<CompleteAttemptResponse>
     updateTimeSpent: (attemptId: string, timeSpent: number) => Promise<void>

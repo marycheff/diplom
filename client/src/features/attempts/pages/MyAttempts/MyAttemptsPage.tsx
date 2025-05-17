@@ -1,5 +1,5 @@
 import MyAttemptsCards from "@/features/attempts/components/Cards/AttemptsCards/MyAttemptsCards"
-import MyAttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/MyAttemptsTable"
+import UserAttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/UserAttemptsTable"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { useIsMobile } from "@/shared/hooks/useIsMobile"
@@ -9,11 +9,11 @@ import { AttemptWithSnapshotDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import Select from "@/shared/ui/Select/Select"
+import { TABLE_LIMIT } from "@/shared/utils/constants"
 import { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import styles from "./MyAttemptsPage.module.scss"
-import { TABLE_LIMIT } from "@/shared/utils/constants"
 
 type ViewMode = "table" | "cards"
 
@@ -157,7 +157,7 @@ const MyAttemptsPage = () => {
                                 </div>
                             )}
                             {viewMode === "table" ? (
-                                <MyAttemptsTable attempts={attempts} total={total} />
+                                <UserAttemptsTable attempts={attempts} total={total} />
                             ) : (
                                 <MyAttemptsCards attempts={attempts} total={total} />
                             )}

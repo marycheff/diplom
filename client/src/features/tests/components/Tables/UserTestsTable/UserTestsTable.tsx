@@ -2,14 +2,14 @@ import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { TestDTO, VisibilityStatusLabels } from "@/shared/types"
 import { FC } from "react"
 import { Link } from "react-router-dom"
-import styles from "./MyTestsTable.module.scss"
+import styles from "./UserTestsTable.module.scss"
 
 interface MyTestsTableProps {
     tests: TestDTO[]
     total: number
 }
 
-const MyTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
+const UserTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
     const { isAdmin } = useAuthStore()
     return (
         <>
@@ -70,4 +70,4 @@ const MyTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
     )
 }
 
-export default MyTestsTable
+export default UserTestsTable
