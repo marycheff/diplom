@@ -321,6 +321,12 @@ const TestInfoPage = () => {
                                             </span>
                                         </div>
                                         <div className={styles.infoRow}>
+                                            <span className={styles.label}>Разрешить повторное прохождение</span>
+                                            <span className={styles.value}>
+                                                {test.settings.allowRetake ? "Да" : "Нет"}
+                                            </span>
+                                        </div>
+                                        <div className={styles.infoRow}>
                                             <span className={styles.label}>Поля ввода</span>
                                             <span className={styles.value}>
                                                 {test.settings.inputFields && test.settings.inputFields.length > 0 ? (

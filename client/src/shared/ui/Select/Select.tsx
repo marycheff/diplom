@@ -11,6 +11,7 @@ const Select: FC<SelectProps> = ({
     error = false,
     label,
     required = false,
+    disabled = false,
     onChange,
 }: SelectProps) => {
     const [isOpen, setOpen] = useState(false)
@@ -46,7 +47,12 @@ const Select: FC<SelectProps> = ({
         setMaxWidth(max)
     }, [options])
 
-    const containerClasses = [styles.container, isOpen ? styles.open : "", error ? styles.error : ""].join(" ")
+    const containerClasses = [
+        styles.container,
+        isOpen ? styles.open : "",
+        error ? styles.error : "",
+        disabled ? styles.disabled : "",
+    ].join(" ")
 
     return (
         <div className={containerClasses}>
@@ -67,7 +73,7 @@ const Select: FC<SelectProps> = ({
             {/* 👇 Применяем вычисленную ширину */}
             <div
                 ref={selectRef}
-                onClick={() => setOpen(!isOpen)}
+                onClick={() => !disabled && setOpen(!isOpen)}
                 className={styles.customSelectWrapper}
                 style={{ width: maxWidth ? `${maxWidth}px` : "auto" }}>
                 <div className={`${styles.customSelect} ${isOpen ? styles.open : ""}`}>

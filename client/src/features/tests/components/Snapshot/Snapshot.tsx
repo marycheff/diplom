@@ -98,6 +98,12 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
                                         </span>
                                     </div>
                                     <div className={styles.infoRow}>
+                                        <span className={styles.label}>Разрешить повторное прохождение</span>
+                                        <span className={styles.value}>
+                                            {snapshot.settings.allowRetake ? "Да" : "Нет"}
+                                        </span>
+                                    </div>
+                                    <div className={styles.infoRow}>
                                         <span className={styles.label}>Поля ввода</span>
                                         <span className={styles.value}>
                                             {snapshot.settings.inputFields &&

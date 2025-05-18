@@ -50,11 +50,10 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
                 <div className={styles.formContent}>
                     {/* Секция с основными полями */}
                     <div className={styles.section}>
-                     
                         <ValidatedInput
                             trigger={trigger}
                             name="title"
-                            placeholder="Название теста*"
+                            placeholder="Название (обязательно)"
                             register={register}
                             setValue={setValue}
                             errors={errors.title}
@@ -66,7 +65,7 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
                             trigger={trigger}
                             multiline
                             name="description"
-                            placeholder="Описание теста"
+                            placeholder="Описание"
                             register={register}
                             setValue={setValue}
                             className={styles.descriptionInput}

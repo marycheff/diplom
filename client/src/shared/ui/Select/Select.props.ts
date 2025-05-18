@@ -8,6 +8,7 @@ export type SelectProps = {
     error?: boolean
     label?: string
     required?: boolean
+    disabled?: boolean
     onChange?: (value: string) => void
 }
 type Option = {

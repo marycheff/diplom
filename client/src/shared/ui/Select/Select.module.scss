@@ -3,6 +3,12 @@
         display: none;
     }
 
+    &.disabled {
+        opacity: 0.6;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+
     .customSelectWrapper {
         position: relative;
         user-select: none;

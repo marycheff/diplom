@@ -4,7 +4,6 @@ import {
     TestSettingsDTO,
     TestSettingsSnapshotDTO,
     UserQuestionDTO,
-    UserTestSettingsDTO,
 } from "@/shared/types"
 
 export interface TestState {
@@ -74,7 +73,7 @@ export interface UserTestDTO {
     title: string
     description?: string
     questions?: UserQuestionDTO[]
-    settings?: UserTestSettingsDTO
+    settings?: TestSettingsDTO
 }
 
 export interface UpdateTestDTO {

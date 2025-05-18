@@ -1,21 +1,13 @@
-import { JsonValue, PreTestUserData } from "@/shared/types"
+import { PreTestUserData } from "@/shared/types"
 
 export interface TestSettingsDTO {
     requireRegistration?: boolean
-    inputFields?: PreTestUserData[]
     shuffleQuestions?: boolean
     shuffleAnswers?: boolean
+    allowRetake?: boolean
     showDetailedResults?: boolean
-    timeLimit?: number | null
-}
-
-export interface UserTestSettingsDTO {
-    timeLimit?: number | null
-    shuffleQuestions?: boolean
-    shuffleAnswers?: boolean
-    requireRegistration?: boolean
     inputFields?: PreTestUserData[]
-    showDetailedResults?: boolean
+    timeLimit?: number | null
 }
 
 export interface TestSettingsSnapshotDTO {
@@ -26,6 +18,7 @@ export interface TestSettingsSnapshotDTO {
     showDetailedResults: boolean
     shuffleQuestions: boolean
     shuffleAnswers: boolean
+    allowRetake?: boolean
     timeLimit?: number | null
     createdAt: Date
 }

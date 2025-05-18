@@ -1,10 +1,11 @@
 import { PreTestUserData, PreTestUserDataLabels, TestSettingsDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
+import QuestionButton from "@/shared/ui/Button/Question/QuestionButton"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
-import { ChangeEvent, FC, useMemo } from "react"
+import { ChangeEvent, FC, useEffect, useMemo } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import styles from "./TestSettingsEditor.module.scss"
 
@@ -20,6 +21,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
         showDetailedResults: settings.showDetailedResults ? "Да" : "Нет",
         shuffleQuestions: settings.shuffleQuestions ? "Да" : "Нет",
         shuffleAnswers: settings.shuffleAnswers ? "Да" : "Нет",
+        allowRetake: settings.allowRetake ? "Да" : "Нет",
         inputFields: settings.inputFields || [],
         hours: String(Math.floor((settings.timeLimit ?? 0) / 3600)),
         minutes: String(Math.floor(((settings.timeLimit ?? 0) % 3600) / 60)),
@@ -40,7 +42,13 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
     })
 
     const watchedValues = watch()
-    const { inputFields } = watch()
+    const { inputFields, requireRegistration } = watch()
+
+    useEffect(() => {
+        if (requireRegistration === "Нет") {
+            setValue("allowRetake", "Нет")
+        }
+    }, [requireRegistration, setValue])
 
     // Функция для сравнения массивов (например, для inputFields)
     const arraysEqual = (a: any[], b: any[]) => {
@@ -54,7 +62,8 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             formatSpaces(watchedValues.requireRegistration) !== formatSpaces(initialValues.requireRegistration) ||
             formatSpaces(watchedValues.showDetailedResults) !== formatSpaces(initialValues.showDetailedResults) ||
             formatSpaces(watchedValues.shuffleQuestions) !== formatSpaces(initialValues.shuffleQuestions) ||
-            formatSpaces(watchedValues.shuffleAnswers) !== formatSpaces(initialValues.shuffleAnswers)
+            formatSpaces(watchedValues.shuffleAnswers) !== formatSpaces(initialValues.shuffleAnswers) ||
+            formatSpaces(watchedValues.allowRetake) !== formatSpaces(initialValues.allowRetake)
         ) {
             return true
         }
@@ -81,12 +90,13 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
         const sortedInputFields = Object.values(PreTestUserData).filter(field => data.inputFields.includes(field))
 
         onSettingsComplete({
-            inputFields: sortedInputFields,
             requireRegistration: data.requireRegistration === "Да",
             showDetailedResults: data.showDetailedResults === "Да",
             shuffleQuestions: data.shuffleQuestions === "Да",
             shuffleAnswers: data.shuffleAnswers === "Да",
+            allowRetake: data.allowRetake === "Да",
             timeLimit: Number(data.hours) * 3600 + Number(data.minutes) * 60 + Number(data.seconds),
+            inputFields: sortedInputFields,
         })
     }
 
@@ -101,16 +111,19 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                 <div className={styles.formContent}>
                     {/* Блок 1: Настройки переключателей */}
                     <div className={styles.section}>
-                        <Select
-                            register={register}
-                            label="Требуется регистрация: "
-                            name="requireRegistration"
-                            options={[
-                                { value: "Да", label: "Да" },
-                                { value: "Нет", label: "Нет" },
-                            ]}
-                            value={settings.requireRegistration ? "Да" : "Нет"}
-                        />
+                        <div className={styles.selectWithQuestion}>
+                            <Select
+                                register={register}
+                                label="Требуется регистрация: "
+                                name="requireRegistration"
+                                options={[
+                                    { value: "Да", label: "Да" },
+                                    { value: "Нет", label: "Нет" },
+                                ]}
+                                value={settings.requireRegistration ? "Да" : "Нет"}
+                            />
+                            <QuestionButton tooltip="Пользователь должен авторизоваться, прежде чем начать тест" />
+                        </div>
                         <Select
                             register={register}
                             label="Показывать детальные результаты: "
@@ -141,6 +154,20 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                             ]}
                             value={settings.shuffleAnswers ? "Да" : "Нет"}
                         />
+                        <div className={styles.selectWithQuestion}>
+                            <Select
+                                register={register}
+                                label="Разрешить повторное прохождение:"
+                                name="allowRetake"
+                                options={[
+                                    { value: "Да", label: "Да" },
+                                    { value: "Нет", label: "Нет" },
+                                ]}
+                                value={settings.allowRetake ? "Да" : "Нет"}
+                                disabled={watchedValues.requireRegistration !== "Да"}
+                            />
+                            <QuestionButton tooltip="Эта настройка доступна только при включенной опции 'Требуется регистрация'." />
+                        </div>
                     </div>
 
                     {/* Блок 2: Поля ввода */}
