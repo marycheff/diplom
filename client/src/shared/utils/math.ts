@@ -22,3 +22,9 @@ export const calculateTestScore = (
     const totalQuestions = questionsWithAnswers.length
     return totalQuestions > 0 ? (correctQuestionsCount / totalQuestions) * 100 : 0
 }
+
+// Функция для сравнения массивов (например, для inputFields)
+export const arraysEqual = (a: any[], b: any[]) => {
+    if (a.length !== b.length) return false
+    return a.every(item => b.includes(item))
+}

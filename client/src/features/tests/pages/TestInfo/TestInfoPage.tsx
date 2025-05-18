@@ -3,6 +3,7 @@ import CopyTestButton from "@/features/tests/components/CopyTestButton/CopyTestB
 import ModerationStatusEditor from "@/features/tests/components/ModerationStatusEditor/ModerationStatusEditor"
 import QuestionsEditor from "@/features/tests/components/QuestionsEditor/QuestionsEditor"
 import TestInfoEditor from "@/features/tests/components/TestInfoEditor/TestInfoEditor"
+import TestPreview from "@/features/tests/components/TestPreview/TestPreview"
 import TestSettingsEditor from "@/features/tests/components/TestSettingsEditor/TestSettingsEditor"
 import InfoRowSkeleton from "@/features/tests/components/TestSettingsSkeleton/TestSettingsSkeleton"
 import { useTestStore } from "@/features/tests/store/useTestStore"
@@ -28,17 +29,17 @@ import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { FaLock, FaLockOpen, FaPlus, FaTrash } from "react-icons/fa"
+import { FiEdit } from "react-icons/fi"
+import { LuEye } from "react-icons/lu"
 import { MdEdit } from "react-icons/md"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import styles from "./TestInfoPage.module.scss"
-import { FiEdit } from "react-icons/fi"
 
 const TestInfoPage = () => {
     const { testId } = useParams<{ testId: string }>()
     const {
         getTestById,
         isFetching,
-        updateTestQuestions,
         upsertQuestions,
         isLoading,
         isShortInfoUpdating,
@@ -63,6 +64,7 @@ const TestInfoPage = () => {
     const [isShortInfoModalOpen, setIsShortInfModalOpen] = useState(location.pathname.endsWith("/edit-info"))
     const [isModerationStatusModalOpen, setIsModerationStatusModalOpen] = useState(false)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
 
@@ -98,6 +100,9 @@ const TestInfoPage = () => {
     }
     const handleEditShortInfoButton = () => {
         setIsShortInfModalOpen(true)
+    }
+    const handlePreviewButton = () => {
+        setIsPreviewModalOpen(true)
     }
     const handleSettingsUpdate = async (updatedSettings: TestSettingsDTO) => {
         if (!test) return
@@ -419,6 +424,11 @@ const TestInfoPage = () => {
                             }>
                             {test.questions?.length && test.questions?.length > 0 ? <MdEdit /> : <FaPlus />}
                         </Button>
+                        {test.questions?.length && test.questions?.length > 0 && (
+                            <Button onClick={handlePreviewButton} className={styles.editBtn} tooltip="Предпросмотр">
+                                <LuEye />
+                            </Button>
+                        )}
                     </div>
                 </div>
                 {isLoading ? (
@@ -502,6 +512,14 @@ const TestInfoPage = () => {
                     setHasUnsavedChanges={setHasUnsavedChanges}
                     isLoading={isLoading}
                 />
+            </Modal>
+
+            <Modal
+                fullScreen
+                isOpen={isPreviewModalOpen}
+                onClose={() => setIsPreviewModalOpen(false)}
+                title="Предпросмотр теста">
+                <TestPreview test={test} onClose={() => setIsPreviewModalOpen(false)} />
             </Modal>
 
             <ConfirmationModal

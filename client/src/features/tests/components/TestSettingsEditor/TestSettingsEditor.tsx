@@ -5,6 +5,7 @@ import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
+import { arraysEqual } from "@/shared/utils/math"
 import { ChangeEvent, FC, useEffect, useMemo } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import styles from "./TestSettingsEditor.module.scss"
@@ -49,12 +50,6 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             setValue("allowRetake", "Нет")
         }
     }, [requireRegistration, setValue])
-
-    // Функция для сравнения массивов (например, для inputFields)
-    const arraysEqual = (a: any[], b: any[]) => {
-        if (a.length !== b.length) return false
-        return a.every(item => b.includes(item))
-    }
 
     const isChanged = useMemo(() => {
         // Проверка для строковых полей с форматированием пробелов

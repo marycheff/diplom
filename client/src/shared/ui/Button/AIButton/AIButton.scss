@@ -12,6 +12,8 @@
     overflow: hidden;
     display: flex;
     align-items: center;
+    // max-width: max-content;
+    max-width: fit-content;
 
     &:hover:not(:disabled) {
         background-color: #1d4ed8;

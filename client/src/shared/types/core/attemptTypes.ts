@@ -19,7 +19,6 @@ export interface AttemptState {
     getAllAttempts: (page: number, limit: number) => Promise<AttemptsListDTO | undefined>
     getMyAttempts: (page: number, limit: number) => Promise<AttemptsWithSnapshotListDTO | undefined>
     getUserAttempts: (userId: string, page: number, limit: number) => Promise<AttemptsWithSnapshotListDTO | undefined>
-    // TODO: исправить any
     startAttempt: (testId: string, preTestUserData?: PreTestUserDataType) => Promise<StartAttemptDTO | undefined>
     saveAnswers: (attemptId: string, answers: AttemptAnswer[]) => Promise<void>
     completeAttempt: (attemptId: string) => Promise<CompleteAttemptResponse>

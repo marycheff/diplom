@@ -1,12 +1,10 @@
 import { GenerateAnswerFormData } from "@/shared/types"
 import { answerValidationRules, questionValidationRules } from "@/shared/types/utils/validationRules"
 import { AIButton } from "@/shared/ui/Button"
-
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
-import { formatSpaces } from "@/shared/utils/formatter"
 import { FC, FormEvent } from "react"
-import { FieldErrors, RegisterOptions, UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form"
+import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form"
 
 interface QuestionFormProps {
     register: UseFormRegister<GenerateAnswerFormData>
@@ -27,15 +25,6 @@ const QuestionForm: FC<QuestionFormProps> = ({
     setValue,
     trigger,
 }) => {
-    const hasText = (value: string): boolean => /[a-zA-Zа-яА-Я]/.test(value)
-    const isWithinWordCount = (value: string, min: number, max: number): boolean => {
-        const wordCount = formatSpaces(value).split(/\s+/).length
-        return wordCount >= min && wordCount <= max
-    }
-    const isWithinCharLimit = (value: string, max: number): boolean => value.length <= max
-
-   
-
     return (
         <form onSubmit={onSubmit}>
             {/* {isLoading && <Loader delay={300} />} */}
@@ -49,7 +38,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 validationRules={questionValidationRules}
                 multiline
             />
-            <br />
+            
             <ValidatedInput
                 clearable
                 placeholder="Правильный ответ"
