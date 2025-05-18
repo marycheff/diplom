@@ -303,7 +303,7 @@ class QuestionService {
                         foundWords: answerCheck.foundWords,
                     })
                     throw ApiError.BadRequest(
-                        `Обнаружены недопустимые слова в тексте ответа вопроса №${questionNumber}`
+                        `Обнаружены недопустимые слова в тексте ответа вопроса №${questionNumber} ${answer.text}`
                     )
                 }
             }
@@ -424,6 +424,13 @@ class QuestionService {
                 })
                 await questionRepository.delete(questionToDelete.id, tx)
             }
+            await testRepository.incrementTestVersion(testId, test.version, tx)
+            await testRepository.cleanupUnusedSnapshots(testId, tx)
+            const updatedTest = await testRepository.findDetailedTestById(testId, tx)
+            if (!updatedTest) {
+                throw ApiError.InternalError("Не удалось получить обновленный тест")
+            }
+            await testRepository.createSnapshot(updatedTest, tx)
             // Очистка кэша
             await deleteTestCache(testId)
 
