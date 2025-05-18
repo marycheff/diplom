@@ -100,6 +100,18 @@ class AttemptService {
                         "У вас уже есть незавершенная попытка прохождения теста. Завершите текущую попытку прежде чем начинать новую."
                     )
                 }
+
+                // Проверяем настройку allowRetake и наличие завершенных попыток
+                if (!settings?.allowRetake) {
+                    const hasCompletedAttempts = await attemptRepository.findCompletedAttemptsByUserAndTest(
+                        userId,
+                        testId
+                    )
+                    if (hasCompletedAttempts) {
+                        logger.warn(`[${LOG_NAMESPACE}] Повторное прохождение теста запрещено`, { testId, userId })
+                        throw ApiError.BadRequest("Повторное прохождение этого теста запрещено")
+                    }
+                }
             }
             const newAttempt = await attemptRepository.createAttempt({
                 testId,

@@ -265,6 +265,18 @@ class AttemptRepository {
 
         return inProgressAttempt !== null
     }
+
+    async findCompletedAttemptsByUserAndTest(userId: string, testId: string): Promise<boolean> {
+        const completedAttempt = await prisma.testAttempt.findFirst({
+            where: {
+                userId: userId,
+                testId: testId,
+                status: TestAttemptStatus.COMPLETED,
+            },
+        })
+
+        return completedAttempt !== null
+    }
     async findManyByTestId(testId: string, page: number, limit: number) {
         const skip = (page - 1) * limit
         const attempts = await prisma.testAttempt.findMany({

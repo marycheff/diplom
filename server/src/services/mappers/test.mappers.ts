@@ -83,6 +83,7 @@ export const mapTest = (
                   showDetailedResults: test.settings.showDetailedResults,
                   shuffleAnswers: test.settings.shuffleAnswers,
                   shuffleQuestions: test.settings.shuffleQuestions,
+                  allowRetake: test.settings.allowRetake,
                   timeLimit: test.settings.timeLimit,
                   inputFields: test.settings.inputFields,
               }
@@ -334,6 +335,7 @@ export const mapUserTest = (
                   showDetailedResults: test.settings.showDetailedResults,
                   shuffleAnswers: test.settings.shuffleAnswers,
                   shuffleQuestions: test.settings.shuffleQuestions,
+                  allowRetake: test.settings.allowRetake,
                   timeLimit: test.settings.timeLimit,
                   inputFields: test.settings.inputFields,
               }

@@ -6,6 +6,7 @@ export interface TestSettingsDTO {
     shuffleQuestions: boolean
     shuffleAnswers: boolean
     showDetailedResults: boolean
+    allowRetake: boolean
     timeLimit?: number | null
 }
 

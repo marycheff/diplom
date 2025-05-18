@@ -55,6 +55,7 @@ model TestSettings {
   timeLimit           Int?     @default(0)
   shuffleAnswers      Boolean  @default(true)
   shuffleQuestions    Boolean  @default(false)
+  allowRetake         Boolean  @default(true)
   // TIMESTAMPS
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
