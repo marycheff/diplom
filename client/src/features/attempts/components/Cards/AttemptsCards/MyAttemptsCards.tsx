@@ -80,7 +80,7 @@ const MyAttemptsCards: FC<MyAttemptsCardsProps> = ({ attempts, total }) => {
                                             Перейти
                                         </Link> */}
                                         {attempt.status === AttemptStatus.IN_PROGRESS ? (
-                                            <Link to={`/my-attempts/${attempt.id}/pass`} className={styles.actionLink}>
+                                            <Link to={`/attempts/${attempt.id}/pass`} className={styles.actionLink}>
                                                 Продолжить выполнение
                                             </Link>
                                         ) : (
@@ -88,7 +88,7 @@ const MyAttemptsCards: FC<MyAttemptsCardsProps> = ({ attempts, total }) => {
                                                 to={
                                                     isAdmin
                                                         ? `/admin/my-attempts/${attempt.id}`
-                                                        : `/my-attempts/${attempt.id}/results`
+                                                        : `/attempts/${attempt.id}/results`
                                                 }
                                                 className={styles.actionLink}>
                                                 Перейти

@@ -1,8 +1,8 @@
 export const ROUTES = {
     // Публичные маршруты
     START_ATTEMPT: "/:testId/start",
-    PASS_ATTEMPT: "/my-attempts/:attemptId/pass",
-    ATTEMPT_RESULTS: "/my-attempts/:attemptId/results",
+    PASS_ATTEMPT: "/attempts/:attemptId/pass",
+    ATTEMPT_RESULTS: "/attempts/:attemptId/results",
     ACTIVATION_ERROR: "/activation-error",
     ACTIVATION_SUCCESS: "/activation-success",
 

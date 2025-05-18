@@ -40,7 +40,7 @@ const UserAttemptsTable: FC<UserAttemptsTableProps> = ({ attempts, total }) => {
                                                 to={
                                                     isAdmin
                                                         ? `/admin/attempts/${attempt.id}`
-                                                        : `/my-attempts/${attempt.id}/results`
+                                                        : `/attempts/${attempt.id}/results`
                                                 }
                                                 className="actionLink">
                                                 {/* {shortenText(attempt.id)} */}

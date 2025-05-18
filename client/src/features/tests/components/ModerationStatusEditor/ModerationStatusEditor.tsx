@@ -4,6 +4,7 @@ import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
 import { FC } from "react"
 import { useForm } from "react-hook-form"
+import styles from "./ModerationStatusEditor.module.scss"
 
 interface ModerationStatusEditorProps {
     currentStatus: ModerationStatus
@@ -26,51 +27,51 @@ const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus
     }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <Select
-                    label="Статус"
-                    name="status"
-                    register={register}
-                    value={currentStatus}
-                    options={[
-                        {
-                            value: ModerationStatus.PENDING,
-                            label: ModerationStatusLabels[ModerationStatus.PENDING],
-                        },
-                        {
-                            value: ModerationStatus.APPROVED,
-                            label: ModerationStatusLabels[ModerationStatus.APPROVED],
-                        },
-                        {
-                            value: ModerationStatus.REJECTED,
-                            label: ModerationStatusLabels[ModerationStatus.REJECTED],
-                        },
-                    ]}
-                />
-                <br />
+        <div className={styles.form}>
+            <form onSubmit={handleSubmit(onSubmit)} className={styles.formContentWrapper}>
+                <div className={styles.formContent}>
+                    <Select
+                        label="Статус"
+                        name="status"
+                        register={register}
+                        value={currentStatus}
+                        options={[
+                            {
+                                value: ModerationStatus.PENDING,
+                                label: ModerationStatusLabels[ModerationStatus.PENDING],
+                            },
+                            {
+                                value: ModerationStatus.APPROVED,
+                                label: ModerationStatusLabels[ModerationStatus.APPROVED],
+                            },
+                            {
+                                value: ModerationStatus.REJECTED,
+                                label: ModerationStatusLabels[ModerationStatus.REJECTED],
+                            },
+                        ]}
+                    />
+                    <br />
 
-                <ValidatedInput
-                    trigger={trigger}
-                    // floatingLabel={false}
-                    multiline
-                    clearable
-                    name="description"
-                    placeholder="Сообщение автору теста"
-                    register={register}
-                    setValue={setValue}
-                    disabled
-                />
-                <br />
-                <br />
-                <br />
+                    <ValidatedInput
+                        trigger={trigger}
+                        multiline
+                        clearable
+                        name="description"
+                        placeholder="Сообщение автору теста"
+                        register={register}
+                        setValue={setValue}
+                        disabled
+                    />
+                </div>
 
-                <Button type="submit" disabled={!hasChanged}>
-                    Сохранить
-                </Button>
-                {/* <Button type="button" onClick={onCancel}>
-                    Отмена
-                </Button> */}
+                <div className={styles.formActions}>
+                    <Button type="button" onClick={onCancel}>
+                        Отмена
+                    </Button>
+                    <Button type="submit" disabled={!hasChanged}>
+                        Сохранить
+                    </Button>
+                </div>
             </form>
         </div>
     )

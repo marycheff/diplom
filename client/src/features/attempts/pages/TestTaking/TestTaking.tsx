@@ -7,7 +7,7 @@ import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
 import { AttemptAnswer, AttemptStatus, QuestionType, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
-import { Button, HomeButton } from "@/shared/ui/Button"
+import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
@@ -302,7 +302,15 @@ const TestTaking = () => {
 
     return (
         <>
-            <HomeButton />
+            <header className={styles.header}>
+                <div className={styles.logo}>НейроТест</div>
+                <div className={styles.authButtons}>
+                    <Button onClick={() => navigate(ROUTES.LOGIN)}>Авторизация</Button>
+                    <Button onClick={() => navigate(ROUTES.REGISTER)} variant="secondary">
+                        Регистрация
+                    </Button>
+                </div>
+            </header>
             <div className={styles.questionsContainer}>
                 {isAttemptCompleted && (
                     <div className={styles.completedBanner}>Попытка завершена. Изменение ответов недоступно.</div>

@@ -225,8 +225,9 @@ const TestInfoPage = () => {
                                     <div className={styles.infoRow}>
                                         <span className={styles.label}>Статус модерации </span>
                                         <span className={styles.value}>
-                                            {ModerationStatusLabels[test.moderationStatus]}{" "}
+                                            {ModerationStatusLabels[test.moderationStatus]}
                                             <Button
+                                                className={styles.editModerationStatusBtn}
                                                 onClick={() => setIsModerationStatusModalOpen(true)}
                                                 tooltip="Редактировать">
                                                 <MdEdit />

@@ -1,10 +1,44 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background-color: $primary-600;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.authButtons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    button {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+}
+
 .questionsContainer {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 50px;
+    padding-top: 0;
+    border: 3px solid $border-primary;
+    border-radius: 16px;
+    margin-top: 10vh;
 }
 
 .questionHeader {
@@ -86,6 +120,10 @@
 
 .submitButton {
     margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
 }
 
 .completedBanner {
@@ -115,6 +153,7 @@
     width: 150px;
     padding: 5px 10px;
     margin: 0 5px;
+    text-align: center;
 
     border-radius: 4px;
     font-size: 16px;

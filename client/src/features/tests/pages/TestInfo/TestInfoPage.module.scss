@@ -303,6 +303,25 @@
     font-size: 17px;
     line-height: 15px;
 }
+.editModerationStatusBtn {
+    background-color: transparent;
+    font-size: 16px;
+    // line-height: 15px;
+    border: none;
+    padding: 0;
+
+    margin-left: 25px;
+
+    svg {
+        fill: black;
+    }
+    &:hover {
+        background-color: transparent;
+        svg {
+            fill: #4e6554;
+        }
+    }
+}
 
 .authBlock {
     background-color: $background-100;

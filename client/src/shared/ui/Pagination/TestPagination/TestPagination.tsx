@@ -1,5 +1,5 @@
-import { FC } from "react"
 import { Button } from "@/shared/ui/Button"
+import { FC } from "react"
 import styles from "./TestPagination.module.scss"
 
 interface TestPaginationProps {
@@ -21,6 +21,13 @@ const TestPagination: FC<TestPaginationProps> = ({ totalPages, page, changePage 
                     <span className={styles.buttonSymbol}>{"<"}</span>
                     <span className={styles.buttonText}>{"Назад"}</span>
                 </Button>
+                <Button
+                    className={styles.navigationButton}
+                    onClick={() => changePage(page + 1)}
+                    disabled={page === totalPages || totalPages === 0}>
+                    <span className={styles.buttonText}>{"Вперед"}</span>
+                    <span className={styles.buttonSymbol}>{">"}</span>
+                </Button>
             </div>
 
             <div className={styles.pagesGrid}>
@@ -32,16 +39,6 @@ const TestPagination: FC<TestPaginationProps> = ({ totalPages, page, changePage 
                         {p}
                     </span>
                 ))}
-            </div>
-
-            <div className={styles.navigationButtons}>
-                <Button
-                    className={styles.navigationButton}
-                    onClick={() => changePage(page + 1)}
-                    disabled={page === totalPages || totalPages === 0}>
-                    <span className={styles.buttonText}>{"Вперед"}</span>
-                    <span className={styles.buttonSymbol}>{">"}</span>
-                </Button>
             </div>
         </div>
     )
