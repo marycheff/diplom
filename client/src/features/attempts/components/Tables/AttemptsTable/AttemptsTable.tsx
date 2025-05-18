@@ -31,8 +31,8 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                     <th scope="col">Пользователь</th>
                                     <th scope="col">Тест</th>
                                     <th scope="col">Статус</th>
-                                    <th scope="col">Начат</th>
-                                    <th scope="col">Завершен</th>
+                                    <th scope="col">Начата</th>
+                                    <th scope="col">Завершена</th>
                                     <th scope="col">Баллы</th>
                                 </tr>
                             </thead>

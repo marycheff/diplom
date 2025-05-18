@@ -33,6 +33,9 @@ const TestTaking = () => {
     const [attempt, setAttempt] = useState<TestAttemptUserDTO | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
     const [timeLimit, setTimeLimit] = useState(0)
+    const [isAttemptLoaded, setIsAttemptLoaded] = useState(false)
+    const [isTestLoaded, setIsTestLoaded] = useState(false)
+
     const navigate = useNavigate()
 
     // Хуки из store
@@ -104,16 +107,30 @@ const TestTaking = () => {
 
     // Загрузка данных попытки
     const fetchAttempt = async () => {
-        const fetchedAttempt = await getAttemptForUserById(attemptId)
-        setAttempt(fetchedAttempt || null)
+        try {
+            const fetchedAttempt = await getAttemptForUserById(attemptId)
+            if (fetchedAttempt) {
+                setAttempt(fetchedAttempt)
+            }
+            setIsAttemptLoaded(true)
+        } catch {
+            setIsAttemptLoaded(true)
+            return <AttemptNotFound />
+        }
     }
 
     // Загрузка данных теста
     const fetchTest = async () => {
-        if (!attempt) return
-        const fetchedTest = await getTestForUserById(attempt.testId, attemptId)
-        setTest(fetchedTest || null)
-        setTimeLimit(fetchedTest?.settings?.timeLimit || 0)
+        try {
+            if (!attempt) return
+            const fetchedTest = await getTestForUserById(attempt.testId, attemptId)
+            setTest(fetchedTest || null)
+            setTimeLimit(fetchedTest?.settings?.timeLimit || 0)
+            setIsTestLoaded(true)
+        } catch (error) {
+            setIsTestLoaded(true)
+            return <TestNotFound />
+        }
     }
 
     // Инициализация данных при монтировании
@@ -285,7 +302,7 @@ const TestTaking = () => {
     }
 
     // Состояния загрузки
-    if (isAttemptFetching || isTestFetching) return <Loader fullScreen />
+    if (isAttemptFetching || isTestFetching || !isAttemptLoaded || !isTestLoaded) return <Loader fullScreen />
     if (!attempt) return <AttemptNotFound />
     if (!test) return <TestNotFound />
     if (!test.questions?.length) {

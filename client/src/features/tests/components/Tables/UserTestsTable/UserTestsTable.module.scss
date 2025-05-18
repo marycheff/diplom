@@ -2,8 +2,10 @@
     margin-top: 5px;
     .testsCount {
         display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 15px;
+        margin-bottom: 10px;
 
         h3 {
             margin: 0;

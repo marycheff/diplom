@@ -136,7 +136,11 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
             </div>
 
             <div className={styles.infoBlock}>
-                <h1 className={styles.blockTitle}>Вопросы</h1>
+                {snapshot.questions?.length && snapshot.questions?.length > 0 ? (
+                    <h1 className={styles.blockTitle}>Вопросы и ответы ({snapshot.questions.length})</h1>
+                ) : (
+                    <h1 className={styles.blockTitle}>Вопросы и ответы</h1>
+                )}
                 <div className={styles.blockContent}>
                     {snapshot.questions.length > 0 ? (
                         <div className={styles.questionsList}>

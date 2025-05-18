@@ -31,6 +31,7 @@ import { FaLock, FaLockOpen, FaPlus, FaTrash } from "react-icons/fa"
 import { MdEdit } from "react-icons/md"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import styles from "./TestInfoPage.module.scss"
+import { FiEdit } from "react-icons/fi"
 
 const TestInfoPage = () => {
     const { testId } = useParams<{ testId: string }>()
@@ -230,7 +231,7 @@ const TestInfoPage = () => {
                                                 className={styles.editModerationStatusBtn}
                                                 onClick={() => setIsModerationStatusModalOpen(true)}
                                                 tooltip="Редактировать">
-                                                <MdEdit />
+                                                <FiEdit />
                                             </Button>
                                         </span>
                                     </div>
@@ -402,7 +403,11 @@ const TestInfoPage = () => {
 
             <div className={styles.infoBlock}>
                 <div className={styles.blockHeader}>
-                    <h1 className={styles.blockTitle}>Вопросы и ответы</h1>
+                    {test.questions?.length && test.questions?.length > 0 ? (
+                        <h1 className={styles.blockTitle}>Вопросы и ответы ({test.questions.length})</h1>
+                    ) : (
+                        <h1 className={styles.blockTitle}>Вопросы и ответы</h1>
+                    )}
                     <div className={styles.buttonContainer}>
                         <Button
                             onClick={handleEditQuestionsButton}

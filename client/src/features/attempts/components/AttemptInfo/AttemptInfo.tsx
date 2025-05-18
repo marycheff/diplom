@@ -38,11 +38,15 @@ const AttemptInfo = () => {
     const [isDataLoaded, setIsDataLoaded] = useState(false)
 
     const fetchAttempt = async () => {
-        const fetchedAttempt = await getAttemptById(attemptId)
-        if (fetchedAttempt) {
-            setAttempt(fetchedAttempt)
+        try {
+            const fetchedAttempt = await getAttemptById(attemptId)
+            if (fetchedAttempt) {
+                setAttempt(fetchedAttempt)
+            }
+            setIsDataLoaded(true)
+        } catch {
+            setIsDataLoaded(true)
         }
-        setIsDataLoaded(true)
     }
 
     useEffect(() => {
