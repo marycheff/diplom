@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import {
     AttemptStatusLabels,
     GenderLabels,
@@ -14,6 +15,7 @@ interface AttemptsTableProps {
     total: number
 }
 const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
+    const { isAdmin } = useAuthStore()
     return (
         <>
             {attempts && attempts.length > 0 && (
@@ -40,9 +42,15 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                 {attempts.map(attempt => (
                                     <tr key={attempt.id}>
                                         <td>
-                                            <Link to={`/admin/attempts/${attempt.id}`} className="actionLink">
-                                                {shortenText(attempt.id)}
-                                            </Link>
+                                            {isAdmin ? (
+                                                <Link to={`/admin/attempts/${attempt.id}`} className="actionLink">
+                                                    {shortenText(attempt.id)}
+                                                </Link>
+                                            ) : (
+                                                <Link to={`/my-attempts/${attempt.id}`} className="actionLink">
+                                                    {shortenText(attempt.id)}
+                                                </Link>
+                                            )}
                                         </td>
                                         <td>
                                             {attempt.user ? (
