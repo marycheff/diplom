@@ -11,8 +11,9 @@ export interface UserState {
     blockUser: (id: string) => Promise<void>
     unblockUser: (id: string) => Promise<void>
     searchUser: (query: string, page: number, limit: number) => Promise<UsersListDTO | undefined>
+    createUser: (userData: CreateUserDTO) => Promise<UserDTO | undefined>
     // CACHE
-    CACHE_EXPIRATION_TIME: number 
+    CACHE_EXPIRATION_TIME: number
     cache: Record<string, { data: UsersListDTO; timestamp: Date }>
     setCache: (key: string, data: UsersListDTO) => void
     clearCache: () => void
@@ -33,7 +34,16 @@ export interface UserDTO {
     surname?: string | null
     patronymic?: string | null
 }
-
+export interface CreateUserDTO {
+    email: string
+    password: string
+    role?: Role
+    isActivated: boolean
+    activationLink?: string
+    name?: string | null
+    surname?: string | null
+    patronymic?: string | null
+}
 export enum Role {
     USER = "USER",
     ADMIN = "ADMIN",

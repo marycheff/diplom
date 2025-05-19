@@ -26,6 +26,8 @@ export const ROUTES = {
     ADMIN: "/admin",
     ADMIN_USERS: "/admin/users",
     ADMIN_USER_INFO: "/admin/users/:userId",
+    ADMIN_CREATE_USER: "/admin/create-user",
+
     ADMIN_TESTS: "/admin/tests",
     ADMIN_UNMODERATED_TESTS: "/admin/tests/unmoderated",
     ADMIN_TEST_INFO: "/admin/tests/:testId",

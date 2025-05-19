@@ -7,8 +7,10 @@ import TestPreview from "@/features/tests/components/TestPreview/TestPreview"
 import TestSettingsEditor from "@/features/tests/components/TestSettingsEditor/TestSettingsEditor"
 import InfoRowSkeleton from "@/features/tests/components/TestSettingsSkeleton/TestSettingsSkeleton"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import { ROUTES } from "@/router/paths"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
+import { useCache } from "@/shared/hooks/useCache"
 import {
     ModerationStatus,
     ModerationStatusLabels,
@@ -18,6 +20,7 @@ import {
     ShortTestInfo,
     TestDTO,
     TestSettingsDTO,
+    TestsListDTO,
     TestVisibilityStatus,
 } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
@@ -54,7 +57,7 @@ const TestInfoPage = () => {
     } = useTestStore()
     const [test, setTest] = useState<TestDTO | null>(null)
     const { user: currentUser, isAdmin } = useAuthStore()
-
+    const { clearCache } = useCache<TestsListDTO>(useTestStore, "tests")
     const navigate = useNavigate()
     const location = useLocation()
     const [isEditQuestionsModalOpen, setIsEditQuestionsModalOpen] = useState(
@@ -76,15 +79,13 @@ const TestInfoPage = () => {
         return <NothingFound title="Невалидный ID теста" />
     }
     const fetchTest = async () => {
-        try{
+        try {
             const fetchedTest = await getTestById(testId)
             if (fetchedTest) {
                 setTest(fetchedTest)
             }
             setIsDataLoaded(true)
-
-        }
-        catch{
+        } catch {
             setIsDataLoaded(true)
         }
     }
@@ -560,7 +561,8 @@ const TestInfoPage = () => {
                 onConfirm={async () => {
                     await deleteTest(test.id)
                     toast.success("Тест удалён")
-                    navigate("/admin/tests")
+                    clearCache()
+                    navigate(ROUTES.ADMIN_TESTS)
                 }}
                 title="Удаление теста"
                 confirmText="Удалить"

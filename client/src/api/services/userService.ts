@@ -1,5 +1,5 @@
 import axiosInstance from "@/api"
-import { AuthResponse, UpdateUser, UserDTO, UsersListDTO } from "@/shared/types"
+import { AuthResponse, CreateUserDTO, UpdateUser, UserDTO, UsersListDTO } from "@/shared/types"
 import { AxiosResponse } from "axios"
 
 class UserService {
@@ -43,6 +43,9 @@ class UserService {
                 limit,
             },
         })
+    }
+    createUser(userData: CreateUserDTO): Promise<AxiosResponse<UserDTO>> {
+        return axiosInstance.post<UserDTO>("/users/create", userData)
     }
 }
 

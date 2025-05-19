@@ -44,6 +44,7 @@ const Breadcrumbs = () => {
         home: "Главная",
         start: "Начать",
         unmoderated: "Не модерированные",
+        "create-user": "Создание пользователя",
         "create-test": "Создание теста",
         "my-tests": "Мои тесты",
         "add-questions": "Добавление вопросов",

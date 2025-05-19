@@ -16,6 +16,7 @@ import CreateTestPage from "@/features/tests/pages/CreateTest/CreateTestPage"
 import MyTestsPage from "@/features/tests/pages/MyTests/MyTestsPage"
 import TestInfoPage from "@/features/tests/pages/TestInfo/TestInfoPage"
 import AllUsersPage from "@/features/users/pages/AllUsers/AllUsersPage"
+import CreateUserPage from "@/features/users/pages/CreateUser/CreateUserPage"
 import UserInfoPage from "@/features/users/pages/UserInfo/UserInfoPage"
 import UserProfilePage from "@/features/users/pages/UserProfile/UserProfilePage"
 import HomePage from "@/pages/HomePage"
@@ -27,6 +28,7 @@ export const adminRoutes = [
     { path: ROUTES.ADMIN, element: <AdminPage /> },
     { path: ROUTES.ADMIN_USERS, element: <AllUsersPage /> },
     { path: ROUTES.ADMIN_USER_INFO, element: <UserInfoPage /> },
+    { path: ROUTES.ADMIN_CREATE_USER, element: <CreateUserPage /> },
     { path: ROUTES.ADMIN_TESTS, element: <AllTestsPage /> },
     { path: ROUTES.ADMIN_UNMODERATED_TESTS, element: <UnmoderatedTestsPage /> },
     { path: ROUTES.ADMIN_TEST_INFO, element: <TestInfoPage /> },

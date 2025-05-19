@@ -3,7 +3,8 @@ import UserTests from "@/features/tests/components/UserTests/UserTests"
 import { useUserStore } from "@/features/users/store/useUserStore"
 import { ROUTES } from "@/router/paths"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
-import { UserDTO } from "@/shared/types"
+import { useCache } from "@/shared/hooks/useCache"
+import { UserDTO, UsersListDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -30,6 +31,7 @@ const UserInfo = () => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [blockModalOpen, setBlockModalOpen] = useState(false)
     const [isDataLoaded, setIsDataLoaded] = useState(false)
+    const { clearCache } = useCache<UsersListDTO>(useUserStore, "users")
 
     const fetchUser = async () => {
         const user = await getUserById(userId)
@@ -45,7 +47,8 @@ const UserInfo = () => {
     const confirmDeleteUser = async () => {
         await deleteUser(user.id)
         toast.success("Пользователь удален")
-        navigate(ROUTES.ADMIN)
+        navigate(ROUTES.ADMIN_USERS)
+        clearCache()
         setDeleteModalOpen(false)
     }
 
@@ -57,6 +60,7 @@ const UserInfo = () => {
         await blockUser(user.id)
         setUser({ ...user, isBlocked: true })
         toast.success("Пользователь заблокирован")
+        clearCache()
         setBlockModalOpen(false)
     }
 

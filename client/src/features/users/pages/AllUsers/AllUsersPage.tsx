@@ -1,6 +1,7 @@
 import styles from "@/features/tests/pages/AllTests/AllTestsPage.module.scss"
 import UsersTable from "@/features/users/components/Tables/UsersTable/UsersTable"
 import { useUserStore } from "@/features/users/store/useUserStore"
+import { ROUTES } from "@/router/paths"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { useCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
@@ -12,7 +13,7 @@ import SearchBar from "@/shared/ui/SearchBar/SearchBar"
 import { TABLE_LIMIT } from "@/shared/utils/constants"
 import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 
 const AllUsersPage = () => {
     const [users, setUsers] = useState<UserDTO[]>([])
@@ -121,6 +122,9 @@ const AllUsersPage = () => {
                     </Button>
                 </div>
 
+                <Link to={ROUTES.ADMIN_CREATE_USER}>
+                    <Button className={styles.navigationButton}>Создать</Button>
+                </Link>
                 <div className={styles.cacheInfo}>
                     <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
                 </div>

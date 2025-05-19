@@ -23,6 +23,17 @@ export const emailValidationRules: RegisterOptions = {
         message: "Введите корректный email",
     },
 }
+export const passwordValidationRules: RegisterOptions = {
+    required: "Пароль обязателен",
+    minLength: {
+        value: 8,
+        message: "Пароль должен содержать не менее 8 символов",
+    },
+    maxLength: {
+        value: 64,
+        message: "Пароль не должен превышать 32 символа",
+    },
+}
 
 export const questionValidationRules: RegisterOptions = {
     required: "Вопрос обязателен",

@@ -96,5 +96,12 @@ export const useUserStore = create<UserState>(set => {
             }
             return withFetching(operation)
         },
+        createUser: async userData => {
+            const operation = async () => {
+                const response = await userService.createUser(userData)
+                return response.data
+            }
+            return withLoading(operation)
+        },
     }
 })

@@ -1,3 +1,4 @@
+import { passwordValidationRules } from "@/shared/types/utils/validationRules"
 import { PasswordInputProps } from "@/shared/ui/Input/Password/PasswordInput.props"
 import { ChangeEvent, FC, useEffect, useState } from "react" // Добавим useEffect
 import { RegisterOptions } from "react-hook-form"
@@ -24,17 +25,7 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
 
     const passwordValidation: RegisterOptions = noValidation
         ? { required: "Пароль обязателен" }
-        : {
-              required: "Пароль обязателен",
-              minLength: {
-                  value: 8,
-                  message: "Пароль должен содержать минимум 8 символов",
-              },
-              maxLength: {
-                  value: 64,
-                  message: "Пароль не должен превышать 32 символа",
-              },
-          }
+        : passwordValidationRules
 
     const handleClear = () => {
         setValue(name, "")
@@ -78,7 +69,8 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
 
     return (
         <div className={styles.inputWrapper}>
-            <label className={styles.label}>{label}</label>
+            {label && <label className={styles.label}>{label}</label>}
+
             <div className={`${styles.inputContainer} ${isActive ? styles.active : ""} ${errors ? styles.error : ""}`}>
                 <input
                     type={isPasswordVisible ? "text" : "password"}
