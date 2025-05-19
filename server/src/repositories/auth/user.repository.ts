@@ -1,7 +1,7 @@
 import { CreateUserDTO } from "@/types/core/user.types"
 import { getActivationLinkExpDate, getResetCodeExpDate } from "@/utils/math"
 import { prisma } from "@/utils/prisma-client"
-import { Prisma, User } from "@prisma/client"
+import { Prisma, Role, User } from "@prisma/client"
 
 class UserRepository {
     async findByEmail(email: string): Promise<User | null> {
@@ -22,7 +22,12 @@ class UserRepository {
         })
     }
 
-    async create(userData: CreateUserDTO, hashedPassword: string, activationLink: string, role: "USER"): Promise<User> {
+    async create(
+        userData: CreateUserDTO,
+        hashedPassword: string,
+        activationLink: string | null,
+        role: Role
+    ): Promise<User> {
         return prisma.user.create({
             data: {
                 ...userData,

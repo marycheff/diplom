@@ -1,9 +1,5 @@
 import { Role } from "@prisma/client"
 
-export interface UsersListDTO {
-    users: UserDTO[]
-    total: number
-}
 export interface UserDTO {
     id: string
     email: string
@@ -14,12 +10,23 @@ export interface UserDTO {
     surname?: string | null
     patronymic?: string | null
 }
+
+export interface UsersListDTO {
+    users: UserDTO[]
+    total: number
+}
+
 export interface CreateUserDTO {
     email: string
     password: string
+    role?: Role
     isActivated: boolean
     activationLink?: string
+    name?: string | null
+    surname?: string | null
+    patronymic?: string | null
 }
+
 export interface UpdateUserDTO {
     name?: string
     surname?: string

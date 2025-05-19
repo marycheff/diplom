@@ -1,7 +1,7 @@
 import ApiError from "@/exceptions/api-error"
 import userRepository from "@/repositories/auth/user.repository"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
-import { UpdateUserDTO, UserDTO, UsersListDTO } from "@/types/core/user.types"
+import { CreateUserDTO, UpdateUserDTO, UserDTO, UsersListDTO } from "@/types/core/user.types"
 import { logger } from "@/utils/logger"
 import { redisClient } from "@/utils/redis-client"
 import { User } from "@prisma/client"
@@ -200,6 +200,37 @@ class UserService {
                 stack: error instanceof Error ? error.stack : undefined,
             })
             throw ApiError.InternalError("Ошибка при удалении пользователя")
+        }
+    }
+
+    async createUser(userData: CreateUserDTO): Promise<UserDTO> {
+        logger.info(`[${LOG_NAMESPACE}] Создание нового пользователя администратором`)
+        try {
+            const candidate = await userRepository.findByEmail(userData.email)
+
+            if (candidate) {
+                logger.warn(`[${LOG_NAMESPACE}] Попытка создания пользователя с существующим email`, {
+                    email: userData.email,
+                })
+                throw ApiError.BadRequest(`Пользователь с email ${userData.email} уже существует`)
+            }
+
+            const hashedPassword = await bcrypt.hash(userData.password, 10)
+            const newUser = await userRepository.create(userData, hashedPassword, null, userData.role || "USER")
+
+            const userDto = mapUserToDto(newUser)
+            logger.info(`[${LOG_NAMESPACE}] Пользователь успешно создан администратором`, { userId: newUser.id })
+
+            return userDto
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при создании пользователя`, {
+                error: error instanceof Error ? error.message : String(error),
+                stack: error instanceof Error ? error.stack : undefined,
+            })
+            throw ApiError.InternalError("Ошибка при создании пользователя")
         }
     }
 

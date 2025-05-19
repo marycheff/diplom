@@ -10,6 +10,9 @@ const router = Router()
 // Получение списка всех пользователей (админ)
 router.get("/", authMiddleware, adminMiddleware, userController.getUsers)
 
+// Создание нового пользователя (админ)
+router.post("/create", authMiddleware, adminMiddleware, userController.createUser)
+
 router.get("/search", authMiddleware, userController.searchUsers)
 
 // Получение информации о пользователе по его ID

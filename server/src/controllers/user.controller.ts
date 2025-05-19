@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express"
 
 import ApiError from "@/exceptions/api-error"
 import userService from "@/services/auth/user.service"
-import { isValidUUID } from "@/utils/validator"
 
 class UserController {
     async getUsers(req: Request, res: Response, next: NextFunction) {
@@ -99,6 +98,15 @@ class UserController {
             const { id } = req.params
             await userService.unblockUser(id)
             res.status(200).json({ message: "Пользователь успешно разблокирован" })
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async createUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userData = await userService.createUser(req.body)
+            res.status(201).json(userData)
         } catch (e) {
             next(e)
         }
