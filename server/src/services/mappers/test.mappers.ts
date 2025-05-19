@@ -350,7 +350,10 @@ export const mapUserQuestion = (question: Question & { answers: Answer[] }): Use
         id: question.id,
         text: question.text,
         type: question.type as QuestionType,
-        answers: question.answers.map(answer => mapUserAnswer(answer)),
+        answers:
+            question.type === "FILL_IN_THE_BLANK" || question.type === "TEXT_INPUT"
+                ? question.answers.map(answer => mapUserAnswerWithoutText(answer))
+                : question.answers.map(answer => mapUserAnswer(answer)),
     }
 }
 
@@ -359,5 +362,11 @@ export const mapUserAnswer = (answer: Answer): AnswerUserDTO => {
     return {
         id: answer.id,
         text: answer.text,
+    }
+}
+export const mapUserAnswerWithoutText = (answer: Answer): AnswerUserDTO => {
+    return {
+        id: answer.id,
+        // text: answer.text,
     }
 }

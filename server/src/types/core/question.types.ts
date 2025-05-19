@@ -30,5 +30,5 @@ export interface UserQuestionDTO {
 
 export interface AnswerUserDTO {
     id: string
-    text: string
+    text?: string
 }
