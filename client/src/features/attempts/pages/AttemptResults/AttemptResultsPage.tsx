@@ -1,7 +1,7 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { ROUTES } from "@/router/paths"
+import Header from "@/shared/components/Header/Header"
 import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
@@ -13,7 +13,6 @@ import {
     TestAttemptUserDTO,
     UserTestDTO,
 } from "@/shared/types"
-import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -28,7 +27,9 @@ const AttemptResultsPage = () => {
     const [attempt, setAttempt] = useState<TestAttemptResultDTO | null>(null)
     const [test, setTest] = useState<UserTestDTO | null>(null)
     const { isFetching: isTestFetching, getTestForUserById } = useTestStore()
-    const { user, isAdmin } = useAuthStore()
+    const { isAdmin } = useAuthStore()
+    const [isAttemptLoaded, setIsAttemptLoaded] = useState(false)
+    const [isTestLoaded, setIsTestLoaded] = useState(false)
 
     const { isFetching: isAttemptFetching, getAttemptResults, getAttemptForUserById } = useAttemptStore()
     // Проверка валидности attemptId
@@ -41,8 +42,16 @@ const AttemptResultsPage = () => {
 
     // Загрузка данных попытки
     const fetchAttemptForUser = async () => {
-        const fetchedAttempt = await getAttemptForUserById(attemptId)
-        setAttemptForUser(fetchedAttempt || null)
+        try {
+            const fetchedAttempt = await getAttemptForUserById(attemptId)
+            if (fetchedAttempt) {
+                setAttemptForUser(fetchedAttempt)
+            }
+            setIsAttemptLoaded(true)
+        } catch {
+            setIsAttemptLoaded(true)
+            return <AttemptNotFound />
+        }
     }
     const fetchAttempt = async () => {
         const fetchedAttempt = await getAttemptResults(attemptId)
@@ -51,9 +60,18 @@ const AttemptResultsPage = () => {
 
     // Загрузка данных теста
     const fetchTest = async () => {
-        if (!attemptForUser) return
-        const fetchedTest = await getTestForUserById(attemptForUser.testId)
-        setTest(fetchedTest || null)
+        try {
+            if (!attemptForUser) return
+
+            const fetchedTest = await getTestForUserById(attemptForUser.testId)
+            if (fetchedTest) {
+                setTest(fetchedTest)
+            }
+            setIsTestLoaded(true)
+        } catch {
+            setIsTestLoaded(true)
+            return <TestNotFound />
+        }
     }
     // Инициализация данных при монтировании
     useEffect(() => {
@@ -104,7 +122,7 @@ const AttemptResultsPage = () => {
     }
 
     // Состояния загрузки
-    if (isAttemptFetching || isTestFetching) return <Loader fullScreen />
+    if (isAttemptFetching || isTestFetching || !isTestLoaded || !isAttemptLoaded) return <Loader fullScreen />
     if (!attemptForUser) return <AttemptNotFound />
     if (attemptForUser.status === AttemptStatus.IN_PROGRESS) {
         return <NothingFound title="Попытка не завершения" description="Завершите попытку и вернитесь позже" />
@@ -117,26 +135,7 @@ const AttemptResultsPage = () => {
 
     return (
         <div className={styles.container}>
-            <header className={styles.header}>
-                <div className={styles.logo}>НейроТест</div>
-                <div className={styles.authButtons}>
-                    {user ? (
-                        <>
-                            <Button onClick={() => navigate(ROUTES.HOME)}>Главная</Button>
-                            <Button onClick={() => navigate(ROUTES.MY_ATTEMPTS)} variant="secondary">
-                                Мои результаты
-                            </Button>
-                        </>
-                    ) : (
-                        <>
-                            <Button onClick={() => navigate(ROUTES.LOGIN)}>Авторизация</Button>
-                            <Button onClick={() => navigate(ROUTES.REGISTER)} variant="secondary">
-                                Регистрация
-                            </Button>
-                        </>
-                    )}
-                </div>
-            </header>
+            <Header />
             <div className={styles.content}>
                 {test.settings?.showDetailedResults || isAdmin ? (
                     <>

@@ -3,12 +3,12 @@ import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import QuestionRenderer from "@/features/tests/components/QuestionRenderer/QuestionRenderer"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
+import Header from "@/shared/components/Header/Header"
 import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
 import { AttemptAnswer, AttemptStatus, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
-import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
@@ -292,15 +292,7 @@ const TestTaking = () => {
 
     return (
         <>
-            <header className={styles.header}>
-                <div className={styles.logo}>НейроТест</div>
-                <div className={styles.authButtons}>
-                    <Button onClick={() => navigate(ROUTES.LOGIN)}>Авторизация</Button>
-                    <Button onClick={() => navigate(ROUTES.REGISTER)} variant="secondary">
-                        Регистрация
-                    </Button>
-                </div>
-            </header>
+            <Header />
             <div className={styles.questionsContainer}>
                 {isAttemptCompleted && (
                     <div className={styles.completedBanner}>Попытка завершена. Изменение ответов недоступно.</div>

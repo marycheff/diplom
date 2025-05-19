@@ -1,4 +1,5 @@
 import { ROUTES } from "@/router/paths"
+import Header from "@/shared/components/Header/Header"
 import { Button } from "@/shared/ui/Button"
 import { useNavigate } from "react-router-dom"
 import styles from "./WelcomePage.module.scss"
@@ -8,14 +9,7 @@ const WelcomePage = () => {
 
     return (
         <div className={styles.wrapper}>
-            <header className={styles.header}>
-                <div className={styles.logo}>НейроТест</div>
-                <div className={styles.authButtons}>
-                    <Button onClick={() => navigate(ROUTES.LOGIN)}>Авторизация</Button>
-                    <Button onClick={() => navigate(ROUTES.REGISTER)} variant="secondary">Регистрация</Button>
-                </div>
-            </header>
-
+            <Header />
             <main className={styles.main}>
                 <section className={styles.hero}>
                     <h1>Создавайте тесты за минуты</h1>
