@@ -12,7 +12,7 @@ export const QuestionTypeLabels: Record<QuestionType, string> = {
     [QuestionType.MULTIPLE_CHOICE]: "Множественный выбор",
     [QuestionType.TEXT_INPUT]: "Текстовый ввод",
     [QuestionType.MATCHING]: "Сопоставление",
-    [QuestionType.FILL_IN_THE_BLANK]: "Заполнение пропусков",
+    [QuestionType.FILL_IN_THE_BLANK]: "Заполнение пропуска",
     [QuestionType.SEQUENCE]: "Последовательность",
 }
 

@@ -76,15 +76,13 @@ const TestInfoPage = () => {
         return <NothingFound title="Невалидный ID теста" />
     }
     const fetchTest = async () => {
-        try{
+        try {
             const fetchedTest = await getTestById(testId)
             if (fetchedTest) {
                 setTest(fetchedTest)
             }
             setIsDataLoaded(true)
-
-        }
-        catch{
+        } catch {
             setIsDataLoaded(true)
         }
     }
@@ -275,18 +273,24 @@ const TestInfoPage = () => {
                                     {test.description || <span className={styles.emptyField}>не указано</span>}
                                 </span>
                             </div>
-                            <div className={styles.infoRow}>
-                                <span className={styles.label}>Всего попыток</span>
-                                <span className={styles.value}>
-                                    {test.totalAttempts === 0 ? (
-                                        "0"
-                                    ) : (
-                                        <Link to={`/admin/tests/${test.id}/attempts`} className="actionLink">
-                                            {test.totalAttempts}
-                                        </Link>
-                                    )}
-                                </span>
-                            </div>
+                            {isAdmin && (
+                                <div className={styles.infoRow}>
+                                    <span className={styles.label}>Всего попыток</span>
+                                    <span className={styles.value}>
+                                        {test.totalAttempts === 0 ? (
+                                            "0"
+                                        ) : isAdmin ? (
+                                            <Link to={`/admin/tests/${test.id}/attempts`} className="actionLink">
+                                                {test.totalAttempts}
+                                            </Link>
+                                        ) : (
+                                            <Link to={`/my-tests/${test.id}/attempts`} className="actionLink">
+                                                {test.totalAttempts}
+                                            </Link>
+                                        )}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
