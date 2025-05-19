@@ -113,8 +113,9 @@ const TestTaking = () => {
                 setAttempt(fetchedAttempt)
             }
             setIsAttemptLoaded(true)
-        } catch {
+        } catch (error) {
             setIsAttemptLoaded(true)
+            setIsTestLoaded(true)
             return <AttemptNotFound />
         }
     }
@@ -275,7 +276,7 @@ const TestTaking = () => {
     }
 
     // Состояния загрузки
-    if (isAttemptFetching || isTestFetching || !isAttemptLoaded || !isTestLoaded) return <Loader fullScreen />
+    if (!isAttemptLoaded || !isTestLoaded) return <Loader fullScreen />
     if (!attempt) return <AttemptNotFound />
     if (!test) return <TestNotFound />
     if (!test.questions?.length) {

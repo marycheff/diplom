@@ -14,13 +14,13 @@ import {
     UserTestDTO,
 } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
+import { countCorrectAnswers } from "@/shared/utils/math"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import styles from "./AttemptResultsPage.module.scss"
 
 const AttemptResultsPage = () => {
-    const navigate = useNavigate()
     // Параметры маршрута
     const { attemptId } = useParams<{ attemptId: string }>()
     const [attemptForUser, setAttemptForUser] = useState<TestAttemptUserDTO | null>(null)
@@ -85,42 +85,6 @@ const AttemptResultsPage = () => {
         }
     }, [attemptForUser])
 
-    // Подсчет количества правильных ответов
-    // TODO: перенести в math
-    const countCorrectAnswers = () => {
-        if (!attempt || !attempt.questions) return 0
-
-        let correctCount = 0
-
-        attempt.questions.forEach(question => {
-            const userAnswers = question.userAnswers?.answers ?? []
-
-            if (
-                question.question.type === QuestionType.TEXT_INPUT ||
-                question.question.type === QuestionType.FILL_IN_THE_BLANK
-            ) {
-                if (question.userAnswers?.isCorrect) {
-                    correctCount++
-                }
-            } else {
-                // Для SINGLE_CHOICE и MULTIPLE_CHOICE сравниваем ID
-                const correctAnswerIds = question.answers.filter(answer => answer.isCorrect).map(answer => answer.id)
-
-                const userAnswerIds = userAnswers.map(a => a.answer.id)
-
-                if (
-                    correctAnswerIds.length === userAnswerIds.length &&
-                    correctAnswerIds.every(id => userAnswerIds.includes(id)) &&
-                    userAnswerIds.every(id => correctAnswerIds.includes(id))
-                ) {
-                    correctCount++
-                }
-            }
-        })
-
-        return correctCount
-    }
-
     // Состояния загрузки
     if (isAttemptFetching || isTestFetching || !isTestLoaded || !isAttemptLoaded) return <Loader fullScreen />
     if (!attemptForUser) return <AttemptNotFound />
@@ -130,7 +94,7 @@ const AttemptResultsPage = () => {
     if (!test) return <TestNotFound />
     if (!attempt) return <AttemptNotFound />
 
-    const correctAnswers = countCorrectAnswers()
+    const correctAnswers = attempt.questions ? countCorrectAnswers(attempt.questions) : 0
     const totalQuestions = attempt.questions?.length || 0
 
     return (

@@ -3,7 +3,6 @@ import { Button } from "@/shared/ui/Button"
 import Tooltip from "@/shared/ui/Tooltip/Tooltip"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import clsx from "clsx"
 import { FC, useRef } from "react"
 import { FaAngleDown, FaAngleUp, FaTrash } from "react-icons/fa"
 import styles from "./QuestionItem.module.scss"
@@ -64,7 +63,7 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
                 </div>
             </div>
             {!isDragging && (
-                <div className={clsx(styles.questionContent, expanded && styles.expanded)}>
+                <div className={`${styles.questionContent} ${expanded ? styles.expanded : ""}`}>
                     {question.answers.map(answer => (
                         <div key={answer.id} className={answer.isCorrect ? styles.correctAnswer : styles.answer}>
                             {answer.text}

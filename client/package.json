@@ -12,7 +12,6 @@
         "@dnd-kit/modifiers": "^9.0.0",
         "@dnd-kit/sortable": "^10.0.0",
         "axios": "^1.9.0",
-        "clsx": "^2.1.1",
         "crypto-js": "^4.2.0",
         "jsonwebtoken": "^9.0.2",
         "react": "^19.1.0",
@@ -23,7 +22,6 @@
         "react-number-format": "^5.4.4",
         "react-pro-sidebar": "^1.1.0",
         "react-router-dom": "^7.5.3",
-        "react-tooltip": "^5.28.1",
         "sass": "^1.87.0",
         "zustand": "^5.0.3"
     },
