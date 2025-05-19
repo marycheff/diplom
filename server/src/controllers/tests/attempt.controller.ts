@@ -92,7 +92,8 @@ class AttemptController {
     async getAttemptForUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { attemptId } = req.params
-            const attempt = await attemptService.getForUserById(attemptId)
+            const userId = req.user?.id
+            const attempt = await attemptService.getForUserById(attemptId, userId)
             res.json(attempt)
         } catch (error) {
             next(error)

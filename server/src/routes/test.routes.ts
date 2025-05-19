@@ -161,7 +161,12 @@ router.post(
     attemptController.completeAttempt
 )
 
-router.get("/attempts/:attemptId/for-user", validateRequest(getAttemptSchema), attemptController.getAttemptForUser)
+router.get(
+    "/attempts/:attemptId/for-user",
+    conditionalAuthMiddleware,
+    validateRequest(getAttemptSchema),
+    attemptController.getAttemptForUser
+)
 router.get(
     "/attempts/:attemptId/results",
     conditionalAuthMiddleware,

@@ -397,22 +397,34 @@ class AttemptService {
         }
     }
 
-    async getForUserById(attemptId: string): Promise<TestAttemptUserDTO> {
+    async getForUserById(attemptId: string, userId?: string): Promise<TestAttemptUserDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение попытки для пользователя по ID`, { attemptId })
+
         try {
             const cacheKey = `user-attempt:${attemptId}`
             const cachedData = await redisClient.get(cacheKey)
             if (cachedData) {
+                const parsedData = JSON.parse(cachedData)
+                if (parsedData.userId && parsedData.userId !== userId) {
+                    logger.warn(`[${LOG_NAMESPACE}] Попытка не принадлежит пользователю`, { attemptId, userId })
+                    throw ApiError.BadRequest("Попытка не принадлежит пользователю")
+                }
                 logger.debug(`[${LOG_NAMESPACE}] Попытка для пользователя получена из кэша`, { attemptId })
-                return JSON.parse(cachedData)
+                return parsedData
             }
             const attempt = await attemptRepository.findForUserById(attemptId)
             if (!attempt) {
                 logger.warn(`[${LOG_NAMESPACE}] Попытка не найдена`, { attemptId })
                 throw ApiError.BadRequest("Попытка не найдена")
             }
-
             const result = mapToTestAttemptUserDTO(attempt)
+
+            if (attempt.userId && attempt.userId !== userId) {
+                logger.warn(`[${LOG_NAMESPACE}] Попытка не принадлежит пользователю`, { attemptId, userId })
+                throw ApiError.BadRequest("Попытка не принадлежит пользователю")
+            }
+            console.log(result)
+
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
             logger.debug(`[${LOG_NAMESPACE}] Попытка для пользователя успешно получена`, { attemptId })
             return result

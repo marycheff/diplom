@@ -247,6 +247,7 @@ export const mapToTestAttemptUserDTO = (
         id: attempt.id,
         testId: attempt.testId,
         status: attempt.status,
+        userId: attempt.userId,
         startedAt: attempt.startedAt,
         completedAt: attempt.completedAt ?? null,
         score: attempt.score ?? null,

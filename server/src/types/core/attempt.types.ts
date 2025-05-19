@@ -43,6 +43,7 @@ export interface TestAttemptResultDTO {
 export interface TestAttemptUserDTO {
     id: string
     testId: string
+    userId?: string | null
     status: string
     startedAt: Date
     completedAt: Date | null
