@@ -67,6 +67,7 @@ const TestInfoPage = () => {
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+    const [isDataLoaded, setIsDataLoaded] = useState(false)
 
     if (!testId) {
         return <NothingFound title="ID теста не указан" />
@@ -75,9 +76,16 @@ const TestInfoPage = () => {
         return <NothingFound title="Невалидный ID теста" />
     }
     const fetchTest = async () => {
-        const fetchedTest = await getTestById(testId)
-        if (fetchedTest) {
-            setTest(fetchedTest)
+        try{
+            const fetchedTest = await getTestById(testId)
+            if (fetchedTest) {
+                setTest(fetchedTest)
+            }
+            setIsDataLoaded(true)
+
+        }
+        catch{
+            setIsDataLoaded(true)
         }
     }
 
@@ -85,7 +93,7 @@ const TestInfoPage = () => {
         fetchTest()
     }, [testId, getTestById])
 
-    if (isFetching) {
+    if (isFetching || !isDataLoaded) {
         return <Loader fullScreen />
     }
     if (!test) {
