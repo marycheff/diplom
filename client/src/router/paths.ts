@@ -22,6 +22,8 @@ export const ROUTES = {
     MY_ATTEMPTS: "/my-attempts",
     MY_ATTEMPT_INFO: "/my-attempts/:attemptId",
 
+    MY_TEST_ATTEMPTS: "/my-tests/:testId/attempts",
+
     // Админские маршруты
     ADMIN: "/admin",
     ADMIN_USERS: "/admin/users",

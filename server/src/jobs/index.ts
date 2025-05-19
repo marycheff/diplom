@@ -7,13 +7,13 @@ export function initializeJobs(): void {
     logger.info("Инициализация фоновых задач...")
 
     // Запуск задачи проверки просроченных попыток
-    // expiredAttemptsJob.start()
+    expiredAttemptsJob.start()
 
     // Запуск задачи проверки просроченных ссылок активации
-    // expiredActivationLinksJob.start()
+    expiredActivationLinksJob.start()
 
     // Запуск задачи проверки просроченных кодов сброса пароля
-    // expiredResetCodesJob.start()
+    expiredResetCodesJob.start()
 
     logger.info("Все фоновые задачи успешно запущены")
 }
