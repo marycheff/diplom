@@ -148,7 +148,7 @@ const AttemptResultsPage = () => {
                                                         {question.question.text}
                                                     </span>
                                                     <span className={styles.questionType}>
-                                                        Тип: {QuestionTypeLabels[question.question.type]}
+                                                        {QuestionTypeLabels[question.question.type]}
                                                     </span>
                                                 </div>
                                                 {/* Вердикт по вопросу */}

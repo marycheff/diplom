@@ -1,19 +1,25 @@
+import UserTestsCards from "@/features/attempts/components/Cards/TestsCards/UserTestsCards"
 import UserTestsTable from "@/features/tests/components/Tables/UserTestsTable/UserTestsTable"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { useCache } from "@/shared/hooks/useCache"
+import { useIsMobile } from "@/shared/hooks/useIsMobile"
 import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { TestDTO, TestsListDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import SearchBar from "@/shared/ui/SearchBar/SearchBar"
+import Select from "@/shared/ui/Select/Select"
 import { TABLE_LIMIT } from "@/shared/utils/constants"
 import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import styles from "./MyTestsPage.module.scss"
+
+type ViewMode = "table" | "cards"
 
 const MyTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
@@ -22,12 +28,25 @@ const MyTestsPage = () => {
     const [limit] = useState<number>(TABLE_LIMIT)
     const [page, setPage] = useState<number>(1)
     const [searchQuery, setSearchQuery] = useState<string>("")
+    const [viewMode, setViewMode] = useState<ViewMode>(() => {
+        const savedViewMode = localStorage.getItem("myTestsViewMode")
+        return (savedViewMode as ViewMode) || "cards"
+    })
     const navigate = useNavigate()
     const location = useLocation()
+    const isMobile = useIsMobile()
     const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
         useCache<TestsListDTO>(useTestStore, "my-tests")
     const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
     const params = new URLSearchParams(location.search)
+    const { register } = useForm()
+
+    const handleViewModeChange = (value: string) => {
+        const newViewMode = value as ViewMode
+        setViewMode(newViewMode)
+        localStorage.setItem("myTestsViewMode", newViewMode)
+    }
+
     const fetchData = useCallback(
         async (currentPage: number, query?: string) => {
             if (isFetching) return
@@ -53,6 +72,13 @@ const MyTestsPage = () => {
         },
         [getCacheKey, getCachedData, saveToCache, searchMyTests, getMyTests, limit]
     )
+
+    // Авто-установка cards-режима при малом экране
+    useEffect(() => {
+        if (isMobile && viewMode !== "cards") {
+            setViewMode("cards")
+        }
+    }, [isMobile, viewMode])
 
     useEffect(() => {
         const query = params.get("query") || ""
@@ -88,16 +114,14 @@ const MyTestsPage = () => {
 
     const handleResetSearch = () => {
         resetSearch()
-        // clearCache()
-        // fetchData(1)
     }
 
     const handleUpdateButton = () => {
         clearCache()
         fetchData(page, searchQuery || undefined)
     }
-    const totalPages = total !== null ? Math.ceil(total / limit) : 0
 
+    const totalPages = total !== null ? Math.ceil(total / limit) : 0
     const isDataLoaded = total !== null
     const hasTests = total !== null && total > 0
     const isSearchActive = !!params.get("query")
@@ -106,7 +130,7 @@ const MyTestsPage = () => {
     const shouldShowPagination = totalPages > 0 && page <= totalPages
 
     return (
-        <>
+        <div className={styles.wrapper}>
             <SearchBar
                 name="search"
                 value={searchQuery}
@@ -129,6 +153,19 @@ const MyTestsPage = () => {
                 <div className={styles.cacheInfo}>
                     <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
                 </div>
+                {!isMobile && (
+                    <Select
+                        register={register}
+                        label="Вид отображения"
+                        name="viewMode"
+                        options={[
+                            { value: "table", label: "Таблицей" },
+                            { value: "cards", label: "Карточками" },
+                        ]}
+                        value={viewMode}
+                        onChange={handleViewModeChange}
+                    />
+                )}
             </div>
 
             {isFetching || !isDataLoaded ? (
@@ -136,10 +173,14 @@ const MyTestsPage = () => {
             ) : (
                 <>
                     {shouldShowPagination ? (
-                        <>
-                            <UserTestsTable tests={tests} total={total} />
+                        <div className={styles.contentContainer}>
+                            {viewMode === "table" ? (
+                                <UserTestsTable tests={tests} total={total} />
+                            ) : (
+                                <UserTestsCards tests={tests} total={total} />
+                            )}
                             <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
-                        </>
+                        </div>
                     ) : noTestsFoundInSearch ? (
                         <NothingFound />
                     ) : emptyTestsPage ? (
@@ -163,7 +204,7 @@ const MyTestsPage = () => {
                     )}
                 </>
             )}
-        </>
+        </div>
     )
 }
 

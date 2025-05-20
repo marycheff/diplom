@@ -11,14 +11,14 @@ const TableSkeleton: FC<TableSkeletonProps> = ({ rows = 10 }) => {
     return (
         <div className="table-skeleton">
             <div className="table-data">
-                <div className="tests-count">
+                {/* <div className="tests-count">
                     <h3 className="skeleton skeleton-text">
                         Всего: <span className="skeleton skeleton-box"></span>
                     </h3>
                     <h3 className="skeleton skeleton-text">
                         На странице: <span className="skeleton skeleton-box"></span>
                     </h3>
-                </div>
+                </div> */}
 
                 <div className="table-responsive">
                     <table>

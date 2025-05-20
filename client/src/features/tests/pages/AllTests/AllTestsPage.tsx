@@ -103,9 +103,7 @@ const AllTestsPage = () => {
     const shouldShowContent = totalPages > 0 && page <= totalPages
 
     return (
-        <>
-            {/* <BackButton />
-            <HomeButton /> */}
+        <div className={styles.wrapper}>
             <SearchBar
                 name="search"
                 value={searchQuery}
@@ -146,7 +144,7 @@ const AllTestsPage = () => {
                     )}
                 </>
             )}
-        </>
+        </div>
     )
 }
 

@@ -150,7 +150,7 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
                                         <span className={styles.questionNumber}>{index + 1}</span>
                                         <span className={styles.questionText}>{question.text}</span>
                                         <span className={styles.questionType}>
-                                            Тип: {QuestionTypeLabels[question.type]}
+                                            {QuestionTypeLabels[question.type]}
                                         </span>
                                     </div>
                                     <div className={styles.answersList}>

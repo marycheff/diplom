@@ -26,8 +26,6 @@ const MyAttemptsPage = () => {
         const savedViewMode = localStorage.getItem("myAttemptsViewMode")
         return (savedViewMode as ViewMode) || "cards"
     })
-    // const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } =
-    //     useCache<AttemptsListDTO>(useAttemptStore, "my-attempts")
     const navigate = useNavigate()
     const params = new URLSearchParams(location.search)
 
@@ -44,27 +42,13 @@ const MyAttemptsPage = () => {
     const fetchData = useCallback(
         async (currentPage: number) => {
             if (isFetching) return
-
-            // const cacheKey = getCacheKey(currentPage)
-            // const cachedData = getCachedData(cacheKey)
-
-            // if (cachedData) {
-            //     setAttempts(cachedData.attempts)
-            //     setTotal(cachedData.total)
-            //     return
-            // }
             const data = await getMyAttempts(currentPage, limit)
             if (data) {
                 setAttempts(data.attempts)
                 setTotal(data.total)
-                // saveToCache(cacheKey, data)
             }
         },
-        [
-            // getCacheKey, getCachedData, saveToCache,
-            getMyAttempts,
-            limit,
-        ]
+        [getMyAttempts, limit]
     )
     useEffect(() => {
         const params = new URLSearchParams(location.search)
@@ -92,32 +76,24 @@ const MyAttemptsPage = () => {
         navigate({ search: params.toString() })
     }
     const handleUpdateButton = () => {
-        // clearCache()
         fetchData(page)
     }
     const handleResetSearch = () => {
-        // clearCache()
         resetSearch()
-        // fetchData(1)
     }
     const isDataLoaded = total !== null
-    const hasTests = total !== null && total > 0
-    const isSearchActive = !!params.get("query")
+
     const totalPages = total !== null ? Math.ceil(total / limit) : 0
     const shouldShowPagination = totalPages > 0 && page <= totalPages
     const emptyAttemptsPage = total === 0 && page === 1 && isDataLoaded
     const { register } = useForm()
     return (
-        <>
+        <div className={styles.wrapper}>
             {page > totalPages && (
                 <Button onClick={handleResetSearch} disabled={isFetching}>
                     Сбросить
                 </Button>
             )}
-
-            {/* <div className="cache-info">
-                <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
-            </div> */}
             {isFetching || !isDataLoaded ? (
                 <TableSkeleton />
             ) : emptyAttemptsPage ? (
@@ -136,26 +112,28 @@ const MyAttemptsPage = () => {
                 <>
                     {shouldShowPagination ? (
                         <div className={styles.contentContainer}>
-                            <div className={styles.buttonsContainer}>
-                                <Button onClick={handleUpdateButton} disabled={isFetching}>
-                                    Обновить
-                                </Button>
-                            </div>
-                            {!isMobile && (
-                                <div className={styles.header}>
-                                    <Select
-                                        register={register}
-                                        label="Вид отображения"
-                                        name="viewMode"
-                                        options={[
-                                            { value: "table", label: "Таблицей" },
-                                            { value: "cards", label: "Карточками" },
-                                        ]}
-                                        value={viewMode}
-                                        onChange={handleViewModeChange}
-                                    />
+                            <div className={styles.controls}>
+                                <div className={styles.buttonsContainer}>
+                                    <Button onClick={handleUpdateButton} disabled={isFetching}>
+                                        Обновить
+                                    </Button>
                                 </div>
-                            )}
+                                {!isMobile && (
+                                    <div className={styles.header}>
+                                        <Select
+                                            register={register}
+                                            label="Вид отображения"
+                                            name="viewMode"
+                                            options={[
+                                                { value: "table", label: "Таблицей" },
+                                                { value: "cards", label: "Карточками" },
+                                            ]}
+                                            value={viewMode}
+                                            onChange={handleViewModeChange}
+                                        />
+                                    </div>
+                                )}
+                            </div>
                             {viewMode === "table" ? (
                                 <UserAttemptsTable attempts={attempts} total={total} />
                             ) : (
@@ -168,7 +146,7 @@ const MyAttemptsPage = () => {
                     )}
                 </>
             )}
-        </>
+        </div>
     )
 }
 
