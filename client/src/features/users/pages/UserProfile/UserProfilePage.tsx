@@ -12,8 +12,8 @@ type UserFields = {
     [key: string]: string | boolean | undefined | null
 }
 const fieldLabels: { [key: string]: string } = {
-    name: "Имя",
     surname: "Фамилия",
+    name: "Имя",
     patronymic: "Отчество",
     email: "Электронная почта",
 }

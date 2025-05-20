@@ -1,9 +1,11 @@
+import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { PreTestUserData, PreTestUserDataLabels } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import DateSelect from "@/shared/ui/DateSelect/DateSelect"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
+import { useEffect } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import styles from "./PreTestForm.module.scss"
 
@@ -21,6 +23,8 @@ interface PreTestFormProps {
 }
 
 export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false }: PreTestFormProps) => {
+    const { user } = useAuthStore()
+
     const {
         register,
         handleSubmit,
@@ -33,6 +37,30 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
         // reValidateMode: "onChange",
         // shouldFocusError: false,
     })
+    // Заполняем поля формы данными пользователя, если они есть
+
+    useEffect(() => {
+        if (!user) return
+        console.log(user)
+
+        const safeString = (value: string | null | undefined): string | undefined =>
+            typeof value === "string" ? value : undefined
+
+        const userFieldMap: Partial<Record<PreTestUserData, string | undefined>> = {
+            [PreTestUserData.LastName]: safeString(user.surname),
+            [PreTestUserData.FirstName]: safeString(user.name),
+            [PreTestUserData.Patronymic]: safeString(user.patronymic),
+            [PreTestUserData.Email]: safeString(user.email),
+        }
+
+        inputFields.forEach(field => {
+            const value = userFieldMap[field as PreTestUserData]
+            console.log(value)
+            if (value) {
+                setValue(field as keyof UserDataFormValues, value)
+            }
+        })
+    }, [user, inputFields, setValue])
 
     const handleFormSubmit: SubmitHandler<UserDataFormValues> = async data => {
         const userData = Object.entries(data).reduce((acc, [key, value]) => {
@@ -107,7 +135,7 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
             }
             case PreTestUserData.Email:
                 return {
-                   ...baseRule,
+                    ...baseRule,
                     pattern: {
                         value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                         message: "Некорректный адрес электронной почты",
@@ -154,6 +182,7 @@ export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false
 
         return (
             <ValidatedInput
+                clearable
                 key={field}
                 name={field}
                 placeholder={PreTestUserDataLabels[field as PreTestUserData]}
