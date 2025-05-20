@@ -60,17 +60,10 @@ const UserTests = () => {
 
     return (
         <div className={styles.userTestsContainer}>
-            {/* <div className={styles.buttonsContainer}>
-                <Button onClick={handleUpdateButton} disabled={isFetching}>
-                    Обновить
-                </Button>
-            </div> */}
-
             {isFetching || !isDataLoaded ? (
                 <TableSkeleton />
             ) : emptyTestsPage ? (
                 <div className={styles.emptyState}>
-                    {/* <h2 className={styles.title}>У пользователя нет тестов</h2> */}
                     <p className={styles.description}>Пользователь еще не создавал тесты</p>
                 </div>
             ) : (

@@ -1,9 +1,10 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
-import { AttemptStatusLabels, AttemptWithSnapshotDTO } from "@/shared/types"
+import { AttemptStatus, AttemptStatusLabels, AttemptWithSnapshotDTO } from "@/shared/types"
 import { formatDate } from "@/shared/utils/formatter"
 import { FC } from "react"
-import { Link } from "react-router-dom"
+import { generatePath, Link } from "react-router-dom"
 import styles from "./AttemptsTable.module.scss"
+import { ROUTES } from "@/router/paths"
 interface UserAttemptsTableProps {
     attempts: AttemptWithSnapshotDTO[] | undefined
     total: number
@@ -36,16 +37,27 @@ const UserAttemptsTable: FC<UserAttemptsTableProps> = ({ attempts, total }) => {
                                 {attempts.map(attempt => (
                                     <tr key={attempt.id}>
                                         <td>
-                                            <Link
-                                                to={
-                                                    isAdmin
-                                                        ? `/admin/attempts/${attempt.id}`
-                                                        : `/attempts/${attempt.id}/results`
-                                                }
-                                                className="actionLink">
-                                                {/* {shortenText(attempt.id)} */}
-                                                Перейти
-                                            </Link>
+                                            {attempt.status === AttemptStatus.IN_PROGRESS ? (
+                                                <Link
+                                                    to={generatePath(ROUTES.PASS_ATTEMPT, { attemptId: attempt.id })}
+                                                    className="actionLink">
+                                                    Продолжить
+                                                </Link>
+                                            ) : (
+                                                <Link
+                                                    to={
+                                                        isAdmin
+                                                            ? generatePath(ROUTES.ADMIN_ATTEMPT_INFO, {
+                                                                  attemptId: attempt.id,
+                                                              })
+                                                            : generatePath(ROUTES.ATTEMPT_RESULTS, {
+                                                                  attemptId: attempt.id,
+                                                              })
+                                                    }
+                                                    className="actionLink">
+                                                    Перейти
+                                                </Link>
+                                            )}
                                         </td>
 
                                         <td>

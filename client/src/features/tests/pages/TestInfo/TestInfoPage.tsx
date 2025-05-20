@@ -39,7 +39,10 @@ import { generatePath, Link, useLocation, useNavigate, useParams } from "react-r
 import styles from "./TestInfoPage.module.scss"
 
 const TestInfoPage = () => {
+    // Параметры маршрута
     const { testId } = useParams<{ testId: string }>()
+
+    // Хуки из store
     const {
         getTestById,
         isFetching,
@@ -55,12 +58,16 @@ const TestInfoPage = () => {
         isModerationStatusUpdating,
         deleteTest,
     } = useTestStore()
-    const [test, setTest] = useState<TestDTO | null>(null)
     const { user: currentUser, isAdmin } = useAuthStore()
     const { clearCache } = useCache<TestsListDTO>(useTestStore, "tests")
+
+    // Навигация и роутинг
     const navigate = useNavigate()
     const location = useLocation()
-    const [isEditQuestionsModalOpen, setIsEditQuestionsModalOpen] = useState(
+
+    // Состояния компонента
+    const [test, setTest] = useState<TestDTO | null>(null)
+    const [isUpsertQuestionsModalOpen, setIsUpsertQuestionsModalOpen] = useState(
         location.pathname.endsWith("/edit-questions")
     )
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(location.pathname.endsWith("/edit-settings"))
@@ -72,12 +79,15 @@ const TestInfoPage = () => {
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
     const [isDataLoaded, setIsDataLoaded] = useState(false)
 
+    // Проверка параметра testId
     if (!testId) {
         return <NothingFound title="ID теста не указан" />
     }
     if (!isValidUUID(testId)) {
         return <NothingFound title="Невалидный ID теста" />
     }
+
+    // Загрузка теста
     const fetchTest = async () => {
         try {
             const fetchedTest = await getTestById(testId)
@@ -87,32 +97,57 @@ const TestInfoPage = () => {
             setIsDataLoaded(true)
         } catch {
             setIsDataLoaded(true)
+            return <TestNotFound />
         }
     }
 
+    // Инициализация данных при монтировании
     useEffect(() => {
         fetchTest()
     }, [testId, getTestById])
 
-    if (isFetching || !isDataLoaded) {
+    // Лоадер на время загрузки
+    if (!isDataLoaded) {
         return <Loader fullScreen />
     }
     if (!test) {
         return <TestNotFound />
     }
 
+    // Обработчик открытия модалки редактирования вопросов
     const handleEditQuestionsButton = () => {
-        setIsEditQuestionsModalOpen(true)
+        setIsUpsertQuestionsModalOpen(true)
     }
+
+    // Обработчик открытия модалки редактирования настроек
     const handleEditSettingsButton = () => {
         setIsSettingsModalOpen(true)
     }
+
+    // Обработчик открытия модалки редактирования информации
     const handleEditShortInfoButton = () => {
         setIsShortInfModalOpen(true)
     }
+    // Обработчик открытия модалки редактирования статуса модерации
+    const handleEditModerationStatusButton = () => {
+        setIsModerationStatusModalOpen(true)
+    }
+
+    // Обработчик открытия предпросмотра
     const handlePreviewButton = () => {
         setIsPreviewModalOpen(true)
     }
+
+    // Обработчик закрытия модалки вопросов
+    const handleCloseUpsertQuestionsModal = () => {
+        if (hasUnsavedChanges) {
+            setShowConfirmationModal(true)
+        } else {
+            setIsUpsertQuestionsModalOpen(false)
+        }
+    }
+
+    // Обработчик обновления настроек теста
     const handleSettingsUpdate = async (updatedSettings: TestSettingsDTO) => {
         if (!test) return
         const updatedTest = {
@@ -120,9 +155,12 @@ const TestInfoPage = () => {
             settings: updatedSettings,
         }
         await updateTestSettings(test.id, updatedSettings)
-        toast.success("Настройки теста обновлены")
         setTest(updatedTest)
+        clearCache()
+        toast.success("Настройки теста обновлены")
     }
+
+    // Обработчик обновления краткой информации
     const handleShortInfoUpdate = async (updatedShortInfo: ShortTestInfo) => {
         const updatedTest = {
             ...test,
@@ -130,10 +168,13 @@ const TestInfoPage = () => {
             description: formatSpaces(updatedShortInfo.description),
         }
         await updateShortInfo(testId, { title: updatedShortInfo.title, description: updatedShortInfo.description })
-        toast.success("Информация о тесте обновлена")
         setTest(updatedTest)
+        clearCache()
+
+        toast.success("Информация о тесте обновлена")
     }
 
+    // Обработчик добавления/обновления вопросов
     const handleQuestionsUpsert = async (updatedQuestions: QuestionDTO[]) => {
         if (!test) return
 
@@ -149,16 +190,11 @@ const TestInfoPage = () => {
             toast.success("Вопросы добавлены")
         }
         setTest(updatedTest)
-        setIsEditQuestionsModalOpen(false)
+        clearCache()
+        setIsUpsertQuestionsModalOpen(false)
     }
 
-    const handleCloseModal = () => {
-        if (hasUnsavedChanges) {
-            setShowConfirmationModal(true)
-        } else {
-            setIsEditQuestionsModalOpen(false)
-        }
-    }
+    // Обработчик смены статуса видимости
     const handleChangeVisibilityStatus = async () => {
         const newStatus =
             test.visibilityStatus === TestVisibilityStatus.HIDDEN
@@ -173,14 +209,14 @@ const TestInfoPage = () => {
                   }
                 : null
         )
+        clearCache()
         toast.success(test.visibilityStatus === TestVisibilityStatus.HIDDEN ? "Тест опубликован" : "Тест скрыт")
     }
 
+    // Обработчик смены статуса модерации
     const handleChangeModerationStatus = async (status: ModerationStatus) => {
         setIsModerationStatusModalOpen(false)
-
         await changeModerationStatus(test.id, status)
-
         setTest(prev =>
             prev
                 ? {
@@ -189,7 +225,16 @@ const TestInfoPage = () => {
                   }
                 : null
         )
+        clearCache()
         toast.success("Статус модерации обновлен")
+    }
+
+    // Обработчик удаления теста
+    const handleDeleteTest = async () => {
+        await deleteTest(test.id)
+        clearCache()
+        toast.success("Тест успешно удален")
+        navigate(ROUTES.ADMIN_TESTS)
     }
 
     return (
@@ -243,7 +288,7 @@ const TestInfoPage = () => {
                                             {ModerationStatusLabels[test.moderationStatus]}
                                             <Button
                                                 className={styles.editModerationStatusBtn}
-                                                onClick={() => setIsModerationStatusModalOpen(true)}
+                                                onClick={handleEditModerationStatusButton}
                                                 tooltip="Редактировать">
                                                 <FiEdit />
                                             </Button>
@@ -521,15 +566,15 @@ const TestInfoPage = () => {
 
             <Modal
                 fullScreen
-                isOpen={isEditQuestionsModalOpen}
-                onClose={handleCloseModal}
+                isOpen={isUpsertQuestionsModalOpen}
+                onClose={handleCloseUpsertQuestionsModal}
                 title="Редактирование вопросов">
                 <QuestionsEditor
                     data={test.questions || []}
                     onQuestionComplete={questions => {
                         handleQuestionsUpsert(questions)
                     }}
-                    onCancel={handleCloseModal}
+                    onCancel={handleCloseUpsertQuestionsModal}
                     setHasUnsavedChanges={setHasUnsavedChanges}
                     isLoading={isLoading}
                 />
@@ -547,7 +592,7 @@ const TestInfoPage = () => {
                 isOpen={showConfirmationModal}
                 onClose={() => setShowConfirmationModal(false)}
                 onConfirm={() => {
-                    setIsEditQuestionsModalOpen(false)
+                    setIsUpsertQuestionsModalOpen(false)
                     setShowConfirmationModal(false)
                 }}
                 title="Несохраненные изменения"
@@ -570,12 +615,7 @@ const TestInfoPage = () => {
             <ConfirmationModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
-                onConfirm={async () => {
-                    await deleteTest(test.id)
-                    toast.success("Тест удалён")
-                    clearCache()
-                    navigate(ROUTES.ADMIN_TESTS)
-                }}
+                onConfirm={handleDeleteTest}
                 title="Удаление теста"
                 confirmText="Удалить"
                 cancelText="Отмена">

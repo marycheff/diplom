@@ -17,7 +17,7 @@ import Loader from "@/shared/ui/Loader/Loader"
 import { countCorrectAnswers } from "@/shared/utils/math"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import styles from "./AttemptResultsPage.module.scss"
 
 const AttemptResultsPage = () => {
@@ -28,6 +28,7 @@ const AttemptResultsPage = () => {
     const [test, setTest] = useState<UserTestDTO | null>(null)
     const { isFetching: isTestFetching, getTestForUserById } = useTestStore()
     const { isAdmin } = useAuthStore()
+    const [isAttemptForUserLoaded, setIsAttemptForUserLoaded] = useState(false)
     const [isAttemptLoaded, setIsAttemptLoaded] = useState(false)
     const [isTestLoaded, setIsTestLoaded] = useState(false)
 
@@ -47,15 +48,23 @@ const AttemptResultsPage = () => {
             if (fetchedAttempt) {
                 setAttemptForUser(fetchedAttempt)
             }
+            setIsAttemptForUserLoaded(true)
+        } catch {
+            setIsAttemptForUserLoaded(true)
+            return <AttemptNotFound />
+        }
+    }
+    const fetchAttempt = async () => {
+        try {
+            const fetchedAttempt = await getAttemptResults(attemptId)
+            if (fetchedAttempt) {
+                setAttempt(fetchedAttempt)
+            }
             setIsAttemptLoaded(true)
         } catch {
             setIsAttemptLoaded(true)
             return <AttemptNotFound />
         }
-    }
-    const fetchAttempt = async () => {
-        const fetchedAttempt = await getAttemptResults(attemptId)
-        setAttempt(fetchedAttempt || null)
     }
 
     // Загрузка данных теста
@@ -86,7 +95,7 @@ const AttemptResultsPage = () => {
     }, [attemptForUser])
 
     // Состояния загрузки
-    if (isAttemptFetching || isTestFetching || !isTestLoaded || !isAttemptLoaded) return <Loader fullScreen />
+    if (!isTestLoaded || !isAttemptForUserLoaded || !isAttemptLoaded) return <Loader fullScreen />
     if (!attemptForUser) return <AttemptNotFound />
     if (attemptForUser.status === AttemptStatus.IN_PROGRESS) {
         return <NothingFound title="Попытка не завершения" description="Завершите попытку и вернитесь позже" />

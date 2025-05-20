@@ -1,4 +1,4 @@
-import { QuestionType } from "@/shared/types"
+import { QuestionType, QuestionTypeLabels } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import { formatSpaces } from "@/shared/utils/formatter"
@@ -89,7 +89,14 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 
     return (
         <div className={styles.questionContent}>
-            {question.type !== QuestionType.FILL_IN_THE_BLANK ? <h3>{question.text}</h3> : <h3>Заполните пропуск</h3>}
+            <div className={styles.questionHeader}>
+                {question.type !== QuestionType.FILL_IN_THE_BLANK ? (
+                    <h3>{question.text}</h3>
+                ) : (
+                    <h3>Заполните пропуск</h3>
+                )}
+                <h4 className={styles.questionType}>{QuestionTypeLabels[question.type].toLowerCase()}</h4>
+            </div>
 
             <div className={styles.answerOptions}>
                 {question.type === QuestionType.TEXT_INPUT ? (

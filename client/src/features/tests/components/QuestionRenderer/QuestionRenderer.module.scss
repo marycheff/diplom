@@ -3,10 +3,22 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 
-.questionContent h3 {
-    user-select: none;
+    h3 {
+        user-select: none;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .questionType {
+        color: $secondary-400;
+        font-style: italic;
+    }
+    .questionHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 }
 
 .answerOptions {
