@@ -1,42 +1,49 @@
+import { envConfig } from "@/config/env-config"
 import ApiError from "@/exceptions/api-error"
+import { generateUUID } from "@/utils/math"
+import { logger } from "@/utils/logger"
 import axios from "axios"
+import https from "follow-redirects/https"
 import qs from "querystring"
-import https from "follow-redirects/https" 
 
-const httpsAgent = new https.Agent({ rejectUnauthorized: false })
+const LOG_NAMESPACE = "GigaChatTokenService"
 
-const getRandomInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1)) + min
+class GigaChatTokenService {
+    httpsAgent = new https.Agent({ rejectUnauthorized: false })
 
-const generateUUID = (): string =>
-    "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
-        const r = getRandomInt(0, 15)
-        const v = c === "x" ? r : (r & 0x3) | 0x8
-        return v.toString(16) 
-    })
+    getAccessToken = async (authData: string): Promise<string> => {
+        logger.debug(`[${LOG_NAMESPACE}] Запрос токена GigaChat`)
 
-export const getAccessToken = async (authData: string): Promise<string> => {
-    const postData = qs.stringify({ scope: "GIGACHAT_API_PERS" })
+        const postData = qs.stringify({ scope: "GIGACHAT_API_PERS" })
 
-    const config = {
-        method: "POST",
-        url: "https://ngw.devices.sberbank.ru:9443/api/v2/oauth",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Accept: "application/json",
-            RqUID: generateUUID(),
-            Authorization: `Bearer ${authData}`,
-        },
-        data: postData,
-        httpsAgent,
-    }
-
-    try {
-        const { data } = await axios(config)
-        if (data?.access_token) {
-            return data.access_token
+        const config = {
+            method: "POST",
+            url: envConfig.GIGACHAT_AUTH_URL,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Accept: "application/json",
+                RqUID: generateUUID(),
+                Authorization: `Bearer ${authData}`,
+            },
+            data: postData,
+            httpsAgent: this.httpsAgent,
         }
-        throw ApiError.InternalError("Ошибка нейросети")
-    } catch (error) {
-        throw ApiError.InternalError("Ошибка получения токена доступа")
+
+        try {
+            const { data } = await axios(config)
+            logger.debug(`[${LOG_NAMESPACE}] Ответ от GigaChat: ${JSON.stringify(data)}`)
+
+            if (data?.access_token) {
+                logger.debug(`[${LOG_NAMESPACE}] Токен успешно получен`)
+                return data.access_token
+            }
+
+            throw ApiError.InternalError("Ошибка нейросети")
+        } catch (error) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка получения токена: ${error}`)
+            throw ApiError.InternalError("Ошибка получения токена доступа")
+        }
     }
 }
+
+export default new GigaChatTokenService()

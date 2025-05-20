@@ -9,11 +9,11 @@ const LOG_NAMESPACE = "TokenService"
 class TokenService {
     generateTokens(payload: object): { accessToken: string; refreshToken: string } {
         logger.debug(`[${LOG_NAMESPACE}] Генерация токенов`)
-        const accessToken = jwt.sign(payload, envConfig.JWT_ACCESS_SECRET as string, {
+        const accessToken = jwt.sign(payload, envConfig.JWT_ACCESS_SECRET, {
             expiresIn: "29d",
             // expiresIn: "15s",
         })
-        const refreshToken = jwt.sign(payload, envConfig.JWT_REFRESH_SECRET as string, {
+        const refreshToken = jwt.sign(payload, envConfig.JWT_REFRESH_SECRET, {
             // expiresIn: "30s",
             expiresIn: "30d",
         })
@@ -55,7 +55,7 @@ class TokenService {
     validateAccessToken(token: string) {
         logger.debug(`[${LOG_NAMESPACE}] Валидация access токена`)
         try {
-            const result = jwt.verify(token, envConfig.JWT_ACCESS_SECRET as string)
+            const result = jwt.verify(token, envConfig.JWT_ACCESS_SECRET)
             logger.debug(`[${LOG_NAMESPACE}] Access токен успешно валидирован`)
             return result
         } catch (e) {
@@ -69,7 +69,7 @@ class TokenService {
     validateRefreshToken(token: string) {
         logger.debug(`[${LOG_NAMESPACE}] Валидация refresh токена`)
         try {
-            const result = jwt.verify(token, envConfig.JWT_REFRESH_SECRET as string)
+            const result = jwt.verify(token, envConfig.JWT_REFRESH_SECRET)
             logger.debug(`[${LOG_NAMESPACE}] Refresh токен успешно валидирован`)
             return result
         } catch (e) {
