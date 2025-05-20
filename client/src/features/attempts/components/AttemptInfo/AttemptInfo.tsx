@@ -1,4 +1,5 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import Snapshot from "@/features/tests/components/Snapshot/Snapshot"
 import { ROUTES } from "@/router/paths"
 import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
@@ -33,6 +34,7 @@ const AttemptInfo = () => {
     }
 
     const { isFetching, getAttemptById } = useAttemptStore()
+    const { isAdmin } = useAuthStore()
     const [attempt, setAttempt] = useState<TestAttemptDTO | null>(null)
     const [isSnapshotModalOpen, setIsSnapshotModalOpen] = useState(false)
     const [isDataLoaded, setIsDataLoaded] = useState(false)
@@ -129,25 +131,36 @@ const AttemptInfo = () => {
                     <div className={styles.blockContent}>
                         {attempt.user ? (
                             <>
-                                <div className={styles.infoRow}>
-                                    <span className={styles.label}>ID</span>
-                                    <span className={styles.value}>
-                                        <Link
-                                            to={
-                                                generatePath(ROUTES.ADMIN_USER_INFO, { userId: attempt.test.id })
-                                                // `/admin/users/${attempt.user.id}`
-                                            }
-                                            className="actionLink">
-                                            {shortenText(attempt.user.id)}
-                                        </Link>
-                                        <CopyButton textToCopy={attempt.user.id} />
-                                    </span>
-                                </div>
+                                {isAdmin && (
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.label}>ID</span>
+                                        <span className={styles.value}>
+                                            <Link
+                                                to={generatePath(ROUTES.ADMIN_USER_INFO, { userId: attempt.test.id })}
+                                                className="actionLink">
+                                                {shortenText(attempt.user.id)}
+                                            </Link>
+                                            <CopyButton textToCopy={attempt.user.id} />
+                                        </span>
+                                    </div>
+                                )}
 
                                 <div className={styles.infoRow}>
                                     <span className={styles.label}>Email</span>
                                     <span className={styles.value}>
                                         {attempt.user.email || <span className={styles.emptyField}>—</span>}
+                                    </span>
+                                </div>
+                                <div className={styles.infoRow}>
+                                    <span className={styles.label}>Имя</span>
+                                    <span className={styles.value}>
+                                        {attempt.user.name || <span className={styles.emptyField}>—</span>}
+                                    </span>
+                                </div>
+                                <div className={styles.infoRow}>
+                                    <span className={styles.label}>Фамилия</span>
+                                    <span className={styles.value}>
+                                        {attempt.user.surname || <span className={styles.emptyField}>—</span>}
                                     </span>
                                 </div>
 
@@ -202,17 +215,31 @@ const AttemptInfo = () => {
                     <div className={styles.blockContent}>
                         {attempt.test ? (
                             <>
-                                <div className={styles.infoRow}>
-                                    <span className={styles.label}>ID</span>
-                                    <span className={styles.value}>
-                                        <Link
-                                            to={generatePath(ROUTES.ADMIN_TEST_INFO, { testId: attempt.test.id })}
-                                            className="actionLink">
-                                            {shortenText(attempt.test.id)}
-                                        </Link>
-                                        <CopyButton textToCopy={attempt.test.id} />
-                                    </span>
-                                </div>
+                                {isAdmin ? (
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.label}>ID</span>
+                                        <span className={styles.value}>
+                                            <Link
+                                                to={generatePath(ROUTES.ADMIN_TEST_INFO, { testId: attempt.test.id })}
+                                                className="actionLink">
+                                                {shortenText(attempt.test.id)}
+                                            </Link>
+                                            <CopyButton textToCopy={attempt.test.id} />
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.label}>Актуальный тест</span>
+                                        <span className={styles.value}>
+                                            <Link
+                                                to={generatePath(ROUTES.MY_TEST_INFO, { testId: attempt.test.id })}
+                                                className="actionLink">
+                                                Перейти
+                                            </Link>
+                                        </span>
+                                    </div>
+                                )}
+
                                 <div className={styles.infoRow}>
                                     <span className={styles.label}>Тест на момент прохождения</span>
                                     <span className={styles.value}>

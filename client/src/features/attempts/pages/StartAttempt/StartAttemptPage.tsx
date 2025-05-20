@@ -3,6 +3,7 @@ import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
+import Header from "@/shared/components/Header/Header"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import { PreTestUserDataType, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
@@ -82,33 +83,36 @@ const StartAttemptPage = () => {
     const hasRequiredFields = test?.settings?.inputFields && test.settings.inputFields.length > 0
 
     return (
-        <div className={styles.container}>
-            <div className={styles.blockContent}>
-                <div className={styles.infoRow}>
-                    <span className={styles.label}>Название:</span>
-                    <span className={styles.value}>
-                        {test!.title || <span className={styles.emptyField}>не указано</span>}
-                    </span>
-                </div>
-                <div className={styles.infoRow}>
-                    <span className={styles.label}>Описание:</span>
-                    <span className={styles.value}>
-                        {test!.description || <span className={styles.emptyField}>не указано</span>}
-                    </span>
-                </div>
-            </div>
-            {hasRequiredFields ? (
-                <PreTestForm
-                    inputFields={test!.settings?.inputFields!}
-                    onSubmit={handleStartAttempt}
-                    isLoading={isLoading}
-                />
-            ) : (
+        <>
+            <Header />
+            <div className={styles.container}>
                 <div className={styles.blockContent}>
-                    <Button onClick={() => handleStartAttempt()}>Начать попытку</Button>
+                    <div className={styles.infoRow}>
+                        <span className={styles.label}>Название:</span>
+                        <span className={styles.value}>
+                            {test!.title || <span className={styles.emptyField}>не указано</span>}
+                        </span>
+                    </div>
+                    <div className={styles.infoRow}>
+                        <span className={styles.label}>Описание:</span>
+                        <span className={styles.value}>
+                            {test!.description || <span className={styles.emptyField}>не указано</span>}
+                        </span>
+                    </div>
                 </div>
-            )}
-        </div>
+                {hasRequiredFields ? (
+                    <PreTestForm
+                        inputFields={test!.settings?.inputFields!}
+                        onSubmit={handleStartAttempt}
+                        isLoading={isLoading}
+                    />
+                ) : (
+                    <div className={styles.blockContent}>
+                        <Button onClick={() => handleStartAttempt()}>Начать попытку</Button>
+                    </div>
+                )}
+            </div>
+        </>
     )
 }
 

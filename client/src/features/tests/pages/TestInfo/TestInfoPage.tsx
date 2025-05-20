@@ -321,28 +321,27 @@ const TestInfoPage = () => {
                                     {test.description || <span className={styles.emptyField}>не указано</span>}
                                 </span>
                             </div>
-                            {isAdmin && (
-                                <div className={styles.infoRow}>
-                                    <span className={styles.label}>Всего попыток</span>
-                                    <span className={styles.value}>
-                                        {test.totalAttempts === 0 ? (
-                                            "0"
-                                        ) : isAdmin ? (
-                                            <Link
-                                                to={generatePath(ROUTES.ADMIN_TEST_ATTEMPTS, { testId: test.id })}
-                                                className="actionLink">
-                                                {test.totalAttempts}
-                                            </Link>
-                                        ) : (
-                                            <Link
-                                                to={generatePath(ROUTES.MY_TEST_ATTEMPTS, { testId: test.id })}
-                                                className="actionLink">
-                                                {test.totalAttempts}
-                                            </Link>
-                                        )}
-                                    </span>
-                                </div>
-                            )}
+
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>Всего попыток</span>
+                                <span className={styles.value}>
+                                    {test.totalAttempts === 0 ? (
+                                        "0"
+                                    ) : isAdmin ? (
+                                        <Link
+                                            to={generatePath(ROUTES.ADMIN_TEST_ATTEMPTS, { testId: test.id })}
+                                            className="actionLink">
+                                            {test.totalAttempts}
+                                        </Link>
+                                    ) : (
+                                        <Link
+                                            to={generatePath(ROUTES.MY_TEST_ATTEMPTS, { testId: test.id })}
+                                            className="actionLink">
+                                            {test.totalAttempts}
+                                        </Link>
+                                    )}
+                                </span>
+                            </div>
                         </div>
                     )}
                 </div>
