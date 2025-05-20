@@ -431,6 +431,7 @@ class QuestionService {
                 throw ApiError.InternalError("Не удалось получить обновленный тест")
             }
             await testRepository.createSnapshot(updatedTest, tx)
+            await testRepository.clearModeration(testId, tx)
             // Очистка кэша
             await deleteTestCache(testId)
 

@@ -1,6 +1,8 @@
 import ApiError from "@/exceptions/api-error"
+import userRepository from "@/repositories/auth/user.repository"
 import attemptRepository from "@/repositories/tests/attempt.repository"
 import testRepository from "@/repositories/tests/test.repository"
+import mailService from "@/services/mail.service"
 import { mapTest, mapToTestSnapshotDTO, mapUserTest } from "@/services/mappers/test.mappers"
 import {
     CreateTest,
@@ -125,6 +127,28 @@ class TestService {
                 }
 
                 await testRepository.updateModerationStatus(testId, status, moderatorId, tx)
+
+                const author = await userRepository.findById(existingTest.authorId)
+                console.log(author?.email)
+
+                // Отправка письма в зависимости от статуса
+                if (author?.email) {
+                    const fullName = author.name || author.email
+                    const testTitle = existingTest.title || "тест"
+
+                    switch (status) {
+                        case ModerationStatus.PENDING:
+                            await mailService.sendModerationPendingMail(author.email, fullName, testTitle)
+                            break
+                        case ModerationStatus.APPROVED:
+                            await mailService.sendModerationApprovedMail(author.email, fullName, testTitle)
+                            break
+                        case ModerationStatus.REJECTED:
+                            await mailService.sendModerationRejectedMail(author.email, fullName, testTitle)
+                            break
+                    }
+                }
+
                 // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
                 // await testRepository.cleanupUnusedSnapshots(testId, tx)
 
@@ -167,7 +191,7 @@ class TestService {
                 return true
             })
 
-           await deleteTestCache(testId)
+            await deleteTestCache(testId)
             logger.info(`[${LOG_NAMESPACE}] Краткая информация о тесте успешно обновлена`, { testId })
         } catch (error) {
             if (error instanceof ApiError) {
@@ -327,7 +351,7 @@ class TestService {
         try {
             await testRepository.deleteById(testId)
 
-           await deleteTestCache(testId)
+            await deleteTestCache(testId)
             logger.info(`[${LOG_NAMESPACE}] Тест успешно удален`, { testId })
         } catch (error) {
             if (error instanceof ApiError) {

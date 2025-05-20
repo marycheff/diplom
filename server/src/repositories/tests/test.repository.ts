@@ -585,6 +585,13 @@ class TestRepository {
             },
         })
     }
+    async clearModeration(testId: string, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.test.update({
+            where: { id: testId },
+            data: { moderatedAt: null, moderatedBy: null },
+        })
+    }
 }
 
 export default new TestRepository()

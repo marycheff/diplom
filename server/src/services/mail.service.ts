@@ -73,6 +73,115 @@ class MailService {
             throw ApiError.InternalError()
         }
     }
+    async sendUserBlockedMail(to: string, name: string) {
+        logger.info(`[${LOG_NAMESPACE}] Отправка письма о блокировке`)
+        try {
+            await this.transporter.sendMail({
+                from: envConfig.SMTP_USER,
+                to,
+                subject: "Ваш аккаунт заблокирован",
+                html: `
+                <div>
+                    <h1>Здравствуйте, ${name}!</h1>
+                    <p>Ваш аккаунт был заблокирован администрацией платформы.</p>
+                    <p>Если вы считаете, что это ошибка — свяжитесь с нами.</p>
+                </div>
+            `,
+            })
+            logger.info(`[${LOG_NAMESPACE}] Письмо о блокировке успешно отправлено`)
+        } catch (error: any) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о блокировке`, {
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError()
+        }
+    }
+
+    async sendUserUnblockedMail(to: string, name: string) {
+        logger.info(`[${LOG_NAMESPACE}] Отправка письма о разблокировке`)
+        try {
+            await this.transporter.sendMail({
+                from: envConfig.SMTP_USER,
+                to,
+                subject: "Ваш аккаунт разблокирован",
+                html: `
+                <div>
+                    <h1>Здравствуйте, ${name}!</h1>
+                    <p>Ваш аккаунт был успешно разблокирован. Теперь вы можете снова пользоваться всеми функциями платформы.</p>
+                </div>
+            `,
+            })
+            logger.info(`[${LOG_NAMESPACE}] Письмо о разблокировке успешно отправлено`)
+        } catch (error: any) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о разблокировке`, {
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError()
+        }
+    }
+    async sendModerationPendingMail(to: string, name: string, testTitle: string) {
+        logger.info(`[${LOG_NAMESPACE}] Уведомление о статусе 'PENDING'`)
+        try {
+            await this.transporter.sendMail({
+                from: envConfig.SMTP_USER,
+                to,
+                subject: `Тест "${testTitle}" отправлен на модерацию`,
+                html: `
+                <div>
+                    <h1>Здравствуйте, ${name}!</h1>
+                    <p>Ваш тест <strong>"${testTitle}"</strong> успешно отправлен на модерацию. Мы уведомим вас, когда решение будет принято.</p>
+                </div>
+            `,
+            })
+        } catch (error) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о статусе 'PENDING'`, {
+                error: error instanceof Error ? error.message : String(error),
+            })
+        }
+    }
+
+    async sendModerationApprovedMail(to: string, name: string, testTitle: string) {
+        logger.info(`[${LOG_NAMESPACE}] Уведомление о статусе 'APPROVED'`)
+        try {
+            await this.transporter.sendMail({
+                from: envConfig.SMTP_USER,
+                to,
+                subject: `Тест "${testTitle}" прошел модерацию`,
+                html: `
+                <div>
+                    <h1>Поздравляем, ${name}!</h1>
+                    <p>Ваш тест <strong>"${testTitle}"</strong> успешно прошёл модерацию и теперь доступен другим пользователям.</p>
+                </div>
+            `,
+            })
+        } catch (error) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о статусе 'APPROVED'`, {
+                error: error instanceof Error ? error.message : String(error),
+            })
+        }
+    }
+
+    async sendModerationRejectedMail(to: string, name: string, testTitle: string) {
+        logger.info(`[${LOG_NAMESPACE}] Уведомление о статусе 'REJECTED'`)
+        try {
+            await this.transporter.sendMail({
+                from: envConfig.SMTP_USER,
+                to,
+                subject: `Тест "${testTitle}" отклонён модерацией`,
+                html: `
+                <div>
+                    <h1>Здравствуйте, ${name}!</h1>
+                    <p>К сожалению, ваш тест <strong>"${testTitle}"</strong> не прошёл модерацию.</p>
+                    <p>Пожалуйста, проверьте требования к контенту и попробуйте снова.</p>
+                </div>
+            `,
+            })
+        } catch (error) {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о статусе 'REJECTED'`, {
+                error: error instanceof Error ? error.message : String(error),
+            })
+        }
+    }
 }
 
 export default new MailService()

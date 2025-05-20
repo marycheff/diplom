@@ -1,5 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import userRepository from "@/repositories/auth/user.repository"
+import mailService from "@/services/mail.service"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
 import { CreateUserDTO, UpdateUserDTO, UserDTO, UsersListDTO } from "@/types/core/user.types"
 import { logger } from "@/utils/logger"
@@ -237,13 +238,16 @@ class UserService {
     async blockUser(id: string): Promise<void> {
         logger.info(`[${LOG_NAMESPACE}] Блокировка пользователя`, { id })
         try {
-            await userRepository.update(id, { isBlocked: true })
+            const user = await userRepository.update(id, { isBlocked: true })
             await redisClient.del(`user:${id}`)
+
             logger.info(`[${LOG_NAMESPACE}] Пользователь успешно заблокирован и кэш очищен`, { id })
+
+            // Отправка письма
+            await mailService.sendUserBlockedMail(user.email, user.name || user.email)
         } catch (error) {
-            if (error instanceof ApiError) {
-                throw error
-            }
+            if (error instanceof ApiError) throw error
+
             logger.error(`[${LOG_NAMESPACE}] Ошибка при блокировке пользователя`, {
                 id,
                 error: error instanceof Error ? error.message : String(error),
@@ -256,13 +260,16 @@ class UserService {
     async unblockUser(id: string): Promise<void> {
         logger.info(`[${LOG_NAMESPACE}] Разблокировка пользователя`, { id })
         try {
-            await userRepository.update(id, { isBlocked: false })
+            const user = await userRepository.update(id, { isBlocked: false })
             await redisClient.del(`user:${id}`)
+
             logger.info(`[${LOG_NAMESPACE}] Пользователь успешно разблокирован и кэш очищен`, { id })
+
+            // Отправка письма
+            await mailService.sendUserUnblockedMail(user.email, user.name || user.email)
         } catch (error) {
-            if (error instanceof ApiError) {
-                throw error
-            }
+            if (error instanceof ApiError) throw error
+
             logger.error(`[${LOG_NAMESPACE}] Ошибка при разблокировке пользователя`, {
                 id,
                 error: error instanceof Error ? error.message : String(error),
