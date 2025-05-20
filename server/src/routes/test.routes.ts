@@ -8,6 +8,7 @@ import { authMiddleware } from "@/middleware/auth.middleware"
 import conditionalAuthMiddleware from "@/middleware/conditional.middleware"
 import {
     answerOwnershipMiddleware,
+    attemptOwnershipMiddleware,
     questionOwnershipMiddleware,
     testOwnershipMiddleware,
 } from "@/middleware/ownership.middleware"
@@ -182,10 +183,11 @@ router.post("/attempts/:attemptId/time-spent", conditionalAuthMiddleware, attemp
 router.get(
     "/attempts/:attemptId/",
     authMiddleware,
-    adminMiddleware,
+    attemptOwnershipMiddleware,
     validateRequest(getAttemptSchema),
     attemptController.getAttempt
 )
+
 // router.get(
 //     "/user-attempts/:userId",
 //     authMiddleware,
