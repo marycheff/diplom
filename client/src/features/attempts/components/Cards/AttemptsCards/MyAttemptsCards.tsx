@@ -1,8 +1,9 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import { ROUTES } from "@/router/paths"
 import { AttemptStatus, AttemptStatusLabels, AttemptWithSnapshotDTO } from "@/shared/types"
 import { formatDate } from "@/shared/utils/formatter"
 import { FC } from "react"
-import { Link } from "react-router-dom"
+import { generatePath, Link } from "react-router-dom"
 import styles from "./AttemptsCards.module.scss"
 
 interface MyAttemptsCardsProps {
@@ -70,25 +71,22 @@ const MyAttemptsCards: FC<MyAttemptsCardsProps> = ({ attempts, total }) => {
                                     </div>
 
                                     <div className={styles.cardActions}>
-                                        {/* <Link
-                                            to={
-                                                isAdmin
-                                                    ? `/admin/my-attempts/${attempt.id}`
-                                                    : `/my-attempts/${attempt.id}/results`
-                                            }
-                                            className={styles.actionLink}>
-                                            Перейти
-                                        </Link> */}
                                         {attempt.status === AttemptStatus.IN_PROGRESS ? (
-                                            <Link to={`/attempts/${attempt.id}/pass`} className={styles.actionLink}>
+                                            <Link
+                                                to={generatePath(ROUTES.PASS_ATTEMPT, { attemptId: attempt.id })}
+                                                className={styles.actionLink}>
                                                 Продолжить выполнение
                                             </Link>
                                         ) : (
                                             <Link
                                                 to={
                                                     isAdmin
-                                                        ? `/admin/my-attempts/${attempt.id}`
-                                                        : `/attempts/${attempt.id}/results`
+                                                        ? generatePath(ROUTES.ADMIN_ATTEMPT_INFO, {
+                                                              attemptId: attempt.id,
+                                                          })
+                                                        : generatePath(ROUTES.ATTEMPT_RESULTS, {
+                                                              attemptId: attempt.id,
+                                                          })
                                                 }
                                                 className={styles.actionLink}>
                                                 Перейти
@@ -97,7 +95,11 @@ const MyAttemptsCards: FC<MyAttemptsCardsProps> = ({ attempts, total }) => {
                                     </div>
                                     {isAdmin && attempt.status === AttemptStatus.IN_PROGRESS && (
                                         <div className={styles.cardActions}>
-                                            <Link to={`/admin/my-attempts/${attempt.id}`} className={styles.actionLink}>
+                                            <Link
+                                                to={generatePath(ROUTES.ADMIN_ATTEMPT_INFO, {
+                                                    attemptId: attempt.id,
+                                                })}
+                                                className={styles.actionLink}>
                                                 На страницу попытки
                                             </Link>
                                         </div>

@@ -20,7 +20,7 @@ export const ROUTES = {
     MY_TEST_ADD_QUESTIONS: "/my-tests/:testId/add-questions",
     MY_TEST_EDIT_SETTINGS: "/my-tests/:testId/edit-settings",
     MY_ATTEMPTS: "/my-attempts",
-    MY_ATTEMPT_INFO: "/my-attempts/:attemptId",
+    MY_TEST_ATTEMPT_INFO: "/my-tests/:testId/attempts/:attemptId",
 
     MY_TEST_ATTEMPTS: "/my-tests/:testId/attempts",
 

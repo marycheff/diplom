@@ -115,11 +115,6 @@ const MyAttemptsPage = () => {
                 </Button>
             )}
 
-            <div className={styles.buttonsContainer}>
-                <Button onClick={handleUpdateButton} disabled={isFetching}>
-                    Обновить
-                </Button>
-            </div>
             {/* <div className="cache-info">
                 <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
             </div> */}
@@ -141,6 +136,11 @@ const MyAttemptsPage = () => {
                 <>
                     {shouldShowPagination ? (
                         <div className={styles.contentContainer}>
+                            <div className={styles.buttonsContainer}>
+                                <Button onClick={handleUpdateButton} disabled={isFetching}>
+                                    Обновить
+                                </Button>
+                            </div>
                             {!isMobile && (
                                 <div className={styles.header}>
                                     <Select

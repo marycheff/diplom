@@ -35,7 +35,7 @@ import { FaLock, FaLockOpen, FaPlus, FaTrash } from "react-icons/fa"
 import { FiEdit } from "react-icons/fi"
 import { LuEye } from "react-icons/lu"
 import { MdEdit } from "react-icons/md"
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
+import { generatePath, Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import styles from "./TestInfoPage.module.scss"
 
 const TestInfoPage = () => {
@@ -283,11 +283,15 @@ const TestInfoPage = () => {
                                         {test.totalAttempts === 0 ? (
                                             "0"
                                         ) : isAdmin ? (
-                                            <Link to={`/admin/tests/${test.id}/attempts`} className="actionLink">
+                                            <Link
+                                                to={generatePath(ROUTES.ADMIN_TEST_ATTEMPTS, { testId: test.id })}
+                                                className="actionLink">
                                                 {test.totalAttempts}
                                             </Link>
                                         ) : (
-                                            <Link to={`/my-tests/${test.id}/attempts`} className="actionLink">
+                                            <Link
+                                                to={generatePath(ROUTES.MY_TEST_ATTEMPTS, { testId: test.id })}
+                                                className="actionLink">
                                                 {test.totalAttempts}
                                             </Link>
                                         )}
@@ -386,7 +390,9 @@ const TestInfoPage = () => {
                             <div className={styles.infoRow}>
                                 <span className={styles.label}>ID</span>
                                 <span className={styles.value}>
-                                    <Link to={`/admin/users/${test.author.id}`} className="actionLink">
+                                    <Link
+                                        to={generatePath(ROUTES.ADMIN_USER_INFO, { userId: test.author.id })}
+                                        className="actionLink">
                                         {shortenText(test.author.id)}
                                     </Link>
                                     <CopyButton textToCopy={test.author.id} />

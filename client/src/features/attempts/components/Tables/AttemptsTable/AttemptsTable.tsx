@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import { ROUTES } from "@/router/paths"
 import {
     AttemptStatusLabels,
     GenderLabels,
@@ -6,9 +7,9 @@ import {
     PreTestUserDataLabels,
     TestAttemptDTO,
 } from "@/shared/types"
-import { formatDate, shortenText } from "@/shared/utils/formatter"
+import { formatDate } from "@/shared/utils/formatter"
 import { FC } from "react"
-import { Link } from "react-router-dom"
+import { generatePath, Link } from "react-router-dom"
 import styles from "./AttemptsTable.module.scss"
 interface AttemptsTableProps {
     attempts: TestAttemptDTO[] | undefined
@@ -29,7 +30,7 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                         <table>
                             <thead>
                                 <tr>
-                                    <th scope="col">ID</th>
+                                    <th scope="col"></th>
                                     <th scope="col">Пользователь</th>
                                     <th scope="col">Тест</th>
                                     <th scope="col">Статус</th>
@@ -42,26 +43,36 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                 {attempts.map(attempt => (
                                     <tr key={attempt.id}>
                                         <td>
-                                            {isAdmin ? (
-                                                <Link to={`/admin/attempts/${attempt.id}`} className="actionLink">
-                                                    {shortenText(attempt.id)}
-                                                </Link>
-                                            ) : (
-                                                <Link to={`/my-attempts/${attempt.id}`} className="actionLink">
-                                                    {shortenText(attempt.id)}
-                                                </Link>
-                                            )}
+                                            <Link
+                                                to={
+                                                    isAdmin
+                                                        ? generatePath(ROUTES.ADMIN_ATTEMPT_INFO, {
+                                                              attemptId: attempt.id,
+                                                          })
+                                                        : generatePath(ROUTES.MY_TEST_ATTEMPT_INFO, {
+                                                              testId: attempt.test.id,
+                                                              attemptId: attempt.id,
+                                                          })
+                                                }
+                                                className="actionLink">
+                                                Перейти
+                                            </Link>
                                         </td>
+
                                         <td>
                                             {attempt.user ? (
                                                 // UserDTO
-                                                <>
-                                                    <Link to={`/admin/users/${attempt.user.id}`} className="actionLink">
-                                                        {/* {shortenUuid(attempt.user.id)} */}
+                                                isAdmin ? (
+                                                    <Link
+                                                        to={generatePath(ROUTES.ADMIN_USER_INFO, {
+                                                            userId: attempt.user.id,
+                                                        })}
+                                                        className="actionLink">
                                                         {attempt.user.email || <span>перейти</span>}
                                                     </Link>
-                                                    <br />
-                                                </>
+                                                ) : (
+                                                    <span>{attempt.user.email || <span>перейти</span>}</span>
+                                                )
                                             ) : attempt.preTestUserData ? (
                                                 // Record<PreTestUserData, string>
                                                 <span>
@@ -83,12 +94,13 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
                                         </td>
 
                                         <td>
-                                            <Link to={`/admin/tests/${attempt.test.id}`} className="actionLink">
-                                                {/* {shortenUuid(attempt.test.id)} */}
+                                            <Link
+                                                to={generatePath(ROUTES.ADMIN_TEST_INFO, {
+                                                    testId: attempt.test.id,
+                                                })}
+                                                className="actionLink">
                                                 {attempt.test.title}
                                             </Link>
-                                            {/* <br />
-                                            {attempt.test.title} */}
                                         </td>
                                         <td>{AttemptStatusLabels[attempt.status]}</td>
                                         <td>{formatDate(attempt.startedAt)}</td>

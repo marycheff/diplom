@@ -1,7 +1,8 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import { ROUTES } from "@/router/paths"
 import { TestDTO, VisibilityStatusLabels } from "@/shared/types"
 import { FC } from "react"
-import { Link } from "react-router-dom"
+import { generatePath, Link } from "react-router-dom"
 import styles from "./UserTestsTable.module.scss"
 
 interface MyTestsTableProps {
@@ -40,7 +41,11 @@ const UserTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
                                     <tr key={test.id}>
                                         <td>
                                             <Link
-                                                to={isAdmin ? `/admin/my-tests/${test.id}` : `/my-tests/${test.id}`}
+                                                to={
+                                                    isAdmin
+                                                        ? generatePath(ROUTES.ADMIN_MY_TEST_INFO, { testId: test.id })
+                                                        : generatePath(ROUTES.MY_TEST_INFO, { testId: test.id })
+                                                }
                                                 className="actionLink">
                                                 Перейти
                                             </Link>
@@ -54,8 +59,16 @@ const UserTestsTable: FC<MyTestsTableProps> = ({ tests, total }) => {
                                             {test.totalAttempts === 0 ? (
                                                 "0"
                                             ) : (
-                                                <Link to={`/admin/tests/${test.id}/attempts`} className="actionLink">
-                                                    {test.totalAttempts}
+                                                <Link
+                                                    to={
+                                                        isAdmin
+                                                            ? generatePath(ROUTES.ADMIN_TEST_ATTEMPTS, {
+                                                                  testId: test.id,
+                                                              })
+                                                            : generatePath(ROUTES.MY_TEST_ATTEMPTS, { testId: test.id })
+                                                    }
+                                                    className="actionLink"> 
+                                                    {test.totalAttempts} 
                                                 </Link>
                                             )}
                                         </td>

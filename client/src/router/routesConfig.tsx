@@ -56,7 +56,8 @@ export const userRoutes = [
     { path: ROUTES.MY_TEST_EDIT_SETTINGS, element: <TestInfoPage /> },
     { path: ROUTES.MY_ATTEMPTS, element: <MyAttemptsPage /> },
     { path: ROUTES.MY_TEST_ATTEMPTS, element: <TestAttemptsPage /> },
-    { path: ROUTES.MY_ATTEMPT_INFO, element: <AttemptInfoPage /> },
+    // TODO: изменить AttemptInfoPage
+    { path: ROUTES.MY_TEST_ATTEMPT_INFO, element: <AttemptInfoPage /> },
 ]
 // Конфигурация публичных роутов
 export const publicRoutes = [

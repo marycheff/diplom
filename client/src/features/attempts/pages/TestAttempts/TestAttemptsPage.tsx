@@ -77,10 +77,6 @@ const TestAttemptsPage = () => {
     const totalPages = Math.ceil(total / limit)
     return (
         <>
-            {/* <BackButton />
-            <HomeButton /> */}
-            <br />
-            <br />
             <Button onClick={handleUpdateButton} disabled={isFetching}>
                 Обновить
             </Button>

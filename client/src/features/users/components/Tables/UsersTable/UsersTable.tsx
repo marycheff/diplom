@@ -1,8 +1,9 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
+import { ROUTES } from "@/router/paths"
 import { RoleLabels, UserDTO } from "@/shared/types"
 import { shortenText } from "@/shared/utils/formatter"
 import { FC } from "react"
-import { Link } from "react-router-dom"
+import { generatePath, Link } from "react-router-dom"
 import styles from "./UsersTable.module.scss"
 
 interface UsersTableProps {
@@ -22,7 +23,7 @@ const UsersTable: FC<UsersTableProps> = ({ users, total }) => {
                     {isCurrentUser ? (
                         <span>{shortenText(user.id)} (Вы)</span>
                     ) : (
-                        <Link to={`/admin/users/${user.id}`} className="actionLink">
+                        <Link to={generatePath(ROUTES.ADMIN_USER_INFO, { userId: user.id })} className="actionLink">
                             {shortenText(user.id)}
                         </Link>
                     )}
