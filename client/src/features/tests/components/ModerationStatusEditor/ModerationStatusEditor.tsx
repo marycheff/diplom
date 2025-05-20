@@ -19,9 +19,6 @@ const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus
         },
     })
 
-    const currentValue = watch("status")
-    const hasChanged = currentValue !== currentStatus
-
     const onSubmit = (data: { status: ModerationStatus }) => {
         onChangingComplete(data.status)
     }
@@ -68,9 +65,7 @@ const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus
                     <Button type="button" onClick={onCancel}>
                         Отмена
                     </Button>
-                    <Button type="submit" disabled={!hasChanged}>
-                        Сохранить
-                    </Button>
+                    <Button type="submit">Сохранить</Button>
                 </div>
             </form>
         </div>

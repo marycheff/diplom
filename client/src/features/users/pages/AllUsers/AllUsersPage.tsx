@@ -123,7 +123,7 @@ const AllUsersPage = () => {
                 </div>
 
                 <Link to={ROUTES.ADMIN_CREATE_USER}>
-                    <Button className={styles.navigationButton}>Создать</Button>
+                    <Button className={styles.navigationButton}>Создать пользователя</Button>
                 </Link>
                 <div className={styles.cacheInfo}>
                     <span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
