@@ -212,7 +212,7 @@ class AttemptService {
             }
 
             for (const answer of answers) {
-                const { questionId, answersIds, textAnswer, timeSpent = 0 } = answer
+                const { questionId, answersIds, textAnswer } = answer
 
                 const question = await testRepository.getQuestionWithAnswers(questionId)
                 if (!question || question.testId !== attempt.testId) {

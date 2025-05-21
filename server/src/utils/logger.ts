@@ -1,6 +1,6 @@
-import winston from "winston"
-import path from "path"
 import fs from "fs"
+import path from "path"
+import winston from "winston"
 import { envConfig } from "../config/env-config"
 
 // Создаем директорию для логов, если ее нет
@@ -84,31 +84,3 @@ export const logger = winston.createLogger({
     transports,
     exitOnError: false,
 })
-
-// Хелпер для логирования ошибок с сохранением стека вызовов
-export function logError(message: string, error: Error, data?: any): void {
-    logger.error({
-        message,
-        stack: error.stack,
-        data,
-    })
-}
-
-// Хелпер для HTTP логирования
-export function logHTTP(req: any, res: any, responseTime?: number): void {
-    const { method, url, ip, headers } = req
-
-    logger.http({
-        message: `${method} ${url} - ${res.statusCode} - ${responseTime || 0}ms`,
-        data: {
-            method,
-            url,
-            statusCode: res.statusCode,
-            ip,
-            userAgent: headers["user-agent"],
-            responseTime,
-        },
-    })
-}
-
-

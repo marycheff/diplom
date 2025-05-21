@@ -47,7 +47,7 @@ class MailService {
             throw ApiError.InternalError()
         }
     }
-    async sendResetPasswordMail(to: string, email: string, code: string) {
+    async sendResetPasswordMail(to: string, code: string) {
         logger.info(`[${LOG_NAMESPACE}] Отправка письма для сброса пароля`)
         try {
             await this.transporter.sendMail({

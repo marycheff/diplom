@@ -43,11 +43,6 @@ export const upsertQuestionsSchema = z.object({
         questions: questionsSchema,
     }),
 })
-export const updateTestSchema = z.object({
-    body: z.object({
-        questions: z.array(questionSchema).min(1, "Должен быть введен хотя бы 1 вопрос"),
-    }),
-})
 
 // Начало попытки
 export const startTestAttemptSchema = z.object({
@@ -216,13 +211,7 @@ export const getAttemptSchema = z.object({
         }),
     }),
 })
-export const getUserAttemptsSchema = z.object({
-    params: z.object({
-        userId: z.string().min(1, "ID пользователя обязательно").refine(isValidUUID, {
-            message: "ID пользователя должен быть корректным UUID",
-        }),
-    }),
-})
+
 // Схема для ответа
 
 // Схема вопроса с уточнениями в зависимости от типа

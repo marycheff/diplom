@@ -12,7 +12,7 @@ class PasswordResetController {
             const user = await userService.getUserByEmail(email)
             const resetCode = generateCode()
             await passwordResetService.saveResetCode(email, resetCode)
-            await mailService.sendResetPasswordMail(user.email, user.email, resetCode)
+            await mailService.sendResetPasswordMail(user.email, resetCode)
 
             res.json({ message: "Код для сброса пароля отправлен на вашу почту." })
         } catch (e) {
@@ -26,7 +26,6 @@ class PasswordResetController {
             const isValid = await passwordResetService.verifyResetCode(email, code)
             if (!isValid) {
                 throw next(ApiError.BadRequest("Неверный код сброса"))
-                
             }
             res.status(200).json({ message: "Код сброса подтвержден." })
         } catch (e) {

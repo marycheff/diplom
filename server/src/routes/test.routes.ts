@@ -17,7 +17,6 @@ import {
     completeTestAttemptSchema,
     getAttemptSchema,
     getTestSnapshotSchema,
-    saveAnswerSchema,
     shortInfoSchema,
     startTestAttemptSchema,
     testIdSchema,
@@ -88,8 +87,6 @@ router.get("/:testId/for-user", validateRequest(testIdSchema), testController.ge
   ================================= */
 
 // Добавление вопросов к тесту
-// router.put("/:testId/questions", authMiddleware, validateRequest(updateTestSchema), testController.updateTest)
-// router.put("/:testId/questions", authMiddleware, testOwnershipMiddleware, questionController.addQuestions)
 router.put(
     "/:testId/questions-upsert",
     authMiddleware,
@@ -132,24 +129,14 @@ router.get("/attempts/all", authMiddleware, adminMiddleware, attemptController.g
 // Начало попытки прохождения теста
 router.post(
     "/:testId/start",
-    // authMiddleware,
     conditionalAuthMiddleware,
     validateRequest(startTestAttemptSchema),
     attemptController.startTestAttempt
 )
 
-// Сохранение ответа во время попытки
-router.post(
-    "/attempts/:attemptId/answer",
-    // authMiddleware,
-    conditionalAuthMiddleware,
-    validateRequest(saveAnswerSchema),
-    attemptController.saveAnswer
-)
-// Сохранение ответа во время попытки
+// Сохранение ответов во время попытки
 router.post(
     "/attempts/:attemptId/answers",
-    // authMiddleware,
     conditionalAuthMiddleware,
     // validateRequest(saveAnswersSchema),
     attemptController.saveAnswers
@@ -157,7 +144,6 @@ router.post(
 // Завершение попытки
 router.post(
     "/attempts/:attemptId/complete",
-    // authMiddleware,
     validateRequest(completeTestAttemptSchema),
     attemptController.completeAttempt
 )
@@ -187,14 +173,6 @@ router.get(
     validateRequest(getAttemptSchema),
     attemptController.getAttempt
 )
-
-// router.get(
-//     "/user-attempts/:userId",
-//     authMiddleware,
-//     testOwnershipMiddleware,
-//     validateRequest(getUserAttemptsSchema),
-//     attemptController.getUserAttempts
-// )
 
 // Получение снимка теста по ID
 router.get(

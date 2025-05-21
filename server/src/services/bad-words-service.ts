@@ -5,7 +5,6 @@ import path from "path"
 const LOG_NAMESPACE = "BadWordsService"
 
 class BadWordsService {
-    private badWords: Set<string> = new Set()
     private initialized: boolean = false
     private regexBadWords: RegExp[] = []
     private plainBadWords: string[] = []
