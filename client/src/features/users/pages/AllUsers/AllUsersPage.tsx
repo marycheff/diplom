@@ -96,7 +96,6 @@ const AllUsersPage = () => {
     }
 
     const isDataLoaded = total !== null
-    const hasUsers = total !== null && total > 0
     const isSearchActive = !!params.get("query")
     const totalPages = total !== null ? Math.ceil(total / limit) : 0
     const shouldShowContent = totalPages > 0 && page <= totalPages

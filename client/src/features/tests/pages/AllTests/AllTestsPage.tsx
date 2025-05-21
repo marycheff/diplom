@@ -16,7 +16,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom"
 import styles from "./AllTestsPage.module.scss"
 const AllTestsPage = () => {
     const [tests, setTests] = useState<TestDTO[]>([])
-    const { getTests, searchTests, getUnmoderatedTests, isFetching } = useTestStore()
+    const { getTests, searchTests, isFetching } = useTestStore()
     const [total, setTotal] = useState<number | null>(null)
     const [limit] = useState<number>(TABLE_LIMIT)
     const [page, setPage] = useState<number>(1)
@@ -97,7 +97,6 @@ const AllTestsPage = () => {
     }
 
     const isDataLoaded = total !== null
-    const hasTests = total !== null && total > 0
     const isSearchActive = !!params.get("query")
     const totalPages = total !== null ? Math.ceil(total / limit) : 0
     const shouldShowContent = totalPages > 0 && page <= totalPages

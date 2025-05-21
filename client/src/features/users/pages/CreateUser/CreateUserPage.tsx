@@ -23,7 +23,6 @@ const CreateUserPage = () => {
         formState: { errors },
         setValue,
         trigger,
-        watch,
     } = useForm<CreateUserDTO>({
         mode: "onBlur",
         reValidateMode: "onChange",

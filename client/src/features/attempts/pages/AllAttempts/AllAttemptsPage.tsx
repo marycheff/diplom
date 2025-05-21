@@ -73,10 +73,7 @@ const AllAttemptsPage = () => {
         // fetchData(1)
     }
     const isDataLoaded = total !== null
-    const hasTests = total !== null && total > 0
-    const isSearchActive = !!params.get("query")
     const totalPages = total !== null ? Math.ceil(total / limit) : 0
-    const shouldShowContent = totalPages > 0 && page <= totalPages
 
     return (
         <>

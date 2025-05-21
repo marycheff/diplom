@@ -40,7 +40,7 @@ const UserInfo = () => {
         }
         setIsDataLoaded(true)
     }
-    const handleDeleteUser = async (id: string) => {
+    const handleDeleteUser = async () => {
         setDeleteModalOpen(true)
     }
 
@@ -52,7 +52,7 @@ const UserInfo = () => {
         setDeleteModalOpen(false)
     }
 
-    const handleBlockUser = async (id: string) => {
+    const handleBlockUser = async () => {
         setBlockModalOpen(true)
     }
 
@@ -64,8 +64,8 @@ const UserInfo = () => {
         setBlockModalOpen(false)
     }
 
-    const handleUnblockUser = async (id: string) => {
-        await unblockUser(id)
+    const handleUnblockUser = async () => {
+        await unblockUser(user.id)
         setUser({ ...user, isBlocked: false })
         toast.success("Пользователь разблокирован")
     }
@@ -92,7 +92,7 @@ const UserInfo = () => {
                             <div className={styles.blockContent}>
                                 <div className={styles.infoRow}>
                                     <span className={styles.label}>ID</span>
-                                    {/* <span className={styles.value}>{user.id}</span> */}
+
                                     <span className={styles.value}>
                                         {shortenText(user.id)}
                                         <CopyButton textToCopy={user.id} />
@@ -124,15 +124,15 @@ const UserInfo = () => {
                                 </div>
                                 <div>
                                     {user.isBlocked ? (
-                                        <Button onClick={() => handleUnblockUser(user.id)} disabled={isLoading}>
+                                        <Button onClick={() => handleUnblockUser()} disabled={isLoading}>
                                             Разблокировать
                                         </Button>
                                     ) : (
-                                        <Button onClick={() => handleBlockUser(user.id)} disabled={isLoading}>
+                                        <Button onClick={() => handleBlockUser()} disabled={isLoading}>
                                             Заблокировать
                                         </Button>
                                     )}
-                                    <Button onClick={() => handleDeleteUser(user.id)} disabled={isLoading}>
+                                    <Button onClick={() => handleDeleteUser()} disabled={isLoading}>
                                         Удалить
                                     </Button>
                                 </div>

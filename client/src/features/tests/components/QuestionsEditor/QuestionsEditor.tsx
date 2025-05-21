@@ -43,7 +43,6 @@ interface TextInputFormData {
 const QuestionsEditor: FC<QuestionsEditorProps> = ({
     data,
     onQuestionComplete,
-    onCancel,
     setHasUnsavedChanges,
     isLoading,
 }) => {

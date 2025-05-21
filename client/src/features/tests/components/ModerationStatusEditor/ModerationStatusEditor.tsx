@@ -13,7 +13,7 @@ interface ModerationStatusEditorProps {
 }
 
 const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus, onChangingComplete, onCancel }) => {
-    const { register, handleSubmit, watch, setValue, trigger } = useForm<{ status: ModerationStatus }>({
+    const { register, handleSubmit, setValue, trigger } = useForm<{ status: ModerationStatus }>({
         defaultValues: {
             status: currentStatus,
         },

@@ -109,7 +109,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
                                     if (errors) trigger(name)
                                 }}
                                 onFocus={() => setIsFocused(true)}
-                                onBlur={e => {
+                                onBlur={() => {
                                     field.onBlur()
                                     setIsFocused(false)
                                 }}

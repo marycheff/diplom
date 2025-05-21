@@ -3,7 +3,6 @@ import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { AttemptWithSnapshotDTO } from "@/shared/types"
-import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import { USER_TABLE_LIMIT } from "@/shared/utils/constants"
 import { isValidUUID } from "@/shared/utils/validator"
@@ -49,12 +48,11 @@ const UserAttempts = () => {
         setPage(newPage)
     }
 
-    const handleUpdateButton = () => {
-        fetchData(page)
-    }
+    // const handleUpdateButton = () => {
+    //     fetchData(page)
+    // }
 
     const isDataLoaded = total !== null
-    const hasAttempts = total !== null && total > 0
     const totalPages = total !== null ? Math.ceil(total / limit) : 0
     const shouldShowPagination = totalPages > 0 && page <= totalPages
     const emptyAttemptsPage = total === 0 && page === 1 && isDataLoaded

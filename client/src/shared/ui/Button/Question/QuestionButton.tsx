@@ -9,7 +9,7 @@ interface QuestionButtonProps {
     variant?: "primary" | "secondary"
 }
 
-const QuestionButton: FC<QuestionButtonProps> = ({ tooltip, className = "", variant = "primary" }) => {
+const QuestionButton: FC<QuestionButtonProps> = ({ tooltip, className = "" }) => {
     const buttonRef = useRef<HTMLButtonElement>(null)
 
     return (

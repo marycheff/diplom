@@ -48,12 +48,11 @@ const UserTests = () => {
         setPage(newPage)
     }
 
-    const handleUpdateButton = () => {
-        fetchData(page)
-    }
+    // const handleUpdateButton = () => {
+    //     fetchData(page)
+    // }
 
     const isDataLoaded = total !== null
-    const hasTests = total !== null && total > 0
     const totalPages = total !== null ? Math.ceil(total / limit) : 0
     const shouldShowContent = totalPages > 0 && page <= totalPages
     const emptyTestsPage = total === 0 && page === 1 && isDataLoaded

@@ -9,10 +9,10 @@ import styles from "./TestInfoEditor.module.scss"
 interface TestInfoEditorProps {
     data: ShortTestInfo
     onChangingComplete: (data: ShortTestInfo) => void
-    onCancel: () => void
+    onCancel?: () => void
 }
 
-const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onChangingComplete, onCancel }) => {
+const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onChangingComplete }) => {
     const onSubmit: SubmitHandler<ShortTestInfo> = data => {
         onChangingComplete({
             title: data.title,

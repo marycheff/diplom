@@ -22,7 +22,7 @@ interface PreTestFormProps {
     isLoading?: boolean
 }
 
-export const PreTestForm = ({ inputFields, onSubmit, onCancel, isLoading = false }: PreTestFormProps) => {
+export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTestFormProps) => {
     const { user } = useAuthStore()
 
     const {

@@ -38,14 +38,8 @@ const TestTaking = () => {
     const navigate = useNavigate()
 
     // Хуки из store
-    const { isFetching: isTestFetching, getTestForUserById } = useTestStore()
-    const {
-        isFetching: isAttemptFetching,
-        getAttemptForUserById,
-        saveAnswers,
-        completeAttempt,
-        isLoading,
-    } = useAttemptStore()
+    const { getTestForUserById } = useTestStore()
+    const { getAttemptForUserById, saveAnswers, completeAttempt, isLoading } = useAttemptStore()
 
     // Проверка валидности attemptId
     if (!attemptId) {

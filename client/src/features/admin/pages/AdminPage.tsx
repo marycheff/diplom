@@ -1,7 +1,6 @@
 import { ROUTES } from "@/router/paths"
 import classNames from "classnames"
-import { FiArchive, FiCheckSquare, FiEdit, FiFileText, FiFolder, FiList, FiUser, FiUsers } from "react-icons/fi"
-import { MdOutlineScience } from "react-icons/md"
+import { FiArchive, FiCheckSquare, FiEdit, FiFileText, FiUser, FiUsers } from "react-icons/fi"
 import { useNavigate } from "react-router-dom"
 import styles from "./AdminPage.module.scss"
 

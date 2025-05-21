@@ -26,13 +26,13 @@ const AttemptResultsPage = () => {
     const [attemptForUser, setAttemptForUser] = useState<TestAttemptUserDTO | null>(null)
     const [attempt, setAttempt] = useState<TestAttemptResultDTO | null>(null)
     const [test, setTest] = useState<UserTestDTO | null>(null)
-    const { isFetching: isTestFetching, getTestForUserById } = useTestStore()
+    const { getTestForUserById } = useTestStore()
     const { isAdmin } = useAuthStore()
     const [isAttemptForUserLoaded, setIsAttemptForUserLoaded] = useState(false)
     const [isAttemptLoaded, setIsAttemptLoaded] = useState(false)
     const [isTestLoaded, setIsTestLoaded] = useState(false)
 
-    const { isFetching: isAttemptFetching, getAttemptResults, getAttemptForUserById } = useAttemptStore()
+    const { getAttemptResults, getAttemptForUserById } = useAttemptStore()
     // Проверка валидности attemptId
     if (!attemptId) {
         return <NothingFound title="ID попытки не указан" />

@@ -45,7 +45,6 @@ const TestInfoPage = () => {
     // Хуки из store
     const {
         getTestById,
-        isFetching,
         upsertQuestions,
         isLoading,
         isShortInfoUpdating,
