@@ -489,11 +489,11 @@ const TestInfoPage = () => {
                             }>
                             {test.questions?.length && test.questions?.length > 0 ? <MdEdit /> : <FaPlus />}
                         </Button>
-                        {test.questions?.length && test.questions?.length > 0 && (
+                        {test.questions?.length && test.questions?.length > 0 ? (
                             <Button onClick={handlePreviewButton} className={styles.editBtn} tooltip="Предпросмотр">
                                 <LuEye />
                             </Button>
-                        )}
+                        ) : null}
                     </div>
                 </div>
                 {isLoading ? (

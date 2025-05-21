@@ -1,16 +1,17 @@
+import { ROUTES } from "@/router/paths"
 import { TestDTO, VisibilityStatusLabels } from "@/shared/types"
-import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import { shortenText } from "@/shared/utils/formatter"
 import { FC } from "react"
-import { Link } from "react-router-dom"
+import { generatePath, Link } from "react-router-dom"
 import styles from "./TestsTable.module.scss"
 
 interface TestsTableProps {
     tests: TestDTO[]
     total: number
+    type?: "all" | "unmoderated"
 }
 
-const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
+const TestsTable: FC<TestsTableProps> = ({ tests, total, type = "all" }) => {
     return (
         <>
             {tests && tests.length > 0 && (
@@ -30,8 +31,6 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                     <th scope="col">Название</th>
                                     <th scope="col">Статус публикации</th>
                                     <th scope="col">Кол-во вопросов</th>
-                                    {/* <th scope="col">Требуется регистрация</th>
-                                    <th scope="col">Показывать детальные результаты</th> */}
                                     <th scope="col">Кол-во попыток</th>
                                 </tr>
                             </thead>
@@ -41,7 +40,13 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                         <tr key={test.id}>
                                             <td>
                                                 <Link
-                                                    to={`/admin/tests/${test.id}`}
+                                                    to={
+                                                        type === "unmoderated"
+                                                            ? generatePath(ROUTES.ADMIN_UNMODERATED_TEST_INFO, {
+                                                                  testId: test.id,
+                                                              })
+                                                            : generatePath(ROUTES.ADMIN_TEST_INFO, { testId: test.id })
+                                                    }
                                                     className="actionLink"
                                                     title={test.id}>
                                                     {shortenText(test.id)}
@@ -50,7 +55,9 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                             <td>{test.moderatedAt ? "Да" : "Нет"}</td>
                                             <td>
                                                 <Link
-                                                    to={`/admin/users/${test.author.id}`}
+                                                    to={generatePath(ROUTES.ADMIN_USER_INFO, {
+                                                        userId: test.author.id,
+                                                    })}
                                                     className="actionLink"
                                                     title={test.author.email}>
                                                     {shortenText(test.author.email, 30)}
@@ -60,15 +67,20 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total }) => {
                                             <td>{VisibilityStatusLabels[test.visibilityStatus]}</td>
 
                                             <td>{test.questions ? test.questions.length : 0}</td>
-                                            {/* <td>{test.settings?.requireRegistration ? "Да" : "Нет"}</td>
-                                            <td>{test.settings?.showDetailedResults ? "Да" : "Нет"}</td> */}
-
                                             <td>
                                                 {test.totalAttempts === 0 ? (
                                                     "0"
                                                 ) : (
                                                     <Link
-                                                        to={`/admin/tests/${test.id}/attempts`}
+                                                        to={
+                                                            type === "unmoderated"
+                                                                ? generatePath(ROUTES.ADMIN_UNMODERATED_TEST_ATTEMPTS, {
+                                                                      testId: test.id,
+                                                                  })
+                                                                : generatePath(ROUTES.ADMIN_TEST_ATTEMPTS, {
+                                                                      testId: test.id,
+                                                                  })
+                                                        }
                                                         className="actionLink">
                                                         {test.totalAttempts}
                                                     </Link>

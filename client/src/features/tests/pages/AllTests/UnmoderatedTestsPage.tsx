@@ -60,7 +60,7 @@ const UnmoderatedTestsPage = () => {
                 <TableSkeleton />
             ) : total > 0 ? (
                 <>
-                    <TestsTable tests={tests} total={total} />
+                    <TestsTable tests={tests} total={total} type="unmoderated" />
                     <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
                 </>
             ) : (
