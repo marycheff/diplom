@@ -14,7 +14,7 @@ import { ConfirmationModal } from "@/shared/ui/Modal"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
 import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
 import { isValidUUID } from "@/shared/utils/validator"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
 import { generatePath, useNavigate, useParams } from "react-router-dom"
 import styles from "./TestTaking.module.scss"
@@ -22,6 +22,7 @@ import styles from "./TestTaking.module.scss"
 const TestTaking = () => {
     // Параметры маршрута
     const { attemptId } = useParams<{ attemptId: string }>()
+    const timerRef = useRef<{ syncTime: () => Promise<void> }>(null)
 
     // Состояния компонента
     const [selectedAnswers, setSelectedAnswers] = useState<string[]>([])
@@ -223,6 +224,11 @@ const TestTaking = () => {
     }
 
     const submitAnswers = async () => {
+        // Синхронизация времени перед отправкой ответов
+        if (timerRef.current) {
+            await timerRef.current.syncTime()
+        }
+
         const formattedAnswers: AttemptAnswer[] = []
 
         // Форматирование обычных ответов
@@ -295,6 +301,7 @@ const TestTaking = () => {
 
                 {timeLimit > 0 && !isAttemptCompleted && (
                     <TestTimer
+                        ref={timerRef}
                         attemptId={attemptId}
                         defaultTime={timeLimit}
                         timeSpent={attempt.timeSpent}

@@ -14,6 +14,7 @@ import {
     UserTestDTO,
 } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
+import { formatSeconds } from "@/shared/utils/formatter"
 import { countCorrectAnswers } from "@/shared/utils/math"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -130,6 +131,10 @@ const AttemptResultsPage = () => {
                                     <span className={styles.value}>
                                         {correctAnswers} из {totalQuestions}
                                     </span>
+                                </div>
+                                <div className={styles.infoRow}>
+                                    <span className={styles.label}>Времени потрачено:</span>
+                                    <span className={styles.value}>{formatSeconds(attempt.timeSpent)}</span>
                                 </div>
                             </div>
                         </div>
@@ -357,6 +362,10 @@ const AttemptResultsPage = () => {
                                 <span className={styles.value}>
                                     {correctAnswers} из {totalQuestions}
                                 </span>
+                            </div>
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>Времени потрачено:</span>
+                                <span className={styles.value}>{formatSeconds(attempt.timeSpent)}</span>
                             </div>
                             {/* Краткий вердикт по каждому вопросу */}
                             {attempt.questions?.length > 0 && (

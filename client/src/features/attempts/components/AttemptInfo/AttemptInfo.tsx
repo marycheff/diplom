@@ -17,7 +17,7 @@ import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import Loader from "@/shared/ui/Loader/Loader"
 import { Modal } from "@/shared/ui/Modal"
-import { formatDate, shortenText } from "@/shared/utils/formatter"
+import { formatDate, formatSeconds, shortenText } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import { generatePath, Link, useParams } from "react-router-dom"
@@ -92,6 +92,16 @@ const AttemptInfo = () => {
                             <span className={styles.value}>
                                 {attempt.completedAt ? (
                                     formatDate(attempt.completedAt)
+                                ) : (
+                                    <span className={styles.emptyField}>—</span>
+                                )}
+                            </span>
+                        </div>
+                        <div className={styles.infoRow}>
+                            <span className={styles.label}>Времени потрачено</span>
+                            <span className={styles.value}>
+                                {attempt.timeSpent !== 0 ? (
+                                    formatSeconds(attempt.timeSpent)
                                 ) : (
                                     <span className={styles.emptyField}>—</span>
                                 )}
