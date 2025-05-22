@@ -13,6 +13,7 @@ interface CopyButtonProps {
 const CopyButton = ({ textToCopy, className = "", showOnHover = false, variant = "icon" }: CopyButtonProps) => {
     const [isCopied, setIsCopied] = useState(false)
     const [isParentHovered, setIsParentHovered] = useState(false)
+    const [isTimeout, setIsTimeout] = useState(false)
     const buttonRef = useRef<HTMLButtonElement>(null)
 
     useEffect(() => {
@@ -32,12 +33,20 @@ const CopyButton = ({ textToCopy, className = "", showOnHover = false, variant =
     }, [showOnHover])
 
     const handleCopy = async () => {
+        if (isTimeout) return
+
         try {
+            setIsTimeout(true)
             await navigator.clipboard.writeText(textToCopy)
             setIsCopied(true)
-            setTimeout(() => setIsCopied(false), 1500)
             toast.success("Скопировано!")
+
+            setTimeout(() => {
+                setIsCopied(false)
+                setIsTimeout(false)
+            }, 1500)
         } catch (err) {
+            setIsTimeout(false)
             console.error("Failed to copy text: ", err)
         }
     }
@@ -69,9 +78,10 @@ const CopyButton = ({ textToCopy, className = "", showOnHover = false, variant =
             ref={buttonRef}
             className={`${styles.iconButton} ${className}`}
             onClick={handleCopy}
-            title="Скопировать"
-            aria-label="Копировать в буфер обмена"
+            title={isTimeout ? "Подождите..." : "Скопировать"}
+            aria-label={isTimeout ? "Подождите..." : "Копировать в буфер обмена"}
             type="button"
+            disabled={isTimeout}
             data-visible={showOnHover ? isParentHovered : true}>
             {getIcon()}
         </button>

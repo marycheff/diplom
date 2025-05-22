@@ -82,6 +82,7 @@ export interface TestAttemptResultDTO {
 export interface TestAttemptUserDTO {
     id: string
     testId: string
+    testSnapshotId: string | null
     status: AttemptStatus
     score: number | null
     timeSpent: number

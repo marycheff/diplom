@@ -21,6 +21,7 @@ export interface TestState {
     searchMyTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     getTestById: (id: string) => Promise<TestDTO | undefined>
     getTestForUserById: (testId: string, attemptId?: string) => Promise<UserTestDTO | undefined>
+    getTestSnapshotForUser: (snapshotId: string, attemptId?: string) => Promise<UserTestDTO | undefined>
     getMyTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     getUserTests: (userId: string, page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     createTest: (title: string, description?: string) => Promise<TestDTO | undefined>

@@ -62,6 +62,11 @@ class TestService {
             params: { attemptId },
         })
     }
+    getTestSnapshotForUser(snapshotId: string, attemptId?: string): Promise<AxiosResponse<UserTestDTO>> {
+        return axiosInstance.get<UserTestDTO>(`/tests/snapshot/${snapshotId}/for-user`, {
+            params: { attemptId },
+        })
+    }
 
     getMyTests(page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
         return axiosInstance.get<TestsListDTO>("/tests/my-tests", {

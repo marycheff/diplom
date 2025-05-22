@@ -27,7 +27,7 @@ const AttemptResultsPage = () => {
     const [attemptForUser, setAttemptForUser] = useState<TestAttemptUserDTO | null>(null)
     const [attempt, setAttempt] = useState<TestAttemptResultDTO | null>(null)
     const [test, setTest] = useState<UserTestDTO | null>(null)
-    const { getTestForUserById } = useTestStore()
+    const { getTestSnapshotForUser } = useTestStore()
     const { isAdmin } = useAuthStore()
     const [isAttemptForUserLoaded, setIsAttemptForUserLoaded] = useState(false)
     const [isAttemptLoaded, setIsAttemptLoaded] = useState(false)
@@ -72,8 +72,7 @@ const AttemptResultsPage = () => {
     const fetchTest = async () => {
         try {
             if (!attemptForUser) return
-
-            const fetchedTest = await getTestForUserById(attemptForUser.testId)
+            const fetchedTest = await getTestSnapshotForUser(attemptForUser.testSnapshotId!)
             if (fetchedTest) {
                 setTest(fetchedTest)
             }
