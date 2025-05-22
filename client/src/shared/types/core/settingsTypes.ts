@@ -4,7 +4,8 @@ export interface TestSettingsDTO {
     requireRegistration?: boolean
     shuffleQuestions?: boolean
     shuffleAnswers?: boolean
-    allowRetake?: boolean
+    allowRetake: boolean
+    retakeLimit: number | null
     showDetailedResults?: boolean
     inputFields?: PreTestUserData[]
     timeLimit?: number | null
@@ -18,7 +19,8 @@ export interface TestSettingsSnapshotDTO {
     showDetailedResults: boolean
     shuffleQuestions: boolean
     shuffleAnswers: boolean
-    allowRetake?: boolean
+    allowRetake: boolean
+    retakeLimit: number | null
     timeLimit?: number | null
     createdAt: Date
 }

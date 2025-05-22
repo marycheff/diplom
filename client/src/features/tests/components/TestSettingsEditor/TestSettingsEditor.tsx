@@ -24,9 +24,10 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
         shuffleAnswers: settings.shuffleAnswers ? "Да" : "Нет",
         allowRetake: settings.allowRetake ? "Да" : "Нет",
         inputFields: settings.inputFields || [],
-        hours: String(Math.floor((settings.timeLimit ?? 0) / 3600)),
-        minutes: String(Math.floor(((settings.timeLimit ?? 0) % 3600) / 60)),
-        seconds: String((settings.timeLimit ?? 0) % 60),
+        retakeLimit: settings.retakeLimit,
+        hours: Math.floor((settings.timeLimit ?? 0) / 3600),
+        minutes: Math.floor(((settings.timeLimit ?? 0) % 3600) / 60),
+        seconds: (settings.timeLimit ?? 0) % 60,
     }
     const {
         register,
@@ -68,11 +69,12 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             return true
         }
 
-        // Проверка для временных полей (приводим к строке, чтобы сравнение было корректным)
+        // Проверка для числовых полей
         if (
-            formatSpaces(String(watchedValues.hours)) !== formatSpaces(initialValues.hours) ||
-            formatSpaces(String(watchedValues.minutes)) !== formatSpaces(initialValues.minutes) ||
-            formatSpaces(String(watchedValues.seconds)) !== formatSpaces(initialValues.seconds)
+            watchedValues.hours !== initialValues.hours ||
+            watchedValues.minutes !== initialValues.minutes ||
+            watchedValues.seconds !== initialValues.seconds ||
+            watchedValues.retakeLimit !== initialValues.retakeLimit
         ) {
             return true
         }
@@ -90,6 +92,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
             shuffleQuestions: data.shuffleQuestions === "Да",
             shuffleAnswers: data.shuffleAnswers === "Да",
             allowRetake: data.allowRetake === "Да",
+            retakeLimit: Number(data.retakeLimit) === 0 ? null : Number(data.retakeLimit),
             timeLimit: Number(data.hours) * 3600 + Number(data.minutes) * 60 + Number(data.seconds),
             inputFields: sortedInputFields,
         })
@@ -162,6 +165,24 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                                 disabled={watchedValues.requireRegistration !== "Да"}
                             />
                             <QuestionButton tooltip="Эта настройка доступна только при включенной опции 'Требуется регистрация'." />
+                            <div className={styles.limitInput}>
+                                <ValidatedInput
+                                    placeholder="Лимит"
+                                    type="number"
+                                    className={styles.timeInput}
+                                    name="retakeLimit"
+                                    trigger={trigger}
+                                    register={register}
+                                    setValue={setValue}
+                                    errors={errors.retakeLimit}
+                                    disabled={watchedValues.allowRetake !== "Да"}
+                                    validationRules={{
+                                        min: { value: 1, message: "Минимум 1 раз" },
+                                        max: { value: 20, message: "Максимум 20 раз" },
+                                        validate: value => !isNaN(Number(value)) || "Некорректное значение",
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -189,6 +210,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                                 <span className={styles.timeLabel}>Часы</span>
                                 <ValidatedInput
                                     className={styles.timeInput}
+                                    type="number"
                                     name="hours"
                                     trigger={trigger}
                                     register={register}
@@ -206,6 +228,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                                 <span className={styles.timeLabel}>Минуты</span>
                                 <ValidatedInput
                                     className={styles.timeInput}
+                                    type="number"
                                     name="minutes"
                                     register={register}
                                     trigger={trigger}
@@ -223,6 +246,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                                 <span className={styles.timeLabel}>Секунды</span>
                                 <ValidatedInput
                                     className={styles.timeInput}
+                                    type="number"
                                     name="seconds"
                                     trigger={trigger}
                                     register={register}

@@ -105,12 +105,15 @@ const TestInfoPage = () => {
         fetchTest()
     }, [testId, getTestById])
 
-    // Лоадер на время загрузки
+    // Loader на время загрузки
     if (!isDataLoaded) {
         return <Loader fullScreen />
     }
     if (!test) {
         return <TestNotFound />
+    }
+    if (!test.settings) {
+        return <NothingFound title="Настройки теста не найдены" />
     }
 
     // Обработчик открытия модалки редактирования вопросов
@@ -396,6 +399,14 @@ const TestInfoPage = () => {
                                             </span>
                                         </div>
                                         <div className={styles.infoRow}>
+                                            <span className={styles.label}>Лимит повторного прохождения</span>
+                                            <span className={styles.value}>
+                                                {test.settings.retakeLimit || (
+                                                    <span className={styles.emptyField}>не указан</span>
+                                                )}
+                                            </span>
+                                        </div>
+                                        <div className={styles.infoRow}>
                                             <span className={styles.label}>Поля ввода</span>
                                             <span className={styles.value}>
                                                 {test.settings.inputFields && test.settings.inputFields.length > 0 ? (
@@ -540,7 +551,7 @@ const TestInfoPage = () => {
                 onClose={() => setIsSettingsModalOpen(false)}
                 title="Редактирование настроек теста">
                 <TestSettingsEditor
-                    settings={test.settings || {}}
+                    settings={test.settings}
                     onSettingsComplete={settings => {
                         handleSettingsUpdate(settings)
                         setIsSettingsModalOpen(false)

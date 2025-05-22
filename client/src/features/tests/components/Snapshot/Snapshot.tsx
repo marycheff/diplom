@@ -1,6 +1,7 @@
+import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
-import { PreTestUserDataLabels, QuestionTypeLabels, TestSnapshotDTO } from "@/shared/types"
+import { ModerationStatusLabels, PreTestUserDataLabels, QuestionTypeLabels, TestSnapshotDTO } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
 import { formatSeconds } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
@@ -12,9 +13,9 @@ interface SnapshotProps {
 }
 
 const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
-    // const { snapshotId } = useParams<{ snapshotId: string }>()
     const { getSnapshotById, isFetching } = useTestStore()
     const [snapshot, setSnapshot] = useState<TestSnapshotDTO | null>(null)
+    const { isAdmin } = useAuthStore()
 
     if (!snapshotId) {
         return <NothingFound title="ID снимка теста не указан" />
@@ -58,10 +59,12 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
                                 {snapshot.description || <span className={styles.emptyField}>не указано</span>}
                             </span>
                         </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.label}>Статус</span>
-                            <span className={styles.value}>{snapshot.status}</span>
-                        </div>
+                        {isAdmin && (
+                            <div className={styles.infoRow}>
+                                <span className={styles.label}>Статус модерации</span>
+                                <span className={styles.value}>{ModerationStatusLabels[snapshot.status]}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className={styles.infoBlock}>
@@ -101,6 +104,15 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
                                         <span className={styles.label}>Разрешить повторное прохождение</span>
                                         <span className={styles.value}>
                                             {snapshot.settings.allowRetake ? "Да" : "Нет"}
+                                        </span>
+                                    </div>
+
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.label}>Лимит повторного прохождения</span>
+                                        <span className={styles.value}>
+                                            {snapshot.settings.retakeLimit || (
+                                                <span className={styles.emptyField}>не указан</span>
+                                            )}
                                         </span>
                                     </div>
                                     <div className={styles.infoRow}>
@@ -149,9 +161,7 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
                                     <div className={styles.questionHeader}>
                                         <span className={styles.questionNumber}>{index + 1}</span>
                                         <span className={styles.questionText}>{question.text}</span>
-                                        <span className={styles.questionType}>
-                                            {QuestionTypeLabels[question.type]}
-                                        </span>
+                                        <span className={styles.questionType}>{QuestionTypeLabels[question.type]}</span>
                                     </div>
                                     <div className={styles.answersList}>
                                         {question.answers.map(answer => (

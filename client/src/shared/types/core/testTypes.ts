@@ -109,7 +109,7 @@ export interface TestSnapshotDTO {
     testId: string
     title: string
     description?: string
-    status: string
+    status: ModerationStatus
     createdAt: Date
     questions: QuestionSnapshotDTO[]
     settings?: TestSettingsSnapshotDTO
