@@ -56,6 +56,7 @@ model TestSettings {
   shuffleAnswers      Boolean  @default(true)
   shuffleQuestions    Boolean  @default(false)
   allowRetake         Boolean  @default(true)
+  retakeLimit         Int?
   // TIMESTAMPS
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -220,6 +221,8 @@ model TestSettingsSnapshot {
   showDetailedResults Boolean      @default(false)
   shuffleQuestions    Boolean      @default(false)
   shuffleAnswers      Boolean      @default(true)
+  allowRetake         Boolean      @default(true)
+  retakeLimit         Int?
   timeLimit           Int?         @default(0)
   // TIMESTAMPS
   createdAt           DateTime     @default(now())

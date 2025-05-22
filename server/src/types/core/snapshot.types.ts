@@ -39,11 +39,14 @@ export interface AnswerSnapshotDTO {
 
 export interface TestSettingsSnapshotDTO {
     id: string
+    // snapshotId: string
     requireRegistration: boolean
     inputFields?: JsonValue
     showDetailedResults: boolean
     shuffleQuestions: boolean
     shuffleAnswers: boolean
+    allowRetake: boolean
+    retakeLimit: number | null
     timeLimit?: number | null
     createdAt: Date
 }

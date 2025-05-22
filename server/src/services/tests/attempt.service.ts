@@ -101,7 +101,7 @@ class AttemptService {
                     )
                 }
 
-                // Проверяем настройку allowRetake и наличие завершенных попыток
+                // Проверка настройки allowRetake и наличие завершенных попыток
                 if (!settings?.allowRetake) {
                     const hasCompletedAttempts = await attemptRepository.findCompletedAttemptsByUserAndTest(
                         userId,
@@ -110,6 +110,21 @@ class AttemptService {
                     if (hasCompletedAttempts) {
                         logger.warn(`[${LOG_NAMESPACE}] Повторное прохождение теста запрещено`, { testId, userId })
                         throw ApiError.BadRequest("Повторное прохождение этого теста запрещено")
+                    }
+                } else if (settings.retakeLimit && settings.retakeLimit > 0) {
+                    // Проверка количества завершенных попыток
+                    const completedAttemptsCount = await attemptRepository.countCompletedAttemptsByUserAndTest(
+                        userId,
+                        testId
+                    )
+                    if (completedAttemptsCount >= settings.retakeLimit) {
+                        logger.warn(`[${LOG_NAMESPACE}] Превышен лимит попыток прохождения теста`, {
+                            testId,
+                            userId,
+                            completedAttempts: completedAttemptsCount,
+                            limit: settings.retakeLimit,
+                        })
+                        throw ApiError.BadRequest(`Превышен лимит попыток прохождения теста (${settings.retakeLimit})`)
                     }
                 }
             }

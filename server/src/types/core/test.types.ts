@@ -30,6 +30,7 @@ export interface TestDTO {
     moderatedBy: string | null
     moderatedAt: Date | null
     totalAttempts: number
+    version?: number
 }
 
 export interface UpdateTestDTO {

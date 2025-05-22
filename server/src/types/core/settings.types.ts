@@ -7,14 +7,6 @@ export interface TestSettingsDTO {
     shuffleAnswers: boolean
     showDetailedResults: boolean
     allowRetake: boolean
+    retakeLimit: number | null
     timeLimit?: number | null
 }
-
-// export interface UserTestSettingsDTO {
-//     timeLimit?: number | null
-//     shuffleQuestions: boolean
-//     shuffleAnswers: boolean
-//     requireRegistration: boolean
-//     inputFields?: JsonValue
-//     showDetailedResults: boolean
-// }

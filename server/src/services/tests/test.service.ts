@@ -33,6 +33,10 @@ class TestService {
                     throw ApiError.NotFound("Тест не найден")
                 }
 
+
+                if (!testSettings.allowRetake && testSettings.retakeLimit) {
+                    throw ApiError.BadRequest("Указан лимит попыток, но не указан флаг 'Разрешить повтор'")
+                }
                 const existingSettings = await testRepository.findSettingsById(testId, tx)
 
                 const sortedInputFields = Array.isArray(testSettings.inputFields)
@@ -62,10 +66,7 @@ class TestService {
 
                 await testRepository.createSnapshot(updatedTest, tx)
             })
-
-            await redisClient.del(`test:${testId}`)
-            await redisClient.del(`user-test:${testId}`)
-            await redisClient.del(`user-test-basic:${testId}`)
+            await deleteTestCache(testId)
 
             logger.info(`[${LOG_NAMESPACE}] Настройки теста успешно обновлены`, { testId })
         } catch (error) {
@@ -95,9 +96,8 @@ class TestService {
                 // await testRepository.createSnapshot(updatedTest, tx)
             })
 
-            await redisClient.del(`test:${testId}`)
-            await redisClient.del(`user-test:${testId}`)
-            await redisClient.del(`user-test-basic:${testId}`)
+            await deleteTestCache(testId)
+
             logger.info(`[${LOG_NAMESPACE}] Статус видимости теста успешно изменен`, { testId, status })
         } catch (error) {
             if (error instanceof ApiError) throw error

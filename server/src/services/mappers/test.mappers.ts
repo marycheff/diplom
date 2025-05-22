@@ -84,6 +84,7 @@ export const mapTest = (
                   shuffleAnswers: test.settings.shuffleAnswers,
                   shuffleQuestions: test.settings.shuffleQuestions,
                   allowRetake: test.settings.allowRetake,
+                  retakeLimit: test.settings.retakeLimit,
                   timeLimit: test.settings.timeLimit,
                   inputFields: test.settings.inputFields,
               }
@@ -288,6 +289,8 @@ export const mapToTestSnapshotDTO = (
                   showDetailedResults: snapshot.settings.showDetailedResults,
                   shuffleQuestions: snapshot.settings.shuffleQuestions,
                   shuffleAnswers: snapshot.settings.shuffleAnswers,
+                  allowRetake: snapshot.settings.allowRetake,
+                  retakeLimit: snapshot.settings.retakeLimit,
                   timeLimit: snapshot.settings.timeLimit,
                   createdAt: snapshot.settings.createdAt,
               }
@@ -337,6 +340,7 @@ export const mapUserTest = (
                   shuffleAnswers: test.settings.shuffleAnswers,
                   shuffleQuestions: test.settings.shuffleQuestions,
                   allowRetake: test.settings.allowRetake,
+                  retakeLimit: test.settings.retakeLimit,
                   timeLimit: test.settings.timeLimit,
                   inputFields: test.settings.inputFields,
               }
