@@ -438,7 +438,6 @@ class AttemptService {
                 logger.warn(`[${LOG_NAMESPACE}] Попытка не принадлежит пользователю`, { attemptId, userId })
                 throw ApiError.BadRequest("Попытка не принадлежит пользователю")
             }
-            console.log(result)
 
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
             logger.debug(`[${LOG_NAMESPACE}] Попытка для пользователя успешно получена`, { attemptId })

@@ -139,6 +139,16 @@ class TestController {
             next(error)
         }
     }
+    async getTestSnapshotForUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { snapshotId } = req.params
+            const attemptId = req.query.attemptId as string
+            const snapshot = await testService.getTestSnapshotForUser(snapshotId, attemptId)
+            res.status(200).json(snapshot)
+        } catch (error) {
+            next(error)
+        }
+    }
     async searchTests(req: Request, res: Response, next: NextFunction) {
         try {
             const page = parseInt(req.query.page as string) || 1
@@ -204,6 +214,7 @@ class TestController {
             next(error)
         }
     }
+
     async changeVisibilityStatus(req: Request, res: Response, next: NextFunction) {
         try {
             const { testId } = req.params

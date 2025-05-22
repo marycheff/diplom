@@ -80,6 +80,7 @@ router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.g
 
 // Получение теста по ID для тестируемого
 router.get("/:testId/for-user", validateRequest(testIdSchema), testController.getTestByIdForUser)
+router.get("/snapshot/:snapshotId/for-user", testController.getTestSnapshotForUser)
 
 // Удаление теста
 router.delete("/:testId", authMiddleware, testOwnershipMiddleware, testController.deleteTest)

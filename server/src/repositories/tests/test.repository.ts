@@ -76,7 +76,7 @@ class TestRepository {
             const questionSnapshot = await client.questionSnapshot.create({
                 data: {
                     testSnapshotId: newSnapshot.id,
-                    originalTestId: question.id,
+                    originalTestId: question.id, //TODO: переименовать в originalID
                     text: question.text,
                     order: question.order,
                     type: question.type,
@@ -86,7 +86,7 @@ class TestRepository {
             await client.answerSnapshot.createMany({
                 data: question.answers.map(answer => ({
                     questionId: questionSnapshot.id,
-                    originalTestId: answer.id,
+                    originalTestId: answer.id, //TODO: переименовать в originalID
                     text: answer.text,
                     isCorrect: answer.isCorrect,
                 })),

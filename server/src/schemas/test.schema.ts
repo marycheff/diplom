@@ -189,6 +189,7 @@ export const testSettingsSchema = z.object({
             shuffleAnswers: z.boolean().optional(),
             showDetailedResults: z.boolean().optional(),
             allowRetake: z.boolean().optional(),
+            retakeLimit: z.number().min(1).max(20).nullable().optional(),
             timeLimit: z.number().nullable().optional(),
         })
         .strict("Обнаружены недопустимые поля в настройках теста")

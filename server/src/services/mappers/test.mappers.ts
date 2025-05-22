@@ -247,6 +247,7 @@ export const mapToTestAttemptUserDTO = (
     return {
         id: attempt.id,
         testId: attempt.testId,
+        testSnapshotId: attempt.testSnapshotId,
         status: attempt.status,
         userId: attempt.userId,
         startedAt: attempt.startedAt,
@@ -373,5 +374,63 @@ export const mapUserAnswerWithoutText = (answer: Answer): AnswerUserDTO => {
     return {
         id: answer.id,
         // text: answer.text,
+    }
+}
+
+// Добавить в test.mappers.ts
+
+export const mapToTestSnapshotForUserDTO = (
+    snapshot: TestSnapshot & {
+        questions: (QuestionSnapshot & { answers: AnswerSnapshot[] })[]
+        settings?: TestSettingsSnapshot | null
+    }
+): UserTestDTO => {
+    return {
+        id: snapshot.testId, // Используем testId из snapshot как id теста
+        title: snapshot.title,
+        description: snapshot.description || "",
+        visibilityStatus: "PUBLISHED",
+        settings: snapshot.settings
+            ? {
+                  requireRegistration: snapshot.settings.requireRegistration,
+                  showDetailedResults: snapshot.settings.showDetailedResults,
+                  shuffleAnswers: snapshot.settings.shuffleAnswers,
+                  shuffleQuestions: snapshot.settings.shuffleQuestions,
+                  allowRetake: snapshot.settings.allowRetake,
+                  retakeLimit: snapshot.settings.retakeLimit,
+                  timeLimit: snapshot.settings.timeLimit,
+                  inputFields: snapshot.settings.inputFields,
+              }
+            : ({} as TestSettingsDTO),
+        questions: snapshot.questions.map(question => mapSnapshotQuestionToUser(question)),
+    }
+}
+
+// Вспомогательная функция для маппинга вопросов из snapshot без информации о правильных ответах
+export const mapSnapshotQuestionToUser = (
+    question: QuestionSnapshot & { answers: AnswerSnapshot[] }
+): UserQuestionDTO => {
+    return {
+        id: question.originalTestId, // Используем originalId для совместимости
+        text: question.text,
+        type: question.type as QuestionType,
+        answers:
+            question.type === "FILL_IN_THE_BLANK" || question.type === "TEXT_INPUT"
+                ? question.answers.map(answer => mapSnapshotAnswerToUserWithoutText(answer))
+                : question.answers.map(answer => mapSnapshotAnswerToUser(answer)),
+    }
+}
+
+// Вспомогательная функция для маппинга ответов из snapshot без информации о правильности
+export const mapSnapshotAnswerToUser = (answer: AnswerSnapshot): AnswerUserDTO => {
+    return {
+        id: answer.originalTestId, // Используем originalId для совместимости
+        text: answer.text,
+    }
+}
+
+export const mapSnapshotAnswerToUserWithoutText = (answer: AnswerSnapshot): AnswerUserDTO => {
+    return {
+        id: answer.originalTestId, // Используем originalId для совместимости
     }
 }

@@ -3,7 +3,12 @@ import userRepository from "@/repositories/auth/user.repository"
 import attemptRepository from "@/repositories/tests/attempt.repository"
 import testRepository from "@/repositories/tests/test.repository"
 import mailService from "@/services/mail.service"
-import { mapTest, mapToTestSnapshotDTO, mapUserTest } from "@/services/mappers/test.mappers"
+import {
+    mapTest,
+    mapToTestSnapshotDTO,
+    mapToTestSnapshotForUserDTO,
+    mapUserTest,
+} from "@/services/mappers/test.mappers"
 import {
     CreateTest,
     ShortTestInfo,
@@ -33,10 +38,10 @@ class TestService {
                     throw ApiError.NotFound("Тест не найден")
                 }
 
-
                 if (!testSettings.allowRetake && testSettings.retakeLimit) {
                     throw ApiError.BadRequest("Указан лимит попыток, но не указан флаг 'Разрешить повтор'")
                 }
+
                 const existingSettings = await testRepository.findSettingsById(testId, tx)
 
                 const sortedInputFields = Array.isArray(testSettings.inputFields)
@@ -588,6 +593,81 @@ class TestService {
                 error: error instanceof Error ? error.message : String(error),
             })
             throw ApiError.InternalError("Ошибка при получении снимка теста")
+        }
+    }
+    async getTestSnapshotForUser(snapshotId: string, attemptId?: string): Promise<UserTestDTO> {
+        logger.debug(`[${LOG_NAMESPACE}] Получение снимка теста для пользователя`, { snapshotId, attemptId })
+        try {
+            const isPreview = !attemptId
+            const cacheKey = isPreview
+                ? `user-test-snapshot-basic:${snapshotId}`
+                : `user-test-snapshot:${snapshotId}:attempt:${attemptId}`
+
+            const cachedSnapshot = await redisClient.get(cacheKey)
+            if (cachedSnapshot) {
+                logger.debug(`[${LOG_NAMESPACE}] Снимок теста для пользователя получен из кэша`, {
+                    snapshotId,
+                    attemptId,
+                })
+                const parsedSnapshot = JSON.parse(cachedSnapshot)
+
+                // Проверяем статус снимка
+                if (parsedSnapshot.visibilityStatus === TestVisibilityStatus.HIDDEN) {
+                    logger.warn(`[${LOG_NAMESPACE}] Снимок теста не найден или недоступен`, { snapshotId })
+                    throw ApiError.NotFound("Снимок теста не найден")
+                }
+                return parsedSnapshot
+            }
+
+            const snapshot = await testRepository.findSnapshot(snapshotId)
+            if (!snapshot) {
+                logger.warn(`[${LOG_NAMESPACE}] Снимок теста не найден`, { snapshotId })
+                throw ApiError.NotFound("Снимок теста не найден")
+            }
+
+            // Проверяем статус модерации снимка
+            if (
+                snapshot.moderationStatus === ModerationStatus.PENDING ||
+                snapshot.moderationStatus === ModerationStatus.REJECTED
+            ) {
+                logger.warn(`[${LOG_NAMESPACE}] Снимок теста не найден или недоступен`, { snapshotId })
+                throw ApiError.NotFound("Снимок теста не найден")
+            }
+
+            let testDTO = mapToTestSnapshotForUserDTO(snapshot)
+
+            if (!isPreview) {
+                // Генерация seed на основе attemptId для детерминированного перемешивания
+                const seed = generateSeedFromAttemptId(attemptId)
+
+                // Перемешивание вопросов с привязкой к попытке
+                if (snapshot.settings?.shuffleQuestions && testDTO.questions) {
+                    testDTO.questions = shuffleArray(testDTO.questions, seed)
+                }
+
+                // Перемешивание вариантов ответов с привязкой к попытке
+                if (snapshot.settings?.shuffleAnswers && testDTO.questions) {
+                    testDTO.questions = testDTO.questions.map((question, index) => ({
+                        ...question,
+                        answers: question.answers ? shuffleArray(question.answers, seed + index) : question.answers,
+                    }))
+                }
+            }
+
+            const cacheTime = isPreview ? 3600 : 3600 * 24
+            await redisClient.setEx(cacheKey, cacheTime, JSON.stringify(testDTO))
+            logger.debug(`[${LOG_NAMESPACE}] Снимок теста для пользователя успешно получен`, { snapshotId, attemptId })
+
+            return testDTO
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при получении снимка теста для пользователя`, {
+                snapshotId,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при получении снимка теста для пользователя")
         }
     }
 }
