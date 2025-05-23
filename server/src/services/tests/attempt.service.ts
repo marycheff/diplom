@@ -269,7 +269,7 @@ class AttemptService {
     async getAll(page = 1, limit = 10): Promise<AttemptsListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение всех попыток`, { page, limit })
         try {
-            const attempts = await attemptRepository.findAll(page, limit)
+            const attempts = await attemptRepository.findMany(page, limit)
             const total = await attemptRepository.count()
 
             logger.debug(`[${LOG_NAMESPACE}] Все попытки успешно получены`, { count: attempts.length })

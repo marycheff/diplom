@@ -42,8 +42,6 @@ class TestService {
                     throw ApiError.BadRequest("Указан лимит попыток, но не указан флаг 'Разрешить повтор'")
                 }
 
-                const existingSettings = await testRepository.findSettingsById(testId, tx)
-
                 const sortedInputFields = Array.isArray(testSettings.inputFields)
                     ? sortInputFields(
                           testSettings.inputFields.filter((field): field is string => typeof field === "string")
@@ -55,12 +53,7 @@ class TestService {
                     inputFields: sortedInputFields,
                 }
 
-                if (existingSettings) {
-                    await testRepository.updateSettings(testId, settingsWithSortedFields, tx)
-                } else {
-                    await testRepository.createSettings(testId, settingsWithSortedFields, tx)
-                }
-
+                await testRepository.upsertSettings(testId, settingsWithSortedFields, tx)
                 await testRepository.incrementVersion(testId, test.version, tx)
                 await testRepository.cleanupUnusedSnapshots(testId, tx)
 
@@ -288,7 +281,7 @@ class TestService {
         logger.debug(`[${LOG_NAMESPACE}] Получение всех тестов`, { page, limit })
         try {
             const skip = (page - 1) * limit
-            const tests = await testRepository.findAll(skip, limit)
+            const tests = await testRepository.findMany(skip, limit)
             const total = await testRepository.count()
 
             // Получение totalAttempts для каждого теста
@@ -320,7 +313,7 @@ class TestService {
         logger.debug(`[${LOG_NAMESPACE}] Получение всех тестов`, { page, limit })
         try {
             const skip = (page - 1) * limit
-            const tests = await testRepository.findAll(skip, limit, { moderatedAt: null })
+            const tests = await testRepository.findMany(skip, limit, { moderatedAt: null })
             const total = await testRepository.count({ moderatedAt: null })
 
             // Получение totalAttempts для каждого теста

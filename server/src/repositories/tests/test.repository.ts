@@ -50,18 +50,6 @@ class TestRepository {
         return { createdTest, settings }
     }
 
-    async createSettings(testId: string, testSettings: TestSettingsDTO, tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-        return client.testSettings.create({
-            data: {
-                ...testSettings,
-                testId,
-                inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-                timeLimit: testSettings.timeLimit,
-            },
-        })
-    }
-
     async createSnapshot(test: TestWithQuestionsAndSettings, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
 
@@ -114,7 +102,7 @@ class TestRepository {
     }
 
     // FIND
-    async findAll(skip: number, limit: number, where?: Prisma.TestWhereInput) {
+    async findMany(skip: number, limit: number, where?: Prisma.TestWhereInput) {
         return prisma.test.findMany({
             skip,
             take: limit,
@@ -151,7 +139,7 @@ class TestRepository {
         })
     }
 
-    async findSettingsById(testId: string, tx?: Prisma.TransactionClient): Promise<TestSettings | null> {
+    async findSettingsByTestId(testId: string, tx?: Prisma.TransactionClient): Promise<TestSettings | null> {
         const client = tx || prisma
         return client.testSettings.findUnique({
             where: { testId },
@@ -287,16 +275,6 @@ class TestRepository {
     }
 
     // UPDATE
-    async updateSettings(testId: string, testSettings: TestSettingsDTO, tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-        return client.testSettings.update({
-            where: { testId },
-            data: {
-                ...testSettings,
-                inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-            },
-        })
-    }
 
     async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
@@ -377,6 +355,24 @@ class TestRepository {
                         patronymic: true,
                     },
                 },
+            },
+        })
+    }
+
+    // UPSERT
+    async upsertSettings(testId: string, testSettings: TestSettingsDTO, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.testSettings.upsert({
+            where: { testId },
+            create: {
+                ...testSettings,
+                testId,
+                inputFields: testSettings.inputFields as Prisma.InputJsonValue,
+                timeLimit: testSettings.timeLimit,
+            },
+            update: {
+                ...testSettings,
+                inputFields: testSettings.inputFields as Prisma.InputJsonValue,
             },
         })
     }

@@ -1,46 +1,31 @@
-import ApiError from "@/exceptions/api-error"
 import { prisma } from "@/utils/prisma-client"
 import { Token } from "@prisma/client"
 
 class TokenRepository {
-    /**
-     * Сохраняет refresh токен в базе данных
-     * @param userId - ID пользователя
-     * @param refreshToken - Refresh токен для сохранения
-     */
-    async saveToken(userId: string, refreshToken: string): Promise<Token> {
-        try {
-            return await prisma.token.upsert({
-                where: { userId },
-                update: { refreshToken },
-                create: { userId, refreshToken },
-            })
-        } catch (error) {
-            throw ApiError.InternalError()
-        }
+    // FIND
+    async findById(refreshToken: string) {
+        return prisma.token.findFirst({
+            where: { refreshToken },
+        })
     }
 
-    /**
-     * Находит токен по значению refreshToken
-     * @param refreshToken - Refresh токен для поиска
-     */
-    async findByRefreshToken(refreshToken: string): Promise<Token | null> {
+    async findByToken(refreshToken: string): Promise<Token | null> {
         return prisma.token.findUnique({
             where: { refreshToken },
         })
     }
 
-    /**
-     * Удаляет токен по значению refreshToken
-     * @param refreshToken - Refresh токен для удаления
-     */
-    async removeByRefreshToken(refreshToken: string): Promise<Token> {
-        const tokenData = await this.findByRefreshToken(refreshToken)
+    // UPSERT
+    async upsert(userId: string, refreshToken: string) {
+        return prisma.token.upsert({
+            where: { userId },
+            update: { refreshToken },
+            create: { userId, refreshToken },
+        })
+    }
 
-        if (!tokenData) {
-            throw new Error("Token not found")
-        }
-
+    // DELETE
+    async delete(refreshToken: string) {
         return prisma.token.delete({
             where: { refreshToken },
         })

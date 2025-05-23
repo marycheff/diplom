@@ -24,7 +24,7 @@ class TokenService {
     async saveToken(userId: string, refreshToken: string): Promise<Token> {
         logger.debug(`[${LOG_NAMESPACE}] Сохранение токена`, { userId })
         try {
-            const token = await tokenRepository.saveToken(userId, refreshToken)
+            const token = await tokenRepository.upsert(userId, refreshToken)
             logger.debug(`[${LOG_NAMESPACE}] Токен успешно сохранен`, { userId })
             return token
         } catch (error) {
@@ -40,7 +40,7 @@ class TokenService {
     async removeToken(refreshToken: string): Promise<Token> {
         logger.debug(`[${LOG_NAMESPACE}] Удаление токена`)
         try {
-            const token = await tokenRepository.removeByRefreshToken(refreshToken)
+            const token = await tokenRepository.delete(refreshToken)
             logger.debug(`[${LOG_NAMESPACE}] Токен успешно удален`, { userId: token.userId })
             return token
         } catch (error) {
@@ -83,7 +83,7 @@ class TokenService {
     async findToken(refreshToken: string): Promise<Token | null> {
         logger.debug(`[${LOG_NAMESPACE}] Поиск токена`)
         try {
-            const token = await tokenRepository.findByRefreshToken(refreshToken)
+            const token = await tokenRepository.findByToken(refreshToken)
             logger.debug(`[${LOG_NAMESPACE}] Токен найден`, { found: !!token })
             return token
         } catch (error) {

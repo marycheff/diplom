@@ -6,11 +6,12 @@ import mailService from "@/services/mail.service"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
 import { logger } from "@/utils/logger"
 
+import tokenRepository from "@/repositories/auth/token.repository"
 import { CreateUserDTO, UserDTO } from "@/types/core/user.types"
+import { redisClient } from "@/utils/redis-client"
 import { Token } from "@prisma/client"
 import bcrypt from "bcryptjs"
 import { v4 as uuid_v4 } from "uuid"
-import { redisClient } from "@/utils/redis-client"
 
 const LOG_NAMESPACE = "AuthService"
 
@@ -43,7 +44,7 @@ class AuthService {
             })
 
             // Сохраняем токен в базе данных
-            await userRepository.saveToken(newUser.id, tokens.refreshToken)
+            await tokenRepository.upsert(newUser.id, tokens.refreshToken)
             logger.info(`[${LOG_NAMESPACE}] Пользователь успешно зарегистрирован`, { userId: newUser.id })
 
             return { ...tokens, user: userDto }
@@ -122,8 +123,7 @@ class AuthService {
             const userDto = mapUserToDto(user)
             const tokens = tokenService.generateTokens(userDto)
 
-            await userRepository.saveToken(user.id, tokens.refreshToken)
-
+            await tokenRepository.upsert(user.id, tokens.refreshToken)
 
             await redisClient.del(`user:${user.id}`)
             logger.info(`[${LOG_NAMESPACE}] Аккаунт пользователя успешно активирован`, { userId: user.id })
@@ -162,7 +162,7 @@ class AuthService {
             const tokens = tokenService.generateTokens({
                 ...userDto,
             })
-            await userRepository.saveToken(user.id, tokens.refreshToken)
+            await tokenRepository.upsert(user.id, tokens.refreshToken)
             logger.info(`[${LOG_NAMESPACE}] Успешный вход в систему`, { userId: user.id })
             return { ...tokens, user: userDto }
         } catch (error) {
@@ -185,7 +185,7 @@ class AuthService {
                 logger.warn(`[${LOG_NAMESPACE}] Попытка выхода без предоставления токена`)
                 throw ApiError.BadRequest("Токен не предоставлен")
             }
-            const token = await userRepository.removeToken(refreshToken)
+            const token = await tokenRepository.delete(refreshToken)
             logger.info(`[${LOG_NAMESPACE}] Успешный выход из системы`, { tokenId: token.id })
             return token
         } catch (error) {
@@ -214,7 +214,7 @@ class AuthService {
                 throw ApiError.Unauthorized()
             }
 
-            const tokenFromDb = await userRepository.findToken(refreshToken)
+            const tokenFromDb = await tokenRepository.findById(refreshToken)
             if (!tokenFromDb) {
                 logger.warn(`[${LOG_NAMESPACE}] Refresh токен не найден в базе данных`)
                 throw ApiError.Unauthorized()
@@ -232,7 +232,7 @@ class AuthService {
             const tokens = tokenService.generateTokens({ ...userDto })
 
             // Сохраняем новый refreshToken
-            await userRepository.saveToken(user.id, tokens.refreshToken)
+            await tokenRepository.upsert(user.id, tokens.refreshToken)
             logger.debug(`[${LOG_NAMESPACE}] Токены доступа успешно обновлены`, { userId: user.id })
 
             return { ...tokens, user: userDto }

@@ -38,7 +38,7 @@ class AttemptRepository {
     }
 
     // FIND
-    async findAll(page: number, limit: number) {
+    async findMany(page: number, limit: number) {
         const skip = (page - 1) * limit
         const attempts = await prisma.testAttempt.findMany({
             skip,

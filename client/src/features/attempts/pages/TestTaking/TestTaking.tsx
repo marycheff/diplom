@@ -229,10 +229,32 @@ const TestTaking = () => {
             await timerRef.current.syncTime()
         }
 
+        if (!test || !test.questions) return
+
+        // Фильтрация ответов: остаются только существующие вопросы
+        const filteredAnswers = Object.fromEntries(
+            Object.entries(allAnswers).filter(([questionId]) => test.questions!.some(q => q.id === questionId))
+        )
+
+        const filteredTextAnswers = Object.fromEntries(
+            Object.entries(allTextAnswers).filter(([questionId]) => test.questions!.some(q => q.id === questionId))
+        )
+
+        // Обновление состояния актуальными ответами
+        setAllAnswers(filteredAnswers)
+        setAllTextAnswers(filteredTextAnswers)
+
+        // Очистка localStorage от удаленных вопросов
+        Object.keys(allAnswers).forEach(qId => {
+            if (!test.questions!.some(q => q.id === qId)) {
+                localStorage.removeItem(`answer_time_${attemptId}_${qId}`)
+            }
+        })
+
         const formattedAnswers: AttemptAnswer[] = []
 
         // Форматирование обычных ответов
-        Object.entries(allAnswers).forEach(([questionId, answersIds]) => {
+        Object.entries(filteredAnswers).forEach(([questionId, answersIds]) => {
             const timeKey = `answer_time_${attemptId}_${questionId}`
             const answeredAt = getDecryptedTime(timeKey)
             formattedAnswers.push({
@@ -244,7 +266,7 @@ const TestTaking = () => {
         })
 
         // Форматирование текстовых ответов
-        Object.entries(allTextAnswers).forEach(([questionId, textAnswer]) => {
+        Object.entries(filteredTextAnswers).forEach(([questionId, textAnswer]) => {
             const timeKey = `answer_time_${attemptId}_${questionId}`
             const answeredAt = getDecryptedTime(timeKey)
             formattedAnswers.push({

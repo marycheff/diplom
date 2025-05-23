@@ -187,7 +187,7 @@ class UserService {
     async deleteUser(id: string): Promise<void> {
         logger.info(`[${LOG_NAMESPACE}] Удаление пользователя`, { id })
         try {
-            await userRepository.deleteWithTokens(id)
+            await userRepository.delete(id)
             const cacheKey = `user:${id}`
             await redisClient.del(cacheKey)
             logger.info(`[${LOG_NAMESPACE}] Пользователь успешно удален и кэш очищен`, { id })
