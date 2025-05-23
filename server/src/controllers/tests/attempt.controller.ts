@@ -19,18 +19,7 @@ class AttemptController {
         }
     }
 
-    // Сохранить ответ
-    async saveAnswer(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { attemptId } = req.params
-            const { questionId, answersIds, timeSpent } = req.body
-
-            await attemptService.saveAnswer(attemptId, questionId, answersIds, timeSpent)
-            res.status(204).send()
-        } catch (e) {
-            next(e)
-        }
-    }
+    // Сохранить ответы
     async saveAnswers(req: Request, res: Response, next: NextFunction) {
         try {
             const { attemptId } = req.params

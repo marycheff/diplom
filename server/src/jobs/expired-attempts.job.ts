@@ -44,7 +44,7 @@ class ExpiredAttemptsJob {
 
         try {
             // Получение просроченных попыток из базы данных
-            const expiredAttempts = await attemptRepository.findExpiredAttempts(this.batchSize)
+            const expiredAttempts = await attemptRepository.findExpired(this.batchSize)
 
             if (expiredAttempts.length > 0) {
                 logger.info(`Найдено ${expiredAttempts.length} просроченных попыток`)

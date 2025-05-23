@@ -104,20 +104,14 @@ class AttemptService {
 
                 // Проверка настройки allowRetake и наличие завершенных попыток
                 if (!settings?.allowRetake) {
-                    const hasCompletedAttempts = await attemptRepository.findCompletedAttemptsByUserAndTest(
-                        userId,
-                        testId
-                    )
+                    const hasCompletedAttempts = await attemptRepository.findCompletedByUserAndTest(userId, testId)
                     if (hasCompletedAttempts) {
                         logger.warn(`[${LOG_NAMESPACE}] Повторное прохождение теста запрещено`, { testId, userId })
                         throw ApiError.BadRequest("Повторное прохождение этого теста запрещено")
                     }
                 } else if (settings.retakeLimit && settings.retakeLimit > 0) {
                     // Проверка количества завершенных попыток
-                    const completedAttemptsCount = await attemptRepository.countCompletedAttemptsByUserAndTest(
-                        userId,
-                        testId
-                    )
+                    const completedAttemptsCount = await attemptRepository.countCompletedByUserAndTest(userId, testId)
                     if (completedAttemptsCount >= settings.retakeLimit) {
                         logger.warn(`[${LOG_NAMESPACE}] Превышен лимит попыток прохождения теста`, {
                             testId,
@@ -129,7 +123,7 @@ class AttemptService {
                     }
                 }
             }
-            const newAttempt = await attemptRepository.createAttempt({
+            const newAttempt = await attemptRepository.create({
                 testId,
                 testSnapshotId: latestSnapshot.id,
                 userId,
@@ -154,70 +148,10 @@ class AttemptService {
         }
     }
 
-    async saveAnswer(attemptId: string, questionId: string, answersIds: string[], timeSpent = 0): Promise<void> {
-        logger.debug(`[${LOG_NAMESPACE}] Сохранение ответа`, { attemptId, questionId })
-        try {
-            const attempt = await attemptRepository.findAttemptWithTest(attemptId)
-
-            if (!attempt) {
-                logger.warn(`[${LOG_NAMESPACE}] Попытка не существует`, { attemptId })
-                throw ApiError.BadRequest("Попытка не существует")
-            }
-            if (attempt.status === TestAttemptStatus.COMPLETED || attempt.completedAt) {
-                logger.warn(`[${LOG_NAMESPACE}] Попытка уже завершена`, { attemptId })
-                throw ApiError.BadRequest("Попытка уже завершена")
-            }
-
-            const question = await questionRepository.findWithAnswers(questionId)
-            if (!question || question.testId !== attempt.testId) {
-                logger.warn(`[${LOG_NAMESPACE}] Вопрос не принадлежит тесту`, { questionId, testId: attempt.testId })
-                throw ApiError.BadRequest("Вопрос не принадлежит тесту")
-            }
-
-            if (question.type === "SINGLE_CHOICE" && answersIds.length > 1) {
-                logger.warn(`[${LOG_NAMESPACE}] Для вопроса с одиночным выбором можно указать только один ответ`, {
-                    questionId,
-                })
-                throw ApiError.BadRequest("Для вопроса с одиночным выбором можно указать только один ответ")
-            }
-
-            if (answersIds.length > 0) {
-                const validAnswerIds = question.answers.map(a => a.id)
-                const allAnswersValid = answersIds.every(id => validAnswerIds.includes(id))
-
-                if (!allAnswersValid) {
-                    if (question.type == "MULTIPLE_CHOICE") {
-                        logger.warn(`[${LOG_NAMESPACE}] Один или несколько ответов не принадлежат вопросу`, {
-                            questionId,
-                        })
-                        throw ApiError.BadRequest("Один или несколько ответов не принадлежат вопросу")
-                    }
-                    logger.warn(`[${LOG_NAMESPACE}] Ответ не принадлежит вопросу`, { questionId })
-                    throw ApiError.BadRequest("Ответ не принадлежит вопросу")
-                }
-
-                await attemptRepository.saveUserAnswer(attemptId, questionId, answersIds, timeSpent)
-                await deleteAttemptCache(attemptId)
-
-                logger.debug(`[${LOG_NAMESPACE}] Ответ успешно сохранен`, { attemptId, questionId })
-            }
-        } catch (error) {
-            if (error instanceof ApiError) {
-                throw error
-            }
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при сохранении ответа`, {
-                attemptId,
-                questionId,
-                error: error instanceof Error ? error.message : String(error),
-            })
-            throw ApiError.InternalError("Ошибка при сохранении ответа")
-        }
-    }
-
     async saveAnswers(attemptId: string, answers: AttemptAnswer[]): Promise<void> {
         logger.debug(`[${LOG_NAMESPACE}] Сохранение всех ответов`, { attemptId })
         try {
-            const attempt = await attemptRepository.findAttemptWithTest(attemptId)
+            const attempt = await attemptRepository.findWithTest(attemptId)
             if (!attempt) {
                 logger.warn(`[${LOG_NAMESPACE}] Попытка не существует`, { attemptId })
                 throw ApiError.BadRequest("Попытка не существует")
@@ -280,7 +214,7 @@ class AttemptService {
                 }
             }
 
-            await attemptRepository.saveUserAnswers(attemptId, answers)
+            await attemptRepository.saveAnswers(attemptId, answers)
             await deleteAttemptCache(attemptId)
 
             logger.debug(`[${LOG_NAMESPACE}] Все ответы успешно сохранены`, { attemptId })
@@ -299,7 +233,7 @@ class AttemptService {
     async completeAttempt(attemptId: string): Promise<{ score: number }> {
         logger.debug(`[${LOG_NAMESPACE}] Завершение попытки теста`, { attemptId })
         try {
-            const attempt = await attemptRepository.findAttemptWithDetails(attemptId)
+            const attempt = await attemptRepository.findWithDetails(attemptId)
 
             if (!attempt) {
                 logger.warn(`[${LOG_NAMESPACE}] Попытка не найдена`, { attemptId })
@@ -310,11 +244,11 @@ class AttemptService {
                 throw ApiError.BadRequest("Тест уже завершен")
             }
 
-            const questionsWithAnswers = await attemptRepository.getQuestionsWithCorrectAnswers(attempt.testId)
+            const questionsWithAnswers = await questionRepository.findWithCorrectAnswers(attempt.testId)
             const score = calculateTestScore(questionsWithAnswers, attempt.answers)
             console.log(score)
 
-            await attemptRepository.updateAttemptScore(attemptId, score)
+            await attemptRepository.updateScore(attemptId, score)
             await deleteAttemptCache(attemptId)
 
             logger.debug(`[${LOG_NAMESPACE}] Попытка теста успешно завершена`, { attemptId, score })

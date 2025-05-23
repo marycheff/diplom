@@ -1,14 +1,8 @@
 import { prisma } from "@/utils/prisma-client"
 
 class AnswerRepository {
-    async findAnswersByQuestionId(questionId: string) {
-        return prisma.question.findUnique({
-            where: { id: questionId },
-            include: { answers: true },
-        })
-    }
-
-    async findAnswerWithDetails(answerId: string) {
+    // FIND
+    async findWithDetails(answerId: string) {
         return prisma.answer.findUnique({
             where: { id: answerId },
             include: {
@@ -36,34 +30,6 @@ class AnswerRepository {
                     },
                 },
             },
-        })
-    }
-
-    async findCorrectAnswers(questionId: string) {
-        return prisma.answer.findMany({
-            where: {
-                questionId,
-                isCorrect: true,
-            },
-        })
-    }
-
-    async findOtherAnswers(questionId: string, excludeAnswerId: string) {
-        return prisma.answer.findMany({
-            where: {
-                questionId,
-                id: { not: excludeAnswerId },
-            },
-        })
-    }
-
-    async deleteAnswer(answerId: string) {
-        return prisma.answer.delete({ where: { id: answerId } })
-    }
-
-    async deleteAllByQuestionId(questionId: string) {
-        return prisma.answer.deleteMany({
-            where: { questionId },
         })
     }
 }

@@ -354,7 +354,7 @@ class QuestionService {
                 }
             }
             // Удаление вопросов, которых нет в новом списке
-            const questionsToDelete = await questionRepository.getQuestionsToDelete(
+            const questionsToDelete = await questionRepository.findQuestionsToDelete(
                 testId,
                 Array.from(processedQuestionIds),
                 tx

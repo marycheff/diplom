@@ -4,6 +4,30 @@ import { isValidUUID } from "@/utils/validator"
 import { Prisma } from "@prisma/client"
 
 class QuestionRepository {
+    // CREATE
+    async create(questionData: QuestionDTO, testId: string, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.question.create({
+            data: {
+                text: questionData.text,
+                order: questionData.order || -1,
+                type: questionData.type,
+                testId: testId,
+                answers: {
+                    create: questionData.answers.map(answer => ({
+                        text: answer.text,
+                        isCorrect: answer.isCorrect,
+                        isGenerated: false,
+                    })),
+                },
+            },
+            include: {
+                answers: true,
+            },
+        })
+    }
+
+    // FIND
     async findManyByTestId(testId: string, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
         return client.question.findMany({
@@ -57,6 +81,41 @@ class QuestionRepository {
         })
     }
 
+    async findQuestionsToDelete(testId: string, updatedQuestionIds: string[], tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.question.findMany({
+            where: {
+                testId,
+                id: {
+                    notIn: updatedQuestionIds,
+                },
+            },
+        })
+    }
+
+    async findWithAnswers(questionId: string, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.question.findUnique({
+            where: { id: questionId },
+            include: { answers: true },
+        })
+    }
+
+    async findWithCorrectAnswers(testId: string) {
+        return prisma.$transaction(async tx => {
+            return tx.question.findMany({
+                where: { testId },
+                include: {
+                    answers: {
+                        where: { isCorrect: true },
+                        select: { id: true },
+                    },
+                },
+            })
+        })
+    }
+
+    // UPDATE
     async update(questionId: string, updateData: QuestionDTO, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
 
@@ -125,6 +184,7 @@ class QuestionRepository {
         }
     }
 
+    // DELETE
     async delete(questionId: string, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
         // Удаление всех связанных ответов
@@ -157,75 +217,6 @@ class QuestionRepository {
         // Удаление всех вопросов теста
         return await client.question.deleteMany({
             where: { testId },
-        })
-    }
-
-    async create(questionData: QuestionDTO, testId: string, tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-        return client.question.create({
-            data: {
-                text: questionData.text,
-                order: questionData.order || -1,
-                type: questionData.type,
-                testId: testId,
-                answers: {
-                    create: questionData.answers.map(answer => ({
-                        text: answer.text,
-                        isCorrect: answer.isCorrect,
-                        isGenerated: false,
-                    })),
-                },
-            },
-            include: {
-                answers: true,
-            },
-        })
-    }
-
-    async getQuestionsToDelete(testId: string, updatedQuestionIds: string[], tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-        return client.question.findMany({
-            where: {
-                testId,
-                id: {
-                    notIn: updatedQuestionIds,
-                },
-            },
-        })
-    }
-    async findWithAnswers(questionId: string, tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-        return client.question.findUnique({
-            where: { id: questionId },
-            include: { answers: true },
-        })
-    }
-
-    async deleteAnswers(questionId: string, tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-        return client.answer.deleteMany({
-            where: { questionId },
-        })
-    }
-
-    async deleteMany(questionIds: string[], tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-        // Удаление всех связанных ответов
-        await client.answer.deleteMany({
-            where: {
-                questionId: {
-                    in: questionIds,
-                },
-            },
-        })
-
-        // Удаление самих вопросов
-        return client.question.deleteMany({
-            where: {
-                id: {
-                    in: questionIds,
-                },
-            },
         })
     }
 }

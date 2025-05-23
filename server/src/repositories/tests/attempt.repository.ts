@@ -3,7 +3,8 @@ import { prisma } from "@/utils/prisma-client"
 import { Prisma, TestAttempt, TestAttemptStatus } from "@prisma/client"
 
 class AttemptRepository {
-    async createAttempt(data: {
+    // CREATE
+    async create(data: {
         testId: string
         testSnapshotId: string
         userId?: string
@@ -36,41 +37,256 @@ class AttemptRepository {
         })
     }
 
-    async findAttemptWithTest(attemptId: string) {
+    // FIND
+    async findAll(page: number, limit: number) {
+        const skip = (page - 1) * limit
+        const attempts = await prisma.testAttempt.findMany({
+            skip,
+            take: limit,
+            include: {
+                test: {
+                    include: {
+                        author: true,
+                        questions: {
+                            include: { answers: true },
+                            orderBy: { order: "asc" },
+                        },
+                    },
+                },
+                user: true,
+                answers: {
+                    include: {
+                        question: true,
+                        answer: true,
+                    },
+                },
+            },
+            orderBy: { startedAt: "desc" },
+        })
+        return attempts
+    }
+
+    async findById(attemptId: string) {
+        return prisma.testAttempt.findUnique({
+            where: { id: attemptId },
+            include: {
+                answers: {
+                    select: {
+                        id: true,
+                        attemptId: true,
+                        questionId: true,
+                        answerId: true,
+                        textAnswer: true,
+                        isCorrect: true,
+                        answeredAt: true,
+                        timeSpent: true,
+                        createdAt: true,
+                    },
+                },
+                test: {
+                    include: {
+                        questions: {
+                            include: { answers: true },
+                        },
+                        author: true,
+                    },
+                },
+                user: true,
+                snapshot: {
+                    include: {
+                        questions: {
+                            include: { answers: true },
+                        },
+                        settings: true,
+                    },
+                },
+            },
+        })
+    }
+
+    async findManyByTestId(testId: string, page: number, limit: number) {
+        const skip = (page - 1) * limit
+        const attempts = await prisma.testAttempt.findMany({
+            skip,
+            take: limit,
+            where: { testId },
+            include: {
+                test: {
+                    include: {
+                        author: true,
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                            orderBy: { order: "asc" },
+                        },
+                    },
+                },
+                user: true,
+                answers: {
+                    include: {
+                        question: true,
+                        answer: true,
+                    },
+                },
+                snapshot: {
+                    include: {
+                        questions: {
+                            include: {
+                                answers: true,
+                            },
+                        },
+                        settings: true,
+                    },
+                },
+            },
+            orderBy: { startedAt: "desc" },
+        })
+        return attempts
+    }
+
+    async findManyByUserId(userId: string, page: number, limit: number) {
+        const skip = (page - 1) * limit
+        const attempts = await prisma.testAttempt.findMany({
+            skip,
+            take: limit,
+            where: { userId },
+            include: {
+                user: true,
+                snapshot: true,
+            },
+            orderBy: { startedAt: "desc" },
+        })
+        return attempts
+    }
+
+    async findWithTest(attemptId: string) {
         return prisma.testAttempt.findUnique({
             where: { id: attemptId },
             include: { test: true },
         })
     }
 
-    async findQuestionWithAnswers(questionId: string, testId: string) {
-        return prisma.question.findUnique({
-            where: {
-                id: questionId,
-                testId: testId,
+    async findWithDetails(attemptId: string) {
+        return prisma.testAttempt.findUnique({
+            where: { id: attemptId },
+            include: {
+                answers: {
+                    include: { answer: true },
+                },
+                test: {
+                    include: {
+                        questions: {
+                            include: { answers: true },
+                        },
+                    },
+                },
             },
-            include: { answers: true },
         })
     }
 
-    async saveUserAnswer(attemptId: string, questionId: string, answersIds: string[], timeSpent: number) {
-        return prisma.$transaction(async tx => {
-            await tx.userAnswer.deleteMany({
-                where: { attemptId, questionId },
-            })
+    async findForUserById(attemptId: string) {
+        return prisma.testAttempt.findUnique({
+            where: { id: attemptId },
 
-            await tx.userAnswer.createMany({
-                data: answersIds.map(answerId => ({
-                    attemptId,
-                    questionId,
-                    answerId,
-                    timeSpent,
-                    answeredAt: new Date(),
-                })),
-            })
+            include: {
+                answers: {
+                    select: {
+                        id: true,
+                        attemptId: true,
+                        questionId: true,
+                        textAnswer: true,
+                        answerId: true,
+                        isCorrect: true,
+                        answeredAt: true,
+                        timeSpent: true,
+                        createdAt: true,
+                    },
+                },
+            },
         })
     }
-    async saveUserAnswers(attemptId: string, answers: AttemptAnswer[]) {
+
+    async findInProgressByUserId(userId: string): Promise<boolean> {
+        const inProgressAttempt = await prisma.testAttempt.findFirst({
+            where: {
+                userId: userId,
+                status: TestAttemptStatus.IN_PROGRESS,
+            },
+        })
+
+        return inProgressAttempt !== null
+    }
+
+    async findCompletedByUserAndTest(userId: string, testId: string): Promise<boolean> {
+        const completedAttempt = await prisma.testAttempt.findFirst({
+            where: {
+                userId: userId,
+                testId: testId,
+                status: TestAttemptStatus.COMPLETED,
+            },
+        })
+
+        return completedAttempt !== null
+    }
+
+    async findExpired(batchSize: number): Promise<TestAttempt[]> {
+        return prisma.testAttempt.findMany({
+            where: {
+                status: TestAttemptStatus.IN_PROGRESS,
+                expirationTime: { lt: new Date() },
+            },
+            take: batchSize,
+        })
+    }
+
+    // UPDATE
+    async updateScore(attemptId: string, score: number) {
+        return prisma.testAttempt.update({
+            where: { id: attemptId },
+            data: {
+                score: Math.round(score * 100) / 100,
+                status: TestAttemptStatus.COMPLETED,
+                completedAt: new Date(),
+            },
+        })
+    }
+
+    async updateStatuses(attemptIds: string[], status: TestAttemptStatus) {
+        return prisma.testAttempt.updateMany({
+            where: { id: { in: attemptIds } },
+            data: { status },
+        })
+    }
+
+    async updateTimeSpent(attemptId: string, timeSpent: number) {
+        return prisma.testAttempt.update({
+            where: { id: attemptId },
+            data: { timeSpent: timeSpent },
+        })
+    }
+
+    // COUNT
+    async count(where?: Prisma.TestAttemptWhereInput): Promise<number> {
+        return prisma.testAttempt.count({
+            where,
+        })
+    }
+
+    async countCompletedByUserAndTest(userId: string, testId: string): Promise<number> {
+        const count = await prisma.testAttempt.count({
+            where: {
+                userId: userId,
+                testId: testId,
+                status: TestAttemptStatus.COMPLETED,
+            },
+        })
+
+        return count
+    }
+
+    // SAVE
+    async saveAnswers(attemptId: string, answers: AttemptAnswer[]) {
         return prisma.$transaction(async tx => {
             for (const answer of answers) {
                 const { questionId, answersIds, textAnswer, timeSpent = 0, answeredAt } = answer
@@ -128,247 +344,6 @@ class AttemptRepository {
                     })
                 }
             }
-        })
-    }
-    async findAttemptWithDetails(attemptId: string) {
-        return prisma.testAttempt.findUnique({
-            where: { id: attemptId },
-            include: {
-                answers: {
-                    include: { answer: true },
-                },
-                test: {
-                    include: {
-                        questions: {
-                            include: { answers: true },
-                        },
-                    },
-                },
-            },
-        })
-    }
-    async getQuestionsWithCorrectAnswers(testId: string) {
-        return prisma.$transaction(async tx => {
-            return tx.question.findMany({
-                where: { testId },
-                include: {
-                    answers: {
-                        where: { isCorrect: true },
-                        select: { id: true },
-                    },
-                },
-            })
-        })
-    }
-    async updateAttemptScore(attemptId: string, score: number) {
-        return prisma.testAttempt.update({
-            where: { id: attemptId },
-            data: {
-                score: Math.round(score * 100) / 100,
-                status: TestAttemptStatus.COMPLETED,
-                completedAt: new Date(),
-            },
-        })
-    }
-    async findAll(page: number, limit: number) {
-        const skip = (page - 1) * limit
-        const attempts = await prisma.testAttempt.findMany({
-            skip,
-            take: limit,
-            include: {
-                test: {
-                    include: {
-                        author: true,
-                        questions: {
-                            include: { answers: true },
-                            orderBy: { order: "asc" },
-                        },
-                    },
-                },
-                user: true,
-                answers: {
-                    include: {
-                        question: true,
-                        answer: true,
-                    },
-                },
-            },
-            orderBy: { startedAt: "desc" },
-        })
-        return attempts
-    }
-    async findById(attemptId: string) {
-        return prisma.testAttempt.findUnique({
-            where: { id: attemptId },
-            include: {
-                answers: {
-                    select: {
-                        id: true,
-                        attemptId: true,
-                        questionId: true,
-                        answerId: true,
-                        textAnswer: true,
-                        isCorrect: true,
-                        answeredAt: true,
-                        timeSpent: true,
-                        createdAt: true,
-                    },
-                },
-                test: {
-                    include: {
-                        questions: {
-                            include: { answers: true },
-                        },
-                        author: true,
-                    },
-                },
-                user: true,
-                snapshot: {
-                    include: {
-                        questions: {
-                            include: { answers: true },
-                        },
-                        settings: true,
-                    },
-                },
-            },
-        })
-    }
-    async findForUserById(attemptId: string) {
-        return prisma.testAttempt.findUnique({
-            where: { id: attemptId },
-
-            include: {
-                answers: {
-                    select: {
-                        id: true,
-                        attemptId: true,
-                        questionId: true,
-                        textAnswer: true,
-                        answerId: true,
-                        isCorrect: true,
-                        answeredAt: true,
-                        timeSpent: true,
-                        createdAt: true,
-                    },
-                },
-            },
-        })
-    }
-    async findInProgressByUserId(userId: string): Promise<boolean> {
-        const inProgressAttempt = await prisma.testAttempt.findFirst({
-            where: {
-                userId: userId,
-                status: TestAttemptStatus.IN_PROGRESS,
-            },
-        })
-
-        return inProgressAttempt !== null
-    }
-
-    async findCompletedAttemptsByUserAndTest(userId: string, testId: string): Promise<boolean> {
-        const completedAttempt = await prisma.testAttempt.findFirst({
-            where: {
-                userId: userId,
-                testId: testId,
-                status: TestAttemptStatus.COMPLETED,
-            },
-        })
-
-        return completedAttempt !== null
-    }
-
-    async countCompletedAttemptsByUserAndTest(userId: string, testId: string): Promise<number> {
-        const count = await prisma.testAttempt.count({
-            where: {
-                userId: userId,
-                testId: testId,
-                status: TestAttemptStatus.COMPLETED,
-            },
-        })
-
-        return count
-    }
-    async findManyByTestId(testId: string, page: number, limit: number) {
-        const skip = (page - 1) * limit
-        const attempts = await prisma.testAttempt.findMany({
-            skip,
-            take: limit,
-            where: { testId },
-            include: {
-                test: {
-                    include: {
-                        author: true,
-                        questions: {
-                            include: {
-                                answers: true,
-                            },
-                            orderBy: { order: "asc" },
-                        },
-                    },
-                },
-                user: true,
-                answers: {
-                    include: {
-                        question: true,
-                        answer: true,
-                    },
-                },
-                snapshot: {
-                    include: {
-                        questions: {
-                            include: {
-                                answers: true,
-                            },
-                        },
-                        settings: true,
-                    },
-                },
-            },
-            orderBy: { startedAt: "desc" },
-        })
-        return attempts
-    }
-    async findManyByUserId(userId: string, page: number, limit: number) {
-        const skip = (page - 1) * limit
-        const attempts = await prisma.testAttempt.findMany({
-            skip,
-            take: limit,
-            where: { userId },
-            include: {
-                user: true,
-                snapshot: true,
-            },
-            orderBy: { startedAt: "desc" },
-        })
-        return attempts
-    }
-    async count(where?: Prisma.TestAttemptWhereInput): Promise<number> {
-        return prisma.testAttempt.count({
-            where,
-        })
-    }
-
-    async findExpiredAttempts(batchSize: number): Promise<TestAttempt[]> {
-        return prisma.testAttempt.findMany({
-            where: {
-                status: TestAttemptStatus.IN_PROGRESS,
-                expirationTime: { lt: new Date() },
-            },
-            take: batchSize,
-        })
-    }
-
-    async updateStatuses(attemptIds: string[], status: TestAttemptStatus) {
-        return prisma.testAttempt.updateMany({
-            where: { id: { in: attemptIds } },
-            data: { status },
-        })
-    }
-    async updateTimeSpent(attemptId: string, timeSpent: number) {
-        return prisma.testAttempt.update({
-            where: { id: attemptId },
-            data: { timeSpent: timeSpent },
         })
     }
 }

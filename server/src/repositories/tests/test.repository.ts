@@ -18,19 +18,102 @@ type TestWithAuthor = TestWithQuestionsAndSettings & {
 }
 
 class TestRepository {
-    // FIND
-
-    async findById(testId: string, tx?: Prisma.TransactionClient): Promise<TestWithQuestionsAndSettings | null> {
+    // CREATE
+    async create(authorId: string, testData: CreateTest, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
-        return client.test.findUnique({
-            where: { id: testId },
+
+        const createdTest = await client.test.create({
+            data: {
+                title: testData.title,
+                description: testData.description,
+                authorId: authorId,
+            },
             include: {
-                questions: { include: { answers: true } },
-                settings: true,
+                author: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        surname: true,
+                        patronymic: true,
+                    },
+                },
+            },
+        })
+
+        const settings = await client.testSettings.create({
+            data: {
+                testId: createdTest.id,
+            },
+        })
+
+        return { createdTest, settings }
+    }
+
+    async createSettings(testId: string, testSettings: TestSettingsDTO, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.testSettings.create({
+            data: {
+                ...testSettings,
+                testId,
+                inputFields: testSettings.inputFields as Prisma.InputJsonValue,
+                timeLimit: testSettings.timeLimit,
             },
         })
     }
 
+    async createSnapshot(test: TestWithQuestionsAndSettings, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+
+        const newSnapshot = await client.testSnapshot.create({
+            data: {
+                testId: test.id,
+                version: test.version,
+                title: test.title,
+                description: test.description,
+                moderationStatus: test.moderationStatus,
+            },
+        })
+
+        for (const question of test.questions) {
+            const questionSnapshot = await client.questionSnapshot.create({
+                data: {
+                    testSnapshotId: newSnapshot.id,
+                    originalId: question.id,
+                    text: question.text,
+                    order: question.order,
+                    type: question.type,
+                },
+            })
+
+            await client.answerSnapshot.createMany({
+                data: question.answers.map(answer => ({
+                    questionId: questionSnapshot.id,
+                    originalId: answer.id,
+                    text: answer.text,
+                    isCorrect: answer.isCorrect,
+                })),
+            })
+        }
+
+        if (test.settings) {
+            await client.testSettingsSnapshot.create({
+                data: {
+                    testSnapshotId: newSnapshot.id,
+                    requireRegistration: test.settings.requireRegistration,
+                    inputFields: test.settings.inputFields ?? [],
+                    showDetailedResults: test.settings.showDetailedResults,
+                    shuffleQuestions: test.settings.shuffleQuestions,
+                    shuffleAnswers: test.settings.shuffleAnswers,
+                    timeLimit: test.settings.timeLimit,
+                },
+            })
+        }
+
+        return newSnapshot
+    }
+
+    // FIND
     async findAll(skip: number, limit: number, where?: Prisma.TestWhereInput) {
         return prisma.test.findMany({
             skip,
@@ -54,6 +137,17 @@ class TestRepository {
                 },
             },
             orderBy: { createdAt: "desc" },
+        })
+    }
+
+    async findById(testId: string, tx?: Prisma.TransactionClient): Promise<TestWithQuestionsAndSettings | null> {
+        const client = tx || prisma
+        return client.test.findUnique({
+            where: { id: testId },
+            include: {
+                questions: { include: { answers: true } },
+                settings: true,
+            },
         })
     }
 
@@ -192,101 +286,6 @@ class TestRepository {
         })
     }
 
-    // CREATE
-    async create(authorId: string, testData: CreateTest, tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-
-        const createdTest = await client.test.create({
-            data: {
-                title: testData.title,
-                description: testData.description,
-                authorId: authorId,
-            },
-            include: {
-                author: {
-                    select: {
-                        id: true,
-                        email: true,
-                        name: true,
-                        surname: true,
-                        patronymic: true,
-                    },
-                },
-            },
-        })
-
-        const settings = await client.testSettings.create({
-            data: {
-                testId: createdTest.id,
-            },
-        })
-
-        return { createdTest, settings }
-    }
-
-    async createSettings(testId: string, testSettings: TestSettingsDTO, tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-        return client.testSettings.create({
-            data: {
-                ...testSettings,
-                testId,
-                inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-                timeLimit: testSettings.timeLimit,
-            },
-        })
-    }
-
-    async createSnapshot(test: TestWithQuestionsAndSettings, tx?: Prisma.TransactionClient) {
-        const client = tx || prisma
-
-        const newSnapshot = await client.testSnapshot.create({
-            data: {
-                testId: test.id,
-                version: test.version,
-                title: test.title,
-                description: test.description,
-                moderationStatus: test.moderationStatus,
-            },
-        })
-
-        for (const question of test.questions) {
-            const questionSnapshot = await client.questionSnapshot.create({
-                data: {
-                    testSnapshotId: newSnapshot.id,
-                    originalId: question.id,
-                    text: question.text,
-                    order: question.order,
-                    type: question.type,
-                },
-            })
-
-            await client.answerSnapshot.createMany({
-                data: question.answers.map(answer => ({
-                    questionId: questionSnapshot.id,
-                    originalId: answer.id,
-                    text: answer.text,
-                    isCorrect: answer.isCorrect,
-                })),
-            })
-        }
-
-        if (test.settings) {
-            await client.testSettingsSnapshot.create({
-                data: {
-                    testSnapshotId: newSnapshot.id,
-                    requireRegistration: test.settings.requireRegistration,
-                    inputFields: test.settings.inputFields ?? [],
-                    showDetailedResults: test.settings.showDetailedResults,
-                    shuffleQuestions: test.settings.shuffleQuestions,
-                    shuffleAnswers: test.settings.shuffleAnswers,
-                    timeLimit: test.settings.timeLimit,
-                },
-            })
-        }
-
-        return newSnapshot
-    }
-
     // UPDATE
     async updateSettings(testId: string, testSettings: TestSettingsDTO, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
@@ -383,7 +382,6 @@ class TestRepository {
     }
 
     // DELETE
-
     async deleteById(testId: string) {
         return prisma.test.delete({
             where: { id: testId },
