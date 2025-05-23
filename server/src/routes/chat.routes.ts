@@ -1,4 +1,4 @@
-import gigachatController from "@/controllers/gigachat.controller"
+import { gigaChatController } from "@/controllers/gigachat.controller"
 import { authMiddleware } from "@/middleware/auth.middleware"
 import { validateRequest } from "@/middleware/validate-request.middleware"
 import { generateAnswersSchema } from "@/schemas/gigachat.schema"
@@ -10,7 +10,7 @@ router.post(
     "/generate-answers",
     authMiddleware,
     validateRequest(generateAnswersSchema),
-    gigachatController.generateAnswers
+    gigaChatController.generateAnswers
 )
 
 export default router

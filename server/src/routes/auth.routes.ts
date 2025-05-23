@@ -1,23 +1,23 @@
-import express from "express"
-import authController from "@/controllers/auth.controller"
-import passwordResetController from "@/controllers/password-reset.controller"
-import userController from "@/controllers/user.controller"
+import { authController } from "@/controllers/auth.controller"
+import { passwordResetController } from "@/controllers/password-reset.controller"
+import { userController } from "@/controllers/user.controller"
 import { authMiddleware } from "@/middleware/auth.middleware"
 import { validateRequest } from "@/middleware/validate-request.middleware"
 import {
-    registrationSchema,
     loginSchema,
-    updateActivationLinkSchema,
+    registrationSchema,
     resetPasswordRequestSchema,
-    verifyResetCodeSchema,
     resetPasswordSchema,
+    updateActivationLinkSchema,
     updatePasswordSchema,
+    verifyResetCodeSchema,
 } from "@/schemas/auth.schema"
+import express from "express"
 
 const router = express.Router()
 
 // Регистрация нового пользователя
-router.post("/registration", validateRequest(registrationSchema), authController.registration)
+router.post("/registration", validateRequest(registrationSchema), authController.register)
 
 // Активация аккаунта по ссылке
 router.get("/activate/:link", authController.activate)
@@ -47,12 +47,12 @@ router.post(
 )
 
 // Проверка кода сброса пароля
-router.post("/verify-reset-code", validateRequest(verifyResetCodeSchema), passwordResetController.verifyResetCode) 
+router.post("/verify-reset-code", validateRequest(verifyResetCodeSchema), passwordResetController.verifyResetCode)
 
 // Сброс пароля
 router.post("/reset-password", validateRequest(resetPasswordSchema), passwordResetController.resetPassword)
 
-// Обновление пароля 
+// Обновление пароля
 router.post("/update-password", authMiddleware, validateRequest(updatePasswordSchema), userController.updatePassword)
 
 export default router

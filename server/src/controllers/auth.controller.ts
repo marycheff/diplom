@@ -5,9 +5,10 @@ import authService from "@/services/auth/auth.service"
 import { NextFunction, Request, Response } from "express"
 
 class AuthController {
-    async registration(req: Request, res: Response, next: NextFunction) {
+    // Регистрация
+    async register(req: Request, res: Response, next: NextFunction) {
         try {
-            const userData = await authService.registration(req.body)
+            const userData = await authService.register(req.body)
             if (!userData.refreshToken) {
                 throw ApiError.InternalError("Ошибка при генерации refreshToken")
             }
@@ -26,6 +27,7 @@ class AuthController {
         }
     }
 
+    // Обновление ссылки активации аккаунта
     async updateActivationLink(req: Request, res: Response, next: NextFunction) {
         try {
             const { email } = req.body
@@ -36,6 +38,7 @@ class AuthController {
         }
     }
 
+    // Активация аккаунта
     async activate(req: Request, res: Response, next: NextFunction) {
         try {
             const activationLink = req.params.link
@@ -66,6 +69,7 @@ class AuthController {
         }
     }
 
+    // Вход
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { email, password } = req.body
@@ -88,6 +92,7 @@ class AuthController {
         }
     }
 
+    // Выход
     async logout(req: Request, res: Response, next: NextFunction) {
         try {
             const { refreshToken } = req.cookies
@@ -105,6 +110,7 @@ class AuthController {
         }
     }
 
+    // Обновление токена
     async refresh(req: Request, res: Response, next: NextFunction) {
         try {
             const { refreshToken } = req.cookies
@@ -122,4 +128,4 @@ class AuthController {
     }
 }
 
-export default new AuthController()
+export const authController = new AuthController()

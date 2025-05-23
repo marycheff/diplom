@@ -1,4 +1,4 @@
-import userController from "@/controllers/user.controller"
+import { userController } from "@/controllers/user.controller"
 import { adminMiddleware } from "@/middleware/admin.middleware"
 import { authMiddleware } from "@/middleware/auth.middleware"
 import { validateRequest } from "@/middleware/validate-request.middleware"
@@ -8,7 +8,7 @@ import { Router } from "express"
 const router = Router()
 
 // Получение списка всех пользователей (админ)
-router.get("/", authMiddleware, adminMiddleware, userController.getUsers)
+router.get("/", authMiddleware, adminMiddleware, userController.getAllUsers)
 
 // Создание нового пользователя (админ)
 router.post("/create", authMiddleware, adminMiddleware, userController.createUser)

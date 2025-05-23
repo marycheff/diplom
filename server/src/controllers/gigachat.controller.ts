@@ -5,6 +5,7 @@ import gigachatService from "@/services/gigachat/gigachat.service"
 import { NextFunction, Request, Response } from "express"
 
 class GigaChatController {
+    // Генерация ответов от GigaChat
     async generateAnswers(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { question, answer, numOfAnswers } = req.body
@@ -20,4 +21,4 @@ class GigaChatController {
     }
 }
 
-export default new GigaChatController()
+export const gigaChatController = new GigaChatController()

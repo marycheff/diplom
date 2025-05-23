@@ -29,6 +29,7 @@ import { Role, TestAttemptStatus } from "@prisma/client"
 const LOG_NAMESPACE = "AttemptService"
 
 class AttemptService {
+    // Начать попытку прохождения теста
     async startAttempt(
         testId: string,
         preTestUserData?: PreTestUserDataType,
@@ -148,6 +149,7 @@ class AttemptService {
         }
     }
 
+    // Сохранить ответы
     async saveAnswers(attemptId: string, answers: AttemptAnswer[]): Promise<void> {
         logger.debug(`[${LOG_NAMESPACE}] Сохранение всех ответов`, { attemptId })
         try {
@@ -230,6 +232,7 @@ class AttemptService {
         }
     }
 
+    // Завершить попытку
     async completeAttempt(attemptId: string): Promise<{ score: number }> {
         logger.debug(`[${LOG_NAMESPACE}] Завершение попытки теста`, { attemptId })
         try {
@@ -266,7 +269,8 @@ class AttemptService {
         }
     }
 
-    async getAll(page = 1, limit = 10): Promise<AttemptsListDTO> {
+    // Получить все попытки
+    async getAllAttempts(page = 1, limit = 10): Promise<AttemptsListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение всех попыток`, { page, limit })
         try {
             const attempts = await attemptRepository.findMany(page, limit)
@@ -287,7 +291,8 @@ class AttemptService {
         }
     }
 
-    async get(attemptId: string): Promise<TestAttemptDTO> {
+    //Получить конкретную попытку
+    async getAttempt(attemptId: string): Promise<TestAttemptDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение попытки по ID`, { attemptId })
         try {
             const cacheKey = `attempt:${attemptId}`
@@ -317,6 +322,7 @@ class AttemptService {
         }
     }
 
+    //Получить результаты конкретной попытки
     async getWithResults(attemptId: string, user?: UserDTO): Promise<TestAttemptResultDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение попытки с результатами`, { attemptId })
         try {
@@ -347,7 +353,8 @@ class AttemptService {
         }
     }
 
-    async getForUserById(attemptId: string, userId?: string): Promise<TestAttemptUserDTO> {
+    //Получить конкретную попытку для пользователя
+    async getAttemptForUser(attemptId: string, userId?: string): Promise<TestAttemptUserDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение попытки для пользователя по ID`, { attemptId })
 
         try {
@@ -389,6 +396,7 @@ class AttemptService {
         }
     }
 
+    //Получить попытки пользователя
     async getUserAttempts(userId: string, page = 1, limit = 10): Promise<AttemptsWithSnapshotListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение попыток пользователя`, { userId, page, limit })
         try {
@@ -414,6 +422,7 @@ class AttemptService {
         }
     }
 
+    // Получение попыток конкретного теста
     async getTestAttempts(testId: string, page = 1, limit = 10): Promise<AttemptsListDTO> {
         try {
             const attempts = await attemptRepository.findManyByTestId(testId, page, limit)
@@ -436,6 +445,8 @@ class AttemptService {
             throw ApiError.InternalError("Ошибка при получении попытки")
         }
     }
+
+    // Обновление времени прохождения
     async updateTimeSpent(attemptId: string, timeSpent: number): Promise<void> {
         logger.debug(`[${LOG_NAMESPACE}] Обновление общего времени попытки`, { attemptId })
         try {
@@ -453,4 +464,4 @@ class AttemptService {
     }
 }
 
-export default new AttemptService()
+export const attemptService = new AttemptService()

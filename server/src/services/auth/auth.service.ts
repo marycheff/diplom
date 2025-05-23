@@ -1,13 +1,12 @@
 import { envConfig } from "@/config/env-config"
 import ApiError from "@/exceptions/api-error"
+import tokenRepository from "@/repositories/auth/token.repository"
 import userRepository from "@/repositories/auth/user.repository"
 import tokenService from "@/services/auth/token.service"
 import mailService from "@/services/mail.service"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
-import { logger } from "@/utils/logger"
-
-import tokenRepository from "@/repositories/auth/token.repository"
 import { CreateUserDTO, UserDTO } from "@/types/core/user.types"
+import { logger } from "@/utils/logger"
 import { redisClient } from "@/utils/redis-client"
 import { Token } from "@prisma/client"
 import bcrypt from "bcryptjs"
@@ -16,7 +15,44 @@ import { v4 as uuid_v4 } from "uuid"
 const LOG_NAMESPACE = "AuthService"
 
 class AuthService {
-    async registration(user: CreateUserDTO): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
+    async login(
+        email: string,
+        password: string
+    ): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
+        logger.info(`[${LOG_NAMESPACE}] Попытка входа в систему`, { email })
+        try {
+            const user = await userRepository.findByEmail(email)
+            if (!user) {
+                logger.warn(`[${LOG_NAMESPACE}] Неудачная попытка входа: пользователь не найден`, { email })
+                throw ApiError.BadRequest("Неверные данные")
+            }
+            const isPassEquals = await bcrypt.compare(password, user.password)
+            if (!isPassEquals) {
+                logger.warn(`[${LOG_NAMESPACE}] Неудачная попытка входа: неверный пароль`, { userId: user.id })
+                throw ApiError.BadRequest("Неверные данные")
+            }
+            const userDto = mapUserToDto(user)
+
+            const tokens = tokenService.generateTokens({
+                ...userDto,
+            })
+            await tokenRepository.upsert(user.id, tokens.refreshToken)
+            logger.info(`[${LOG_NAMESPACE}] Успешный вход в систему`, { userId: user.id })
+            return { ...tokens, user: userDto }
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при входе в систему`, {
+                email,
+                error: error instanceof Error ? error.message : String(error),
+                stack: error instanceof Error ? error.stack : undefined,
+            })
+            throw ApiError.InternalError("Ошибка при входе в систему")
+        }
+    }
+
+    async register(user: CreateUserDTO): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
         logger.info(`[${LOG_NAMESPACE}] Регистрация нового пользователя`)
         try {
             const candidate = await userRepository.findByEmail(user.email)
@@ -28,9 +64,7 @@ class AuthService {
 
             const hashedPassword = await bcrypt.hash(user.password, 10)
             const activationLink = uuid_v4()
-
-            const defaultRole = "USER"
-            const newUser = await userRepository.create(user, hashedPassword, activationLink, defaultRole)
+            const newUser = await userRepository.create(user, hashedPassword, activationLink)
             logger.debug(`[${LOG_NAMESPACE}] Пользователь создан в базе данных`, { userId: newUser.id })
 
             await mailService.sendActivationMail(user.email, `${envConfig.API_URL}/api/auth/activate/${activationLink}`)
@@ -141,65 +175,6 @@ class AuthService {
         }
     }
 
-    async login(
-        email: string,
-        password: string
-    ): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
-        logger.info(`[${LOG_NAMESPACE}] Попытка входа в систему`, { email })
-        try {
-            const user = await userRepository.findByEmail(email)
-            if (!user) {
-                logger.warn(`[${LOG_NAMESPACE}] Неудачная попытка входа: пользователь не найден`, { email })
-                throw ApiError.BadRequest("Неверные данные")
-            }
-            const isPassEquals = await bcrypt.compare(password, user.password)
-            if (!isPassEquals) {
-                logger.warn(`[${LOG_NAMESPACE}] Неудачная попытка входа: неверный пароль`, { userId: user.id })
-                throw ApiError.BadRequest("Неверные данные")
-            }
-            const userDto = mapUserToDto(user)
-
-            const tokens = tokenService.generateTokens({
-                ...userDto,
-            })
-            await tokenRepository.upsert(user.id, tokens.refreshToken)
-            logger.info(`[${LOG_NAMESPACE}] Успешный вход в систему`, { userId: user.id })
-            return { ...tokens, user: userDto }
-        } catch (error) {
-            if (error instanceof ApiError) {
-                throw error
-            }
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при входе в систему`, {
-                email,
-                error: error instanceof Error ? error.message : String(error),
-                stack: error instanceof Error ? error.stack : undefined,
-            })
-            throw ApiError.InternalError("Ошибка при входе в систему")
-        }
-    }
-
-    async logout(refreshToken: string): Promise<Token> {
-        logger.info(`[${LOG_NAMESPACE}] Выход из системы`)
-        try {
-            if (!refreshToken) {
-                logger.warn(`[${LOG_NAMESPACE}] Попытка выхода без предоставления токена`)
-                throw ApiError.BadRequest("Токен не предоставлен")
-            }
-            const token = await tokenRepository.delete(refreshToken)
-            logger.info(`[${LOG_NAMESPACE}] Успешный выход из системы`, { tokenId: token.id })
-            return token
-        } catch (error) {
-            if (error instanceof ApiError) {
-                throw error
-            }
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при выходе из системы`, {
-                error: error instanceof Error ? error.message : String(error),
-                stack: error instanceof Error ? error.stack : undefined,
-            })
-            throw ApiError.InternalError("Ошибка при выходе из системы")
-        }
-    }
-
     async refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string; user: UserDTO }> {
         logger.debug(`[${LOG_NAMESPACE}] Обновление токенов доступа`)
         try {
@@ -245,6 +220,28 @@ class AuthService {
                 stack: error instanceof Error ? error.stack : undefined,
             })
             throw ApiError.InternalError("Ошибка при обновлении токенов доступа")
+        }
+    }
+
+    async logout(refreshToken: string): Promise<Token> {
+        logger.info(`[${LOG_NAMESPACE}] Выход из системы`)
+        try {
+            if (!refreshToken) {
+                logger.warn(`[${LOG_NAMESPACE}] Попытка выхода без предоставления токена`)
+                throw ApiError.BadRequest("Токен не предоставлен")
+            }
+            const token = await tokenRepository.delete(refreshToken)
+            logger.info(`[${LOG_NAMESPACE}] Успешный выход из системы`, { tokenId: token.id })
+            return token
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при выходе из системы`, {
+                error: error instanceof Error ? error.message : String(error),
+                stack: error instanceof Error ? error.stack : undefined,
+            })
+            throw ApiError.InternalError("Ошибка при выходе из системы")
         }
     }
 }

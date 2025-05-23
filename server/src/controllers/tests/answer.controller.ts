@@ -1,2 +1,2 @@
 class AnswerController {}
-export default new AnswerController()
+export const answerController = new AnswerController()

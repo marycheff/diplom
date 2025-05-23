@@ -6,6 +6,7 @@ import passwordResetService from "../services/auth/password-reset.service"
 import userService from "../services/auth/user.service"
 
 class PasswordResetController {
+    // Запрос на сброс пароля
     async requestReset(req: Request, res: Response, next: NextFunction) {
         const { email } = req.body
         try {
@@ -14,12 +15,13 @@ class PasswordResetController {
             await passwordResetService.saveResetCode(email, resetCode)
             await mailService.sendResetPasswordMail(user.email, resetCode)
 
-            res.json({ message: "Код для сброса пароля отправлен на вашу почту." })
+            res.status(200).json({ message: "Код для сброса пароля отправлен на вашу почту." })
         } catch (e) {
             next(e)
         }
     }
 
+    // Проверка кода сброса
     async verifyResetCode(req: Request, res: Response, next: NextFunction) {
         const { email, code } = req.body
         try {
@@ -33,6 +35,7 @@ class PasswordResetController {
         }
     }
 
+    // Сброс пароля
     async resetPassword(req: Request, res: Response, next: NextFunction) {
         const { email, code, newPassword } = req.body
         try {
@@ -48,4 +51,4 @@ class PasswordResetController {
     }
 }
 
-export default new PasswordResetController()
+export const passwordResetController = new PasswordResetController()

@@ -82,4 +82,4 @@ class AnswerService {
     }
 }
 
-export default new AnswerService()
+export const answerService = new AnswerService()

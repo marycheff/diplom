@@ -1,4 +1,4 @@
-import testController from "@/controllers/tests/test.controller"
+import {testController} from "@/controllers/tests/test.controller"
 import { accountActivationMiddleware } from "@/middleware/accountConfirmation.middleware"
 import { adminMiddleware } from "@/middleware/admin.middleware"
 import { authMiddleware } from "@/middleware/auth.middleware"
@@ -71,9 +71,9 @@ router.put(
     authMiddleware,
     accountActivationMiddleware,
     testOwnershipMiddleware,
-    testController.changeVisibilityStatus
+    testController.updateVisibilityStatus
 )
-router.put("/:testId/moderation-status", authMiddleware, adminMiddleware, testController.changeModerationStatus)
+router.put("/:testId/moderation-status", authMiddleware, adminMiddleware, testController.updateModerationStatus)
 
 // Получение теста по ID
 router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.getTestById)

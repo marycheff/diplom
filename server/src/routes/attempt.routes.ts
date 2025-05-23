@@ -1,4 +1,4 @@
-import attemptController from "@/controllers/tests/attempt.controller"
+import {attemptController} from "@/controllers/tests/attempt.controller"
 import { adminMiddleware } from "@/middleware/admin.middleware"
 import { authMiddleware } from "@/middleware/auth.middleware"
 import conditionalAuthMiddleware from "@/middleware/conditional.middleware"
@@ -30,7 +30,7 @@ router.post(
     "/:testId/start",
     conditionalAuthMiddleware,
     validateRequest(startTestAttemptSchema),
-    attemptController.startTestAttempt
+    attemptController.startAttempt
 )
 
 // Сохранение ответов во время попытки

@@ -21,6 +21,7 @@ class MailService {
         } as SMTPTransport.Options)
     }
 
+    // Отправка письма активации аккаунта
     async sendActivationMail(to: string, link: string) {
         logger.info(`[${LOG_NAMESPACE}] Отправка письма активации`)
         try {
@@ -47,6 +48,8 @@ class MailService {
             throw ApiError.InternalError()
         }
     }
+
+    // Отправка письма для сброса пароля
     async sendResetPasswordMail(to: string, code: string) {
         logger.info(`[${LOG_NAMESPACE}] Отправка письма для сброса пароля`)
         try {
@@ -73,6 +76,8 @@ class MailService {
             throw ApiError.InternalError()
         }
     }
+
+    // Отправка письма о блокировке
     async sendUserBlockedMail(to: string, name: string) {
         logger.info(`[${LOG_NAMESPACE}] Отправка письма о блокировке`)
         try {
@@ -97,6 +102,7 @@ class MailService {
         }
     }
 
+    // Отправка письма о разблокировке
     async sendUserUnblockedMail(to: string, name: string) {
         logger.info(`[${LOG_NAMESPACE}] Отправка письма о разблокировке`)
         try {
@@ -119,6 +125,8 @@ class MailService {
             throw ApiError.InternalError()
         }
     }
+
+    // Отправка письма о том, что тест отправлен на модерацию
     async sendModerationPendingMail(to: string, name: string, testTitle: string) {
         logger.info(`[${LOG_NAMESPACE}] Уведомление о статусе 'PENDING'`)
         try {
@@ -140,6 +148,7 @@ class MailService {
         }
     }
 
+    // Отправка письма о том, что тест прошел модерацию
     async sendModerationApprovedMail(to: string, name: string, testTitle: string) {
         logger.info(`[${LOG_NAMESPACE}] Уведомление о статусе 'APPROVED'`)
         try {
@@ -161,6 +170,7 @@ class MailService {
         }
     }
 
+    // Отправка письма о том, что тест был отклонен модерацией
     async sendModerationRejectedMail(to: string, name: string, testTitle: string) {
         logger.info(`[${LOG_NAMESPACE}] Уведомление о статусе 'REJECTED'`)
         try {

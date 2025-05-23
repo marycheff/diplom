@@ -70,7 +70,7 @@ class UserService {
         }
     }
 
-    async getUsers(page = 1, limit = 10): Promise<UsersListDTO> {
+    async getAllUsers(page = 1, limit = 10): Promise<UsersListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение списка пользователей`, { page, limit })
         try {
             const skip = (page - 1) * limit

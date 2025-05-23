@@ -29,180 +29,7 @@ import { ModerationStatus, Test, TestVisibilityStatus } from "@prisma/client"
 const LOG_NAMESPACE = "TestService"
 
 class TestService {
-    async updateTestSettings(testId: string, testSettings: TestSettingsDTO): Promise<void> {
-        logger.info(`[${LOG_NAMESPACE}] Обновление настроек теста`, { testId })
-        try {
-            await executeTransaction(async tx => {
-                const test = await testRepository.findById(testId, tx)
-                if (!test) {
-                    throw ApiError.NotFound("Тест не найден")
-                }
-
-                if (!testSettings.allowRetake && testSettings.retakeLimit) {
-                    throw ApiError.BadRequest("Указан лимит попыток, но не указан флаг 'Разрешить повтор'")
-                }
-
-                const sortedInputFields = Array.isArray(testSettings.inputFields)
-                    ? sortInputFields(
-                          testSettings.inputFields.filter((field): field is string => typeof field === "string")
-                      )
-                    : []
-
-                const settingsWithSortedFields = {
-                    ...testSettings,
-                    inputFields: sortedInputFields,
-                }
-
-                await testRepository.upsertSettings(testId, settingsWithSortedFields, tx)
-                await testRepository.incrementVersion(testId, test.version, tx)
-                await testRepository.cleanupUnusedSnapshots(testId, tx)
-
-                const updatedTest = await testRepository.findDetailedById(testId, tx)
-                if (!updatedTest) {
-                    throw ApiError.InternalError("Не удалось получить обновленный тест")
-                }
-
-                await testRepository.createSnapshot(updatedTest, tx)
-            })
-            await deleteTestCache(testId)
-
-            logger.info(`[${LOG_NAMESPACE}] Настройки теста успешно обновлены`, { testId })
-        } catch (error) {
-            throw ApiError.InternalError("Ошибка при обновлении настроек теста")
-        }
-    }
-    async changeVisibilityStatus(testId: string, status: TestVisibilityStatus, test?: Test): Promise<void> {
-        logger.info(`[${LOG_NAMESPACE}] Изменение статуса видимости теста`, { testId, status })
-
-        try {
-            await executeTransaction(async tx => {
-                const existingTest = test ?? (await testRepository.findById(testId))
-
-                if (!existingTest) {
-                    throw ApiError.NotFound("Тест не найден")
-                }
-
-                await testRepository.updateVisibilityStatus(testId, status, tx)
-                // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
-                // await testRepository.cleanupUnusedSnapshots(testId, tx)
-
-                // const updatedTest = await testRepository.findDetailedTestById(testId, tx)
-                // if (!updatedTest) {
-                //     throw ApiError.InternalError("Не удалось получить обновленный тест")
-                // }
-
-                // await testRepository.createSnapshot(updatedTest, tx)
-            })
-
-            await deleteTestCache(testId)
-
-            logger.info(`[${LOG_NAMESPACE}] Статус видимости теста успешно изменен`, { testId, status })
-        } catch (error) {
-            if (error instanceof ApiError) throw error
-
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при изменении статуса видимости теста`, {
-                testId,
-                status,
-                error: error instanceof Error ? error.message : String(error),
-            })
-            throw ApiError.InternalError("Ошибка при изменении статуса видимости теста")
-        }
-    }
-    async changeModerationStatus(
-        testId: string,
-        status: ModerationStatus,
-        moderatorId: string,
-        test?: Test
-    ): Promise<void> {
-        logger.info(`[${LOG_NAMESPACE}] Изменение статуса модерации теста`, { testId, status })
-
-        try {
-            await executeTransaction(async tx => {
-                const existingTest = test ?? (await testRepository.findById(testId))
-
-                if (!existingTest) {
-                    throw ApiError.NotFound("Тест не найден")
-                }
-
-                await testRepository.updateModerationStatus(testId, status, moderatorId, tx)
-
-                const author = await userRepository.findById(existingTest.authorId)
-                console.log(author?.email)
-
-                // Отправка письма в зависимости от статуса
-                if (author?.email) {
-                    const fullName = author.name || author.email
-                    const testTitle = existingTest.title || "тест"
-
-                    switch (status) {
-                        case ModerationStatus.PENDING:
-                            await mailService.sendModerationPendingMail(author.email, fullName, testTitle)
-                            break
-                        case ModerationStatus.APPROVED:
-                            await mailService.sendModerationApprovedMail(author.email, fullName, testTitle)
-                            break
-                        case ModerationStatus.REJECTED:
-                            await mailService.sendModerationRejectedMail(author.email, fullName, testTitle)
-                            break
-                    }
-                }
-
-                // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
-                // await testRepository.cleanupUnusedSnapshots(testId, tx)
-
-                // const updatedTest = await testRepository.findDetailedTestById(testId, tx)
-                // if (!updatedTest) {
-                //     throw ApiError.InternalError("Не удалось получить обновленный тест")
-                // }
-
-                // await testRepository.createSnapshot(updatedTest, tx)
-            })
-
-            await deleteTestCache(testId)
-            logger.info(`[${LOG_NAMESPACE}] Статус модерации теста успешно изменен`, { testId, status })
-        } catch (error) {
-            if (error instanceof ApiError) throw error
-
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при изменении статуса модерации теста`, {
-                testId,
-                status,
-                error: error instanceof Error ? error.message : String(error),
-            })
-            throw ApiError.InternalError("Ошибка при изменении статуса модерации теста")
-        }
-    }
-
-    async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo): Promise<void> {
-        logger.info(`[${LOG_NAMESPACE}] Обновление краткой информации о тесте`, { testId })
-        try {
-            const test = await testRepository.findById(testId)
-            if (!test) {
-                logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
-                throw ApiError.NotFound("Тест не найден")
-            }
-
-            await executeTransaction(async tx => {
-                const updatedTest = await testRepository.updateShortInfo(testId, updatedShortInfo, tx)
-                await testRepository.incrementVersion(testId, test.version, tx)
-                await testRepository.cleanupUnusedSnapshots(testId, tx)
-                await testRepository.createSnapshot(updatedTest, tx)
-                return true
-            })
-
-            await deleteTestCache(testId)
-            logger.info(`[${LOG_NAMESPACE}] Краткая информация о тесте успешно обновлена`, { testId })
-        } catch (error) {
-            if (error instanceof ApiError) {
-                throw error
-            }
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при обновлении краткой информации о тесте`, {
-                testId,
-                error: error instanceof Error ? error.message : String(error),
-            })
-            throw ApiError.InternalError("Ошибка при обновлении краткой информации о тесте")
-        }
-    }
-
+    // Создание пустого теста
     async createTest(authorId: string, testData: CreateTest): Promise<TestDTO> {
         logger.info(`[${LOG_NAMESPACE}] Создание теста`, { authorId })
         try {
@@ -244,39 +71,7 @@ class TestService {
         }
     }
 
-    async getUserTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
-        logger.debug(`[${LOG_NAMESPACE}] Получение тестов пользователя`, { userId, page, limit })
-        try {
-            const skip = (page - 1) * limit
-            const tests = await testRepository.findByAuthor(userId, skip, limit)
-            const total = await testRepository.countByAuthor(userId)
-
-            // Получение totalAttempts для каждого теста
-            const testsWithAttempts = await Promise.all(
-                tests.map(async test => {
-                    const totalAttempts = await attemptRepository.count({ testId: test.id })
-                    return { ...test, totalAttempts }
-                })
-            )
-            logger.debug(`[${LOG_NAMESPACE}] Тесты пользователя успешно получены`, { userId, count: tests.length })
-            return {
-                tests: testsWithAttempts.map(test => mapTest(test)),
-                total,
-            }
-        } catch (error) {
-            if (error instanceof ApiError) {
-                throw error
-            }
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при получении тестов пользователя`, {
-                userId,
-                page,
-                limit,
-                error: error instanceof Error ? error.message : String(error),
-            })
-            throw ApiError.InternalError("Ошибка при получении тестов пользователя")
-        }
-    }
-
+    // Получение всех тестов
     async getAllTests(page = 1, limit = 10): Promise<TestsListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение всех тестов`, { page, limit })
         try {
@@ -309,6 +104,8 @@ class TestService {
             throw ApiError.InternalError("Ошибка при получении всех тестов")
         }
     }
+
+    // Получение всех тестов, требующих модерации
     async getAllUnmoderatedTests(page = 1, limit = 10): Promise<TestsListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение всех тестов`, { page, limit })
         try {
@@ -344,25 +141,7 @@ class TestService {
         }
     }
 
-    async deleteTest(testId: string): Promise<void> {
-        logger.info(`[${LOG_NAMESPACE}] Удаление теста`, { testId })
-        try {
-            await testRepository.deleteById(testId)
-
-            await deleteTestCache(testId)
-            logger.info(`[${LOG_NAMESPACE}] Тест успешно удален`, { testId })
-        } catch (error) {
-            if (error instanceof ApiError) {
-                throw error
-            }
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при удалении теста`, {
-                testId,
-                error: error instanceof Error ? error.message : String(error),
-            })
-            throw ApiError.InternalError("Ошибка при удалении теста")
-        }
-    }
-
+    // Получение теста по id
     async getTestById(testId: string): Promise<TestDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение теста по ID`, { testId })
         try {
@@ -399,6 +178,8 @@ class TestService {
             throw ApiError.InternalError("Ошибка при получении теста по ID")
         }
     }
+
+    // Получение краткой информации о тесте
     async getBasicTestInfo(testId: string): Promise<UserTestDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение базовой информации о тесте`, { testId })
         try {
@@ -451,6 +232,7 @@ class TestService {
         }
     }
 
+    // Получение теста для попытки
     async getTestForAttempt(testId: string, attemptId: string): Promise<UserTestDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение полной информации о тесте`, { testId, attemptId })
         try {
@@ -521,25 +303,22 @@ class TestService {
         }
     }
 
-    async searchTests(query: string, page = 1, limit = 10): Promise<TestsListDTO> {
-        logger.debug(`[${LOG_NAMESPACE}] Поиск тестов`, { query, page, limit })
+    // Получение тестов пользователя
+    async getUserTests(userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
+        logger.debug(`[${LOG_NAMESPACE}] Получение тестов пользователя`, { userId, page, limit })
         try {
             const skip = (page - 1) * limit
-            const whereCondition = testRepository.getSearchConditions(query)
+            const tests = await testRepository.findByAuthor(userId, skip, limit)
+            const total = await testRepository.countByAuthor(userId)
 
-            const tests = await testRepository.search(query, skip, limit)
-            const total = await testRepository.count(whereCondition)
-            // Подсчет totalAttempts для каждого теста
+            // Получение totalAttempts для каждого теста
             const testsWithAttempts = await Promise.all(
                 tests.map(async test => {
                     const totalAttempts = await attemptRepository.count({ testId: test.id })
                     return { ...test, totalAttempts }
                 })
             )
-            logger.debug(`[${LOG_NAMESPACE}] Результаты поиска тестов получены`, {
-                query,
-                count: testsWithAttempts.length,
-            })
+            logger.debug(`[${LOG_NAMESPACE}] Тесты пользователя успешно получены`, { userId, count: tests.length })
             return {
                 tests: testsWithAttempts.map(test => mapTest(test)),
                 total,
@@ -548,60 +327,17 @@ class TestService {
             if (error instanceof ApiError) {
                 throw error
             }
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при поиске тестов`, {
-                query,
-                page,
-                limit,
-                error: error instanceof Error ? error.message : String(error),
-            })
-            throw ApiError.InternalError("Ошибка при поиске тестов")
-        }
-    }
-
-    async searchUserTests(query: string, userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
-        logger.debug(`[${LOG_NAMESPACE}] Поиск тестов пользователя`, { query, userId, page, limit })
-        try {
-            const skip = (page - 1) * limit
-            const whereCondition = {
-                authorId: userId,
-                OR: testRepository.getSearchConditions(query).OR,
-            }
-
-            const tests = await testRepository.searchUserTests(query, userId, skip, limit)
-            const total = await testRepository.count(whereCondition)
-
-            // Подсчет totalAttempts для каждого теста
-            const testsWithAttempts = await Promise.all(
-                tests.map(async test => {
-                    const totalAttempts = await attemptRepository.count({ testId: test.id })
-                    return { ...test, totalAttempts }
-                })
-            )
-
-            logger.debug(`[${LOG_NAMESPACE}] Результаты поиска тестов пользователя получены`, {
-                query,
-                userId,
-                count: testsWithAttempts.length,
-            })
-            return {
-                tests: testsWithAttempts.map(test => mapTest(test)),
-                total,
-            }
-        } catch (error) {
-            if (error instanceof ApiError) {
-                throw error
-            }
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при поиске тестов пользователя`, {
-                query,
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при получении тестов пользователя`, {
                 userId,
                 page,
                 limit,
                 error: error instanceof Error ? error.message : String(error),
             })
-            throw ApiError.BadRequest("Ошибка при поиске тестов пользователя")
+            throw ApiError.InternalError("Ошибка при получении тестов пользователя")
         }
     }
 
+    // Получение снимка теста
     async getTestSnapshot(snapshotId: string): Promise<SnapshotWithOriginalTestDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение снимка теста`, { snapshotId })
         try {
@@ -637,6 +373,8 @@ class TestService {
             throw ApiError.InternalError("Ошибка при получении снимка теста")
         }
     }
+
+    // Получение снимка теста для попытки
     async getTestSnapshotForAttempt(snapshotId: string, attemptId?: string): Promise<UserTestDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение снимка теста для пользователя`, { snapshotId, attemptId })
         try {
@@ -710,6 +448,289 @@ class TestService {
                 error: error instanceof Error ? error.message : String(error),
             })
             throw ApiError.InternalError("Ошибка при получении снимка теста для пользователя")
+        }
+    }
+
+    // Изменение настроек теста
+    async updateTestSettings(testId: string, testSettings: TestSettingsDTO): Promise<void> {
+        logger.info(`[${LOG_NAMESPACE}] Обновление настроек теста`, { testId })
+        try {
+            await executeTransaction(async tx => {
+                const test = await testRepository.findById(testId, tx)
+                if (!test) {
+                    throw ApiError.NotFound("Тест не найден")
+                }
+
+                if (!testSettings.allowRetake && testSettings.retakeLimit) {
+                    throw ApiError.BadRequest("Указан лимит попыток, но не указан флаг 'Разрешить повтор'")
+                }
+
+                const sortedInputFields = Array.isArray(testSettings.inputFields)
+                    ? sortInputFields(
+                          testSettings.inputFields.filter((field): field is string => typeof field === "string")
+                      )
+                    : []
+
+                const settingsWithSortedFields = {
+                    ...testSettings,
+                    inputFields: sortedInputFields,
+                }
+
+                await testRepository.upsertSettings(testId, settingsWithSortedFields, tx)
+                await testRepository.incrementVersion(testId, test.version, tx)
+                await testRepository.cleanupUnusedSnapshots(testId, tx)
+
+                const updatedTest = await testRepository.findDetailedById(testId, tx)
+                if (!updatedTest) {
+                    throw ApiError.InternalError("Не удалось получить обновленный тест")
+                }
+
+                await testRepository.createSnapshot(updatedTest, tx)
+            })
+            await deleteTestCache(testId)
+
+            logger.info(`[${LOG_NAMESPACE}] Настройки теста успешно обновлены`, { testId })
+        } catch (error) {
+            throw ApiError.InternalError("Ошибка при обновлении настроек теста")
+        }
+    }
+
+    // Изменение статуса видимости теста
+    async updateVisibilityStatus(testId: string, status: TestVisibilityStatus, test?: Test): Promise<void> {
+        logger.info(`[${LOG_NAMESPACE}] Изменение статуса видимости теста`, { testId, status })
+
+        try {
+            await executeTransaction(async tx => {
+                const existingTest = test ?? (await testRepository.findById(testId))
+
+                if (!existingTest) {
+                    throw ApiError.NotFound("Тест не найден")
+                }
+
+                await testRepository.updateVisibilityStatus(testId, status, tx)
+                // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
+                // await testRepository.cleanupUnusedSnapshots(testId, tx)
+
+                // const updatedTest = await testRepository.findDetailedTestById(testId, tx)
+                // if (!updatedTest) {
+                //     throw ApiError.InternalError("Не удалось получить обновленный тест")
+                // }
+
+                // await testRepository.createSnapshot(updatedTest, tx)
+            })
+
+            await deleteTestCache(testId)
+
+            logger.info(`[${LOG_NAMESPACE}] Статус видимости теста успешно изменен`, { testId, status })
+        } catch (error) {
+            if (error instanceof ApiError) throw error
+
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при изменении статуса видимости теста`, {
+                testId,
+                status,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при изменении статуса видимости теста")
+        }
+    }
+
+    // Изменение статуса модерации теста
+    async updateModerationStatus(
+        testId: string,
+        status: ModerationStatus,
+        moderatorId: string,
+        test?: Test
+    ): Promise<void> {
+        logger.info(`[${LOG_NAMESPACE}] Изменение статуса модерации теста`, { testId, status })
+
+        try {
+            await executeTransaction(async tx => {
+                const existingTest = test ?? (await testRepository.findById(testId))
+
+                if (!existingTest) {
+                    throw ApiError.NotFound("Тест не найден")
+                }
+
+                await testRepository.updateModerationStatus(testId, status, moderatorId, tx)
+
+                const author = await userRepository.findById(existingTest.authorId)
+                console.log(author?.email)
+
+                // Отправка письма в зависимости от статуса
+                if (author?.email) {
+                    const fullName = author.name || author.email
+                    const testTitle = existingTest.title || "тест"
+
+                    switch (status) {
+                        case ModerationStatus.PENDING:
+                            await mailService.sendModerationPendingMail(author.email, fullName, testTitle)
+                            break
+                        case ModerationStatus.APPROVED:
+                            await mailService.sendModerationApprovedMail(author.email, fullName, testTitle)
+                            break
+                        case ModerationStatus.REJECTED:
+                            await mailService.sendModerationRejectedMail(author.email, fullName, testTitle)
+                            break
+                    }
+                }
+
+                // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
+                // await testRepository.cleanupUnusedSnapshots(testId, tx)
+
+                // const updatedTest = await testRepository.findDetailedTestById(testId, tx)
+                // if (!updatedTest) {
+                //     throw ApiError.InternalError("Не удалось получить обновленный тест")
+                // }
+
+                // await testRepository.createSnapshot(updatedTest, tx)
+            })
+
+            await deleteTestCache(testId)
+            logger.info(`[${LOG_NAMESPACE}] Статус модерации теста успешно изменен`, { testId, status })
+        } catch (error) {
+            if (error instanceof ApiError) throw error
+
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при изменении статуса модерации теста`, {
+                testId,
+                status,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при изменении статуса модерации теста")
+        }
+    }
+
+    // Обновление краткой информации о тесте
+    async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo): Promise<void> {
+        logger.info(`[${LOG_NAMESPACE}] Обновление краткой информации о тесте`, { testId })
+        try {
+            const test = await testRepository.findById(testId)
+            if (!test) {
+                logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
+                throw ApiError.NotFound("Тест не найден")
+            }
+
+            await executeTransaction(async tx => {
+                const updatedTest = await testRepository.updateShortInfo(testId, updatedShortInfo, tx)
+                await testRepository.incrementVersion(testId, test.version, tx)
+                await testRepository.cleanupUnusedSnapshots(testId, tx)
+                await testRepository.createSnapshot(updatedTest, tx)
+                return true
+            })
+
+            await deleteTestCache(testId)
+            logger.info(`[${LOG_NAMESPACE}] Краткая информация о тесте успешно обновлена`, { testId })
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при обновлении краткой информации о тесте`, {
+                testId,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при обновлении краткой информации о тесте")
+        }
+    }
+
+    // Поиск тестов
+    async searchTests(query: string, page = 1, limit = 10): Promise<TestsListDTO> {
+        logger.debug(`[${LOG_NAMESPACE}] Поиск тестов`, { query, page, limit })
+        try {
+            const skip = (page - 1) * limit
+            const whereCondition = testRepository.getSearchConditions(query)
+
+            const tests = await testRepository.search(query, skip, limit)
+            const total = await testRepository.count(whereCondition)
+            // Подсчет totalAttempts для каждого теста
+            const testsWithAttempts = await Promise.all(
+                tests.map(async test => {
+                    const totalAttempts = await attemptRepository.count({ testId: test.id })
+                    return { ...test, totalAttempts }
+                })
+            )
+            logger.debug(`[${LOG_NAMESPACE}] Результаты поиска тестов получены`, {
+                query,
+                count: testsWithAttempts.length,
+            })
+            return {
+                tests: testsWithAttempts.map(test => mapTest(test)),
+                total,
+            }
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при поиске тестов`, {
+                query,
+                page,
+                limit,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при поиске тестов")
+        }
+    }
+
+    // Поиск тестов пользователя
+    async searchUserTests(query: string, userId: string, page = 1, limit = 10): Promise<TestsListDTO> {
+        logger.debug(`[${LOG_NAMESPACE}] Поиск тестов пользователя`, { query, userId, page, limit })
+        try {
+            const skip = (page - 1) * limit
+            const whereCondition = {
+                authorId: userId,
+                OR: testRepository.getSearchConditions(query).OR,
+            }
+
+            const tests = await testRepository.searchUserTests(query, userId, skip, limit)
+            const total = await testRepository.count(whereCondition)
+
+            // Подсчет totalAttempts для каждого теста
+            const testsWithAttempts = await Promise.all(
+                tests.map(async test => {
+                    const totalAttempts = await attemptRepository.count({ testId: test.id })
+                    return { ...test, totalAttempts }
+                })
+            )
+
+            logger.debug(`[${LOG_NAMESPACE}] Результаты поиска тестов пользователя получены`, {
+                query,
+                userId,
+                count: testsWithAttempts.length,
+            })
+            return {
+                tests: testsWithAttempts.map(test => mapTest(test)),
+                total,
+            }
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при поиске тестов пользователя`, {
+                query,
+                userId,
+                page,
+                limit,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.BadRequest("Ошибка при поиске тестов пользователя")
+        }
+    }
+
+    //  Удаление теста
+    async deleteTest(testId: string): Promise<void> {
+        logger.info(`[${LOG_NAMESPACE}] Удаление теста`, { testId })
+        try {
+            await testRepository.deleteById(testId)
+
+            await deleteTestCache(testId)
+            logger.info(`[${LOG_NAMESPACE}] Тест успешно удален`, { testId })
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при удалении теста`, {
+                testId,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при удалении теста")
         }
     }
 }

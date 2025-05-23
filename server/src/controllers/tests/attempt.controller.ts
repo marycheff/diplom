@@ -1,11 +1,11 @@
 import ApiError from "@/exceptions/api-error"
-import attemptService from "@/services/tests/attempt.service"
+import { attemptService } from "@/services/tests/attempt.service"
 
 import { NextFunction, Request, Response } from "express"
 
 class AttemptController {
     // Начать попытку прохождения теста
-    async startTestAttempt(req: Request, res: Response, next: NextFunction) {
+    async startAttempt(req: Request, res: Response, next: NextFunction) {
         try {
             const { testId } = req.params
             const userId = req.user?.id
@@ -36,11 +36,12 @@ class AttemptController {
         try {
             const { attemptId } = req.params
             const result = await attemptService.completeAttempt(attemptId)
-            res.json(result)
+            res.status(200).json(result)
         } catch (e) {
             next(e)
         }
     }
+
     // Получить все попытки
     async getAllAttempts(req: Request, res: Response, next: NextFunction) {
         try {
@@ -49,8 +50,8 @@ class AttemptController {
             if (page < 1 || limit < 1) {
                 throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
             }
-            const attempts = await attemptService.getAll(page, limit)
-            res.json(attempts)
+            const attempts = await attemptService.getAllAttempts(page, limit)
+            res.status(200).json(attempts)
         } catch (error) {
             next(error)
         }
@@ -60,35 +61,38 @@ class AttemptController {
     async getAttempt(req: Request, res: Response, next: NextFunction) {
         try {
             const { attemptId } = req.params
-            const attempt = await attemptService.get(attemptId)
-            res.json(attempt)
-        } catch (error) {
-            next(error)
-        }
-    }
-    //Получить конкретную попытку
-    async getAttemptResults(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { attemptId } = req.params
-            const user = req.user
-            const attempt = await attemptService.getWithResults(attemptId, user)
-            res.json(attempt)
-        } catch (error) {
-            next(error)
-        }
-    }
-    //Получить конкретную попытку для пользователя
-    async getAttemptForUser(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { attemptId } = req.params
-            const userId = req.user?.id
-            const attempt = await attemptService.getForUserById(attemptId, userId)
-            res.json(attempt)
+            const attempt = await attemptService.getAttempt(attemptId)
+            res.status(200).json(attempt)
         } catch (error) {
             next(error)
         }
     }
 
+    //Получить результаты конкретной попытки
+    async getAttemptResults(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { attemptId } = req.params
+            const user = req.user
+            const attempt = await attemptService.getWithResults(attemptId, user)
+            res.status(200).json(attempt)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    //Получить конкретную попытку для пользователя
+    async getAttemptForUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { attemptId } = req.params
+            const userId = req.user?.id
+            const attempt = await attemptService.getAttemptForUser(attemptId, userId)
+            res.status(200).json(attempt)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    // Получение своих попыток
     async getMyAttempts(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.user?.id
@@ -100,11 +104,13 @@ class AttemptController {
 
             if (!userId) throw ApiError.Unauthorized()
             const attempts = await attemptService.getUserAttempts(userId, page, limit)
-            res.json(attempts)
+            res.status(200).json(attempts)
         } catch (error) {
             next(error)
         }
     }
+
+    // Получение попыток конкретного пользователя
     async getUserAttempts(req: Request, res: Response, next: NextFunction) {
         try {
             const { userId } = req.params
@@ -115,12 +121,13 @@ class AttemptController {
             }
             if (!userId) throw ApiError.Unauthorized()
             const attempts = await attemptService.getUserAttempts(userId, page, limit)
-            res.json(attempts)
+            res.status(200).json(attempts)
         } catch (error) {
             next(error)
         }
     }
 
+    // Получение попыток конкретного теста
     async getTestAttempts(req: Request, res: Response, next: NextFunction) {
         try {
             const page = parseInt(req.query.page as string) || 1
@@ -130,11 +137,13 @@ class AttemptController {
             }
             const { testId } = req.params
             const attempts = await attemptService.getTestAttempts(testId, page, limit)
-            res.json(attempts)
+            res.status(200).json(attempts)
         } catch (error) {
             next(error)
         }
     }
+
+    // Обновление времени прохождения
     async updateTimeSpent(req: Request, res: Response, next: NextFunction) {
         try {
             const { attemptId } = req.params
@@ -147,4 +156,4 @@ class AttemptController {
         }
     }
 }
-export default new AttemptController()
+export const attemptController = new AttemptController()

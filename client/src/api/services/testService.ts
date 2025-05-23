@@ -9,7 +9,6 @@ import {
     TestSettingsDTO,
     TestsListDTO,
     TestVisibilityStatus,
-    UpdateTestDTO,
     UserTestDTO,
 } from "@/shared/types"
 import { AxiosResponse } from "axios"
@@ -100,12 +99,6 @@ class TestService {
             answer: data.answer,
             numOfAnswers: data.numOfAnswers,
         })
-    }
-    // updateTestQuestions = (testId: string, questions: QuestionDTO[]) => {
-    //     return axiosInstance.put(`/tests/${testId}/questions`, questions)
-    // }
-    updateTestQuestions = (testId: string, data: UpdateTestDTO) => {
-        return axiosInstance.put(`/tests/${testId}/questions`, data)
     }
     updateTestSettings = (testId: string, updatedSettings: TestSettingsDTO) => {
         return axiosInstance.put(`/tests/${testId}/settings`, updatedSettings)

@@ -1,6 +1,6 @@
 import ApiError from "@/exceptions/api-error"
-import answerService from "@/services/tests/answer.service"
-import attemptService from "@/services/tests/attempt.service"
+import { answerService } from "@/services/tests/answer.service"
+import { attemptService } from "@/services/tests/attempt.service"
 import questionService from "@/services/tests/question.service"
 import testService from "@/services/tests/test.service"
 import { logger } from "@/utils/logger"
@@ -193,7 +193,7 @@ export const attemptOwnershipMiddleware = async (req: Request, res: Response, ne
             logger.warn(`${context} Некорректный UUID теста`, { attemptId })
             return next(ApiError.BadRequest("Некорректный ID теста"))
         }
-        const attempt = await attemptService.get(attemptId)
+        const attempt = await attemptService.getAttempt(attemptId)
         if (!attempt) {
             logger.warn(`${context} Попытка не найдена`, { attempt })
             return next(ApiError.NotFound("Тест не найден"))
