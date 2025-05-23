@@ -1,5 +1,5 @@
-import ApiError from "@/exceptions/api-error"
-import answerRepository from "@/repositories/tests/answer.repository"
+import { ApiError } from "@/exceptions/api-error"
+import { answerRepository } from "@/repositories/tests/answer.repository"
 import { mapAnswer, mapQuestion, mapTest } from "@/services/mappers/test.mappers"
 import { AnswerDTO, QuestionDTO, TestDTO } from "@/types"
 import { logger } from "@/utils/logger"

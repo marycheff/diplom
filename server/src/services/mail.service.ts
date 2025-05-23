@@ -1,5 +1,5 @@
 import { envConfig } from "@/config/env-config"
-import ApiError from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions/api-error"
 import { logger } from "@/utils/logger"
 import nodemailer from "nodemailer"
 import SMTPTransport from "nodemailer/lib/smtp-transport"
@@ -194,4 +194,4 @@ class MailService {
     }
 }
 
-export default new MailService()
+export const mailService = new MailService()

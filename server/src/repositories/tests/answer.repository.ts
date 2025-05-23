@@ -34,4 +34,4 @@ class AnswerRepository {
     }
 }
 
-export default new AnswerRepository()
+export const answerRepository = new AnswerRepository()

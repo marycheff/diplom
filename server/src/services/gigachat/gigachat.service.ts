@@ -1,5 +1,5 @@
 import { envConfig } from "@/config/env-config"
-import ApiError from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions/api-error"
 import { ChatContentResponse, GetChatContentParams } from "@/types"
 import { logger } from "@/utils/logger"
 import axios from "axios"
@@ -99,4 +99,4 @@ class GigaChatService {
     }
 }
 
-export default new GigaChatService()
+export const gigaChatService = new GigaChatService()

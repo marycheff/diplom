@@ -1,4 +1,4 @@
-import questionService from "@/services/tests/question.service"
+import { questionService } from "@/services/tests/question.service"
 
 import { NextFunction, Request, Response } from "express"
 class QuestionController {

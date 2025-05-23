@@ -30,4 +30,4 @@ router.post("/block/:id", authMiddleware, adminMiddleware, validateRequest(userI
 // Разблокировка пользователя по ID (админ)
 router.post("/unblock/:id", authMiddleware, adminMiddleware, validateRequest(userIdSchema), userController.unblockUser)
 
-export default router
+export const userRoutes = router

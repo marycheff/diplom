@@ -1,5 +1,5 @@
-import ApiError from "@/exceptions/api-error"
-import testService from "@/services/tests/test.service"
+import { ApiError } from "@/exceptions/api-error"
+import { testService } from "@/services/tests/test.service"
 import { CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types"
 import { ModerationStatus, TestVisibilityStatus } from "@prisma/client"
 import { NextFunction, Request, Response } from "express"
@@ -51,7 +51,7 @@ class TestController {
             next(error)
         }
     }
-    
+
     // Получение своих тестов
     async getMyTests(req: Request, res: Response, next: NextFunction) {
         try {

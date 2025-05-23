@@ -1,6 +1,6 @@
-import ApiError from "@/exceptions/api-error"
-import questionRepository from "@/repositories/tests/question.repository"
-import testRepository from "@/repositories/tests/test.repository"
+import { ApiError } from "@/exceptions/api-error"
+import { questionRepository } from "@/repositories/tests/question.repository"
+import { testRepository } from "@/repositories/tests/test.repository"
 import { badWordsService } from "@/services/bad-words-service"
 import { mapQuestion, mapTest } from "@/services/mappers/test.mappers"
 import { answerService } from "@/services/tests/answer.service"
@@ -315,4 +315,4 @@ class QuestionService {
     }
 }
 
-export default new QuestionService()
+export const questionService = new QuestionService()

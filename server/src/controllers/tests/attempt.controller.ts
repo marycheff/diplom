@@ -1,4 +1,4 @@
-import ApiError from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions/api-error"
 import { attemptService } from "@/services/tests/attempt.service"
 
 import { NextFunction, Request, Response } from "express"

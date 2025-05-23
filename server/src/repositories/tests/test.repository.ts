@@ -573,4 +573,4 @@ class TestRepository {
     }
 }
 
-export default new TestRepository()
+export const testRepository = new TestRepository()

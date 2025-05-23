@@ -1,5 +1,5 @@
-import ApiError from "@/exceptions/api-error"
-import userRepository from "@/repositories/auth/user.repository"
+import { ApiError } from "@/exceptions/api-error"
+import { userRepository } from "@/repositories/auth/user.repository"
 import { logger } from "@/utils/logger"
 import bcrypt from "bcryptjs"
 
@@ -77,4 +77,4 @@ class PasswordResetService {
     }
 }
 
-export default new PasswordResetService()
+export const passwordResetService = new PasswordResetService()

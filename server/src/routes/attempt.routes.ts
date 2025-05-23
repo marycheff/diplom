@@ -1,7 +1,7 @@
-import {attemptController} from "@/controllers/tests/attempt.controller"
+import { attemptController } from "@/controllers/tests/attempt.controller"
 import { adminMiddleware } from "@/middleware/admin.middleware"
 import { authMiddleware } from "@/middleware/auth.middleware"
-import conditionalAuthMiddleware from "@/middleware/conditional.middleware"
+import { conditionalAuthMiddleware } from "@/middleware/conditional.middleware"
 import { attemptOwnershipMiddleware, testOwnershipMiddleware } from "@/middleware/ownership.middleware"
 import { validateRequest } from "@/middleware/validate-request.middleware"
 import { completeTestAttemptSchema, getAttemptSchema, startTestAttemptSchema } from "@/schemas/test.schema"
@@ -76,4 +76,4 @@ router.get(
     attemptController.getAttempt
 )
 
-export default router
+export const attemptRoutes = router

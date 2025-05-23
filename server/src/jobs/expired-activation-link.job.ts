@@ -1,4 +1,4 @@
-import userRepository from "@/repositories/auth/user.repository"
+import { userRepository } from "@/repositories/auth/user.repository"
 import { logger } from "@/utils/logger"
 import { redisClient } from "@/utils/redis-client"
 import cron from "node-cron"

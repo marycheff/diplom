@@ -55,4 +55,4 @@ router.post("/reset-password", validateRequest(resetPasswordSchema), passwordRes
 // Обновление пароля
 router.post("/update-password", authMiddleware, validateRequest(updatePasswordSchema), userController.updatePassword)
 
-export default router
+export const authRoutes = router

@@ -1,10 +1,10 @@
-import tokenService from "@/services/auth/token.service"
+import { tokenService } from "@/services/auth/token.service"
 import { UserDTO } from "@/types"
-import { NextFunction, Request, Response } from "express"
 import { logger } from "@/utils/logger"
+import { NextFunction, Request, Response } from "express"
 const LOG_NAMESPACE = "ConditionalAuth"
 
-export default function conditionalAuthMiddleware(req: Request, res: Response, next: NextFunction) {
+export const conditionalAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
         const authorizationHeader = req.headers.authorization
         if (authorizationHeader) {

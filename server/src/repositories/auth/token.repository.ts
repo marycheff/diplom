@@ -32,4 +32,4 @@ class TokenRepository {
     }
 }
 
-export default new TokenRepository()
+export const tokenRepository = new TokenRepository()

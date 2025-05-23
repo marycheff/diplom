@@ -1,7 +1,7 @@
-import ApiError from "@/exceptions/api-error"
-import attemptRepository from "@/repositories/tests/attempt.repository"
-import questionRepository from "@/repositories/tests/question.repository"
-import testRepository from "@/repositories/tests/test.repository"
+import { ApiError } from "@/exceptions/api-error"
+import { attemptRepository } from "@/repositories/tests/attempt.repository"
+import { questionRepository } from "@/repositories/tests/question.repository"
+import { testRepository } from "@/repositories/tests/test.repository"
 import {
     mapToAttemptWithResultsDTO,
     mapToAttemptWithSnapshotDTO,

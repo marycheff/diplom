@@ -348,4 +348,4 @@ class AttemptRepository {
     }
 }
 
-export default new AttemptRepository()
+export const attemptRepository = new AttemptRepository()

@@ -1,4 +1,4 @@
-import ApiError from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions/api-error"
 import { logger } from "@/utils/logger"
 import { NextFunction, Request, Response } from "express"
 import { AnyZodObject, ZodError } from "zod"

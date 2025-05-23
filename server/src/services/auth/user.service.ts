@@ -1,6 +1,6 @@
-import ApiError from "@/exceptions/api-error"
-import userRepository from "@/repositories/auth/user.repository"
-import mailService from "@/services/mail.service"
+import { ApiError } from "@/exceptions/api-error"
+import { userRepository } from "@/repositories/auth/user.repository"
+import { mailService } from "@/services/mail.service"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
 import { CreateUserDTO, UpdateUserDTO, UserDTO, UsersListDTO } from "@/types/core/user.types"
 import { logger } from "@/utils/logger"
@@ -321,4 +321,4 @@ class UserService {
     }
 }
 
-export default new UserService()
+export const userService = new UserService()

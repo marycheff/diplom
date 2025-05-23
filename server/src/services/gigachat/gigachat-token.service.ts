@@ -1,7 +1,7 @@
 import { envConfig } from "@/config/env-config"
-import ApiError from "@/exceptions/api-error"
-import { generateUUID } from "@/utils/math"
+import { ApiError } from "@/exceptions/api-error"
 import { logger } from "@/utils/logger"
+import { generateUUID } from "@/utils/math"
 import axios from "axios"
 import https from "follow-redirects/https"
 import qs from "querystring"
@@ -46,4 +46,4 @@ class GigaChatTokenService {
     }
 }
 
-export default new GigaChatTokenService()
+export const gigaChatTokenService = new GigaChatTokenService()

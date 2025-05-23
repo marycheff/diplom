@@ -1,9 +1,9 @@
 import { envConfig } from "@/config/env-config"
-import ApiError from "@/exceptions/api-error"
-import tokenRepository from "@/repositories/auth/token.repository"
-import userRepository from "@/repositories/auth/user.repository"
-import tokenService from "@/services/auth/token.service"
-import mailService from "@/services/mail.service"
+import { ApiError } from "@/exceptions/api-error"
+import { tokenRepository } from "@/repositories/auth/token.repository"
+import { userRepository } from "@/repositories/auth/user.repository"
+import { tokenService } from "@/services/auth/token.service"
+import { mailService } from "@/services/mail.service"
 import { mapUserToDto } from "@/services/mappers/user.mappers"
 import { CreateUserDTO, UserDTO } from "@/types/core/user.types"
 import { logger } from "@/utils/logger"
@@ -245,4 +245,4 @@ class AuthService {
         }
     }
 }
-export default new AuthService()
+export const authService = new AuthService()

@@ -20,4 +20,4 @@ router.put(
     questionController.upsertQuestions
 )
 
-export default router
+export const questionRoutes = router

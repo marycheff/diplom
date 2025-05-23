@@ -221,4 +221,4 @@ class QuestionRepository {
     }
 }
 
-export default new QuestionRepository()
+export const questionRepository = new QuestionRepository()

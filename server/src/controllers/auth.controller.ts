@@ -1,6 +1,6 @@
 import { envConfig } from "@/config/env-config"
-import ApiError from "@/exceptions/api-error"
-import authService from "@/services/auth/auth.service"
+import { ApiError } from "@/exceptions/api-error"
+import { authService } from "@/services/auth/auth.service"
 
 import { NextFunction, Request, Response } from "express"
 

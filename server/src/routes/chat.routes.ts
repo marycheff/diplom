@@ -13,4 +13,4 @@ router.post(
     gigaChatController.generateAnswers
 )
 
-export default router
+export const chatRoutes = router

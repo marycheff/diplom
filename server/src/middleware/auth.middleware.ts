@@ -1,11 +1,10 @@
-import ApiError from "@/exceptions/api-error"
-import tokenService from "@/services/auth/token.service"
+import { ApiError } from "@/exceptions/api-error"
+import { tokenService } from "@/services/auth/token.service"
 import { UserDTO } from "@/types/core/user.types"
 import { logger } from "@/utils/logger"
 import { NextFunction, Request, Response } from "express"
 
 const LOG_NAMESPACE = "AuthMiddleware"
-
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {

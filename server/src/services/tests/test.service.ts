@@ -1,8 +1,8 @@
-import ApiError from "@/exceptions/api-error"
-import userRepository from "@/repositories/auth/user.repository"
-import attemptRepository from "@/repositories/tests/attempt.repository"
-import testRepository from "@/repositories/tests/test.repository"
-import mailService from "@/services/mail.service"
+import { ApiError } from "@/exceptions/api-error"
+import { userRepository } from "@/repositories/auth/user.repository"
+import { attemptRepository } from "@/repositories/tests/attempt.repository"
+import { testRepository } from "@/repositories/tests/test.repository"
+import { mailService } from "@/services/mail.service"
 import {
     mapTest,
     mapToTestSnapshotDTO,
@@ -735,4 +735,4 @@ class TestService {
     }
 }
 
-export default new TestService()
+export const testService = new TestService()
