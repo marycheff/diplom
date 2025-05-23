@@ -20,8 +20,9 @@ export interface TestState {
     searchTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     searchMyTests: (query: string, page: number, limit: number) => Promise<TestsListDTO | undefined>
     getTestById: (id: string) => Promise<TestDTO | undefined>
-    getTestForUserById: (testId: string, attemptId?: string) => Promise<UserTestDTO | undefined>
-    getTestSnapshotForUser: (snapshotId: string, attemptId?: string) => Promise<UserTestDTO | undefined>
+    getTestForAttempt: (testId: string, attemptId: string) => Promise<UserTestDTO | undefined>
+    getBasicTestInfo: (testId: string) => Promise<UserTestDTO | undefined>
+    getTestSnapshotForAttempt: (snapshotId: string, attemptId?: string) => Promise<UserTestDTO | undefined>
     getMyTests: (page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     getUserTests: (userId: string, page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     createTest: (title: string, description?: string) => Promise<TestDTO | undefined>

@@ -57,13 +57,18 @@ class TestService {
     getTestById(id: string): Promise<AxiosResponse<TestDTO>> {
         return axiosInstance.get<TestDTO>(`/tests/${id}`)
     }
-    getTestForUserById(testId: string, attemptId?: string): Promise<AxiosResponse<UserTestDTO>> {
-        return axiosInstance.get<UserTestDTO>(`/tests/${testId}/for-user`, {
+
+    getTestForAttempt(testId: string, attemptId: string): Promise<AxiosResponse<UserTestDTO>> {
+        return axiosInstance.get<UserTestDTO>(`/tests/${testId}/for-attempt`, {
             params: { attemptId },
         })
     }
-    getTestSnapshotForUser(snapshotId: string, attemptId?: string): Promise<AxiosResponse<UserTestDTO>> {
-        return axiosInstance.get<UserTestDTO>(`/tests/snapshot/${snapshotId}/for-user`, {
+    getBasicTestInfo(testId: string): Promise<AxiosResponse<UserTestDTO>> {
+        return axiosInstance.get<UserTestDTO>(`/tests/${testId}/basic`)
+    }
+
+    getTestSnapshotForAttempt(snapshotId: string, attemptId?: string): Promise<AxiosResponse<UserTestDTO>> {
+        return axiosInstance.get<UserTestDTO>(`/tests/snapshot/${snapshotId}/for-attempt`, {
             params: { attemptId },
         })
     }

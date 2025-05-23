@@ -39,7 +39,7 @@ const TestTaking = () => {
     const navigate = useNavigate()
 
     // Хуки из store
-    const { getTestForUserById } = useTestStore()
+    const { getTestForAttempt } = useTestStore()
     const { getAttemptForUserById, saveAnswers, completeAttempt, isLoading } = useAttemptStore()
 
     // Проверка валидности attemptId
@@ -119,7 +119,7 @@ const TestTaking = () => {
     const fetchTest = async () => {
         try {
             if (!attempt) return
-            const fetchedTest = await getTestForUserById(attempt.testId, attemptId)
+            const fetchedTest = await getTestForAttempt(attempt.testId, attemptId)
             setTest(fetchedTest || null)
             setTimeLimit(fetchedTest?.settings?.timeLimit || 0)
             setIsTestLoaded(true)

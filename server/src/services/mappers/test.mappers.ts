@@ -379,7 +379,7 @@ export const mapUserAnswerWithoutText = (answer: Answer): AnswerUserDTO => {
 
 // Добавить в test.mappers.ts
 
-export const mapToTestSnapshotForUserDTO = (
+export const mapToTestSnapshotForAttemptDTO = (
     snapshot: TestSnapshot & {
         questions: (QuestionSnapshot & { answers: AnswerSnapshot[] })[]
         settings?: TestSettingsSnapshot | null

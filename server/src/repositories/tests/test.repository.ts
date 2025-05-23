@@ -314,13 +314,31 @@ class TestRepository {
             where: { id: testId },
             include: {
                 settings: true,
-
                 questions: {
                     include: {
                         answers: true,
                     },
                     orderBy: { order: "asc" },
                 },
+                author: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        surname: true,
+                        patronymic: true,
+                    },
+                },
+            },
+        })
+    }
+
+    async findBasicTestInfo(testId: string, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.test.findUnique({
+            where: { id: testId },
+            include: {
+                settings: true,
                 author: {
                     select: {
                         id: true,

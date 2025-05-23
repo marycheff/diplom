@@ -46,6 +46,7 @@ class TestController {
             next(error)
         }
     }
+
     async getMyTests(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.user?.id
@@ -64,6 +65,7 @@ class TestController {
             next(error)
         }
     }
+
     async getUserTests(req: Request, res: Response, next: NextFunction) {
         try {
             const { userId } = req.params
@@ -82,6 +84,7 @@ class TestController {
             next(error)
         }
     }
+
     async getAllTests(req: Request, res: Response, next: NextFunction) {
         try {
             const page = parseInt(req.query.page as string) || 1
@@ -96,6 +99,7 @@ class TestController {
             next(error)
         }
     }
+
     async getAllUnmoderatedTests(req: Request, res: Response, next: NextFunction) {
         try {
             const page = parseInt(req.query.page as string) || 1
@@ -129,21 +133,34 @@ class TestController {
             next(error)
         }
     }
-    async getTestByIdForUser(req: Request, res: Response, next: NextFunction) {
+
+    async getTestForAttempt(req: Request, res: Response, next: NextFunction) {
         try {
             const { testId } = req.params
             const attemptId = req.query.attemptId as string
-            const test = await testService.getTestForUserById(testId, attemptId)
+            if (!attemptId) {
+                throw ApiError.BadRequest("Нет идентификатора попытки")
+            }
+            const test = await testService.getTestForAttempt(testId, attemptId)
             res.status(200).json(test)
         } catch (error) {
             next(error)
         }
     }
-    async getTestSnapshotForUser(req: Request, res: Response, next: NextFunction) {
+    async getBasicTestInfo(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { testId } = req.params
+            const test = await testService.getBasicTestInfo(testId)
+            res.status(200).json(test)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async getTestSnapshotForAttempt(req: Request, res: Response, next: NextFunction) {
         try {
             const { snapshotId } = req.params
             const attemptId = req.query.attemptId as string
-            const snapshot = await testService.getTestSnapshotForUser(snapshotId, attemptId)
+            const snapshot = await testService.getTestSnapshotForAttempt(snapshotId, attemptId)
             res.status(200).json(snapshot)
         } catch (error) {
             next(error)

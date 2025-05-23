@@ -79,8 +79,9 @@ router.put("/:testId/moderation-status", authMiddleware, adminMiddleware, testCo
 router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.getTestById)
 
 // Получение теста по ID для тестируемого
-router.get("/:testId/for-user", validateRequest(testIdSchema), testController.getTestByIdForUser)
-router.get("/snapshot/:snapshotId/for-user", testController.getTestSnapshotForUser)
+router.get("/:testId/for-attempt", validateRequest(testIdSchema), testController.getTestForAttempt)
+router.get("/:testId/basic", validateRequest(testIdSchema), testController.getBasicTestInfo)
+router.get("/snapshot/:snapshotId/for-attempt", testController.getTestSnapshotForAttempt)
 
 // Удаление теста
 router.delete("/:testId", authMiddleware, testOwnershipMiddleware, testController.deleteTest)

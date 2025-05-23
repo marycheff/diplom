@@ -6,7 +6,7 @@ import mailService from "@/services/mail.service"
 import {
     mapTest,
     mapToTestSnapshotDTO,
-    mapToTestSnapshotForUserDTO,
+    mapToTestSnapshotForAttemptDTO,
     mapUserTest,
 } from "@/services/mappers/test.mappers"
 import {
@@ -406,15 +406,66 @@ class TestService {
             throw ApiError.InternalError("Ошибка при получении теста по ID")
         }
     }
-    async getTestForUserById(testId: string, attemptId?: string): Promise<UserTestDTO> {
-        logger.debug(`[${LOG_NAMESPACE}] Получение теста для пользователя по ID`, { testId, attemptId })
+    async getBasicTestInfo(testId: string): Promise<UserTestDTO> {
+        logger.debug(`[${LOG_NAMESPACE}] Получение базовой информации о тесте`, { testId })
         try {
-            const isPreview = !attemptId
-            const cacheKey = isPreview ? `user-test-basic:${testId}` : `user-test:${testId}:attempt:${attemptId}`
+            const cacheKey = `user-test-basic:${testId}`
             const cachedTest = await redisClient.get(cacheKey)
 
             if (cachedTest) {
-                logger.debug(`[${LOG_NAMESPACE}] Тест для попытки пользователя получен из кэша`, { testId, attemptId })
+                logger.debug(`[${LOG_NAMESPACE}] Базовая информация о тесте получена из кэша`, { testId })
+
+                const parsedTest = JSON.parse(cachedTest)
+                if (
+                    parsedTest.visibilityStatus === TestVisibilityStatus.HIDDEN ||
+                    parsedTest?.status === ModerationStatus.REJECTED ||
+                    parsedTest?.status === ModerationStatus.PENDING
+                ) {
+                    logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
+                    throw ApiError.NotFound("Тест не найден")
+                }
+                return parsedTest
+            }
+
+            const test = await testRepository.findBasicTestInfo(testId)
+            if (!test) {
+                logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
+                throw ApiError.NotFound("Тест не найден")
+            }
+            if (
+                test.visibilityStatus === TestVisibilityStatus.HIDDEN ||
+                test.moderationStatus === ModerationStatus.PENDING ||
+                test.moderationStatus === ModerationStatus.REJECTED
+            ) {
+                logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
+                throw ApiError.NotFound("Тест не найден")
+            }
+
+            const testDTO = mapUserTest(test)
+            await redisClient.setEx(cacheKey, 3600, JSON.stringify(testDTO))
+            logger.debug(`[${LOG_NAMESPACE}] Базовая информация о тесте успешно получена`, { testId })
+
+            return testDTO
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error
+            }
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при получении базовой информации о тесте`, {
+                testId,
+                error: error instanceof Error ? error.message : String(error),
+            })
+            throw ApiError.InternalError("Ошибка при получении базовой информации о тесте")
+        }
+    }
+
+    async getTestForAttempt(testId: string, attemptId: string): Promise<UserTestDTO> {
+        logger.debug(`[${LOG_NAMESPACE}] Получение полной информации о тесте`, { testId, attemptId })
+        try {
+            const cacheKey = `user-test:${testId}:attempt:${attemptId}`
+            const cachedTest = await redisClient.get(cacheKey)
+
+            if (cachedTest) {
+                logger.debug(`[${LOG_NAMESPACE}] Полная информация о тесте получена из кэша`, { testId, attemptId })
 
                 const parsedTest = JSON.parse(cachedTest)
                 if (
@@ -444,38 +495,36 @@ class TestService {
 
             let testDTO = mapUserTest(test)
 
-            if (!isPreview) {
-                // Генерация seed на основе attemptId для детерминированного перемешивания
-                const seed = generateSeedFromAttemptId(attemptId)
+            // Генерация seed на основе attemptId для детерминированного перемешивания
+            const seed = generateSeedFromAttemptId(attemptId)
 
-                // Перемешивание вопросов с привязкой к попытке
-                if (test.settings?.shuffleQuestions && testDTO.questions) {
-                    testDTO.questions = shuffleArray(testDTO.questions, seed)
-                }
-
-                // Перемешивание вариантов ответов с привязкой к попытке
-                if (test.settings?.shuffleAnswers && testDTO.questions) {
-                    testDTO.questions = testDTO.questions.map((question, index) => ({
-                        ...question,
-                        answers: question.answers ? shuffleArray(question.answers, seed + index) : question.answers,
-                    }))
-                }
+            // Перемешивание вопросов с привязкой к попытке
+            if (test.settings?.shuffleQuestions && testDTO.questions) {
+                testDTO.questions = shuffleArray(testDTO.questions, seed)
             }
 
-            const cacheTime = isPreview ? 3600 : 3600 * 24
-            await redisClient.setEx(cacheKey, cacheTime, JSON.stringify(testDTO))
-            logger.debug(`[${LOG_NAMESPACE}] Тест для попытки пользователя успешно получен`, { testId, attemptId })
+            // Перемешивание вариантов ответов с привязкой к попытке
+            if (test.settings?.shuffleAnswers && testDTO.questions) {
+                testDTO.questions = testDTO.questions.map((question, index) => ({
+                    ...question,
+                    answers: question.answers ? shuffleArray(question.answers, seed + index) : question.answers,
+                }))
+            }
+
+            await redisClient.setEx(cacheKey, 3600 * 24, JSON.stringify(testDTO))
+            logger.debug(`[${LOG_NAMESPACE}] Полная информация о тесте успешно получена`, { testId, attemptId })
 
             return testDTO
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error
             }
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при получении теста для пользователя по ID`, {
+            logger.error(`[${LOG_NAMESPACE}] Ошибка при получении полной информации о тесте`, {
                 testId,
+                attemptId,
                 error: error instanceof Error ? error.message : String(error),
             })
-            throw ApiError.InternalError("Ошибка при получении теста для пользователя по ID")
+            throw ApiError.InternalError("Ошибка при получении полной информации о тесте")
         }
     }
 
@@ -595,7 +644,7 @@ class TestService {
             throw ApiError.InternalError("Ошибка при получении снимка теста")
         }
     }
-    async getTestSnapshotForUser(snapshotId: string, attemptId?: string): Promise<UserTestDTO> {
+    async getTestSnapshotForAttempt(snapshotId: string, attemptId?: string): Promise<UserTestDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение снимка теста для пользователя`, { snapshotId, attemptId })
         try {
             const isPreview = !attemptId
@@ -634,7 +683,7 @@ class TestService {
                 throw ApiError.NotFound("Снимок теста не найден")
             }
 
-            let testDTO = mapToTestSnapshotForUserDTO(snapshot)
+            let testDTO = mapToTestSnapshotForAttemptDTO(snapshot)
 
             if (!isPreview) {
                 // Генерация seed на основе attemptId для детерминированного перемешивания

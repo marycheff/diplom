@@ -28,7 +28,8 @@ export async function deleteTestCache(testId: string): Promise<void> {
  */
 export async function deleteAttemptCache(attemptId: string): Promise<void> {
     try {
-        const keys = await redisClient.keys(`*${attemptId}*`)
+        const allKeys = await redisClient.keys(`*${attemptId}*`)
+        const keys = allKeys.filter(key => key.startsWith("user-attempt:") || key.startsWith("attempt:"))
         if (keys.length > 0) {
             await redisClient.del(keys)
             logger.debug(`[${LOG_NAMESPACE}] Удалены ключи кэша попытки`, { attemptId, keys })

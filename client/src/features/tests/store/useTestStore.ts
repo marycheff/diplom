@@ -78,16 +78,23 @@ export const useTestStore = create<TestState>(set => {
             }
             return withFetching(operation)
         },
-        getTestForUserById: async (testId, attemptId) => {
+        getTestForAttempt: async (testId, attemptId) => {
             const operation = async () => {
-                const response = await testService.getTestForUserById(testId, attemptId)
+                const response = await testService.getTestForAttempt(testId, attemptId)
                 return response.data
             }
             return withFetching(operation)
         },
-        getTestSnapshotForUser: async (snapshotId, attemptId) => {
+        getBasicTestInfo: async testId => {
             const operation = async () => {
-                const response = await testService.getTestSnapshotForUser(snapshotId, attemptId)
+                const response = await testService.getBasicTestInfo(testId)
+                return response.data
+            }
+            return withFetching(operation)
+        },
+        getTestSnapshotForAttempt: async (snapshotId, attemptId) => {
+            const operation = async () => {
+                const response = await testService.getTestSnapshotForAttempt(snapshotId, attemptId)
                 return response.data
             }
             return withFetching(operation)

@@ -18,7 +18,7 @@ const StartAttemptPage = () => {
     const navigate = useNavigate()
     const { testId } = useParams<{ testId: string }>()
     const { isLoading, startAttempt } = useAttemptStore()
-    const { isFetching, getTestForUserById } = useTestStore()
+    const { isFetching, getBasicTestInfo } = useTestStore()
     const [test, setTest] = useState<UserTestDTO | null>(null)
     const { user } = useAuthStore()
     const [isDataLoaded, setIsDataLoaded] = useState(false)
@@ -37,7 +37,7 @@ const StartAttemptPage = () => {
 
         const fetchTest = async () => {
             try {
-                const fetchedTest = await getTestForUserById(testId)
+                const fetchedTest = await getBasicTestInfo(testId)
                 if (fetchedTest) {
                     setTest(fetchedTest)
                 }
@@ -48,7 +48,7 @@ const StartAttemptPage = () => {
             }
         }
         fetchTest()
-    }, [testId, getTestForUserById, navigate])
+    }, [testId, getBasicTestInfo, navigate])
 
     if (isFetching || isLoading || !isDataLoaded) {
         return <Loader fullScreen />

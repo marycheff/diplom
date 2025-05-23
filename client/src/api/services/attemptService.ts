@@ -27,9 +27,11 @@ class AttemptService {
     getAttemptResultsById(id: string): Promise<AxiosResponse<TestAttemptResultDTO>> {
         return axiosInstance.get<TestAttemptResultDTO>(`/tests/attempts/${id}/results`)
     }
+    
     getAttemptForUserById(id: string): Promise<AxiosResponse<TestAttemptUserDTO>> {
         return axiosInstance.get<TestAttemptUserDTO>(`/tests/attempts/${id}/for-user`)
     }
+
     getAllAttempts(page = 1, limit = 10): Promise<AxiosResponse<AttemptsListDTO>> {
         return axiosInstance.get<AttemptsListDTO>("/tests/attempts/all", {
             params: {
