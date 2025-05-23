@@ -193,6 +193,13 @@ class QuestionRepository {
             },
         })
     }
+    async findWithAnswers(questionId: string, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return client.question.findUnique({
+            where: { id: questionId },
+            include: { answers: true },
+        })
+    }
 
     async deleteAnswers(questionId: string, tx?: Prisma.TransactionClient) {
         const client = tx || prisma

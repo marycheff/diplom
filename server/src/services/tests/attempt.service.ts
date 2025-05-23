@@ -1,5 +1,6 @@
 import ApiError from "@/exceptions/api-error"
 import attemptRepository from "@/repositories/tests/attempt.repository"
+import questionRepository from "@/repositories/tests/question.repository"
 import testRepository from "@/repositories/tests/test.repository"
 import {
     mapToAttemptWithResultsDTO,
@@ -167,7 +168,7 @@ class AttemptService {
                 throw ApiError.BadRequest("Попытка уже завершена")
             }
 
-            const question = await testRepository.getQuestionWithAnswers(questionId)
+            const question = await questionRepository.findWithAnswers(questionId)
             if (!question || question.testId !== attempt.testId) {
                 logger.warn(`[${LOG_NAMESPACE}] Вопрос не принадлежит тесту`, { questionId, testId: attempt.testId })
                 throw ApiError.BadRequest("Вопрос не принадлежит тесту")
@@ -229,7 +230,7 @@ class AttemptService {
             for (const answer of answers) {
                 const { questionId, answersIds, textAnswer } = answer
 
-                const question = await testRepository.getQuestionWithAnswers(questionId)
+                const question = await questionRepository.findWithAnswers(questionId)
                 if (!question || question.testId !== attempt.testId) {
                     logger.warn(`[${LOG_NAMESPACE}] Вопрос не принадлежит тесту`, {
                         questionId,

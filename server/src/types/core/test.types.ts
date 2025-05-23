@@ -4,7 +4,6 @@ import { ModerationStatus, TestVisibilityStatus } from "@prisma/client"
 export interface CreateTest {
     title: string
     description: string | null
-    settings?: TestSettingsDTO | null
 }
 
 export interface TestsListDTO {

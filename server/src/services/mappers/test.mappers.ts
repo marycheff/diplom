@@ -299,7 +299,7 @@ export const mapToTestSnapshotDTO = (
         questions: snapshot.questions.map(q => ({
             id: q.id,
             // snapshotId: q.snapshotId,
-            originalId: q.originalTestId,
+            originalId: q.originalId,
             text: q.text,
             order: q.order,
             type: q.type,
@@ -307,7 +307,7 @@ export const mapToTestSnapshotDTO = (
             answers: q.answers.map(a => ({
                 id: a.id,
                 questionId: a.questionId,
-                originalId: a.originalTestId,
+                originalId: a.originalId,
                 text: a.text,
                 isCorrect: a.isCorrect,
                 createdAt: a.createdAt,
@@ -373,11 +373,8 @@ export const mapUserAnswer = (answer: Answer): AnswerUserDTO => {
 export const mapUserAnswerWithoutText = (answer: Answer): AnswerUserDTO => {
     return {
         id: answer.id,
-        // text: answer.text,
     }
 }
-
-// Добавить в test.mappers.ts
 
 export const mapToTestSnapshotForAttemptDTO = (
     snapshot: TestSnapshot & {
@@ -386,7 +383,7 @@ export const mapToTestSnapshotForAttemptDTO = (
     }
 ): UserTestDTO => {
     return {
-        id: snapshot.testId, // Используем testId из snapshot как id теста
+        id: snapshot.testId, //  testId из snapshot как id теста
         title: snapshot.title,
         description: snapshot.description || "",
         visibilityStatus: "PUBLISHED",
@@ -411,7 +408,7 @@ export const mapSnapshotQuestionToUser = (
     question: QuestionSnapshot & { answers: AnswerSnapshot[] }
 ): UserQuestionDTO => {
     return {
-        id: question.originalTestId, // Используем originalId для совместимости
+        id: question.originalId, // originalId для совместимости
         text: question.text,
         type: question.type as QuestionType,
         answers:
@@ -424,13 +421,13 @@ export const mapSnapshotQuestionToUser = (
 // Вспомогательная функция для маппинга ответов из snapshot без информации о правильности
 export const mapSnapshotAnswerToUser = (answer: AnswerSnapshot): AnswerUserDTO => {
     return {
-        id: answer.originalTestId, // Используем originalId для совместимости
+        id: answer.originalId, // originalId для совместимости
         text: answer.text,
     }
 }
 
 export const mapSnapshotAnswerToUserWithoutText = (answer: AnswerSnapshot): AnswerUserDTO => {
     return {
-        id: answer.originalTestId, // Используем originalId для совместимости
+        id: answer.originalId, // originalId для совместимости
     }
 }

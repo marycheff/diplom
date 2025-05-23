@@ -186,7 +186,7 @@ model TestSnapshot {
 model QuestionSnapshot {
   id             String           @id @default(uuid())
   testSnapshotId String
-  originalTestId String
+  originalId     String
   text           String           @db.VarChar(500)
   order          Int
   type           QuestionType
@@ -200,15 +200,15 @@ model QuestionSnapshot {
 }
 
 model AnswerSnapshot {
-  id             String           @id @default(uuid())
-  questionId     String
-  originalTestId String
-  text           String           @db.VarChar(255)
-  isCorrect      Boolean          @default(false)
+  id         String           @id @default(uuid())
+  questionId String
+  originalId String
+  text       String           @db.VarChar(255)
+  isCorrect  Boolean          @default(false)
   // TIMESTAMPS
-  createdAt      DateTime         @default(now())
+  createdAt  DateTime         @default(now())
   // RELATIONS
-  question       QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  question   QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@map("answer_snapshots")
 }

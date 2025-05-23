@@ -1,5 +1,4 @@
 import questionService from "@/services/tests/question.service"
-import { QuestionDTO } from "@/types"
 
 import { NextFunction, Request, Response } from "express"
 class QuestionController {
@@ -39,22 +38,6 @@ class QuestionController {
             next(error)
         }
     }
-    // Добавление вопросов к тесту
-    async addQuestions(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { testId } = req.params
-            const questions = req.body.questions.map((question: QuestionDTO, index: number) => ({
-                ...question,
-                order: index + 1,
-            }))
-            const updatedQuestions = await questionService.addQuestions(testId, questions)
-            res.status(200).json({
-                questions: updatedQuestions,
-            })
-        } catch (error) {
-            next(error)
-        }
-    }
 
     async upsertQuestions(req: Request, res: Response, next: NextFunction) {
         try {
@@ -64,7 +47,6 @@ class QuestionController {
             const updatedQuestions = await questionService.upsertQuestions(testId, questions)
 
             res.status(200).json({
-
                 message: "Вопросы успешно обновлены",
                 questions: updatedQuestions,
             })
@@ -72,16 +54,5 @@ class QuestionController {
             next(error)
         }
     }
-
-    // async updateQuestion(req: Request, res: Response, next: NextFunction) {
-    //     try {
-    //         const { questionId } = req.params
-    //         const updateQuestionData: QuestionDTO = req.body
-    //         await questionService.updateQuestion(questionId, updateQuestionData)
-    //         res.status(200).json({ message: "Ответ успешно обновлен", data: updateQuestionData })
-    //     } catch (error) {
-    //         next(error)
-    //     }
-    // }
 }
 export default new QuestionController()

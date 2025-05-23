@@ -44,65 +44,6 @@ class QuestionService {
     }
 
     /**
-     * Добавление новых вопросов к тесту
-     * @param testId Идентификатор теста
-     * @param data Массив DTO данных для новых вопросов
-     * @returns Обновленный DTO теста с добавленными вопросами
-     */
-    async addQuestions(testId: string, data: QuestionDTO[]): Promise<TestDTO> {
-        logger.info(`[${LOG_NAMESPACE}] Добавление вопросов к тесту`, { testId })
-        try {
-            const { updatedTest, questions } = await executeTransaction(async tx => {
-                const test = await testRepository.findWithQuestionsAndAuthor(testId, tx)
-                if (!test) {
-                    logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
-                    throw ApiError.NotFound("Тест не найден")
-                }
-                const createdQuestions = await Promise.all(
-                    data.map(async (questionData, index) => {
-                        const createdQuestion = await testRepository.createQuestion(
-                            testId,
-                            {
-                                text: questionData.text,
-                                type: questionData.type,
-                                order: index + 1,
-                            },
-                            tx
-                        )
-                        await testRepository.createAnswersForQuestion(createdQuestion.id, questionData.answers, tx)
-                        return testRepository.getQuestionWithAnswers(createdQuestion.id, tx)
-                    })
-                )
-                const validQuestions = createdQuestions.filter(question => question !== null)
-                await testRepository.incrementTestVersion(testId, test.version, tx)
-                await testRepository.cleanupUnusedSnapshots(testId, tx)
-                const testWithUpdatedQuestions = {
-                    ...test,
-                    questions: [...validQuestions],
-                }
-                await testRepository.createSnapshot(testWithUpdatedQuestions, tx)
-                return { updatedTest: test, questions: validQuestions }
-            })
-
-            await deleteTestCache(testId)
-            logger.info(`[${LOG_NAMESPACE}] Вопросы успешно добавлены к тесту`, { testId })
-            return mapTest({
-                ...updatedTest,
-                questions,
-            })
-        } catch (error) {
-            logger.error(`[${LOG_NAMESPACE}] Ошибка при добавлении вопросов к тесту`, {
-                testId,
-                error: error instanceof Error ? error.message : String(error),
-            })
-            if (error instanceof ApiError) {
-                throw error
-            }
-            throw ApiError.InternalError("Ошибка при добавлении вопросов к тесту")
-        }
-    }
-
-    /**
      * Проверка принадлежности вопроса к тесту
      * @param questionId Идентификатор вопроса
      * @param testId Идентификатор теста
@@ -424,9 +365,9 @@ class QuestionService {
                 })
                 await questionRepository.delete(questionToDelete.id, tx)
             }
-            await testRepository.incrementTestVersion(testId, test.version, tx)
+            await testRepository.incrementVersion(testId, test.version, tx)
             await testRepository.cleanupUnusedSnapshots(testId, tx)
-            const updatedTest = await testRepository.findDetailedTestById(testId, tx)
+            const updatedTest = await testRepository.findDetailedById(testId, tx)
             if (!updatedTest) {
                 throw ApiError.InternalError("Не удалось получить обновленный тест")
             }

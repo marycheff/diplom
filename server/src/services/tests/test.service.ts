@@ -61,10 +61,10 @@ class TestService {
                     await testRepository.createSettings(testId, settingsWithSortedFields, tx)
                 }
 
-                await testRepository.incrementTestVersion(testId, test.version, tx)
+                await testRepository.incrementVersion(testId, test.version, tx)
                 await testRepository.cleanupUnusedSnapshots(testId, tx)
 
-                const updatedTest = await testRepository.findDetailedTestById(testId, tx)
+                const updatedTest = await testRepository.findDetailedById(testId, tx)
                 if (!updatedTest) {
                     throw ApiError.InternalError("Не удалось получить обновленный тест")
                 }
@@ -190,7 +190,7 @@ class TestService {
 
             await executeTransaction(async tx => {
                 const updatedTest = await testRepository.updateShortInfo(testId, updatedShortInfo, tx)
-                await testRepository.incrementTestVersion(testId, test.version, tx)
+                await testRepository.incrementVersion(testId, test.version, tx)
                 await testRepository.cleanupUnusedSnapshots(testId, tx)
                 await testRepository.createSnapshot(updatedTest, tx)
                 return true
@@ -380,7 +380,7 @@ class TestService {
                 return JSON.parse(cachedTest)
             }
 
-            const test = await testRepository.findDetailedTestById(testId)
+            const test = await testRepository.findDetailedById(testId)
             if (!test) {
                 logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                 throw ApiError.NotFound("Тест не найден")
@@ -427,7 +427,7 @@ class TestService {
                 return parsedTest
             }
 
-            const test = await testRepository.findBasicTestInfo(testId)
+            const test = await testRepository.findBasicInfo(testId)
             if (!test) {
                 logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                 throw ApiError.NotFound("Тест не найден")
@@ -479,7 +479,7 @@ class TestService {
                 return parsedTest
             }
 
-            const test = await testRepository.findDetailedTestById(testId)
+            const test = await testRepository.findDetailedById(testId)
             if (!test) {
                 logger.warn(`[${LOG_NAMESPACE}] Тест не найден`, { testId })
                 throw ApiError.NotFound("Тест не найден")
