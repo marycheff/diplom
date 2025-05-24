@@ -146,7 +146,7 @@ const AttemptInfo = () => {
                                         <span className={styles.label}>ID</span>
                                         <span className={styles.value}>
                                             <Link
-                                                to={generatePath(ROUTES.ADMIN_USER_INFO, { userId: attempt.test.id })}
+                                                to={generatePath(ROUTES.ADMIN_USER_INFO, { userId: attempt.user.id })}
                                                 className="actionLink">
                                                 {shortenText(attempt.user.id)}
                                             </Link>

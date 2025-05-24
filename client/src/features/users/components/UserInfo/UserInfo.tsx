@@ -34,11 +34,15 @@ const UserInfo = () => {
     const { clearCache } = useCache<UsersListDTO>(useUserStore, "users")
 
     const fetchUser = async () => {
-        const user = await getUserById(userId)
-        if (user !== undefined) {
-            setUser(user)
+        try {
+            const user = await getUserById(userId)
+            if (user !== undefined) {
+                setUser(user)
+            }
+            setIsDataLoaded(true)
+        } catch {
+            setIsDataLoaded(true)
         }
-        setIsDataLoaded(true)
     }
     const handleDeleteUser = async () => {
         setDeleteModalOpen(true)

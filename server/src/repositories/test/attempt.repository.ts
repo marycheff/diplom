@@ -1,5 +1,5 @@
 import { AttemptAnswer, PreTestUserDataType } from "@/types"
-import { prisma } from "@/utils/prisma"
+import { prisma } from "@/utils/prisma-client"
 import { Prisma, TestAttempt, TestAttemptStatus } from "@prisma/client"
 
 class AttemptRepository {

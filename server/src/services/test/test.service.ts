@@ -13,7 +13,7 @@ import {
 } from "@/types"
 import { logger } from "@/utils/logger"
 import { generateSeedFromAttemptId, shuffleArray } from "@/utils/math"
-import { executeTransaction } from "@/utils/prisma"
+import { executeTransaction } from "@/utils/prisma-client"
 import { redisClient } from "@/utils/redis/redis-client"
 
 import { deleteTestCache } from "@/utils/redis/redis.utils"

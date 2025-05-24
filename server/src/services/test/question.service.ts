@@ -4,7 +4,7 @@ import { questionRepository, testRepository } from "@/repositories"
 import { answerService, badWordsService } from "@/services"
 import { QuestionDTO, TestDTO } from "@/types"
 import { logger } from "@/utils/logger"
-import { executeTransaction } from "@/utils/prisma"
+import { executeTransaction } from "@/utils/prisma-client"
 import { deleteTestCache } from "@/utils/redis/redis.utils"
 import { isValidUUID } from "@/utils/validator"
 

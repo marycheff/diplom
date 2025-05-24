@@ -1,5 +1,5 @@
 import { QuestionDTO } from "@/types"
-import { prisma } from "@/utils/prisma"
+import { prisma } from "@/utils/prisma-client"
 import { isValidUUID } from "@/utils/validator"
 import { Prisma } from "@prisma/client"
 

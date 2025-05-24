@@ -114,7 +114,7 @@ export const saveAnswersSchema = z.object({
                         message: "Массив answersIds содержит дублирующиеся идентификаторы",
                     })
                     .optional(),
-                textAnswer: z.string().optional(),
+                textAnswer: z.string().optional().nullable(),
                 timeSpent: z.number().optional().default(0),
                 answeredAt: z
                     .string()
