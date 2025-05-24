@@ -1,9 +1,12 @@
-import { attemptController } from "@/controllers/tests/attempt.controller"
-import { adminMiddleware } from "@/middleware/admin.middleware"
-import { authMiddleware } from "@/middleware/auth.middleware"
-import { conditionalAuthMiddleware } from "@/middleware/conditional.middleware"
-import { attemptOwnershipMiddleware, testOwnershipMiddleware } from "@/middleware/ownership.middleware"
-import { validateRequest } from "@/middleware/validate-request.middleware"
+import { attemptController } from "@/controllers"
+import {
+    adminMiddleware,
+    attemptOwnershipMiddleware,
+    authMiddleware,
+    conditionalAuthMiddleware,
+    testOwnershipMiddleware,
+    validateRequest,
+} from "@/middleware"
 import { completeTestAttemptSchema, getAttemptSchema, startTestAttemptSchema } from "@/schemas/test.schema"
 import express from "express"
 

@@ -1,4 +1,4 @@
-import { mapUserToDto } from "@/services/mappers/user.mappers"
+import { mapUserToDto } from "@/mappers"
 import {
     AnswerDTO,
     AnswerUserDTO,

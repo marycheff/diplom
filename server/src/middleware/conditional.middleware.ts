@@ -1,4 +1,4 @@
-import { tokenService } from "@/services/auth/token.service"
+import { tokenService } from "@/services"
 import { UserDTO } from "@/types"
 import { logger } from "@/utils/logger"
 import { NextFunction, Request, Response } from "express"

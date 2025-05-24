@@ -1,5 +1,5 @@
 import { ApiError } from "@/exceptions/api-error"
-import { userService } from "@/services/auth/user.service"
+import { userService } from "@/services"
 import { NextFunction, Request, Response } from "express"
 
 class UserController {

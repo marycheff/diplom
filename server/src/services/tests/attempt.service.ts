@@ -1,13 +1,11 @@
 import { ApiError } from "@/exceptions/api-error"
-import { attemptRepository } from "@/repositories/tests/attempt.repository"
-import { questionRepository } from "@/repositories/tests/question.repository"
-import { testRepository } from "@/repositories/tests/test.repository"
 import {
     mapToAttemptWithResultsDTO,
     mapToAttemptWithSnapshotDTO,
     mapToTestAttemptDTO,
     mapToTestAttemptUserDTO,
-} from "@/services/mappers/test.mappers"
+} from "@/mappers"
+import { attemptRepository, questionRepository, testRepository } from "@/repositories"
 import {
     AttemptAnswer,
     AttemptsListDTO,

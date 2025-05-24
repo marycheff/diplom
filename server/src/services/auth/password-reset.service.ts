@@ -1,5 +1,5 @@
 import { ApiError } from "@/exceptions/api-error"
-import { userRepository } from "@/repositories/auth/user.repository"
+import { userRepository } from "@/repositories"
 import { logger } from "@/utils/logger"
 import bcrypt from "bcryptjs"
 

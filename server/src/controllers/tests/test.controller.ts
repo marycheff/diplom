@@ -1,5 +1,5 @@
 import { ApiError } from "@/exceptions/api-error"
-import { testService } from "@/services/tests/test.service"
+import { testService } from "@/services"
 import { CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types"
 import { ModerationStatus, TestVisibilityStatus } from "@prisma/client"
 import { NextFunction, Request, Response } from "express"

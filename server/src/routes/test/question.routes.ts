@@ -1,7 +1,5 @@
-import { questionController } from "@/controllers/tests/question.controller"
-import { authMiddleware } from "@/middleware/auth.middleware"
-import { testOwnershipMiddleware } from "@/middleware/ownership.middleware"
-import { validateRequest } from "@/middleware/validate-request.middleware"
+import { questionController } from "@/controllers"
+import { authMiddleware, testOwnershipMiddleware, validateRequest } from "@/middleware"
 import { upsertQuestionsSchema } from "@/schemas/test.schema"
 import express from "express"
 

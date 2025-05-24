@@ -1,14 +1,7 @@
 import { ApiError } from "@/exceptions/api-error"
-import { userRepository } from "@/repositories/auth/user.repository"
-import { attemptRepository } from "@/repositories/tests/attempt.repository"
-import { testRepository } from "@/repositories/tests/test.repository"
-import { mailService } from "@/services/mail.service"
-import {
-    mapTest,
-    mapToTestSnapshotDTO,
-    mapToTestSnapshotForAttemptDTO,
-    mapUserTest,
-} from "@/services/mappers/test.mappers"
+import { mapTest, mapToTestSnapshotDTO, mapToTestSnapshotForAttemptDTO, mapUserTest } from "@/mappers"
+import { attemptRepository, testRepository, userRepository } from "@/repositories"
+import { mailService } from "@/services"
 import {
     CreateTest,
     ShortTestInfo,

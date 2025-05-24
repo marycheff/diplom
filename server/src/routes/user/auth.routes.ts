@@ -1,8 +1,5 @@
-import { authController } from "@/controllers/auth.controller"
-import { passwordResetController } from "@/controllers/password-reset.controller"
-import { userController } from "@/controllers/user.controller"
-import { authMiddleware } from "@/middleware/auth.middleware"
-import { validateRequest } from "@/middleware/validate-request.middleware"
+import { authController, passwordResetController, userController } from "@/controllers"
+import { authMiddleware, validateRequest } from "@/middleware"
 import {
     loginSchema,
     registrationSchema,

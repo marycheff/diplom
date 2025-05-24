@@ -1,4 +1,4 @@
-import { attemptRepository } from "@/repositories/tests/attempt.repository"
+import { attemptRepository } from "@/repositories"
 import { logger } from "@/utils/logger"
 import { redisClient } from "@/utils/redis-client"
 import { TestAttemptStatus } from "@prisma/client"

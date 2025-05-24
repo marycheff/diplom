@@ -1,6 +1,6 @@
 import { envConfig } from "@/config/env-config"
 import { initializeJobs, shutdownJobs } from "@/jobs"
-import { errorMiddleware } from "@/middleware/error.middleware"
+import { errorMiddleware } from "@/middleware"
 import { authRoutes, chatRoutes, testRoutes, userRoutes } from "@/routes"
 import { logger } from "@/utils/logger"
 import { connectRedis, disconnectRedis } from "@/utils/redis-client"

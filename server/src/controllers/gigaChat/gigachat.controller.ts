@@ -1,7 +1,5 @@
 import { envConfig } from "@/config/env-config"
-import { gigaChatTokenService } from "@/services/gigachat/gigachat-token.service"
-
-import { gigaChatService } from "@/services/gigachat/gigachat.service"
+import { gigaChatService, gigaChatTokenService } from "@/services"
 import { NextFunction, Request, Response } from "express"
 
 class GigaChatController {

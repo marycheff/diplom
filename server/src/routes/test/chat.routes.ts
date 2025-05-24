@@ -1,6 +1,5 @@
-import { gigaChatController } from "@/controllers/gigachat.controller"
-import { authMiddleware } from "@/middleware/auth.middleware"
-import { validateRequest } from "@/middleware/validate-request.middleware"
+import { gigaChatController } from "@/controllers"
+import { authMiddleware, validateRequest } from "@/middleware"
 import { generateAnswersSchema } from "@/schemas/gigachat.schema"
 import { Router } from "express"
 

@@ -1,7 +1,5 @@
-import { userController } from "@/controllers/user.controller"
-import { adminMiddleware } from "@/middleware/admin.middleware"
-import { authMiddleware } from "@/middleware/auth.middleware"
-import { validateRequest } from "@/middleware/validate-request.middleware"
+import { userController } from "@/controllers"
+import { adminMiddleware, authMiddleware, validateRequest } from "@/middleware"
 import { userIdSchema } from "@/schemas/user.schema"
 import { Router } from "express"
 

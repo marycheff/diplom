@@ -1,8 +1,8 @@
-import { attemptRoutes } from "./attempt.routes"
-import { authRoutes } from "./auth.routes"
-import { chatRoutes } from "./chat.routes"
-import { questionRoutes } from "./question.routes"
-import { testRoutes } from "./test.routes"
-import { userRoutes } from "./user.routes"
+import { attemptRoutes } from "./test/attempt.routes"
+import { authRoutes } from "./user/auth.routes"
+import { chatRoutes } from "./test/chat.routes"
+import { questionRoutes } from "./test/question.routes"
+import { testRoutes } from "./test/test.routes"
+import { userRoutes } from "./user/user.routes"
 
 export { attemptRoutes, authRoutes, chatRoutes, questionRoutes, testRoutes, userRoutes }

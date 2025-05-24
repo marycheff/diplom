@@ -1,9 +1,11 @@
-import { testController } from "@/controllers/tests/test.controller"
-import { accountActivationMiddleware } from "@/middleware/accountConfirmation.middleware"
-import { adminMiddleware } from "@/middleware/admin.middleware"
-import { authMiddleware } from "@/middleware/auth.middleware"
-import { testOwnershipMiddleware } from "@/middleware/ownership.middleware"
-import { validateRequest } from "@/middleware/validate-request.middleware"
+import { testController } from "@/controllers"
+import {
+    accountActivationMiddleware,
+    adminMiddleware,
+    authMiddleware,
+    testOwnershipMiddleware,
+    validateRequest,
+} from "@/middleware"
 import { attemptRoutes, questionRoutes } from "@/routes"
 import { getTestSnapshotSchema, shortInfoSchema, testIdSchema, testSettingsSchema } from "@/schemas/test.schema"
 import express from "express"
