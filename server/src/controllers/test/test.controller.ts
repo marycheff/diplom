@@ -1,4 +1,4 @@
-import { ApiError } from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions"
 import { testService } from "@/services"
 import { CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types"
 import { ModerationStatus, TestVisibilityStatus } from "@prisma/client"

@@ -1,4 +1,4 @@
-import { ApiError } from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions"
 import { tokenService } from "@/services"
 import { UserDTO } from "@/types/user/user.types"
 import { logger } from "@/utils/logger"

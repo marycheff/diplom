@@ -1,5 +1,5 @@
 import { envConfig } from "@/config/env-config"
-import { ApiError } from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions"
 import { ChatContentResponse, GetChatContentParams } from "@/types"
 import { logger } from "@/utils/logger"
 import axios from "axios"

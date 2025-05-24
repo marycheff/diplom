@@ -1,4 +1,4 @@
-import { ApiError } from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions"
 import { mapTest, mapToTestSnapshotDTO, mapToTestSnapshotForAttemptDTO, mapUserTest } from "@/mappers"
 import { attemptRepository, testRepository, userRepository } from "@/repositories"
 import { mailService } from "@/services"

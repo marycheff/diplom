@@ -1,4 +1,4 @@
-import { ApiError } from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions"
 import { userRepository } from "@/repositories"
 import { logger } from "@/utils/logger"
 import bcrypt from "bcryptjs"

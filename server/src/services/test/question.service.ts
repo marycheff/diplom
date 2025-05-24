@@ -1,4 +1,4 @@
-import { ApiError } from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions"
 import { mapQuestion, mapTest } from "@/mappers"
 import { questionRepository, testRepository } from "@/repositories"
 import { answerService, badWordsService } from "@/services"

@@ -1,4 +1,4 @@
-import { ApiError } from "@/exceptions/api-error"
+import { ApiError } from "@/exceptions"
 import { answerService, attemptService, questionService, testService } from "@/services"
 import { logger } from "@/utils/logger"
 import { isValidUUID } from "@/utils/validator"
