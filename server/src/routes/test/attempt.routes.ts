@@ -7,7 +7,12 @@ import {
     testOwnershipMiddleware,
     validateRequest,
 } from "@/middleware"
-import { completeTestAttemptSchema, getAttemptSchema, startTestAttemptSchema } from "@/schemas/test.schema"
+import {
+    completeTestAttemptSchema,
+    getAttemptSchema,
+    saveAnswersSchema,
+    startTestAttemptSchema,
+} from "@/schemas/test.schema"
 import express from "express"
 
 const router = express.Router()
@@ -40,7 +45,7 @@ router.post(
 router.post(
     "/attempts/:attemptId/answers",
     conditionalAuthMiddleware,
-    // validateRequest(saveAnswersSchema),
+    validateRequest(saveAnswersSchema),
     attemptController.saveAnswers
 )
 

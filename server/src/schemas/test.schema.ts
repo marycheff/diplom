@@ -92,41 +92,6 @@ export const startTestAttemptSchema = z.object({
 })
 
 // Сохранение ответа
-export const saveAnswerSchema = z.object({
-    params: z.object({
-        attemptId: z.string().min(1, "ID попытки обязательно").refine(isValidUUID, {
-            message: "ID попытки должен быть корректным UUID",
-        }),
-    }),
-    body: z.object({
-        questionId: z.string().min(1, "ID вопроса обязательно").refine(isValidUUID, {
-            message: "ID вопроса должен быть корректным UUID",
-        }),
-        answersIds: z
-            .array(
-                z.string().min(1, "ID ответа не может быть пустым").refine(isValidUUID, {
-                    message: "ID ответа должен быть корректным UUID",
-                })
-            )
-            .nonempty("Должен быть указан хотя бы один ответ")
-            .or(
-                z
-                    .string()
-                    .min(1, "ID ответа обязательно")
-                    .refine(isValidUUID, {
-                        message: "ID ответа должен быть корректным UUID",
-                    })
-                    .transform(val => [val])
-            )
-            .refine(val => Array.isArray(val), {
-                message: "Параметр answersIds должен быть массивом идентификаторов",
-            })
-            .refine(val => new Set(val).size === val.length, {
-                message: "Массив answersIds содержит дублирующиеся идентификаторы",
-            }),
-        timeSpent: z.number().optional().default(0),
-    }),
-})
 export const saveAnswersSchema = z.object({
     params: z.object({
         attemptId: z.string().min(1, "ID попытки обязательно").refine(isValidUUID, {

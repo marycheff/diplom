@@ -1,4 +1,4 @@
-export * from "./gigaChat/gigachat.types"
+export * from "./gigachat/gigachat.types"
 export * from "./test/attempt.types"
 export * from "./test/question.types"
 export * from "./test/settings.types"
