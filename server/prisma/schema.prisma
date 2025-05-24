@@ -107,23 +107,47 @@ model Question {
 }
 
 model Answer {
-  id          String       @id @default(uuid())
-  questionId  String
-  text        String       @db.VarChar(255)
-  isCorrect   Boolean      @default(false)
-  isGenerated Boolean      @default(false)
+  id               String              @id @default(uuid())
+  questionId       String
+  text             String              @db.VarChar(255)
+  isCorrect        Boolean             @default(false)
+  isGenerated      Boolean             @default(false)
+  // Новое поле для хранения правильного порядка в последовательности
+  sequencePosition Int?
   // TIMESTAMPS
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
   // RELATIONS
-  question    Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  userAnswers UserAnswer[]
+  question         Question            @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userAnswers      UserAnswer[]
+  // Новая связь для хранения порядка ответов пользователя
+  sequenceAnswers  UserSequenceOrder[]
 
   @@map("answers")
 }
 
+// Новая таблица для хранения порядка ответов в вопросах типа SEQUENCE
+model UserSequenceOrder {
+  id         String      @id @default(uuid())
+  attemptId  String
+  questionId String
+  answerId   String
+  position   Int // Позиция, которую пользователь присвоил этому ответу
+  timeSpent  Int?
+  answeredAt DateTime?
+  // TIMESTAMPS
+  createdAt  DateTime    @default(now())
+  // RELATIONS
+  answer     Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  attempt    TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId, answerId])
+  @@unique([attemptId, questionId, position])
+  @@map("user_sequence_orders")
+}
+
 model TestAttempt {
-  id              String            @id @default(uuid())
+  id              String              @id @default(uuid())
   testId          String
   userId          String?
   preTestUserData Json?
@@ -131,16 +155,18 @@ model TestAttempt {
   status          TestAttemptStatus
   testSnapshotId  String?
   expirationTime  DateTime?
-  timeSpent       Int               @default(0)
-  startedAt       DateTime          @default(now())
+  timeSpent       Int                 @default(0)
+  startedAt       DateTime            @default(now())
   // TIMESTAMPS
-  updatedAt       DateTime          @updatedAt
+  updatedAt       DateTime            @updatedAt
   completedAt     DateTime?
   // RELATIONS
-  test            Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
-  snapshot        TestSnapshot?     @relation(fields: [testSnapshotId], references: [id])
-  user            User?             @relation("TestAttemptUser", fields: [userId], references: [id])
+  test            Test                @relation(fields: [testId], references: [id], onDelete: Cascade)
+  snapshot        TestSnapshot?       @relation(fields: [testSnapshotId], references: [id])
+  user            User?               @relation("TestAttemptUser", fields: [userId], references: [id])
   answers         UserAnswer[]
+  // Новая связь для вопросов типа SEQUENCE
+  sequenceAnswers UserSequenceOrder[]
 
   @@map("test_attempts")
 }
@@ -152,7 +178,6 @@ model UserAnswer {
   answerId   String
   textAnswer String?     @db.VarChar(255)
   answeredAt DateTime?
-  timeSpent  Int?
   isCorrect  Boolean?
   // TIMESTAMPS
   createdAt  DateTime    @default(now())
@@ -200,15 +225,17 @@ model QuestionSnapshot {
 }
 
 model AnswerSnapshot {
-  id         String           @id @default(uuid())
-  questionId String
-  originalId String
-  text       String           @db.VarChar(255)
-  isCorrect  Boolean          @default(false)
+  id               String           @id @default(uuid())
+  questionId       String
+  originalId       String
+  text             String           @db.VarChar(255)
+  isCorrect        Boolean          @default(false)
+  // Новое поле для snapshots
+  sequencePosition Int?
   // TIMESTAMPS
-  createdAt  DateTime         @default(now())
+  createdAt        DateTime         @default(now())
   // RELATIONS
-  question   QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  question         QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@map("answer_snapshots")
 }
@@ -263,4 +290,4 @@ enum TestVisibilityStatus {
   PUBLISHED
 }
 
-// 12 таблиц 3 enum
+// 13 таблиц 3 enum

@@ -9,6 +9,7 @@ export interface CreateQuestionDTO {
 export interface CreateAnswerDTO {
     text: string
     isCorrect: boolean
+    sequencePosition?: number | null
 }
 
 export interface AnswerDTO extends CreateAnswerDTO {
@@ -31,4 +32,5 @@ export interface UserQuestionDTO {
 export interface AnswerUserDTO {
     id: string
     text?: string
+    sequencePosition?: number | null
 }

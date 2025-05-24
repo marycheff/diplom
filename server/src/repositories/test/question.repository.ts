@@ -18,6 +18,7 @@ class QuestionRepository {
                         text: answer.text,
                         isCorrect: answer.isCorrect,
                         isGenerated: false,
+                        sequencePosition: answer.sequencePosition,
                     })),
                 },
             },
@@ -145,6 +146,7 @@ class QuestionRepository {
                     data: {
                         text: answer.text,
                         isCorrect: answer.isCorrect,
+                        sequencePosition: answer.sequencePosition,
                     },
                 })
             } else {
@@ -155,6 +157,7 @@ class QuestionRepository {
                         isCorrect: answer.isCorrect,
                         questionId: questionId,
                         isGenerated: false,
+                        sequencePosition: answer.sequencePosition,
                     },
                 })
             }
