@@ -2,11 +2,11 @@
     "name": "server",
     "version": "1.0.0",
     "type": "module",
-    "main": "index.js",
+    "main": "server.js",
     "scripts": {
-        "dev": "tsx watch src/index.ts",
+        "dev": "tsx watch src/server.ts",
         "build": "prisma generate && tsc",
-        "start": "node -r module-alias/register ./dist/src/index.js",
+        "start": "node -r module-alias/register ./dist/src/server.js",
         "postbuild": "node -e \"const fs = require('fs'); if (!fs.existsSync('dist')) fs.mkdirSync('dist'); const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8')); fs.writeFileSync('dist/package.json', JSON.stringify(pkg, null, 4));\"",
         "postinstall": "prisma generate"
     },

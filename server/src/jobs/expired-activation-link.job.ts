@@ -1,6 +1,7 @@
 import { userRepository } from "@/repositories"
 import { logger } from "@/utils/logger"
-import { redisClient } from "@/utils/redis-client"
+import { redisClient } from "@/utils/redis"
+
 import cron from "node-cron"
 
 class ExpiredActivationLinksJob {

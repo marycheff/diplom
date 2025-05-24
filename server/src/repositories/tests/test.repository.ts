@@ -1,5 +1,5 @@
 import { CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types"
-import { prisma } from "@/utils/prisma-client"
+import { prisma } from "@/utils/prisma"
 import { isValidUUID } from "@/utils/validator"
 import { Answer, ModerationStatus, Prisma, Question, Test, TestSettings, TestVisibilityStatus } from "@prisma/client"
 

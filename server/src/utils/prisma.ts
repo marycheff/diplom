@@ -1,6 +1,6 @@
+import { logger } from "@/utils/logger"
 import { PrismaClient } from "@prisma/client"
 import { performance } from "perf_hooks"
-import { logger } from "../utils/logger"
 
 const prisma = new PrismaClient().$extends({
     query: {

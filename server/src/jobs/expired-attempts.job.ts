@@ -1,6 +1,6 @@
 import { attemptRepository } from "@/repositories"
 import { logger } from "@/utils/logger"
-import { redisClient } from "@/utils/redis-client"
+import { redisClient } from "@/utils/redis"
 import { TestAttemptStatus } from "@prisma/client"
 import cron from "node-cron"
 

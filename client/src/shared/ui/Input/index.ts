@@ -1,7 +1,5 @@
-
 export { default as Input } from "./Base/Input"
 export type { InputProps } from "./Base/Input.props"
-
 
 export { default as EditableInput } from "./Editable/EditableInput"
 export type { EditableInputProps } from "./Editable/EditableInput.props"

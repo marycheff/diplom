@@ -35,6 +35,5 @@ USER bun
 
 CMD ["sh", "-c", "bunx prisma migrate deploy && bun -r module-alias/register ./dist/src/index.js"]
 
-
 # # docker build -t server .    
 # # docker run -p 5000:5000 --env-file .env server

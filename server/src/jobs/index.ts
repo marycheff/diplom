@@ -1,6 +1,5 @@
 import { expiredActivationLinksJob } from "@/jobs/expired-activation-link.job"
 import { expiredAttemptsJob } from "@/jobs/expired-attempts.job"
-import { expiredResetCodesJob } from "@/jobs/expired-reset-code.job"
 import { logger } from "@/utils/logger"
 
 export function initializeJobs(): void {

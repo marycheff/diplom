@@ -1,4 +1,4 @@
-import { prisma } from "@/utils/prisma-client"
+import { prisma } from "@/utils/prisma"
 import { Token } from "@prisma/client"
 
 class TokenRepository {

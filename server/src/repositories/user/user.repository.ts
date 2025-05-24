@@ -1,6 +1,6 @@
-import { CreateUserDTO } from "@/types/core/user.types"
+import { CreateUserDTO } from "@/types/user/user.types"
 import { getActivationLinkExpDate, getResetCodeExpDate } from "@/utils/math"
-import { prisma } from "@/utils/prisma-client"
+import { prisma } from "@/utils/prisma"
 import { Prisma, Role, User } from "@prisma/client"
 
 class UserRepository {

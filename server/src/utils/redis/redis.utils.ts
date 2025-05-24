@@ -1,5 +1,5 @@
 import { logger } from "@/utils/logger"
-import { redisClient } from "@/utils/redis-client"
+import { redisClient } from "@/utils/redis/redis-client"
 
 const LOG_NAMESPACE = "RedisUtils"
 

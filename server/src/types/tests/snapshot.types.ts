@@ -1,6 +1,6 @@
 import { QuestionType } from "@prisma/client"
 import { JsonValue } from "@prisma/client/runtime/library"
-import { TestDTO } from "./test.types"
+import { TestDTO } from "../tests/test.types"
 
 export interface SnapshotWithOriginalTestDTO {
     snapshot: TestSnapshotDTO

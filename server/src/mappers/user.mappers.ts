@@ -1,4 +1,4 @@
-import { UserDTO } from "@/types/core/user.types"
+import { UserDTO } from "@/types/user/user.types"
 import { User } from "@prisma/client"
 
 export const mapUserToDto = (user: User): UserDTO => {

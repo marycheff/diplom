@@ -1,6 +1,6 @@
 import { ApiError } from "@/exceptions/api-error"
 import { tokenService } from "@/services"
-import { UserDTO } from "@/types/core/user.types"
+import { UserDTO } from "@/types/user/user.types"
 import { logger } from "@/utils/logger"
 import { NextFunction, Request, Response } from "express"
 

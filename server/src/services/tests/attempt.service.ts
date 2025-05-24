@@ -20,8 +20,8 @@ import {
 } from "@/types"
 import { logger } from "@/utils/logger"
 import { calculateTestScore } from "@/utils/math"
-import { redisClient } from "@/utils/redis-client"
-import { deleteAttemptCache, deleteTestCache } from "@/utils/redis.utils"
+import { redisClient } from "@/utils/redis/redis-client"
+import { deleteAttemptCache, deleteTestCache } from "@/utils/redis/redis.utils"
 import { Role, TestAttemptStatus } from "@prisma/client"
 
 const LOG_NAMESPACE = "AttemptService"
