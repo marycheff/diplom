@@ -3,7 +3,7 @@ import { ModerationStatus, TestVisibilityStatus } from "@prisma/client"
 
 export interface CreateTest {
     title: string
-    description: string | null
+    description?: string | null
 }
 
 export interface TestsListDTO {

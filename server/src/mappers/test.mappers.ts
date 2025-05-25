@@ -43,6 +43,7 @@ export const mapQuestion = (question: Question & { answers?: Answer[] }): Questi
         text: question.text,
         order: question.order,
         type: question.type,
+        image: question.image || undefined,
         answers: question.answers?.map(answer => mapAnswer(answer)) || [],
     }
 }

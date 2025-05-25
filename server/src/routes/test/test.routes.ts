@@ -76,14 +76,13 @@ router.put(
 )
 router.put("/:testId/moderation-status", authMiddleware, adminMiddleware, testController.updateModerationStatus)
 
-// Получение теста по ID
-router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.getTestById)
-
 // Получение теста по ID для тестируемого
 router.get("/:testId/for-attempt", validateRequest(testIdSchema), testController.getTestForAttempt)
 router.get("/:testId/basic", validateRequest(testIdSchema), testController.getBasicTestInfo)
 router.get("/snapshot/:snapshotId/for-attempt", testController.getTestSnapshotForAttempt)
 
+// Получение теста по ID
+router.get("/:testId", authMiddleware, testOwnershipMiddleware, testController.getTestById)
 // Удаление теста
 router.delete("/:testId", authMiddleware, testOwnershipMiddleware, testController.deleteTest)
 

@@ -25,6 +25,11 @@ export const answerSchema = z.object({
 export const questionSchema = z.object({
     text: z.string().min(1, "Текст вопроса обязателен").max(500, "Максимальная длина 500 символов"),
     type: z.enum(["SINGLE_CHOICE", "MULTIPLE_CHOICE", "TEXT_INPUT", "FILL_IN_THE_BLANK", "SEQUENCE"]),
+    // image: z.string().max(255, "Максимальная длина пути к изображению 255 символов").optional(),
+    image: z
+        .string()
+        .regex(/^data:image\/(jpeg|png|gif);base64,/, "Изображение должно быть в формате base64 (JPEG, PNG или GIF)")
+        .optional(),
     answers: z
         .array(answerSchema)
         .min(1, "Должен быть хотя бы один ответ")

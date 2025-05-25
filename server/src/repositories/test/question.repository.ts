@@ -12,6 +12,7 @@ class QuestionRepository {
                 text: questionData.text,
                 order: questionData.order || -1,
                 type: questionData.type,
+                image: questionData.image,
                 testId: testId,
                 answers: {
                     create: questionData.answers.map(answer => ({
@@ -127,6 +128,7 @@ class QuestionRepository {
                 text: updateData.text,
                 order: updateData.order,
                 type: updateData.type,
+                image: updateData.image,
             },
         })
 
@@ -185,6 +187,13 @@ class QuestionRepository {
             ...updateData,
             answers: updatedQuestion?.answers,
         }
+    }
+    async updateImage(questionId: string, image: string, tx?: Prisma.TransactionClient) {
+        const client = tx || prisma
+        return await client.question.update({
+            where: { id: questionId },
+            data: { image },
+        })
     }
 
     // DELETE

@@ -1,22 +1,85 @@
 import { ApiError } from "@/exceptions"
 import { mapQuestion, mapTest } from "@/mappers"
 import { questionRepository, testRepository } from "@/repositories"
-import { answerService, badWordsService } from "@/services"
+import { answerService, badWordsService, imageService } from "@/services"
 import { QuestionDTO, TestDTO } from "@/types"
 import { logger } from "@/utils/logger"
+import { generateUUID } from "@/utils/math"
 import { executeTransaction } from "@/utils/prisma-client"
 import { deleteTestCache } from "@/utils/redis/redis.utils"
 import { isValidUUID } from "@/utils/validator"
+import fs from "fs"
 
 const LOG_NAMESPACE = "QuestionService"
+const UPLOAD_DIR = "uploads/questions"
+
+// Создаем директорию для загрузок, если она не существует
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true })
+}
 
 class QuestionService {
-    /**
-     * Полное обновление (вставка или обновление) вопросов теста
-     * @param testId Идентификатор теста
-     * @param questions Массив DTO с данными вопросов
-     * @returns Массив DTO обновленных вопросов
-     */
+    // async uploadImage(questionId: string, file: Express.Multer.File): Promise<void> {
+    //     logger.info(`[${LOG_NAMESPACE}] Загрузка изображения для вопроса`, {
+    //         questionId,
+    //         filename: file.filename,
+    //         size: file.size,
+    //     })
+
+    //     return executeTransaction(async tx => {
+    //         const question = await questionRepository.findById(questionId, tx)
+    //         if (!question) {
+    //             // Удаляем загруженный файл, если вопрос не найден
+    //             await fs.promises.unlink(file.path)
+    //             throw ApiError.NotFound("Вопрос не найден")
+    //         }
+
+    //         // Удаляем старое изображение, если оно существует
+    //         if (question.image) {
+    //             const oldImagePath = path.join(UPLOAD_DIR, path.basename(question.image))
+    //             if (fs.existsSync(oldImagePath)) {
+    //                 await fs.promises.unlink(oldImagePath)
+    //             }
+    //         }
+
+    //         // Обновляем информацию о изображении в базе данных
+    //         await questionRepository.update(
+    //             questionId,
+    //             {
+    //                 ...question,
+    //                 image: `/api/questions/images/${file.filename}`,
+    //             },
+    //             tx
+    //         )
+    //     })
+    // }
+
+    // async getImage(filename: string): Promise<{ path: string; mimetype: string }> {
+    //     const filepath = path.join(UPLOAD_DIR, filename)
+
+    //     if (!fs.existsSync(filepath)) {
+    //         throw ApiError.NotFound("Изображение не найдено")
+    //     }
+
+    //     const ext = path.extname(filename).toLowerCase()
+    //     let mimetype = "application/octet-stream"
+
+    //     switch (ext) {
+    //         case ".jpg":
+    //         case ".jpeg":
+    //             mimetype = "image/jpeg"
+    //             break
+    //         case ".png":
+    //             mimetype = "image/png"
+    //             break
+    //         case ".gif":
+    //             mimetype = "image/gif"
+    //             break
+    //     }
+
+    //     return { path: filepath, mimetype }
+    // }
+
     async upsertQuestions(testId: string, questions: QuestionDTO[]): Promise<QuestionDTO[]> {
         logger.info(`[${LOG_NAMESPACE}] Полное обновление вопросов теста`, {
             testId,
@@ -26,6 +89,7 @@ class QuestionService {
         // Проверка на недопустимые слова перед обновлением
         this.checkForBadWords(questions)
         this.validateFillInTheBlankQuestions(questions)
+        console.log("questions", questions)
         return executeTransaction(async tx => {
             // Проверка существования теста
             const test = await testRepository.findById(testId, tx)
@@ -45,72 +109,84 @@ class QuestionService {
                 try {
                     question.order = index + 1
                     let questionId = question.id
-                    // Проверка валидности UUID вопроса
+
+                    // Обработка существующего вопроса
                     if (isValidUUID(questionId)) {
-                        // Проверка принадлежности вопроса к тесту
                         const belongs = await this.isQuestionBelongsToTest(questionId, testId)
                         if (!belongs) {
-                            logger.warn(`[${LOG_NAMESPACE}] Вопрос не принадлежит тесту`, {
-                                questionId: questionId,
-                                testId,
-                            })
+                            logger.warn(`[${LOG_NAMESPACE}] Вопрос не принадлежит тесту`, { questionId, testId })
                             throw ApiError.BadRequest("Вопрос не принадлежит текущему тесту")
                         }
-                        // Обновление существующего вопроса
-                        if (existingQuestionsMap.has(questionId)) {
-                            logger.debug(`[${LOG_NAMESPACE}] Обновление существующего вопроса`, {
-                                questionId: questionId,
-                            })
-                            // Проверка принадлежности ответов к вопросу
-                            const answersWithValidIds = question.answers.filter(answer => isValidUUID(answer.id))
-                            for (const answer of answersWithValidIds) {
-                                const { belongsToQuestion } = await answerService.isAnswerBelongsToQuestion(
-                                    answer.id,
-                                    questionId
-                                )
-                                if (!belongsToQuestion) {
-                                    logger.warn(`[${LOG_NAMESPACE}] Ответ не принадлежит вопросу`, {
-                                        answerId: answer.id,
-                                        questionId: questionId,
-                                    })
-                                    throw ApiError.BadRequest("Ответ не принадлежит указанному вопросу")
-                                }
-                            }
-                            // Обновление вопроса и его ответов через репозиторий
-                            await questionRepository.update(questionId, question, tx)
-                            processedQuestionIds.add(questionId)
-                        } else {
+
+                        if (!existingQuestionsMap.has(questionId)) {
                             logger.warn(`[${LOG_NAMESPACE}] Вопрос с указанным ID не найден в текущем тесте`, {
-                                questionId: questionId,
+                                questionId,
                                 testId,
                             })
                             throw ApiError.NotFound("Вопрос с указанным ID не найден в текущем тесте")
                         }
-                    } else {
-                        // Создание нового вопроса
-                        logger.debug(`[${LOG_NAMESPACE}] Создание нового вопроса`, { question })
-                        const newQuestion = await questionRepository.create(question, testId, tx)
-                        questionId = newQuestion.id
-                        question.id = questionId // Сохранение ID вопроса
-                        // Сохранение ответов с их ID
-                        question.answers = newQuestion.answers.map(answer => ({
-                            ...answer,
-                            id: answer.id,
-                        }))
+
+                        logger.debug(`[${LOG_NAMESPACE}] Обновление существующего вопроса`, { questionId })
+
+                        // Проверка принадлежности ответов
+                        const validAnswers = question.answers.filter(answer => isValidUUID(answer.id))
+                        for (const answer of validAnswers) {
+                            const { belongsToQuestion } = await answerService.isAnswerBelongsToQuestion(
+                                answer.id,
+                                questionId
+                            )
+                            if (!belongsToQuestion) {
+                                logger.warn(`[${LOG_NAMESPACE}] Ответ не принадлежит вопросу`, {
+                                    answerId: answer.id,
+                                    questionId,
+                                })
+                                throw ApiError.BadRequest("Ответ не принадлежит указанному вопросу")
+                            }
+                        }
+
+                        if (question.image) {
+                            question.image = await imageService.processImage(question.image, questionId)
+                        }
+
+                        await questionRepository.update(questionId, question, tx)
                         processedQuestionIds.add(questionId)
                     }
+
+                    // Обработка нового вопроса
+                    else {
+                        const tempId = generateUUID()
+
+                        if (question.image) {
+                            question.image = await imageService.processImage(question.image, tempId)
+                        }
+                        console.log("question.image", question.image)
+
+                        logger.debug(`[${LOG_NAMESPACE}] Создание нового вопроса`, { question })
+
+                        const newQuestion = await questionRepository.create(question, testId, tx)
+
+                        // Убрано повторное обращение к processImage
+                        questionId = newQuestion.id
+                        question.id = questionId
+                        question.answers = newQuestion.answers.map(answer => ({ ...answer, id: answer.id }))
+                        processedQuestionIds.add(questionId)
+                    }
+
                     processedQuestions.push(question)
                 } catch (error) {
                     if (error instanceof ApiError) {
                         throw error
                     }
+
                     logger.error(`[${LOG_NAMESPACE}] Ошибка при обработке вопроса`, {
                         questionId: question.id,
-                        error: error,
+                        error,
                     })
+
                     throw error
                 }
             }
+
             // Удаление вопросов, которых нет в новом списке
             const questionsToDelete = await questionRepository.findQuestionsToDelete(
                 testId,
