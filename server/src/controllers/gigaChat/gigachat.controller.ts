@@ -14,6 +14,17 @@ class GigaChatController {
             next(e)
         }
     }
+    // Генерация теста от GigaChat
+    async generateTest(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { topic, numOfQuestions } = req.body
+            const token = await gigaChatTokenService.getAccessToken(envConfig.GIGACHAT_AUTH_DATA)
+            const response = await gigaChatService.generateTest(token, topic, numOfQuestions)
+            res.status(200).json(response)
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 export const gigaChatController = new GigaChatController()

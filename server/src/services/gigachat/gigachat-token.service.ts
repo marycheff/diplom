@@ -31,8 +31,6 @@ class GigaChatTokenService {
 
         try {
             const { data } = await axios(config)
-            logger.debug(`[${LOG_NAMESPACE}] Ответ от GigaChat: ${JSON.stringify(data)}`)
-
             if (data?.access_token) {
                 logger.debug(`[${LOG_NAMESPACE}] Токен успешно получен`)
                 return data.access_token
