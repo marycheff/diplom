@@ -52,7 +52,7 @@ model TestSettings {
   requireRegistration Boolean  @default(false)
   inputFields         Json?
   showDetailedResults Boolean  @default(false)
-  timeLimit           Int?     @default(0)
+  timeLimit           Int?
   shuffleAnswers      Boolean  @default(true)
   shuffleQuestions    Boolean  @default(false)
   allowRetake         Boolean  @default(true)
@@ -250,7 +250,7 @@ model TestSettingsSnapshot {
   shuffleAnswers      Boolean      @default(true)
   allowRetake         Boolean      @default(true)
   retakeLimit         Int?
-  timeLimit           Int?         @default(0)
+  timeLimit           Int?
   // TIMESTAMPS
   createdAt           DateTime     @default(now())
   // RELATIONS
