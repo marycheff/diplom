@@ -41,7 +41,6 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 
     useEffect(() => {
         if (!user) return
-        console.log(user)
 
         const safeString = (value: string | null | undefined): string | undefined =>
             typeof value === "string" ? value : undefined
@@ -55,7 +54,6 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 
         inputFields.forEach(field => {
             const value = userFieldMap[field as PreTestUserData]
-            console.log(value)
             if (value) {
                 setValue(field as keyof UserDataFormValues, value)
             }

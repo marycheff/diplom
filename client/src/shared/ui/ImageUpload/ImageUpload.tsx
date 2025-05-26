@@ -1,4 +1,5 @@
-import { ChangeEvent, FC, useRef, useState } from "react"
+import { ChangeEvent, DragEvent, FC, useRef, useState } from "react"
+import toast from "react-hot-toast"
 import styles from "./ImageUpload.module.scss"
 
 interface ImageUploadProps {
@@ -9,25 +10,72 @@ interface ImageUploadProps {
 
 const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, className }) => {
     const [preview, setPreview] = useState<string | undefined>(currentImage)
+    const [isDragging, setIsDragging] = useState(false)
+    const dragCounter = useRef(0)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0]
-        if (!file) return
+    const validateAndLoadImage = (file: File) => {
+        if (file.size > 1 * 1024 * 1024) {
+            toast.error("Файл слишком большой. Максимальный размер: 1MB")
+            return
+        }
 
-        if (file.size > 5 * 1024 * 1024) {
-            // 5MB limit
-            alert("Файл слишком большой. Максимальный размер: 5MB")
+        if (!["image/jpeg", "image/png"].includes(file.type)) {
+            toast.error("Разрешены только изображения JPG и PNG")
             return
         }
 
         const reader = new FileReader()
         reader.onloadend = () => {
             const base64String = reader.result as string
-            setPreview(base64String)
-            onImageSelect(base64String)
+            const img = new Image()
+            img.onload = () => {
+                if (img.width > 500 || img.height > 500) {
+                    toast.error("Изображение превышает допустимые размеры 500x500 пикселей")
+                    return
+                }
+                setPreview(base64String)
+                onImageSelect(base64String)
+            }
+            img.src = base64String
         }
         reader.readAsDataURL(file)
+    }
+
+    const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (file) validateAndLoadImage(file)
+    }
+
+    const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+        event.preventDefault()
+        dragCounter.current = 0
+        setIsDragging(false)
+
+        const files = event.dataTransfer.files
+        if (files.length > 1) {
+            toast.error("Можно загрузить только один файл")
+            return
+        }
+
+        const file = files?.[0]
+        if (file) validateAndLoadImage(file)
+    }
+
+    const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+        event.preventDefault()
+    }
+
+    const handleDragEnter = (event: DragEvent<HTMLDivElement>) => {
+        event.preventDefault()
+        dragCounter.current++
+        if (dragCounter.current === 1) setIsDragging(true)
+    }
+
+    const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
+        event.preventDefault()
+        dragCounter.current--
+        if (dragCounter.current === 0) setIsDragging(false)
     }
 
     const handleClick = () => {
@@ -44,12 +92,18 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
     }
 
     return (
-        <div className={`${styles.container} ${className || ""}`} onClick={handleClick}>
+        <div
+            className={`${styles.container} ${className || ""} ${isDragging ? styles.dragging : ""}`}
+            onClick={handleClick}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}>
             <input
                 type="file"
                 ref={fileInputRef}
                 onChange={handleImageChange}
-                accept="image/jpeg,image/png,image/gif"
+                accept="image/jpeg,image/png"
                 className={styles.input}
             />
             {preview ? (
@@ -61,8 +115,8 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
                 </div>
             ) : (
                 <div className={styles.placeholder}>
-                    <span>Нажмите, чтобы добавить изображение</span>
-                    <span className={styles.subtitle}>JPG, PNG или GIF до 5MB</span>
+                    <span>Нажмите или перетащите изображение сюда</span>
+                    <span className={styles.subtitle}>JPG или PNG до 1MB, не больше 500×500px</span>
                 </div>
             )}
         </div>

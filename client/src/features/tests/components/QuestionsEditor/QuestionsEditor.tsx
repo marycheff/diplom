@@ -202,7 +202,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
                 id: editingQuestion?.id || `temp-${Date.now()}`,
                 text: formatSpaces(data.question),
                 type: questionType,
-                image: data.image || undefined,
+                image: data.image || null,
                 answers: [
                     {
                         id: `temp-${Date.now()}-0`,
@@ -243,7 +243,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
             id: editingQuestion?.id || `temp-${Date.now()}`,
             text: formatSpaces(data.question),
             type: numOfCorrectAnswers === 1 ? QuestionType.SINGLE_CHOICE : QuestionType.MULTIPLE_CHOICE,
-            image: data.image || undefined,
+            image: data.image || null,
             answers: validAnswers,
         }
 
@@ -436,7 +436,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
                                 id="questionType"
                                 value={questionType}
                                 disabled={editingQuestion !== null}
-                                onChange={e => {
+                                onChange={e => {    
                                     setQuestionType(e.target.value as QuestionType)
                                     // Дополнительная логика при изменении типа
                                 }}

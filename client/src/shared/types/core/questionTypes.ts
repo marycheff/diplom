@@ -22,7 +22,7 @@ export interface QuestionDTO {
     order?: number
     answers: AnswerDTO[]
     type: QuestionType
-    image?: string
+    image: string | null
 }
 
 export interface AnswerDTO {

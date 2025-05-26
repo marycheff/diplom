@@ -535,6 +535,12 @@ const TestInfoPage = () => {
                                                 </div>
                                             ))}
                                         </div>
+                                        {question.image && (
+                                            <img
+                                                src={`${import.meta.env.VITE_SERVER_URL}${question.image}`}
+                                                alt="картинка не загрузилась"
+                                            />
+                                        )}
                                     </div>
                                 ))}
                             </div>

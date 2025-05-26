@@ -1,6 +1,7 @@
 import axiosInstance from "@/api"
 import { AuthResponse } from "@/shared/types"
 import { AxiosResponse } from "axios"
+import toast from "react-hot-toast"
 
 class AuthService {
     async login(email: string, password: string): Promise<AxiosResponse<AuthResponse>> {
@@ -14,7 +15,7 @@ class AuthService {
             await axiosInstance.post("/auth/logout")
             localStorage.removeItem("token")
         } catch (error) {
-            console.log(error)
+            toast.error("Ошибка при выходе из аккаунта")
         }
     }
     async updateActivationLink(email: string): Promise<AxiosResponse<AuthResponse>> {
