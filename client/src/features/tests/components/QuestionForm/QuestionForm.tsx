@@ -1,9 +1,10 @@
 import { GenerateAnswerFormData } from "@/shared/types"
 import { answerValidationRules, questionValidationRules } from "@/shared/types/utils/validationRules"
 import { AIButton } from "@/shared/ui/Button"
+import ImageUpload from "@/shared/ui/ImageUpload/ImageUpload"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
-import { FC, FormEvent } from "react"
+import { FC, FormEvent, useState } from "react"
 import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form"
 
 interface QuestionFormProps {
@@ -14,6 +15,7 @@ interface QuestionFormProps {
     isButtonDisabled: boolean
     setValue: UseFormSetValue<GenerateAnswerFormData>
     trigger: UseFormTrigger<GenerateAnswerFormData>
+    initialImage?: string
 }
 
 const QuestionForm: FC<QuestionFormProps> = ({
@@ -24,7 +26,14 @@ const QuestionForm: FC<QuestionFormProps> = ({
     onSubmit,
     setValue,
     trigger,
+    initialImage,
 }) => {
+    const [currentImage, setCurrentImage] = useState(initialImage)
+
+    const handleImageSelect = (base64Image: string) => {
+        setValue("image", base64Image)
+        setCurrentImage(base64Image)
+    }
     return (
         <form onSubmit={onSubmit}>
             {/* {isLoading && <Loader delay={300} />} */}
@@ -38,7 +47,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 validationRules={questionValidationRules}
                 multiline
             />
-            
+
             <ValidatedInput
                 clearable
                 placeholder="Правильный ответ"
@@ -49,6 +58,8 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 errors={errors?.answer}
                 validationRules={answerValidationRules}
             />
+
+            <ImageUpload onImageSelect={handleImageSelect} currentImage={currentImage} />
 
             <Select
                 register={register}

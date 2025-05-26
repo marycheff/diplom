@@ -6,7 +6,8 @@ import { fileURLToPath } from "url"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const UPLOAD_DIR = path.resolve(__dirname, "..", "..", "uploads", "questions")
+const UPLOAD_DIR = path.resolve(__dirname, "..", "..","..", "uploads", "questions")
+console.log(`UPLOAD_DIR: ${UPLOAD_DIR}`)
 
 export class ImageService {
     async saveBase64Image(imageBase64: string, targetId: string): Promise<string> {

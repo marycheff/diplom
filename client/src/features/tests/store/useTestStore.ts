@@ -128,12 +128,7 @@ export const useTestStore = create<TestState>(set => {
             }
             return withGenerating(operation)
         },
-        updateTestQuestions: async (testId, data) => {
-            const operation = async () => {
-                await testService.updateTestQuestions(testId, data)
-            }
-            return withLoading(operation)
-        },
+
         updateTestSettings: async (testId, updatedSettings) => {
             const operation = async () => {
                 await testService.updateTestSettings(testId, updatedSettings)

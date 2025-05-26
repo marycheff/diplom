@@ -19,67 +19,6 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 }
 
 class QuestionService {
-    // async uploadImage(questionId: string, file: Express.Multer.File): Promise<void> {
-    //     logger.info(`[${LOG_NAMESPACE}] Загрузка изображения для вопроса`, {
-    //         questionId,
-    //         filename: file.filename,
-    //         size: file.size,
-    //     })
-
-    //     return executeTransaction(async tx => {
-    //         const question = await questionRepository.findById(questionId, tx)
-    //         if (!question) {
-    //             // Удаляем загруженный файл, если вопрос не найден
-    //             await fs.promises.unlink(file.path)
-    //             throw ApiError.NotFound("Вопрос не найден")
-    //         }
-
-    //         // Удаляем старое изображение, если оно существует
-    //         if (question.image) {
-    //             const oldImagePath = path.join(UPLOAD_DIR, path.basename(question.image))
-    //             if (fs.existsSync(oldImagePath)) {
-    //                 await fs.promises.unlink(oldImagePath)
-    //             }
-    //         }
-
-    //         // Обновляем информацию о изображении в базе данных
-    //         await questionRepository.update(
-    //             questionId,
-    //             {
-    //                 ...question,
-    //                 image: `/api/questions/images/${file.filename}`,
-    //             },
-    //             tx
-    //         )
-    //     })
-    // }
-
-    // async getImage(filename: string): Promise<{ path: string; mimetype: string }> {
-    //     const filepath = path.join(UPLOAD_DIR, filename)
-
-    //     if (!fs.existsSync(filepath)) {
-    //         throw ApiError.NotFound("Изображение не найдено")
-    //     }
-
-    //     const ext = path.extname(filename).toLowerCase()
-    //     let mimetype = "application/octet-stream"
-
-    //     switch (ext) {
-    //         case ".jpg":
-    //         case ".jpeg":
-    //             mimetype = "image/jpeg"
-    //             break
-    //         case ".png":
-    //             mimetype = "image/png"
-    //             break
-    //         case ".gif":
-    //             mimetype = "image/gif"
-    //             break
-    //     }
-
-    //     return { path: filepath, mimetype }
-    // }
-
     async upsertQuestions(testId: string, questions: QuestionDTO[]): Promise<QuestionDTO[]> {
         logger.info(`[${LOG_NAMESPACE}] Полное обновление вопросов теста`, {
             testId,

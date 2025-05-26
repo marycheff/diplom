@@ -40,12 +40,7 @@ interface TextInputFormData {
     answer: string
 }
 
-const QuestionsEditor: FC<QuestionsEditorProps> = ({
-    data,
-    onQuestionComplete,
-    setHasUnsavedChanges,
-    isLoading,
-}) => {
+const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, setHasUnsavedChanges, isLoading }) => {
     const [questions, setQuestions] = useState<QuestionDTO[]>(data)
     const [editingQuestion, setEditingQuestion] = useState<QuestionDTO | null>(null)
     const [expandedQuestionIds, setExpandedQuestionIds] = useState<string[]>([])
@@ -200,22 +195,21 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
         setCurrentAnswers(prev => [...prev, { id: `temp-${Date.now()}`, text: "", isCorrect: false }])
     }
 
-    const handleAddQuestion = (data: GenerateAnswerFormData & TextInputFormData) => {
+    const handleAddQuestion = (data: GenerateAnswerFormData & TextInputFormData & { image?: string }) => {
         if (questionType === QuestionType.TEXT_INPUT || questionType === QuestionType.FILL_IN_THE_BLANK) {
             // Для TEXT_INPUT и FILL_IN_THE_BLANK создаем только один ответ, который является правильным
-            const textInputAnswer: AnswerDTO[] = [
-                {
-                    id: `temp-${Date.now()}-0`,
-                    text: formatSpaces(data.answer),
-                    isCorrect: true,
-                },
-            ]
-
             const newQuestion: QuestionDTO = {
                 id: editingQuestion?.id || `temp-${Date.now()}`,
                 text: formatSpaces(data.question),
                 type: questionType,
-                answers: textInputAnswer,
+                image: data.image || undefined,
+                answers: [
+                    {
+                        id: `temp-${Date.now()}-0`,
+                        text: formatSpaces(data.answer),
+                        isCorrect: true,
+                    },
+                ],
             }
 
             if (editingQuestion) {
@@ -249,6 +243,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({
             id: editingQuestion?.id || `temp-${Date.now()}`,
             text: formatSpaces(data.question),
             type: numOfCorrectAnswers === 1 ? QuestionType.SINGLE_CHOICE : QuestionType.MULTIPLE_CHOICE,
+            image: data.image || undefined,
             answers: validAnswers,
         }
 

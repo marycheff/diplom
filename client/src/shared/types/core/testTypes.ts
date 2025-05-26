@@ -27,7 +27,6 @@ export interface TestState {
     getUserTests: (userId: string, page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     createTest: (title: string, description?: string) => Promise<TestDTO | undefined>
     generateAnswers: (data: GenerateAnswerFormData) => Promise<string[]>
-    updateTestQuestions: (testId: string, data: UpdateTestDTO) => Promise<void>
     upsertQuestions: (testId: string, questions: QuestionDTO[]) => Promise<QuestionDTO[]>
     updateTestSettings: (testId: string, updatedSettings: TestSettingsDTO) => Promise<void>
     updateShortInfo: (testId: string, updatedShortInfo: ShortTestInfo) => Promise<void>
@@ -95,6 +94,7 @@ export interface GenerateAnswerFormData {
     question: string
     answer: string
     numOfAnswers: number
+    image?: string
 }
 export interface ShortTestInfo {
     title: string

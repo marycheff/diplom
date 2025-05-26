@@ -30,6 +30,8 @@ app.use(
         // origin: envConfig.ALLOWED_ORIGINS!.split(","),
     })
 )
+
+app.use("/api/questions/images", express.static("uploads/questions"))
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/chat", chatRoutes)

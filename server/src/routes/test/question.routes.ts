@@ -46,16 +46,6 @@ router.put(
     questionController.upsertQuestions
 )
 
-// Загрузка изображения для вопроса
-// router.post(
-//     "/:testId/questions/:questionId/image",
-//     authMiddleware,
-//     testOwnershipMiddleware,
-//     upload.single("image"),
-//     questionController.uploadQuestionImage
-// )
 
-// Получение изображения вопроса
-// router.get("/questions/images/:filename", questionController.getQuestionImage)
 
 export const questionRoutes = router
