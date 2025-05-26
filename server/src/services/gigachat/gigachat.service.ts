@@ -27,7 +27,6 @@ class GigaChatService {
 
         try {
             logger.debug(`[${LOG_NAMESPACE}] Отправка запроса к GigaChat`)
-            console.log("MODEL", envConfig.GIGACHAT_ANSWERS_MODEL)
             const response = await axios<GigaChatContentResponse>(requestOptions)
 
             logger.debug(`[${LOG_NAMESPACE}] Ответ от GigaChat: ${JSON.stringify(response.data).substring(0, 30)}...`)
@@ -197,6 +196,7 @@ class GigaChatService {
                 type: "SINGLE_CHOICE",
                 order: questionCounter,
                 answers,
+                image: null,
             })
         }
 

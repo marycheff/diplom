@@ -4,7 +4,7 @@ export interface CreateQuestionDTO {
     text: string
     type: QuestionType
     order?: number
-    image?: string 
+    image: string | null
 }
 
 export interface CreateAnswerDTO {
@@ -27,7 +27,7 @@ export interface UserQuestionDTO {
     id: string
     text: string
     type: QuestionType
-    image?: string
+    image: string | null
     answers: AnswerUserDTO[]
 }
 

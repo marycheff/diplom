@@ -6,8 +6,7 @@ import { fileURLToPath } from "url"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const UPLOAD_DIR = path.resolve(__dirname, "..", "..","..", "uploads", "questions")
-console.log(`UPLOAD_DIR: ${UPLOAD_DIR}`)
+const UPLOAD_DIR = path.resolve(__dirname, "..", "..", "..", "uploads", "questions")
 
 export class ImageService {
     async saveBase64Image(imageBase64: string, targetId: string): Promise<string> {
@@ -21,7 +20,7 @@ export class ImageService {
         const [, extension, base64Data] = matches
         const buffer = Buffer.from(base64Data, "base64")
 
-        if (buffer.length > 5 * 1024 * 1024) {
+        if (buffer.length > 1 * 1024 * 1024) {
             throw ApiError.BadRequest("Размер изображения превышает 5MB")
         }
 
@@ -54,18 +53,20 @@ export class ImageService {
 
     async processImage(imageBase64: string, tempId: string, realId?: string): Promise<string> {
         console.log(`Processing image with tempId: ${tempId}, imageBase64: ${imageBase64}`)
+
+        if (imageBase64.startsWith("/api/questions/images/")) {
+            return imageBase64
+        }
         const matches = imageBase64.trim().match(/^(data:)?image\/(png|jpeg|jpg|gif);base64,(.+)$/i)
 
         if (!matches) {
             throw ApiError.BadRequest("Некорректный формат изображения!!")
         }
 
-        // Extract components - matches[2] is the extension, matches[3] is the base64 data
         const extension = matches[2]
         const base64Data = matches[3]
         const buffer = Buffer.from(base64Data, "base64")
 
-        // Check file size (5MB limit)
         if (buffer.length > 5 * 1024 * 1024) {
             throw ApiError.BadRequest("Размер изображения превышает 5MB")
         }
@@ -73,6 +74,8 @@ export class ImageService {
         let metadata
         try {
             metadata = await sharp(buffer).metadata()
+            console.log(metadata)
+
             if (!metadata.width || !metadata.height) {
                 throw ApiError.BadRequest("Не удалось определить размеры изображения")
             }
@@ -100,6 +103,16 @@ export class ImageService {
         }
 
         return `/api/questions/images/${tempFilename}`
+    }
+
+    async deleteImage(imagePath: string): Promise<void> {
+        const filename = path.basename(imagePath)
+        const fullPath = path.join(UPLOAD_DIR, filename)
+        try {
+            await fs.promises.unlink(fullPath)
+        } catch (err) {
+            console.warn(`Не удалось удалить файл изображения: ${fullPath}`, err)
+        }
     }
 }
 

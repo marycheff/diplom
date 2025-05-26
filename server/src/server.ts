@@ -37,13 +37,13 @@ app.use("/api/users", userRoutes)
 app.use("/api/chat", chatRoutes)
 app.use("/api/tests", testRoutes)
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    errorMiddleware(err, req, res, next)
-})
 app.get("/", (req: Request, res: Response) => {
     res.send("Сервер работает")
 })
 
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    errorMiddleware(err, req, res, next)
+})
 const start = async () => {
     try {
         await connectRedis()

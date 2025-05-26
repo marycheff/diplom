@@ -28,7 +28,6 @@ class QuestionService {
         // Проверка на недопустимые слова перед обновлением
         this.checkForBadWords(questions)
         this.validateFillInTheBlankQuestions(questions)
-        console.log("questions", questions)
         return executeTransaction(async tx => {
             // Проверка существования теста
             const test = await testRepository.findById(testId, tx)
@@ -98,13 +97,10 @@ class QuestionService {
                         if (question.image) {
                             question.image = await imageService.processImage(question.image, tempId)
                         }
-                        console.log("question.image", question.image)
-
                         logger.debug(`[${LOG_NAMESPACE}] Создание нового вопроса`, { question })
 
                         const newQuestion = await questionRepository.create(question, testId, tx)
 
-                        // Убрано повторное обращение к processImage
                         questionId = newQuestion.id
                         question.id = questionId
                         question.answers = newQuestion.answers.map(answer => ({ ...answer, id: answer.id }))
@@ -137,6 +133,9 @@ class QuestionService {
                     questionId: questionToDelete.id,
                 })
                 await questionRepository.delete(questionToDelete.id, tx)
+                if (questionToDelete.image) {
+                    await imageService.deleteImage(questionToDelete.image)
+                }
             }
             await testRepository.incrementVersion(testId, test.version, tx)
             await testRepository.cleanupUnusedSnapshots(testId, tx)
