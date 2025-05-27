@@ -1,12 +1,12 @@
 import { QuestionDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Tooltip from "@/shared/ui/Tooltip/Tooltip"
-import { getImageUrl } from "@/shared/utils"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { FC, useRef } from "react"
 import { FaAngleDown, FaAngleUp, FaTrash } from "react-icons/fa"
 import styles from "./QuestionItem.module.scss"
+import { getImageUrl } from "@/shared/utils"
 
 interface QuestionItemProps {
     id: string

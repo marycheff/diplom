@@ -1,5 +1,5 @@
 import { getImageUrl } from "@/shared/utils"
-import { ChangeEvent, DragEvent, FC, useEffect, useRef, useState } from "react"
+import React, { ChangeEvent, DragEvent, FC, useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
 import styles from "./ImageUpload.module.scss"
 
@@ -21,8 +21,6 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
             fileInputRef.current.value = ""
         }
     }, [currentImage])
-    console.log(currentImage)
-
     const validateAndLoadImage = (file: File) => {
         if (file.size > 1 * 1024 * 1024) {
             toast.error("Файл слишком большой. Максимальный размер: 1MB")
@@ -132,4 +130,4 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
     )
 }
 
-export default ImageUpload
+export default React.memo(ImageUpload)

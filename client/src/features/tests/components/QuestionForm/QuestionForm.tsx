@@ -4,7 +4,7 @@ import { AIButton } from "@/shared/ui/Button"
 import ImageUpload from "@/shared/ui/ImageUpload/ImageUpload"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
-import { FC, FormEvent } from "react"
+import { FC, FormEvent, useCallback } from "react" // Добавляем useCallback
 import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger, UseFormWatch } from "react-hook-form"
 
 interface QuestionFormProps {
@@ -30,10 +30,12 @@ const QuestionForm: FC<QuestionFormProps> = ({
 }) => {
     const imageValue = watch("image")
 
-    // Обработчик выбора изображения обновляет только поле формы
-    const handleImageSelect = (base64Image: string) => {
-        setValue("image", base64Image)
-    }
+    const handleImageSelect = useCallback(
+        (base64Image: string) => {
+            setValue("image", base64Image)
+        },
+        [setValue]
+    )
 
     return (
         <form onSubmit={onSubmit}>
@@ -57,7 +59,6 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 errors={errors?.answer}
                 validationRules={answerValidationRules}
             />
-            {/* Передаем текущее значение поля "image" в ImageUpload */}
             <ImageUpload onImageSelect={handleImageSelect} currentImage={imageValue} />
             <Select
                 register={register}

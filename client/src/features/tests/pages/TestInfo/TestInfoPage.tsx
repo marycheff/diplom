@@ -587,7 +587,6 @@ const TestInfoPage = () => {
                     onQuestionComplete={questions => {
                         handleQuestionsUpsert(questions)
                     }}
-                    onCancel={handleCloseUpsertQuestionsModal}
                     setHasUnsavedChanges={setHasUnsavedChanges}
                     isLoading={isLoading}
                 />
