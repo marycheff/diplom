@@ -24,6 +24,8 @@ export interface QuestionSnapshotDTO {
     text: string
     order: number
     type: QuestionType
+    image: string | null
+
     createdAt: Date
     answers: AnswerSnapshotDTO[]
 }

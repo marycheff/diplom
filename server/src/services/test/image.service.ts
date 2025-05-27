@@ -9,41 +9,6 @@ const __dirname = path.dirname(__filename)
 const UPLOAD_DIR = path.resolve(__dirname, "..", "..", "..", "uploads", "questions")
 
 export class ImageService {
-    async saveBase64Image(imageBase64: string, targetId: string): Promise<string> {
-        console.log(`Processing image . imageBase64: ${imageBase64}`)
-        const matches = imageBase64.trim().match(/^(data:)?image\/(png|jpeg|jpg|gif);base64,(.+)$/i)
-
-        if (!matches) {
-            throw ApiError.BadRequest("Некорректный формат изображения")
-        }
-
-        const [, extension, base64Data] = matches
-        const buffer = Buffer.from(base64Data, "base64")
-
-        if (buffer.length > 1 * 1024 * 1024) {
-            throw ApiError.BadRequest("Размер изображения превышает 5MB")
-        }
-
-        const metadata = await sharp(buffer).metadata()
-        if (!metadata.width || !metadata.height) {
-            throw ApiError.BadRequest("Не удалось определить размеры изображения")
-        }
-
-        if (metadata.width > 500 || metadata.height > 500) {
-            throw ApiError.BadRequest("Изображение должно быть не больше 500×500 пикселей")
-        }
-
-        if (!fs.existsSync(UPLOAD_DIR)) {
-            fs.mkdirSync(UPLOAD_DIR, { recursive: true })
-        }
-
-        const filename = `${targetId}.${extension}`
-        const filepath = path.join(UPLOAD_DIR, filename)
-        await fs.promises.writeFile(filepath, buffer)
-
-        return `/api/questions/images/${filename}`
-    }
-
     async renameImage(oldId: string, newId: string, extension: string): Promise<string> {
         const oldPath = path.join(UPLOAD_DIR, `${oldId}.${extension}`)
         const newPath = path.join(UPLOAD_DIR, `${newId}.${extension}`)

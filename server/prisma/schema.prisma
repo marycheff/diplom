@@ -95,7 +95,7 @@ model Question {
   text        String       @db.VarChar(500)
   order       Int
   type        QuestionType @default(SINGLE_CHOICE)
-  image  String?      @db.VarChar(255)
+  image       String?      @db.VarChar(255)
   // TIMESTAMPS
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -215,6 +215,7 @@ model QuestionSnapshot {
   originalId     String
   text           String           @db.VarChar(500)
   order          Int
+  image          String?          @db.VarChar(255)
   type           QuestionType
   // TIMESTAMPS
   createdAt      DateTime         @default(now())

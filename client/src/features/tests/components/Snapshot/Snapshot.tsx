@@ -7,6 +7,7 @@ import { formatSeconds } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { FC, useEffect, useState } from "react"
 import styles from "./Snapshot.module.scss"
+import { getImageUrl } from "@/shared/utils"
 
 interface SnapshotProps {
     snapshotId: string
@@ -163,6 +164,11 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
                                         <span className={styles.questionText}>{question.text}</span>
                                         <span className={styles.questionType}>{QuestionTypeLabels[question.type]}</span>
                                     </div>
+                                    {question.image && (
+                                        <div className={styles.questionImage}>
+                                            <img src={getImageUrl(question.image)} alt=" картинка не загрузилась" />
+                                        </div>
+                                    )}
                                     <div className={styles.answersList}>
                                         {question.answers.map(answer => (
                                             <div

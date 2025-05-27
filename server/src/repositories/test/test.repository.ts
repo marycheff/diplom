@@ -71,6 +71,7 @@ class TestRepository {
                     text: question.text,
                     order: question.order,
                     type: question.type,
+                    image: question.image,
                 },
             })
 

@@ -47,7 +47,7 @@ const CopyButton = ({ textToCopy, className = "", showOnHover = false, variant =
             }, 1500)
         } catch (err) {
             setIsTimeout(false)
-            console.error("Failed to copy text: ", err)
+            toast.error("Ошибка копирования")
         }
     }
 

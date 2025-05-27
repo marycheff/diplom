@@ -254,3 +254,35 @@
     font-size: 12px;
     font-weight: 600;
 }
+
+.questionImage {
+    margin-left: 40px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    padding: 20px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $background-800;
+    min-height: 100px;
+
+    img {
+        max-width: 100%;
+        max-height: 400px;
+        height: auto;
+        display: block;
+        object-fit: contain;
+        border-radius: 4px;
+    }
+}
+
+.imageFallback {
+    padding: 1rem;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    text-align: center;
+}

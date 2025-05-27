@@ -1,7 +1,6 @@
 import { envConfig } from "@/config/env-config"
 import { ApiError } from "@/exceptions"
 import { logger } from "@/utils/logger"
-import { generateUUID } from "@/utils/math"
 import axios from "axios"
 import https from "follow-redirects/https"
 import qs from "querystring"
@@ -22,7 +21,7 @@ class GigaChatTokenService {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
                 Accept: "application/json",
-                RqUID: generateUUID(),
+                RqUID: crypto.randomUUID(),
                 Authorization: `Bearer ${authData}`,
             },
             data: postData,

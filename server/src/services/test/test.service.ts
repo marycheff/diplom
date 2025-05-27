@@ -548,7 +548,6 @@ class TestService {
                 await testRepository.updateModerationStatus(testId, status, moderatorId, tx)
 
                 const author = await userRepository.findById(existingTest.authorId)
-                console.log(author?.email)
 
                 // Отправка письма в зависимости от статуса
                 if (author?.email) {
