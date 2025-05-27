@@ -522,6 +522,11 @@ const TestInfoPage = () => {
                                                 {QuestionTypeLabels[question.type]}
                                             </span>
                                         </div>
+                                        {question.image && (
+                                            <div className={styles.questionImage}>
+                                                <img src={getImageUrl(question.image)} alt="картинка не загрузилась" />
+                                            </div>
+                                        )}
                                         <div className={styles.answersList}>
                                             {question.answers.map(answer => (
                                                 <div
@@ -536,9 +541,6 @@ const TestInfoPage = () => {
                                                 </div>
                                             ))}
                                         </div>
-                                        {question.image && (
-                                            <img src={getImageUrl(question.image)} alt="картинка не загрузилась" />
-                                        )}
                                     </div>
                                 ))}
                             </div>

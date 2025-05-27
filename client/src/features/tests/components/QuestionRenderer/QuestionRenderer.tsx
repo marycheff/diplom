@@ -1,20 +1,13 @@
-import { QuestionType, QuestionTypeLabels } from "@/shared/types"
+import { QuestionType, QuestionTypeLabels, UserQuestionDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
+import { getImageUrl } from "@/shared/utils"
 import { formatSpaces } from "@/shared/utils/formatter"
 import React, { useEffect, useState } from "react"
 import styles from "./QuestionRenderer.module.scss"
 
 export interface QuestionRendererProps {
-    question: {
-        id: string
-        text: string
-        type: QuestionType
-        answers?: Array<{
-            id: string
-            text: string
-        }>
-    }
+    question: UserQuestionDTO
     selectedAnswers: string[]
     textAnswer: string
     isPreviewMode?: boolean
@@ -88,102 +81,114 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
     }
 
     return (
-        <div className={styles.questionContent}>
-            <div className={styles.questionHeader}>
-                {question.type !== QuestionType.FILL_IN_THE_BLANK ? (
-                    <h3>{question.text}</h3>
-                ) : (
-                    <h3>Заполните пропуск</h3>
-                )}
-                <h4 className={styles.questionType}>{QuestionTypeLabels[question.type].toLowerCase()}</h4>
-            </div>
+        <>
+            {question.image && (
+                <div className={styles.questionImage}>
+                    <img src={getImageUrl(question.image)} alt="Изображение к вопросу" />
+                </div>
+            )}
+            <div className={styles.questionContent}>
+                <div className={styles.questionHeader}>
+                    {question.type !== QuestionType.FILL_IN_THE_BLANK ? (
+                        <h3>{question.text}</h3>
+                    ) : (
+                        <h3>Заполните пропуск</h3>
+                    )}
+                    <h4 className={styles.questionType}>{QuestionTypeLabels[question.type].toLowerCase()}</h4>
+                </div>
 
-            <div className={styles.answerOptions}>
-                {question.type === QuestionType.TEXT_INPUT ? (
-                    <textarea
-                        className={styles.textInput}
-                        value={localTextAnswer}
-                        onChange={handleTextChange}
-                        onBlur={handleBlur}
-                        disabled={isCompleted || isPreviewMode}
-                        placeholder="Введите ваш ответ..."
-                    />
-                ) : question.type === QuestionType.FILL_IN_THE_BLANK ? (
-                    <div className={styles.fillInTheBlankContainer}>
-                        <div className={styles.questionWithBlank}>
-                            {question.text.split("{blank}").map((part, index, array) => (
-                                <React.Fragment key={index}>
-                                    {part}
-                                    {index < array.length - 1 && (
-                                        <input
-                                            type="text"
-                                            className={styles.blankInput}
-                                            value={localTextAnswer}
-                                            onChange={handleTextChange}
-                                            onBlur={handleBlur}
-                                            disabled={isCompleted || isPreviewMode}
-                                        />
-                                    )}
-                                </React.Fragment>
-                            ))}
+                <div className={styles.answerOptions}>
+                    {question.type === QuestionType.TEXT_INPUT ? (
+                        <textarea
+                            className={styles.textInput}
+                            value={localTextAnswer}
+                            onChange={handleTextChange}
+                            onBlur={handleBlur}
+                            disabled={isCompleted || isPreviewMode}
+                            placeholder="Введите ваш ответ..."
+                        />
+                    ) : question.type === QuestionType.FILL_IN_THE_BLANK ? (
+                        <div className={styles.fillInTheBlankContainer}>
+                            <div className={styles.questionWithBlank}>
+                                {question.text.split("{blank}").map((part, index, array) => (
+                                    <React.Fragment key={index}>
+                                        {part}
+                                        {index < array.length - 1 && (
+                                            <input
+                                                type="text"
+                                                className={styles.blankInput}
+                                                value={localTextAnswer}
+                                                onChange={handleTextChange}
+                                                onBlur={handleBlur}
+                                                disabled={isCompleted || isPreviewMode}
+                                            />
+                                        )}
+                                    </React.Fragment>
+                                ))}
+                            </div>
                         </div>
+                    ) : (
+                        question.answers?.map((answer, index) => (
+                            <div
+                                key={answer.id}
+                                className={`${styles.answerOption} ${
+                                    isCompleted || isPreviewMode ? styles.disabled : ""
+                                }`}
+                                onClick={handleAnswerOptionClick(
+                                    answer.id,
+                                    question.type === QuestionType.SINGLE_CHOICE
+                                )}>
+                                {question.type === QuestionType.SINGLE_CHOICE ? (
+                                    <input
+                                        type="radio"
+                                        checked={localSelectedAnswers.includes(answer.id)}
+                                        readOnly
+                                        disabled={isCompleted || isPreviewMode}
+                                    />
+                                ) : (
+                                    <Checkbox
+                                        id={`checkbox-${question.id}-${index}`}
+                                        checked={localSelectedAnswers.includes(answer.id)}
+                                        onChange={handleCheckboxChange(answer.id)}
+                                        disabled={isCompleted || isPreviewMode}
+                                    />
+                                )}
+                                <label>{answer.text}</label>
+                            </div>
+                        ))
+                    )}
+                </div>
+
+                {!isPreviewMode && (
+                    <div className={styles.actionButtons}>
+                        {isLastQuestion && !isCompleted && (
+                            <Button onClick={onSubmitAnswers} disabled={isLoading} className={styles.submitButton}>
+                                {isLoading ? "Отправка..." : "Отправить ответы"}
+                            </Button>
+                        )}
+                        {!isLastQuestion && !isCompleted && onNextQuestion && (
+                            <Button onClick={onNextQuestion} className={styles.submitButton}>
+                                Следующий вопрос
+                            </Button>
+                        )}
                     </div>
-                ) : (
-                    question.answers?.map((answer, index) => (
-                        <div
-                            key={answer.id}
-                            className={`${styles.answerOption} ${isCompleted || isPreviewMode ? styles.disabled : ""}`}
-                            onClick={handleAnswerOptionClick(answer.id, question.type === QuestionType.SINGLE_CHOICE)}>
-                            {question.type === QuestionType.SINGLE_CHOICE ? (
-                                <input
-                                    type="radio"
-                                    checked={localSelectedAnswers.includes(answer.id)}
-                                    readOnly
-                                    disabled={isCompleted || isPreviewMode}
-                                />
-                            ) : (
-                                <Checkbox
-                                    id={`checkbox-${question.id}-${index}`}
-                                    checked={localSelectedAnswers.includes(answer.id)}
-                                    onChange={handleCheckboxChange(answer.id)}
-                                    disabled={isCompleted || isPreviewMode}
-                                />
-                            )}
-                            <label>{answer.text}</label>
-                        </div>
-                    ))
+                )}
+                {isPreviewMode && (
+                    <div className={styles.actionButtons}>
+                        {isLastQuestion && !isCompleted && (
+                            <Button onClick={onSubmitAnswers} disabled className={styles.submitButton}>
+                                {isLoading ? "Отправка..." : "Отправить ответы"}
+                            </Button>
+                        )}
+                        {!isLastQuestion && !isCompleted && onNextQuestion && (
+                            <Button onClick={onNextQuestion} className={styles.submitButton}>
+                                Следующий вопрос
+                            </Button>
+                        )}
+                    </div>
                 )}
             </div>
-
-            {!isPreviewMode && (
-                <div className={styles.actionButtons}>
-                    {isLastQuestion && !isCompleted && (
-                        <Button onClick={onSubmitAnswers} disabled={isLoading} className={styles.submitButton}>
-                            {isLoading ? "Отправка..." : "Отправить ответы"}
-                        </Button>
-                    )}
-                    {!isLastQuestion && !isCompleted && onNextQuestion && (
-                        <Button onClick={onNextQuestion} className={styles.submitButton}>
-                            Следующий вопрос
-                        </Button>
-                    )}
-                </div>
-            )}
-            {isPreviewMode && (
-                <div className={styles.actionButtons}>
-                    {isLastQuestion && !isCompleted && (
-                        <Button onClick={onSubmitAnswers} disabled className={styles.submitButton}>
-                            {isLoading ? "Отправка..." : "Отправить ответы"}
-                        </Button>
-                    )}
-                    {!isLastQuestion && !isCompleted && onNextQuestion && (
-                        <Button onClick={onNextQuestion} className={styles.submitButton}>
-                            Следующий вопрос
-                        </Button>
-                    )}
-                </div>
-            )}
-        </div>
+        </>
     )
 }
 
