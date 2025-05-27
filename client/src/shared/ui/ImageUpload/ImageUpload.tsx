@@ -1,4 +1,5 @@
-import { ChangeEvent, DragEvent, FC, useRef, useState } from "react"
+import { getImageUrl } from "@/shared/utils"
+import { ChangeEvent, DragEvent, FC, useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
 import styles from "./ImageUpload.module.scss"
 
@@ -13,6 +14,14 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
     const [isDragging, setIsDragging] = useState(false)
     const dragCounter = useRef(0)
     const fileInputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        setPreview(getImageUrl(currentImage))
+        if (!currentImage && fileInputRef.current) {
+            fileInputRef.current.value = ""
+        }
+    }, [currentImage])
+    console.log(currentImage)
 
     const validateAndLoadImage = (file: File) => {
         if (file.size > 1 * 1024 * 1024) {

@@ -27,6 +27,7 @@ import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
 import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal, Modal } from "@/shared/ui/Modal"
+import { getImageUrl } from "@/shared/utils"
 import { formatSeconds, formatSpaces, shortenText } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
@@ -536,10 +537,7 @@ const TestInfoPage = () => {
                                             ))}
                                         </div>
                                         {question.image && (
-                                            <img
-                                                src={`${import.meta.env.VITE_SERVER_URL}${question.image}`}
-                                                alt="картинка не загрузилась"
-                                            />
+                                            <img src={getImageUrl(question.image)} alt="картинка не загрузилась" />
                                         )}
                                     </div>
                                 ))}

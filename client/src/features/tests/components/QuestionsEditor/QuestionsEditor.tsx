@@ -305,6 +305,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
         setCurrentAnswers(newAnswers)
         setQuestionType(QuestionType.SINGLE_CHOICE)
 
+        // Сбрасываем изображение
+        setValue("image", "")
+
         // Сбрасываем начальное состояние формы
         setInitialFormState({
             question: "",
@@ -327,6 +330,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
     const editQuestion = (question: QuestionDTO) => {
         setEditingQuestion(question)
         setQuestionType(question.type)
+        setValue("image", question.image || "")
     }
 
     const deleteQuestion = (questionId: string) => {
@@ -372,6 +376,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
         !currentQuestion &&
         !currentAnswer &&
         currentAnswers.every(answer => !answer.text || formatSpaces(answer.text) === "")
+        
     // Предотвращение случайного закрытия страницы
     usePreventLeave({ shouldPrevent: hasFormChanges && Boolean(currentQuestion || currentAnswer) })
 
@@ -436,7 +441,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
                                 id="questionType"
                                 value={questionType}
                                 disabled={editingQuestion !== null}
-                                onChange={e => {    
+                                onChange={e => {
                                     setQuestionType(e.target.value as QuestionType)
                                     // Дополнительная логика при изменении типа
                                 }}
@@ -474,6 +479,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
                                         isGenerating={isGenerating}
                                         isButtonDisabled={!isFormValid}
                                         onSubmit={handleSubmit(askQuestion)}
+                                        watch={watch}
                                     />
                                     <AnswersList
                                         answers={currentAnswers}

@@ -4,8 +4,8 @@ import { AIButton } from "@/shared/ui/Button"
 import ImageUpload from "@/shared/ui/ImageUpload/ImageUpload"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
-import { FC, FormEvent, useState } from "react"
-import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form"
+import { FC, FormEvent } from "react"
+import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger, UseFormWatch } from "react-hook-form"
 
 interface QuestionFormProps {
     register: UseFormRegister<GenerateAnswerFormData>
@@ -15,7 +15,7 @@ interface QuestionFormProps {
     isButtonDisabled: boolean
     setValue: UseFormSetValue<GenerateAnswerFormData>
     trigger: UseFormTrigger<GenerateAnswerFormData>
-    initialImage?: string
+    watch: UseFormWatch<GenerateAnswerFormData>
 }
 
 const QuestionForm: FC<QuestionFormProps> = ({
@@ -26,17 +26,17 @@ const QuestionForm: FC<QuestionFormProps> = ({
     onSubmit,
     setValue,
     trigger,
-    initialImage,
+    watch,
 }) => {
-    const [currentImage, setCurrentImage] = useState(initialImage)
+    const imageValue = watch("image")
 
+    // Обработчик выбора изображения обновляет только поле формы
     const handleImageSelect = (base64Image: string) => {
         setValue("image", base64Image)
-        setCurrentImage(base64Image)
     }
+
     return (
         <form onSubmit={onSubmit}>
-            {/* {isLoading && <Loader delay={300} />} */}
             <ValidatedInput
                 placeholder="Вопрос"
                 name="question"
@@ -47,7 +47,6 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 validationRules={questionValidationRules}
                 multiline
             />
-
             <ValidatedInput
                 clearable
                 placeholder="Правильный ответ"
@@ -58,9 +57,8 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 errors={errors?.answer}
                 validationRules={answerValidationRules}
             />
-
-            <ImageUpload onImageSelect={handleImageSelect} currentImage={currentImage} />
-
+            {/* Передаем текущее значение поля "image" в ImageUpload */}
+            <ImageUpload onImageSelect={handleImageSelect} currentImage={imageValue} />
             <Select
                 register={register}
                 label="Количество ответов для генерации"
@@ -68,11 +66,11 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 options={[{ value: "1" }, { value: "2" }, { value: "3" }, { value: "4" }]}
                 value="3"
             />
-
             <AIButton type="submit" generating={isGenerating} disabled={isButtonDisabled}>
                 {isGenerating ? "Генерация" : "Генерировать"}
             </AIButton>
         </form>
     )
 }
+
 export default QuestionForm

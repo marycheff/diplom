@@ -1,6 +1,7 @@
 import { QuestionDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Tooltip from "@/shared/ui/Tooltip/Tooltip"
+import { getImageUrl } from "@/shared/utils"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { FC, useRef } from "react"
@@ -64,6 +65,11 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
             </div>
             {!isDragging && (
                 <div className={`${styles.questionContent} ${expanded ? styles.expanded : ""}`}>
+                    {question.image && (
+                        <div className={styles.questionImage}>
+                            <img src={getImageUrl(question.image)} alt="Изображение к вопросу" />
+                        </div>
+                    )}
                     {question.answers.map(answer => (
                         <div key={answer.id} className={answer.isCorrect ? styles.correctAnswer : styles.answer}>
                             {answer.text}
