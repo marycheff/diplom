@@ -416,6 +416,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
                                     errors={formState.errors}
                                     onSubmit={handleSubmit(handleAddQuestion)}
                                     trigger={trigger}
+                                    watch={watch}
                                 />
                             ) : questionType === QuestionType.FILL_IN_THE_BLANK ? (
                                 <FillInTheBlankQuestionForm
@@ -425,6 +426,8 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
                                     onSubmit={handleSubmit(handleAddQuestion)}
                                     isEditing={!!editingQuestion}
                                     trigger={trigger}
+                                    watch={watch}
+                                    
                                 />
                             ) : (
                                 <>

@@ -1,8 +1,9 @@
 import { GenerateAnswerFormData } from "@/shared/types"
 import { answerValidationRules, questionValidationRules } from "@/shared/types/utils/validationRules"
+import ImageUpload from "@/shared/ui/ImageUpload/ImageUpload"
 import { ValidatedInput } from "@/shared/ui/Input"
-import { FC, FormEvent } from "react"
-import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form"
+import { FC, FormEvent, useCallback } from "react"
+import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger, UseFormWatch } from "react-hook-form"
 
 interface TextInputFormData {
     question: string
@@ -16,9 +17,25 @@ interface TextInputQuestionFormProps {
     onSubmit: (e: FormEvent<HTMLFormElement>) => void
     setValue: UseFormSetValue<GenerateAnswerFormData & TextInputFormData>
     trigger: UseFormTrigger<GenerateAnswerFormData & TextInputFormData>
+    watch: UseFormWatch<GenerateAnswerFormData>
 }
 
-const TextInputQuestionForm: FC<TextInputQuestionFormProps> = ({ register, errors, onSubmit, setValue, trigger }) => {
+const TextInputQuestionForm: FC<TextInputQuestionFormProps> = ({
+    register,
+    errors,
+    onSubmit,
+    setValue,
+    trigger,
+    watch,
+}) => {
+    const imageValue = watch("image")
+    const handleImageSelect = useCallback(
+        (base64Image: string) => {
+            setValue("image", base64Image)
+        },
+        [setValue]
+    )
+
     return (
         <form onSubmit={onSubmit}>
             <ValidatedInput
@@ -31,7 +48,7 @@ const TextInputQuestionForm: FC<TextInputQuestionFormProps> = ({ register, error
                 errors={errors?.question}
                 validationRules={questionValidationRules}
             />
-            <br />
+
             <ValidatedInput
                 clearable
                 placeholder="Правильный ответ"
@@ -42,6 +59,7 @@ const TextInputQuestionForm: FC<TextInputQuestionFormProps> = ({ register, error
                 errors={errors?.answer}
                 validationRules={answerValidationRules}
             />
+            <ImageUpload onImageSelect={handleImageSelect} currentImage={imageValue} />
         </form>
     )
 }

@@ -166,7 +166,7 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
                                     </div>
                                     {question.image && (
                                         <div className={styles.questionImage}>
-                                            <img src={getImageUrl(question.image)} alt=" картинка не загрузилась" />
+                                            <img src={getImageUrl(question.image)} alt="Картинка не загрузилась" />
                                         </div>
                                     )}
                                     <div className={styles.answersList}>

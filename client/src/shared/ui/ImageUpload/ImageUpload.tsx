@@ -22,8 +22,8 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
         }
     }, [currentImage])
     const validateAndLoadImage = (file: File) => {
-        if (file.size > 1 * 1024 * 1024) {
-            toast.error("Файл слишком большой. Максимальный размер: 1MB")
+        if (file.size > 3 * 1024 * 1024) {
+            toast.error("Файл слишком большой. Максимальный размер: 3MB")
             return
         }
 
@@ -37,16 +37,78 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
             const base64String = reader.result as string
             const img = new Image()
             img.onload = () => {
+                // Если изображение больше 500x500, уменьшаем его с сохранением пропорций
                 if (img.width > 500 || img.height > 500) {
-                    toast.error("Изображение превышает допустимые размеры 500x500 пикселей")
-                    return
+                    resizeImage(img, base64String, file.type)
+                        .then(resizedBase64 => {
+                            // Проверяем размер сжатого изображения
+                            const base64Data = resizedBase64.split(",")[1]
+                            const sizeInBytes = Math.ceil((base64Data.length * 3) / 4)
+
+                            if (sizeInBytes > 1 * 1024 * 1024) {
+                                toast.error("После сжатия файл всё ещё слишком большой. Максимальный размер: 1MB")
+                                return
+                            }
+
+                            setPreview(resizedBase64)
+                            onImageSelect(resizedBase64)
+                        })
+                        .catch(error => {
+                            console.error("Ошибка при изменении размера изображения:", error)
+                            toast.error("Не удалось обработать изображение")
+                        })
+                } else {
+                    setPreview(base64String)
+                    onImageSelect(base64String)
                 }
-                setPreview(base64String)
-                onImageSelect(base64String)
             }
             img.src = base64String
         }
         reader.readAsDataURL(file)
+    }
+
+    // Функция для изменения размера изображения с сохранением пропорций
+    const resizeImage = (img: HTMLImageElement, base64: string, mimeType: string): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            try {
+                // Вычисляем новые размеры с сохранением пропорций
+                let newWidth = img.width
+                let newHeight = img.height
+                const maxSize = 500
+
+                if (newWidth > maxSize || newHeight > maxSize) {
+                    if (newWidth > newHeight) {
+                        // Ширина больше высоты - ограничиваем по ширине
+                        newHeight = Math.round((newHeight * maxSize) / newWidth)
+                        newWidth = maxSize
+                    } else {
+                        // Высота больше или равна ширине - ограничиваем по высоте
+                        newWidth = Math.round((newWidth * maxSize) / newHeight)
+                        newHeight = maxSize
+                    }
+                }
+
+                // Создаем canvas для изменения размера
+                const canvas = document.createElement("canvas")
+                canvas.width = newWidth
+                canvas.height = newHeight
+                const ctx = canvas.getContext("2d")
+
+                if (!ctx) {
+                    reject(new Error("Не удалось получить контекст canvas"))
+                    return
+                }
+
+                // Рисуем изображение с новыми размерами
+                ctx.drawImage(img, 0, 0, newWidth, newHeight)
+
+                // Получаем новое base64 изображение
+                const resizedBase64 = canvas.toDataURL(mimeType)
+                resolve(resizedBase64)
+            } catch (error) {
+                reject(error)
+            }
+        })
     }
 
     const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -123,7 +185,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
             ) : (
                 <div className={styles.placeholder}>
                     <span>Нажмите или перетащите изображение сюда</span>
-                    <span className={styles.subtitle}>JPG или PNG до 1MB, не больше 500×500px</span>
+                    <span className={styles.subtitle}>JPG или PNG до 3MB, не больше 500×500px</span>
                 </div>
             )}
         </div>
