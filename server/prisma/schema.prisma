@@ -30,6 +30,11 @@ model User {
   testsCreated      Test[]        @relation("TestAuthor")
   refreshToken      Token?
 
+  // INDEXES
+  @@index([name])
+  @@index([surname])
+  @@index([patronymic])
+  @@index([createdAt])
   @@map("users")
 }
 
@@ -79,13 +84,18 @@ model Test {
   // TIMESTAMPS
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
-  // Relations
+  // RELATIONS
   questions        Question[]
   testAttempts     TestAttempt[]
   settings         TestSettings?
   snapshots        TestSnapshot[]
   author           User                 @relation("TestAuthor", fields: [authorId], references: [id], onDelete: Cascade)
 
+  // INDEXES
+  @@index([title])
+  @@index([description])
+  @@index([authorId])
+  @@index([createdAt])
   @@map("tests")
 }
 
@@ -104,6 +114,9 @@ model Question {
   test        Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
   userAnswers UserAnswer[]
 
+  // INDEXES
+  @@index([testId])
+  @@index([text])
   @@map("questions")
 }
 
@@ -124,6 +137,9 @@ model Answer {
   // Новая связь для хранения порядка ответов пользователя
   sequenceAnswers  UserSequenceOrder[]
 
+  // INDEXES
+  @@index([questionId])
+  @@index([text])
   @@map("answers")
 }
 
