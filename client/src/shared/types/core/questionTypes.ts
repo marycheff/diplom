@@ -35,6 +35,7 @@ export interface UserQuestionDTO {
     id: string
     text: string
     type: QuestionType
+    image: string | null
     answers: AnswerUserDTO[]
 }
 
@@ -50,6 +51,7 @@ export interface QuestionSnapshotDTO {
     text: string
     order: number
     type: QuestionType
+    image: string | null
     createdAt: Date
     answers: AnswerSnapshotDTO[]
 }

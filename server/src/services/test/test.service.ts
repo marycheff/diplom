@@ -503,7 +503,7 @@ class TestService {
 
                 await testRepository.updateVisibilityStatus(testId, status, tx)
                 // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
-                // await testRepository.cleanupUnusedSnapshots(testId, tx)
+                await testRepository.cleanupUnusedSnapshots(testId, tx)
 
                 // const updatedTest = await testRepository.findDetailedTestById(testId, tx)
                 // if (!updatedTest) {
@@ -568,7 +568,7 @@ class TestService {
                 }
 
                 // await testRepository.incrementTestVersion(testId, existingTest.version, tx)
-                // await testRepository.cleanupUnusedSnapshots(testId, tx)
+                await testRepository.cleanupUnusedSnapshots(testId, tx)
 
                 // const updatedTest = await testRepository.findDetailedTestById(testId, tx)
                 // if (!updatedTest) {

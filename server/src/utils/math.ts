@@ -57,9 +57,6 @@ export const calculateTestScore = (questionsWithAnswers: QuestionWithAnswers[], 
     }
 
     const totalQuestions = questionsWithAnswers.length
-    console.log("totalQuestions", totalQuestions)
-    console.log("correctQuestionsCount", correctQuestionsCount)
-    console.log("score", (correctQuestionsCount / totalQuestions) * 100)
     return totalQuestions > 0 ? (correctQuestionsCount / totalQuestions) * 100 : 0
 }
 

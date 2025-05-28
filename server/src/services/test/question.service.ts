@@ -4,7 +4,6 @@ import { questionRepository, testRepository } from "@/repositories"
 import { answerService, badWordsService, imageService } from "@/services"
 import { QuestionDTO, TestDTO } from "@/types"
 import { logger } from "@/utils/logger"
-import { generateUUID } from "@/utils/math"
 import { executeTransaction } from "@/utils/prisma-client"
 import { deleteTestCache } from "@/utils/redis/redis.utils"
 import { isValidUUID } from "@/utils/validator"
@@ -83,7 +82,7 @@ class QuestionService {
                         }
 
                         if (question.image) {
-                            question.image = await imageService.processImage(question.image, questionId)
+                            question.image = await imageService.processImage(question.image, crypto.randomUUID())
                         }
 
                         await questionRepository.update(questionId, question, tx)
@@ -92,10 +91,8 @@ class QuestionService {
 
                     // Обработка нового вопроса
                     else {
-                        const tempId = generateUUID()
-
                         if (question.image) {
-                            question.image = await imageService.processImage(question.image, tempId)
+                            question.image = await imageService.processImage(question.image, crypto.randomUUID())
                         }
                         logger.debug(`[${LOG_NAMESPACE}] Создание нового вопроса`, { question })
 

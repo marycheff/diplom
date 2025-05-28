@@ -247,9 +247,18 @@ class AttemptService {
 
             const questionsWithAnswers = await questionRepository.findWithCorrectAnswers(attempt.testId)
             const score = calculateTestScore(questionsWithAnswers, attempt.answers)
-            console.log(score)
-
             await attemptRepository.updateScore(attemptId, score)
+
+            const latestSnapshot = await testRepository.findLatestSnapshot(attempt.testId)
+            if (!latestSnapshot) {
+                logger.warn(`[${LOG_NAMESPACE}] Не найден актуальный снапшот теста`, { testId: attempt.testId })
+                throw ApiError.NotFound("Не найден актуальный снапшот теста")
+            }
+            if (latestSnapshot.id !== attempt.testSnapshotId) {
+                attemptRepository.updateSnapshotId(attemptId, latestSnapshot.id)
+            }
+
+            testRepository.cleanupUnusedSnapshots(attempt.testId)
             await deleteAttemptCache(attemptId)
 
             logger.debug(`[${LOG_NAMESPACE}] Попытка теста успешно завершена`, { attemptId, score })
