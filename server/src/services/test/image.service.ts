@@ -1,4 +1,5 @@
 import { ApiError } from "@/exceptions"
+import crypto from "crypto"
 import fs from "fs"
 import path from "path"
 import sharp from "sharp"
@@ -16,13 +17,34 @@ export class ImageService {
         return `/api/questions/images/${newId}.${extension}`
     }
 
-    async processImage(imageBase64: string, tempId: string, realId?: string): Promise<string> {
-        console.log(`Processing image with tempId: ${tempId}, imageBase64: ${imageBase64}`)
+    async processImage(image: string): Promise<string> {
+        console.log(`Processing image: ${image}`)
 
-        if (imageBase64.startsWith("/api/questions/images/")) {
-            return imageBase64
+        if (image.startsWith("/api/questions/images/")) {
+            return image
         }
-        const matches = imageBase64.trim().match(/^(data:)?image\/(png|jpeg|jpg|gif);base64,(.+)$/i)
+
+        // Проверка на внешнюю ссылку
+        if (image.startsWith("http://") || image.startsWith("https://")) {
+            // Проверка длины URL
+            if (image.length > 255) {
+                throw ApiError.BadRequest("URL слишком длинный. Максимальная длина: 255 символов")
+            }
+
+            // Проверка расширения файла
+            const validExtensions = [".jpg", ".jpeg", ".png"]
+            const hasValidExtension = validExtensions.some(ext => image.toLowerCase().endsWith(ext))
+
+            if (!hasValidExtension) {
+                throw ApiError.BadRequest("URL должен указывать на изображение формата JPG, JPEG или PNG")
+            }
+
+            // Возвращаем URL как есть, без сохранения на сервере
+            return image
+        }
+
+        // Обработка base64 изображения
+        const matches = image.trim().match(/^(data:)?image\/(png|jpeg|jpg);base64,(.+)$/i)
 
         if (!matches) {
             throw ApiError.BadRequest("Некорректный формат изображения!!")
@@ -56,21 +78,21 @@ export class ImageService {
             fs.mkdirSync(UPLOAD_DIR, { recursive: true })
         }
 
-        const tempFilename = `${tempId}.${extension}`
-        const tempPath = path.join(UPLOAD_DIR, tempFilename)
-        await fs.promises.writeFile(tempPath, buffer)
+        // Генерация UUID для имени файла
+        const fileId = crypto.randomUUID()
+        const filename = `${fileId}.${extension}`
+        const filePath = path.join(UPLOAD_DIR, filename)
+        await fs.promises.writeFile(filePath, buffer)
 
-        if (realId) {
-            const finalFilename = `${realId}.${extension}`
-            const finalPath = path.join(UPLOAD_DIR, finalFilename)
-            await fs.promises.rename(tempPath, finalPath)
-            return `/api/questions/images/${finalFilename}`
-        }
-
-        return `/api/questions/images/${tempFilename}`
+        return `/api/questions/images/${filename}`
     }
 
     async deleteImage(imagePath: string): Promise<void> {
+        // Не удаляем внешние ссылки
+        if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+            return
+        }
+
         const filename = path.basename(imagePath)
         const fullPath = path.join(UPLOAD_DIR, filename)
         try {

@@ -82,7 +82,7 @@ class QuestionService {
                         }
 
                         if (question.image) {
-                            question.image = await imageService.processImage(question.image, crypto.randomUUID())
+                            question.image = await imageService.processImage(question.image)
                         }
 
                         await questionRepository.update(questionId, question, tx)
@@ -92,7 +92,7 @@ class QuestionService {
                     // Обработка нового вопроса
                     else {
                         if (question.image) {
-                            question.image = await imageService.processImage(question.image, crypto.randomUUID())
+                            question.image = await imageService.processImage(question.image)
                         }
                         logger.debug(`[${LOG_NAMESPACE}] Создание нового вопроса`, { question })
 

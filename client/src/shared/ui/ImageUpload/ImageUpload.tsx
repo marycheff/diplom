@@ -9,26 +9,35 @@ interface ImageUploadProps {
     className?: string
 }
 
+type UploadMode = "file" | "url"
+
 const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, className }) => {
     const [preview, setPreview] = useState<string | undefined>(currentImage)
     const [isDragging, setIsDragging] = useState(false)
+    const [uploadMode, setUploadMode] = useState<UploadMode>("file")
+    const [imageUrl, setImageUrl] = useState<string>("")
     const dragCounter = useRef(0)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const urlInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         setPreview(getImageUrl(currentImage))
         if (!currentImage && fileInputRef.current) {
             fileInputRef.current.value = ""
         }
+        if (!currentImage) {
+            setImageUrl("")
+        }
     }, [currentImage])
+
     const validateAndLoadImage = (file: File) => {
         if (file.size > 3 * 1024 * 1024) {
             toast.error("Файл слишком большой. Максимальный размер: 3MB")
             return
         }
 
-        if (!["image/jpeg", "image/png"].includes(file.type)) {
-            toast.error("Разрешены только изображения JPG и PNG")
+        if (!["image/jpeg", "image/jpg", "image/png"].includes(file.type)) {
+            toast.error("Разрешены только изображения JPG, JPEG и PNG")
             return
         }
 
@@ -65,6 +74,36 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
             img.src = base64String
         }
         reader.readAsDataURL(file)
+    }
+
+    // Функция для валидации URL изображения
+    const validateAndLoadImageUrl = (url: string) => {
+        // Проверка длины URL
+        if (url.length > 255) {
+            toast.error("URL слишком длинный. Максимальная длина: 255 символов")
+            return
+        }
+
+        // Проверка расширения файла
+        const validExtensions = [".jpg", ".jpeg", ".png"]
+        const hasValidExtension = validExtensions.some(ext => url.toLowerCase().endsWith(ext))
+
+        if (!hasValidExtension) {
+            toast.error("URL должен указывать на изображение формата JPG, JPEG или PNG")
+            return
+        }
+
+        // Проверка доступности изображения
+        const img = new Image()
+        img.onload = () => {
+            // Если изображение загрузилось успешно
+            setPreview(url)
+            onImageSelect(url)
+        }
+        img.onerror = () => {
+            toast.error("Не удалось загрузить изображение по указанному URL")
+        }
+        img.src = url
     }
 
     // Функция для изменения размера изображения с сохранением пропорций
@@ -116,7 +155,26 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
         if (file) validateAndLoadImage(file)
     }
 
+    // Обновляем предпросмотр URL при изменении поля ввода
+    const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const url = e.target.value
+        setImageUrl(url)
+
+        // Проверяем, является ли URL изображением и показываем предпросмотр
+        if (url.trim()) {
+            const validExtensions = [".jpg", ".jpeg", ".png"]
+            const hasValidExtension = validExtensions.some(ext => url.toLowerCase().endsWith(ext))
+
+            if (hasValidExtension) {
+                // Автоматически загружаем изображение, если URL валидный
+                validateAndLoadImageUrl(url.trim())
+            }
+        }
+    }
+
     const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+        if (uploadMode !== "file") return
+
         event.preventDefault()
         dragCounter.current = 0
         setIsDragging(false)
@@ -132,23 +190,33 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
     }
 
     const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
-        event.preventDefault()
+        if (uploadMode === "file") {
+            event.preventDefault()
+        }
     }
 
     const handleDragEnter = (event: DragEvent<HTMLDivElement>) => {
-        event.preventDefault()
-        dragCounter.current++
-        if (dragCounter.current === 1) setIsDragging(true)
+        if (uploadMode === "file") {
+            event.preventDefault()
+            dragCounter.current++
+            if (dragCounter.current === 1) setIsDragging(true)
+        }
     }
 
     const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
-        event.preventDefault()
-        dragCounter.current--
-        if (dragCounter.current === 0) setIsDragging(false)
+        if (uploadMode === "file") {
+            event.preventDefault()
+            dragCounter.current--
+            if (dragCounter.current === 0) setIsDragging(false)
+        }
     }
 
     const handleClick = () => {
-        fileInputRef.current?.click()
+        if (uploadMode === "file") {
+            fileInputRef.current?.click()
+        } else if (uploadMode === "url" && urlInputRef.current) {
+            urlInputRef.current.focus()
+        }
     }
 
     const handleRemove = (e: React.MouseEvent) => {
@@ -158,36 +226,86 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
         if (fileInputRef.current) {
             fileInputRef.current.value = ""
         }
+        setImageUrl("")
     }
 
+    const switchMode = (mode: UploadMode) => (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setUploadMode(mode)
+    }
+
+    // Определяем, есть ли у нас активное изображение (превью или предпросмотр URL)
+    const hasActiveImage = !!preview
+
     return (
-        <div
-            className={`${styles.container} ${className || ""} ${isDragging ? styles.dragging : ""}`}
-            onClick={handleClick}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragEnter={handleDragEnter}
-            onDragLeave={handleDragLeave}>
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-                accept="image/jpeg,image/png"
-                className={styles.input}
-            />
-            {preview ? (
-                <div className={styles.previewContainer}>
-                    <img src={preview} alt="Preview" className={styles.preview} />
-                    <button onClick={handleRemove} className={styles.removeButton} type="button">
-                        ✕
-                    </button>
-                </div>
-            ) : (
-                <div className={styles.placeholder}>
-                    <span>Нажмите или перетащите изображение сюда</span>
-                    <span className={styles.subtitle}>JPG или PNG до 3MB, не больше 500×500px</span>
-                </div>
-            )}
+        <div className={styles.uploadWrapper}>
+            <div className={styles.modeSwitcher}>
+                <button
+                    type="button"
+                    className={`${styles.modeButton} ${uploadMode === "file" ? styles.activeMode : ""}`}
+                    onClick={switchMode("file")}
+                    disabled={hasActiveImage}>
+                    {" "}
+                    {/* Блокируем кнопки, если есть активное изображение */}
+                    Загрузить файл
+                </button>
+                <button
+                    type="button"
+                    className={`${styles.modeButton} ${uploadMode === "url" ? styles.activeMode : ""}`}
+                    onClick={switchMode("url")}
+                    disabled={hasActiveImage}>
+                    {" "}
+                    {/* Блокируем кнопки, если есть активное изображение */}
+                    Указать URL
+                </button>
+            </div>
+
+            <div
+                className={`${styles.container} ${className || ""} ${
+                    isDragging && uploadMode === "file" ? styles.dragging : ""
+                }`}
+                onClick={handleClick}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}>
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    accept="image/jpeg,image/png"
+                    className={styles.input}
+                />
+
+                {uploadMode === "url" && !preview && (
+                    <div onClick={e => e.stopPropagation()} className={styles.urlForm}>
+                        <input
+                            type="text"
+                            ref={urlInputRef}
+                            value={imageUrl}
+                            onChange={handleUrlChange}
+                            placeholder="Введите URL изображения"
+                            className={styles.urlInput}
+                        />
+                    </div>
+                )}
+
+                {preview ? (
+                    <div className={styles.previewContainer}>
+                        <img src={preview} alt="Preview" className={styles.preview} />
+                        <button onClick={handleRemove} className={styles.removeButton} type="button">
+                            ✕
+                        </button>
+                    </div>
+                ) : (
+                    uploadMode === "file" && (
+                        <div className={styles.placeholder}>
+                            <span>Нажмите или перетащите изображение сюда</span>
+                            <span className={styles.subtitle}>JPG или PNG до 3MB, не больше 500×500px</span>
+                        </div>
+                    )
+                )}
+            </div>
         </div>
     )
 }
