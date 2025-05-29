@@ -8,6 +8,7 @@ import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
+import { useTestSocket } from "@/shared/hooks/useTestSocket"
 import { AttemptAnswer, AttemptStatus, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
@@ -137,6 +138,11 @@ const TestTaking = () => {
     useEffect(() => {
         if (attempt) fetchTest()
     }, [attempt])
+
+    useTestSocket(attempt?.testId || "", () => {
+        if (attempt) fetchTest()
+        toast("Вопросы были обновлены")
+    })
 
     // Обновление выбранных ответов при смене страницы
     useEffect(() => {

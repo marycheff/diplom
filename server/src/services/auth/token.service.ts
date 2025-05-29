@@ -2,7 +2,7 @@ import { envConfig } from "@/config/env-config"
 import { tokenRepository } from "@/repositories"
 import { logger } from "@/utils/logger"
 import { Token } from "@prisma/client"
-import jwt from "jsonwebtoken"
+import jwt, { JwtPayload } from "jsonwebtoken"
 
 const LOG_NAMESPACE = "TokenService"
 
@@ -52,12 +52,12 @@ class TokenService {
         }
     }
 
-    validateAccessToken(token: string) {
+    validateAccessToken(token: string): JwtPayload | null {
         logger.debug(`[${LOG_NAMESPACE}] Валидация access токена`)
         try {
             const result = jwt.verify(token, envConfig.JWT_ACCESS_SECRET)
             logger.debug(`[${LOG_NAMESPACE}] Access токен успешно валидирован`)
-            return result
+            return result as JwtPayload
         } catch (e) {
             logger.warn(`[${LOG_NAMESPACE}] Ошибка валидации access токена`, {
                 error: e instanceof Error ? e.message : String(e),
@@ -66,12 +66,12 @@ class TokenService {
         }
     }
 
-    validateRefreshToken(token: string) {
+    validateRefreshToken(token: string): JwtPayload | null {
         logger.debug(`[${LOG_NAMESPACE}] Валидация refresh токена`)
         try {
             const result = jwt.verify(token, envConfig.JWT_REFRESH_SECRET)
             logger.debug(`[${LOG_NAMESPACE}] Refresh токен успешно валидирован`)
-            return result
+            return result as JwtPayload
         } catch (e) {
             logger.warn(`[${LOG_NAMESPACE}] Ошибка валидации refresh токена`, {
                 error: e instanceof Error ? e.message : String(e),

@@ -2,6 +2,7 @@ import { ApiError } from "@/exceptions"
 import { mapQuestion, mapTest } from "@/mappers"
 import { questionRepository, testRepository } from "@/repositories"
 import { answerService, badWordsService, imageService } from "@/services"
+import { getIO } from "@/sockets"
 import { QuestionDTO, TestDTO } from "@/types"
 import { logger } from "@/utils/logger"
 import { executeTransaction } from "@/utils/prisma-client"
@@ -18,15 +19,18 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 }
 
 class QuestionService {
-    async upsertQuestions(testId: string, questions: QuestionDTO[]): Promise<QuestionDTO[]> {
+    async upsertQuestions(testId: string, questions: QuestionDTO[], testGenerating = false): Promise<QuestionDTO[]> {
         logger.info(`[${LOG_NAMESPACE}] Полное обновление вопросов теста`, {
             testId,
             questionsCount: questions.length,
         })
 
-        // Проверка на недопустимые слова перед обновлением
-        this.checkForBadWords(questions)
-        this.validateFillInTheBlankQuestions(questions)
+        // Проверка на недопустимые слова перед обновлением, если тест не генерируется
+        if (!testGenerating) {
+            this.checkForBadWords(questions)
+            this.validateFillInTheBlankQuestions(questions)
+        }
+
         return executeTransaction(async tx => {
             // Проверка существования теста
             const test = await testRepository.findById(testId, tx)
@@ -142,6 +146,11 @@ class QuestionService {
             }
             await testRepository.createSnapshot(updatedTest, tx)
             await testRepository.clearModeration(testId, tx)
+            const io = getIO()
+            io.to(testId).emit("questions_updated", {
+                testId,
+                updatedAt: new Date().toISOString(),
+            })
             // Очистка кэша
             await deleteTestCache(testId)
 

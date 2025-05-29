@@ -2,6 +2,7 @@ import { envConfig } from "@/config/env-config"
 import { initializeJobs, shutdownJobs } from "@/jobs"
 import { errorMiddleware } from "@/middleware"
 import { authRoutes, chatRoutes, testRoutes, userRoutes } from "@/routes"
+import { closeSocketIO, initSocketIO } from "@/sockets"
 import { logger } from "@/utils/logger"
 import { connectRedis, disconnectRedis } from "@/utils/redis"
 import { PrismaClient } from "@prisma/client"
@@ -9,13 +10,14 @@ import { parse } from "cookie"
 import cors from "cors"
 import dotenv from "dotenv"
 import express, { NextFunction, Request, Response } from "express"
+import { createServer } from "http"
 import "module-alias/register"
-
 dotenv.config()
 
 const PORT = envConfig.PORT
 const app = express()
 const prisma = new PrismaClient()
+const httpServer = createServer(app)
 
 app.use(express.json({ limit: "1mb" }))
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -48,11 +50,11 @@ const start = async () => {
     try {
         await connectRedis()
         await prisma.$connect()
-        app.listen(PORT, "0.0.0.0", () => {
+        initSocketIO(httpServer)
+
+        httpServer.listen(PORT, "0.0.0.0", () => {
             console.log(`✓ Сервер запущен. Порт ${PORT}`)
             logger.info(`Сервер запущен на порту ${PORT} в режиме ${envConfig.NODE_ENV}`)
-
-            // Запускаем запланированные задачи после успешного старта сервера
             initializeJobs()
         })
     } catch (error) {
@@ -84,6 +86,7 @@ const gracefulShutdown = async (): Promise<void> => {
     try {
         // Останавливаем все фоновые задачи
         shutdownJobs()
+        closeSocketIO()
 
         logger.info("Закрытие соединения с Redis...")
         await disconnectRedis()
