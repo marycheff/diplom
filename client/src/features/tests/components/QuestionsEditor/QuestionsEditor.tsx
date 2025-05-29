@@ -198,21 +198,27 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 
     const askQuestion = useCallback(
         async (data: GenerateAnswerFormData) => {
+           
+            const numOfAnswers = Number(data.numOfAnswers)
             const res = await generateAnswers(data)
             const correctAnswer = {
                 id: `temp-${Date.now()}-0`,
                 text: watch("answer") || "",
                 isCorrect: true,
             }
-            const incorrectAnswers = res.slice(0, data.numOfAnswers).map((answer: string, index) => ({
+
+            const incorrectAnswers = res.slice(0, numOfAnswers).map((answer: string, index) => ({
                 id: `temp-${Date.now()}-${index + 1}`,
                 text: answer,
                 isCorrect: false,
             }))
+
             const newAnswers = [correctAnswer, ...incorrectAnswers]
-            if (data.numOfAnswers !== incorrectAnswers.length) {
+
+            if (numOfAnswers !== incorrectAnswers.length) {
                 toast.error("Нейросеть сгенерировала неправильное кол-во ответов. Попробуйте еще раз.")
             }
+
             setCurrentAnswers(newAnswers)
         },
         [generateAnswers, watch]

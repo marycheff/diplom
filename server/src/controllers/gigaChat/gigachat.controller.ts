@@ -29,7 +29,7 @@ class GigaChatController {
 
             const test = await testService.createTest(authorId, { title: topic })
 
-            const updatedQuestions = await questionService.upsertQuestions(test.id, questions)
+            const updatedQuestions = await questionService.upsertQuestions(test.id, questions, true)
 
             res.status(200).json({ ...test, questions: updatedQuestions })
         } catch (e) {

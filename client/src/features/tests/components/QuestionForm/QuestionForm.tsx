@@ -4,10 +4,8 @@ import { AIButton } from "@/shared/ui/Button"
 import ImageUpload from "@/shared/ui/ImageUpload/ImageUpload"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
-import { FC, FormEvent, useCallback, useEffect, useState } from "react"
+import { FC, FormEvent, useCallback } from "react"
 import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger, UseFormWatch } from "react-hook-form"
-import { FaImage } from "react-icons/fa6"
-import styles from "./QuestionForm.module.scss"
 
 interface QuestionFormProps {
     register: UseFormRegister<GenerateAnswerFormData>
@@ -33,7 +31,6 @@ const QuestionForm: FC<QuestionFormProps> = ({
     withGenerateButton = true,
 }) => {
     const imageValue = watch("image")
-    const [showImageUpload, setShowImageUpload] = useState(!!watch("image"))
 
     const handleImageSelect = useCallback(
         (base64Image: string) => {
@@ -41,10 +38,6 @@ const QuestionForm: FC<QuestionFormProps> = ({
         },
         [setValue]
     )
-    const toggleImageUpload = () => setShowImageUpload(prev => !prev)
-    useEffect(() => {
-        if (imageValue) setShowImageUpload(true)
-    }, [imageValue])
 
     return (
         <form onSubmit={onSubmit}>
@@ -82,6 +75,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
                         options={[{ value: "1" }, { value: "2" }, { value: "3" }, { value: "4" }]}
                         value="3"
                     />
+
                     <AIButton type="submit" generating={isGenerating} disabled={isButtonDisabled}>
                         {isGenerating ? "Генерация" : "Генерировать"}
                     </AIButton>

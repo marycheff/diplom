@@ -12,6 +12,6 @@ export type SelectProps = {
     onChange?: (value: string) => void
 }
 type Option = {
-    value: string
+    value: string 
     label?: string
 }

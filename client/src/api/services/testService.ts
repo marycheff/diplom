@@ -97,7 +97,13 @@ class TestService {
         return axiosInstance.post<string[]>("/chat/generate-answers", {
             question: data.question,
             answer: data.answer,
-            numOfAnswers: data.numOfAnswers,
+            numOfAnswers: Number(data.numOfAnswers),
+        })
+    }
+    generateTest = (topic: string, numOfQuestions = 10): Promise<AxiosResponse<TestDTO>> => {
+        return axiosInstance.post<TestDTO>("/chat/generate-test", {
+            topic,
+            numOfQuestions,
         })
     }
     updateTestSettings = (testId: string, updatedSettings: TestSettingsDTO) => {

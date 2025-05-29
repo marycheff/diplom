@@ -1,6 +1,6 @@
 import { testService } from "@/api/services/testService"
 import { createApiHandler } from "@/shared/hooks/useStoreHelpers"
-import { GenerateAnswerFormData, TestState, TestsListDTO } from "@/shared/types"
+import { TestState, TestsListDTO } from "@/shared/types"
 import { create } from "zustand"
 
 const initialState = {
@@ -71,7 +71,7 @@ export const useTestStore = create<TestState>(set => {
             }
             return withFetching(operation)
         },
-        getTestById: async (id: string) => {
+        getTestById: async id => {
             const operation = async () => {
                 const response = await testService.getTestById(id)
                 return response.data
@@ -121,9 +121,16 @@ export const useTestStore = create<TestState>(set => {
             }
             return withLoading(operation)
         },
-        generateAnswers: async (data: GenerateAnswerFormData) => {
+        generateAnswers: async data => {
             const operation = async () => {
                 const response = await testService.generateAnswers(data)
+                return response.data
+            }
+            return withGenerating(operation)
+        },
+        generateTest: async (topic, numOfQuestions) => {
+            const operation = async () => {
+                const response = await testService.generateTest(topic, numOfQuestions)
                 return response.data
             }
             return withGenerating(operation)

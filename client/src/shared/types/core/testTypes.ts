@@ -27,6 +27,7 @@ export interface TestState {
     getUserTests: (userId: string, page?: number, limit?: number) => Promise<TestsListDTO | undefined>
     createTest: (title: string, description?: string) => Promise<TestDTO | undefined>
     generateAnswers: (data: GenerateAnswerFormData) => Promise<string[]>
+    generateTest: (topic: string, numOfQuestions: number) => Promise<TestDTO>
     upsertQuestions: (testId: string, questions: QuestionDTO[]) => Promise<QuestionDTO[]>
     updateTestSettings: (testId: string, updatedSettings: TestSettingsDTO) => Promise<void>
     updateShortInfo: (testId: string, updatedShortInfo: ShortTestInfo) => Promise<void>

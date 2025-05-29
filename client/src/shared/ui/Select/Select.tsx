@@ -1,6 +1,7 @@
 import useOutsideClick from "@/shared/hooks/useOutSideClick"
 import { SelectProps } from "@/shared/ui/Select/Select.props"
 import { FC, useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import styles from "./Select.module.scss"
 
 const Select: FC<SelectProps> = ({
@@ -17,23 +18,34 @@ const Select: FC<SelectProps> = ({
     const [isOpen, setOpen] = useState(false)
     const [selected, setSelected] = useState(value || options[0]?.value || "")
     const [maxWidth, setMaxWidth] = useState<number | undefined>(undefined)
+    const [position, setPosition] = useState<{ top: number; left: number; width: number } | null>(null)
+    const [isVisible, setIsVisible] = useState(false)
 
     const selectRef = useRef<HTMLDivElement>(null)
     const ghostRef = useRef<HTMLDivElement>(null)
+    const optionsRef = useRef<HTMLDivElement>(null)
 
-    useOutsideClick(selectRef, () => setOpen(false))
+    // Закрытие при клике вне элемента
+    useOutsideClick([selectRef, optionsRef], () => {
+        if (isOpen) {
+            closeSelect()
+        }
+    })
 
+    // Обновление значения в скрытом select
     useEffect(() => {
         const element = document.getElementById(name) as HTMLInputElement
-        if (element) element.value = selected
+        if (element) element.value = String(selected)
     }, [selected, name])
 
+    // Вызов callback при изменении значения
     useEffect(() => {
         if (onChange) {
             onChange(selected)
         }
     }, [selected, onChange])
 
+    // Вычисление максимальной ширины на основе содержимого
     useEffect(() => {
         if (!ghostRef.current) return
 
@@ -44,8 +56,71 @@ const Select: FC<SelectProps> = ({
             if (width > max) max = width
         })
 
-        setMaxWidth(max)
+        // Добавляем проверку на необходимость скролла
+        const viewportHeight = window.innerHeight
+        const dropdownHeight = options.length * 32 // Примерная высота элемента
+        const needsScroll = dropdownHeight > viewportHeight * 0.2 
+
+        setMaxWidth(needsScroll ? max + 10 : max)
     }, [options])
+
+    // Обновление позиции выпадающего списка
+    const updatePosition = () => {
+        if (selectRef.current) {
+            const rect = selectRef.current.getBoundingClientRect()
+            setPosition({
+                top: rect.bottom + window.scrollY,
+                left: rect.left + window.scrollX,
+                width: rect.width,
+            })
+        }
+    }
+
+    // Открытие селекта с анимацией
+    const openSelect = () => {
+        if (disabled) return
+
+        setOpen(true)
+        setIsVisible(true)
+        updatePosition()
+
+        window.addEventListener("scroll", updatePosition, true)
+        window.addEventListener("resize", updatePosition)
+    }
+
+    // Закрытие селекта с анимацией
+    const closeSelect = () => {
+        setOpen(false)
+
+        window.removeEventListener("scroll", updatePosition, true)
+        window.removeEventListener("resize", updatePosition)
+
+        // Задержка для завершения анимации перед скрытием
+        setTimeout(() => {
+            setPosition(null)
+            setIsVisible(false)
+        }, 300)
+    }
+
+    // Обработчик клика по триггеру
+    const handleToggle = () => {
+        if (isOpen) {
+            closeSelect()
+        } else {
+            openSelect()
+        }
+    }
+
+    // Обработчик выбора опции
+    const handleOptionSelect = (itemValue: string) => {
+        setSelected(itemValue)
+        const element = document.getElementById(name) as HTMLInputElement
+        if (element) {
+            element.value = itemValue
+            element.dispatchEvent(new Event("change", { bubbles: true }))
+        }
+        closeSelect()
+    }
 
     const containerClasses = [
         styles.container,
@@ -70,13 +145,12 @@ const Select: FC<SelectProps> = ({
                 ))}
             </select>
 
-            {/* 👇 Применяем вычисленную ширину */}
             <div
                 ref={selectRef}
-                onClick={() => !disabled && setOpen(!isOpen)}
+                onClick={handleToggle}
                 className={styles.customSelectWrapper}
                 style={{ width: maxWidth ? `${maxWidth}px` : "auto" }}>
-                <div className={`${styles.customSelect} ${isOpen ? styles.open : ""}`}>
+                <div className={`${styles.customSelect} ${isOpen ? styles.open : ""} ${error ? styles.error : ""}`}>
                     <div className={styles.customSelectTrigger}>
                         <span>
                             {options.find(item => item.value === selected)?.label ||
@@ -85,18 +159,25 @@ const Select: FC<SelectProps> = ({
                         </span>
                         <div className={styles.arrow} />
                     </div>
-                    <div className={styles.customOptions}>
+                </div>
+            </div>
+
+            {/* Рендерим выпадающий список через портал */}
+            {(isOpen || isVisible) &&
+                position &&
+                createPortal(
+                    <div
+                        ref={optionsRef}
+                        className={`${styles.customOptions} ${isOpen ? styles.open : ""}`}
+                        style={{
+                            top: `${position.top}px`,
+                            left: `${position.left}px`,
+                            width: `${position.width}px`,
+                        }}>
                         {options.map(item => (
                             <div
                                 key={item.value}
-                                onClick={() => {
-                                    setSelected(item.value)
-                                    const element = document.getElementById(name) as HTMLInputElement
-                                    if (element) {
-                                        element.value = item.value
-                                        element.dispatchEvent(new Event("change", { bubbles: true }))
-                                    }
-                                }}
+                                onClick={() => handleOptionSelect(item.value)}
                                 className={styles.optionContainer}>
                                 <span
                                     className={`${styles.customOption} ${
@@ -107,11 +188,11 @@ const Select: FC<SelectProps> = ({
                                 </span>
                             </div>
                         ))}
-                    </div>
-                </div>
-            </div>
+                    </div>,
+                    document.body
+                )}
 
-            {/* 👇 Скрытый элемент для измерения ширины */}
+            {/* Скрытый элемент для измерения ширины */}
             <div ref={ghostRef} className={styles.ghostMeasure}>
                 {options.map(item => (
                     <span key={item.value} className={styles.ghostItem}>

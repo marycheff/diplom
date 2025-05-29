@@ -66,7 +66,7 @@ class GigaChatService {
     }
 
     // Генерация теста
-    async generateTest(token: string, topic: string, numOfQuestions: number): Promise<QuestionDTO[]> {
+    async generateTest(token: string, topic: string, numOfQuestions = 10): Promise<QuestionDTO[]> {
         logger.debug(`[${LOG_NAMESPACE}] Генерация теста. Тема: "${topic}", кол-во вопросов: ${numOfQuestions}`)
 
         const content = `Сгенерируй тест из ${numOfQuestions} вопросов по теме ${topic}. В каждом вопросе должно быть 4 варианта ответа. один вариант ответа правильный, а 3 варианта ответа неправильные. Правильный ответ пиши всегда в начале. Формат ответа: 1. Вопрос: (текст вопроса). Ответы: 1.1. Ответ. 1.2. Ответ. 1.3. Ответ. 1.4. Ответ. 2. Вопрос: (текст вопроса). Ответы: 2.1. Ответ. 2.2. Ответ. 2.3. Ответ.`
