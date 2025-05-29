@@ -1,6 +1,7 @@
 import { getImageUrl } from "@/shared/utils"
 import React, { ChangeEvent, DragEvent, FC, useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
+import { FaImage } from "react-icons/fa6"
 import styles from "./ImageUpload.module.scss"
 
 interface ImageUploadProps {
@@ -19,6 +20,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
     const dragCounter = useRef(0)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const urlInputRef = useRef<HTMLInputElement>(null)
+    const [isExpanded, setIsExpanded] = useState(!!currentImage)
 
     useEffect(() => {
         setPreview(getImageUrl(currentImage))
@@ -27,6 +29,12 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
         }
         if (!currentImage) {
             setImageUrl("")
+        }
+    }, [currentImage])
+
+    useEffect(() => {
+        if (currentImage) {
+            setIsExpanded(true)
         }
     }, [currentImage])
 
@@ -238,75 +246,84 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
     const hasActiveImage = !!preview
 
     return (
-        <div className={styles.uploadWrapper}>
-            <div className={styles.modeSwitcher}>
-                <button
-                    type="button"
-                    className={`${styles.modeButton} ${uploadMode === "file" ? styles.activeMode : ""}`}
-                    onClick={switchMode("file")}
-                    disabled={hasActiveImage}>
-                    {" "}
-                    {/* Блокируем кнопки, если есть активное изображение */}
-                    Загрузить файл
-                </button>
-                <button
-                    type="button"
-                    className={`${styles.modeButton} ${uploadMode === "url" ? styles.activeMode : ""}`}
-                    onClick={switchMode("url")}
-                    disabled={hasActiveImage}>
-                    {" "}
-                    {/* Блокируем кнопки, если есть активное изображение */}
-                    Указать URL
-                </button>
-            </div>
+        <>
+            <button type="button" className={styles.toggleButton} onClick={() => setIsExpanded(prev => !prev)}>
+                <FaImage />
+                {isExpanded ? "Скрыть изображение" : "Добавить изображение"}
+            </button>
 
-            <div
-                className={`${styles.container} ${className || ""} ${
-                    isDragging && uploadMode === "file" ? styles.dragging : ""
-                }`}
-                onClick={handleClick}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragEnter={handleDragEnter}
-                onDragLeave={handleDragLeave}>
-                <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageChange}
-                    accept="image/jpeg,image/png"
-                    className={styles.input}
-                />
-
-                {uploadMode === "url" && !preview && (
-                    <div onClick={e => e.stopPropagation()} className={styles.urlForm}>
-                        <input
-                            type="text"
-                            ref={urlInputRef}
-                            value={imageUrl}
-                            onChange={handleUrlChange}
-                            placeholder="Введите URL изображения"
-                            className={styles.urlInput}
-                        />
-                    </div>
-                )}
-
-                {preview ? (
-                    <div className={styles.previewContainer}>
-                        <img src={preview} alt="Preview" className={styles.preview} />
-                        <button onClick={handleRemove} className={styles.removeButton} type="button">
-                            ✕
-                        </button>
-                    </div>
-                ) : (
-                    uploadMode === "file" && (
-                        <div className={styles.placeholder}>
-                            <span>Нажмите или перетащите изображение сюда</span>
-                            <span className={styles.subtitle}>JPG или PNG до 3MB, не больше 500×500px</span>
+            <div className={`${styles.uploadSection} ${isExpanded ? styles.uploadSectionVisible : ""}`}>
+                <div className={styles.uploadContainer}>
+                    {!currentImage && (
+                        <div className={styles.modeSwitcher}>
+                            <button
+                                type="button"
+                                className={`${styles.modeButton} ${uploadMode === "file" ? styles.modeActive : ""}`}
+                                onClick={switchMode("file")}
+                                disabled={hasActiveImage}>
+                                Загрузить файл
+                            </button>
+                            <button
+                                type="button"
+                                className={`${styles.modeButton} ${uploadMode === "url" ? styles.modeActive : ""}`}
+                                onClick={switchMode("url")}
+                                disabled={hasActiveImage}>
+                                Указать URL
+                            </button>
                         </div>
-                    )
-                )}
+                    )}
+
+                    <div
+                        className={`${styles.dropZone} ${className || ""} ${
+                            isDragging && uploadMode === "file" ? styles.dragging : ""
+                        }`}
+                        onClick={handleClick}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        onDragEnter={handleDragEnter}
+                        onDragLeave={handleDragLeave}>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageChange}
+                            accept="image/jpeg,image/png"
+                            className={styles.fileInput}
+                        />
+
+                        {uploadMode === "url" && !preview && (
+                            <div onClick={e => e.stopPropagation()} className={styles.urlInputWrapper}>
+                                <input
+                                    type="text"
+                                    ref={urlInputRef}
+                                    value={imageUrl}
+                                    onChange={handleUrlChange}
+                                    placeholder="Введите URL изображения"
+                                    className={styles.urlInput}
+                                />
+                            </div>
+                        )}
+
+                        {preview ? (
+                            <div className={styles.previewBox}>
+                                <img src={preview} alt="Preview" className={styles.previewImage} />
+                                <button onClick={handleRemove} className={styles.removePreview} type="button">
+                                    ✕
+                                </button>
+                            </div>
+                        ) : (
+                            uploadMode === "file" && (
+                                <div className={styles.placeholder}>
+                                    <span>Нажмите или перетащите изображение сюда</span>
+                                    <span className={styles.placeholderNote}>
+                                        JPG или PNG до 3MB, не больше 500×500px
+                                    </span>
+                                </div>
+                            )
+                        )}
+                    </div>
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 

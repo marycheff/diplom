@@ -1,12 +1,12 @@
 import { GenerateAnswerFormData } from "@/shared/types"
 import { answerValidationRules, questionValidationFillInTextRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
+import ImageUpload from "@/shared/ui/ImageUpload/ImageUpload"
 import { ValidatedInput } from "@/shared/ui/Input"
 import { FC, FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from "react"
 import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger, UseFormWatch } from "react-hook-form"
 import BlankMarkerDisplay from "../BlankMarkerDisplay/BlankMarkerDisplay"
 import styles from "./FillInTheBlankQuestionForm.module.scss"
-import ImageUpload from "@/shared/ui/ImageUpload/ImageUpload"
 
 interface FillInTheBlankFormData {
     question: string
@@ -237,6 +237,7 @@ const FillInTheBlankQuestionForm: FC<FillInTheBlankQuestionFormProps> = ({
                 errors={errors?.answer}
                 validationRules={answerValidationRules}
             />
+
             <ImageUpload onImageSelect={handleImageSelect} currentImage={imageValue} />
         </form>
     )

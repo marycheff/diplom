@@ -4,7 +4,6 @@ import ImageUpload from "@/shared/ui/ImageUpload/ImageUpload"
 import { ValidatedInput } from "@/shared/ui/Input"
 import { FC, FormEvent, useCallback } from "react"
 import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger, UseFormWatch } from "react-hook-form"
-
 interface TextInputFormData {
     question: string
     answer: string
@@ -59,6 +58,7 @@ const TextInputQuestionForm: FC<TextInputQuestionFormProps> = ({
                 errors={errors?.answer}
                 validationRules={answerValidationRules}
             />
+
             <ImageUpload onImageSelect={handleImageSelect} currentImage={imageValue} />
         </form>
     )

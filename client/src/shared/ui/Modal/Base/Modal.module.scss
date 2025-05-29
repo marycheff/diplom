@@ -58,7 +58,7 @@
 
 .modalContent {
     background: white;
-    padding: 20px;
+    padding: 20px 20px 20px 20px; /* Оставляем padding сверху, снизу и слева */
     border-radius: 12px;
     width: 50vw;
     height: 40vh;
@@ -80,7 +80,6 @@
 
     &.fullScreen {
         width: 90vw;
-        // ПОНЯТЬ ПОЧЕМУ ИМЕННО СТОЛЬКО
         height: 82.4vh;
         @media screen and (max-width: 1024px) {
             width: 98vw;
@@ -93,7 +92,6 @@
         @media screen and (max-height: 1000px) {
             height: 95vh;
             width: 100vw;
-
         }
     }
 
@@ -107,12 +105,13 @@
         }
     }
 
-    // Содержимое с прокруткой внутри модального окна
     .modalBody {
         flex: 1;
         overflow-y: auto;
-        overflow-x: hidden;
-        padding-right: 4px;
+        // overflow-x: hidden;
+        margin-right: -20px; /* Компенсируем правый padding родителя */
+        padding-right: 20px; /* Восстанавливаем padding для контента */
+        box-sizing: content-box; /* Убедимся, что padding не влияет на ширину */
     }
 }
 

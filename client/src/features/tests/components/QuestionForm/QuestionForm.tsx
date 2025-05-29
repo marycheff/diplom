@@ -4,8 +4,10 @@ import { AIButton } from "@/shared/ui/Button"
 import ImageUpload from "@/shared/ui/ImageUpload/ImageUpload"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
-import { FC, FormEvent, useCallback } from "react" // Добавляем useCallback
+import { FC, FormEvent, useCallback, useEffect, useState } from "react"
 import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormTrigger, UseFormWatch } from "react-hook-form"
+import { FaImage } from "react-icons/fa6"
+import styles from "./QuestionForm.module.scss"
 
 interface QuestionFormProps {
     register: UseFormRegister<GenerateAnswerFormData>
@@ -16,6 +18,7 @@ interface QuestionFormProps {
     setValue: UseFormSetValue<GenerateAnswerFormData>
     trigger: UseFormTrigger<GenerateAnswerFormData>
     watch: UseFormWatch<GenerateAnswerFormData>
+    withGenerateButton?: boolean
 }
 
 const QuestionForm: FC<QuestionFormProps> = ({
@@ -27,8 +30,10 @@ const QuestionForm: FC<QuestionFormProps> = ({
     setValue,
     trigger,
     watch,
+    withGenerateButton = true,
 }) => {
     const imageValue = watch("image")
+    const [showImageUpload, setShowImageUpload] = useState(!!watch("image"))
 
     const handleImageSelect = useCallback(
         (base64Image: string) => {
@@ -36,6 +41,10 @@ const QuestionForm: FC<QuestionFormProps> = ({
         },
         [setValue]
     )
+    const toggleImageUpload = () => setShowImageUpload(prev => !prev)
+    useEffect(() => {
+        if (imageValue) setShowImageUpload(true)
+    }, [imageValue])
 
     return (
         <form onSubmit={onSubmit}>
@@ -49,27 +58,35 @@ const QuestionForm: FC<QuestionFormProps> = ({
                 validationRules={questionValidationRules}
                 multiline
             />
-            <ValidatedInput
-                clearable
-                placeholder="Правильный ответ"
-                name="answer"
-                trigger={trigger}
-                register={register}
-                setValue={setValue}
-                errors={errors?.answer}
-                validationRules={answerValidationRules}
-            />
+            {withGenerateButton && (
+                <ValidatedInput
+                    clearable
+                    placeholder="Правильный ответ"
+                    name="answer"
+                    trigger={trigger}
+                    register={register}
+                    setValue={setValue}
+                    errors={errors?.answer}
+                    validationRules={answerValidationRules}
+                />
+            )}
+
             <ImageUpload onImageSelect={handleImageSelect} currentImage={imageValue} />
-            <Select
-                register={register}
-                label="Количество ответов для генерации"
-                name="numOfAnswers"
-                options={[{ value: "1" }, { value: "2" }, { value: "3" }, { value: "4" }]}
-                value="3"
-            />
-            <AIButton type="submit" generating={isGenerating} disabled={isButtonDisabled}>
-                {isGenerating ? "Генерация" : "Генерировать"}
-            </AIButton>
+
+            {withGenerateButton && (
+                <>
+                    <Select
+                        register={register}
+                        label="Количество ответов для генерации"
+                        name="numOfAnswers"
+                        options={[{ value: "1" }, { value: "2" }, { value: "3" }, { value: "4" }]}
+                        value="3"
+                    />
+                    <AIButton type="submit" generating={isGenerating} disabled={isButtonDisabled}>
+                        {isGenerating ? "Генерация" : "Генерировать"}
+                    </AIButton>
+                </>
+            )}
         </form>
     )
 }

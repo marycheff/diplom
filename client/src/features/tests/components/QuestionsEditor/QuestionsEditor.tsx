@@ -428,7 +428,6 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
                                     isEditing={!!editingQuestion}
                                     trigger={trigger}
                                     watch={watch}
-                                    
                                 />
                             ) : (
                                 <>
