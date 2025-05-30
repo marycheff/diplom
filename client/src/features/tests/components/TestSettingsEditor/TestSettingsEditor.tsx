@@ -132,6 +132,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                             ]}
                             value={settings.showDetailedResults ? "Да" : "Нет"}
                         />
+                        <br />
                         <Select
                             register={register}
                             label="Перемешивать вопросы: "
@@ -142,6 +143,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                             ]}
                             value={settings.shuffleQuestions ? "Да" : "Нет"}
                         />
+                        <br />
                         <Select
                             register={register}
                             label="Перемешивать варианты ответов: "
@@ -152,6 +154,8 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
                             ]}
                             value={settings.shuffleAnswers ? "Да" : "Нет"}
                         />
+                        <br />
+
                         <div className={styles.selectWithQuestion}>
                             <Select
                                 register={register}
