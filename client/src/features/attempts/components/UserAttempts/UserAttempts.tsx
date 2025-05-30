@@ -11,80 +11,79 @@ import { useParams } from "react-router-dom"
 import styles from "./UserAttempts.module.scss"
 
 const UserAttempts = () => {
-    const { userId } = useParams<{ userId: string }>()
+	const { userId } = useParams<{ userId: string }>()
 
-    if (!userId) {
-        return <NothingFound title="ID пользователя не указан" />
-    }
-    if (!isValidUUID(userId)) {
-        return <NothingFound title="Невалидный ID пользователя" />
-    }
+	if (!userId) {
+		return <NothingFound title="ID пользователя не указан" />
+	}
+	if (!isValidUUID(userId)) {
+		return <NothingFound title="Невалидный ID пользователя" />
+	}
 
-    const [attempts, setAttempts] = useState<AttemptWithSnapshotDTO[]>([])
-    const [total, setTotal] = useState<number | null>(null)
-    const [limit] = useState<number>(USER_TABLE_LIMIT)
-    const [page, setPage] = useState<number>(1)
+	const [attempts, setAttempts] = useState<AttemptWithSnapshotDTO[]>([])
+	const [total, setTotal] = useState<number | null>(null)
+	const [limit] = useState<number>(USER_TABLE_LIMIT)
+	const [page, setPage] = useState<number>(1)
 
-    const { getUserAttempts, isFetching } = useAttemptStore()
+	const { getUserAttempts, isFetching } = useAttemptStore()
 
-    const fetchData = useCallback(
-        async (currentPage: number) => {
-            if (isFetching) return
+	const fetchData = useCallback(
+		async (currentPage: number) => {
+			if (isFetching) return
 
-            const data = await getUserAttempts(userId, currentPage, limit)
-            if (data) {
-                setAttempts(data.attempts)
-                setTotal(data.total)
-            }
-        },
-        [getUserAttempts, limit, userId]
-    )
+			const data = await getUserAttempts(userId, currentPage, limit)
+			if (data) {
+				setAttempts(data.attempts)
+				setTotal(data.total)
+			}
+		},
+		[getUserAttempts, limit, userId]
+	)
 
-    useEffect(() => {
-        fetchData(page)
-    }, [fetchData, page])
+	useEffect(() => {
+		fetchData(page)
+	}, [fetchData, page])
 
-    const handlePageChange = (newPage: number) => {
-        setPage(newPage)
-    }
+	const handlePageChange = (newPage: number) => {
+		setPage(newPage)
+	}
 
-    // const handleUpdateButton = () => {
-    //     fetchData(page)
-    // }
 
-    const isDataLoaded = total !== null
-    const totalPages = total !== null ? Math.ceil(total / limit) : 0
-    const shouldShowPagination = totalPages > 0 && page <= totalPages
-    const emptyAttemptsPage = total === 0 && page === 1 && isDataLoaded
 
-    return (
-        <div className={styles.userAttemptsContainer}>
-            {/* <div className={styles.buttonsContainer}>
-                <Button onClick={handleUpdateButton} disabled={isFetching}>
-                    Обновить
-                </Button>
-            </div> */}
+	const isDataLoaded = total !== null
+	const totalPages = total !== null ? Math.ceil(total / limit) : 0
+	const shouldShowPagination = totalPages > 0 && page <= totalPages
+	const emptyAttemptsPage = total === 0 && page === 1 && isDataLoaded
 
-            {isFetching || !isDataLoaded ? (
-                <TableSkeleton />
-            ) : emptyAttemptsPage ? (
-                <div className={styles.emptyState}>
-                    <p className={styles.description}>Пользователь еще не проходил тесты</p>
-                </div>
-            ) : (
-                <>
-                    {shouldShowPagination ? (
-                        <div className={styles.contentContainer}>
-                            <UserAttemptsTable attempts={attempts} total={total} />
-                            <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
-                        </div>
-                    ) : (
-                        <NothingFound />
-                    )}
-                </>
-            )}
-        </div>
-    )
+	return (
+		<div className={styles.userAttemptsContainer}>
+			{isFetching || !isDataLoaded ? (
+				<TableSkeleton />
+			) : emptyAttemptsPage ? (
+				<div className={styles.emptyState}>
+					<p className={styles.description}>Пользователь еще не проходил тесты</p>
+				</div>
+			) : (
+				<>
+					{shouldShowPagination ? (
+						<div className={styles.contentContainer}>
+							<UserAttemptsTable
+								attempts={attempts}
+								total={total}
+							/>
+							<Pagination
+								page={page}
+								totalPages={totalPages}
+								changePage={handlePageChange}
+							/>
+						</div>
+					) : (
+						<NothingFound />
+					)}
+				</>
+			)}
+		</div>
+	)
 }
 
 export default UserAttempts

@@ -9,238 +9,246 @@ import BlankMarkerDisplay from "../BlankMarkerDisplay/BlankMarkerDisplay"
 import styles from "./FillInTheBlankQuestionForm.module.scss"
 
 interface FillInTheBlankFormData {
-    question: string
-    answer: string
-    numOfAnswers?: number
+	question: string
+	answer: string
+	numOfAnswers?: number
 }
 
 interface FillInTheBlankQuestionFormProps {
-    register: UseFormRegister<GenerateAnswerFormData & FillInTheBlankFormData>
-    errors?: FieldErrors<GenerateAnswerFormData & FillInTheBlankFormData>
-    onSubmit: (e: FormEvent<HTMLFormElement>) => void
-    setValue: UseFormSetValue<GenerateAnswerFormData & FillInTheBlankFormData>
-    trigger: UseFormTrigger<GenerateAnswerFormData & FillInTheBlankFormData>
-    isEditing?: boolean
-    watch: UseFormWatch<GenerateAnswerFormData>
+	register: UseFormRegister<GenerateAnswerFormData & FillInTheBlankFormData>
+	errors?: FieldErrors<GenerateAnswerFormData & FillInTheBlankFormData>
+	onSubmit: (e: FormEvent<HTMLFormElement>) => void
+	setValue: UseFormSetValue<GenerateAnswerFormData & FillInTheBlankFormData>
+	trigger: UseFormTrigger<GenerateAnswerFormData & FillInTheBlankFormData>
+	isEditing?: boolean
+	watch: UseFormWatch<GenerateAnswerFormData>
 }
 
 const FillInTheBlankQuestionForm: FC<FillInTheBlankQuestionFormProps> = ({
-    register,
-    errors,
-    onSubmit,
-    setValue,
-    trigger,
-    isEditing = false,
-    watch,
+	register,
+	errors,
+	onSubmit,
+	setValue,
+	trigger,
+	isEditing = false,
+	watch
 }) => {
-    const imageValue = watch("image")
-    const handleImageSelect = useCallback(
-        (base64Image: string) => {
-            setValue("image", base64Image)
-        },
-        [setValue]
-    )
-    const [hasBlank, setHasBlank] = useState(false)
-    const [displayValue, setDisplayValue] = useState("")
-    // Используем useRef вместо объекта с current
-    const inputRef = useRef<HTMLInputElement | null>(null)
-    const hasBlankMarker = (value: string): boolean => value.includes("{blank}")
+	const imageValue = watch("image")
+	const handleImageSelect = useCallback(
+		(base64Image: string) => {
+			setValue("image", base64Image)
+		},
+		[setValue]
+	)
+	const [hasBlank, setHasBlank] = useState(false)
+	const [displayValue, setDisplayValue] = useState("")
+	// Используем useRef вместо объекта с current
+	const inputRef = useRef<HTMLInputElement | null>(null)
+	const hasBlankMarker = (value: string): boolean => value.includes("{blank}")
 
-    // Проверяем наличие пропуска при изменении вопроса и обновляем отображаемое значение
-    useEffect(() => {
-        const subscription = register("question", questionValidationFillInTextRules).onChange(event => {
-            const value = event.target.value || ""
-            updateDisplayValue(value)
-            setHasBlank(hasBlankMarker(value))
-        })
-        return () => subscription.unsubscribe
-    }, [register])
+	// Проверяем наличие пропуска при изменении вопроса и обновляем отображаемое значение
+	useEffect(() => {
+		const subscription = register("question", questionValidationFillInTextRules).onChange((event) => {
+			const value = event.target.value || ""
+			updateDisplayValue(value)
+			setHasBlank(hasBlankMarker(value))
+		})
+		return () => subscription.unsubscribe
+	}, [register])
 
-    // Обновляем состояние наличия пропуска при изменении значения поля
-    useEffect(() => {
-        const updateBlankState = () => {
-            if (inputRef.current) {
-                const value = inputRef.current.value
-                setHasBlank(hasBlankMarker(value))
-                updateDisplayValue(value)
-            }
-        }
+	// Обновляем состояние наличия пропуска при изменении значения поля
+	useEffect(() => {
+		const updateBlankState = () => {
+			if (inputRef.current) {
+				const value = inputRef.current.value
+				setHasBlank(hasBlankMarker(value))
+				updateDisplayValue(value)
+			}
+		}
 
-        if (inputRef.current) {
-            inputRef.current.addEventListener("input", updateBlankState)
-            updateBlankState() // Инициализация состояния
-        }
+		if (inputRef.current) {
+			inputRef.current.addEventListener("input", updateBlankState)
+			updateBlankState() // Инициализация состояния
+		}
 
-        return () => {
-            if (inputRef.current) {
-                inputRef.current.removeEventListener("input", updateBlankState)
-            }
-        }
-    }, [])
+		return () => {
+			if (inputRef.current) {
+				inputRef.current.removeEventListener("input", updateBlankState)
+			}
+		}
+	}, [])
 
-    // Проверяем наличие маркера при инициализации формы (для режима редактирования)
-    useEffect(() => {
-        // При монтировании компонента или изменении режима редактирования
-        const checkInitialValue = () => {
-            if (inputRef.current) {
-                const value = inputRef.current.value
-                setHasBlank(hasBlankMarker(value))
-                updateDisplayValue(value)
-            }
-        }
+	// Проверяем наличие маркера при инициализации формы (для режима редактирования)
+	useEffect(() => {
+		// При монтировании компонента или изменении режима редактирования
+		const checkInitialValue = () => {
+			if (inputRef.current) {
+				const value = inputRef.current.value
+				setHasBlank(hasBlankMarker(value))
+				updateDisplayValue(value)
+			}
+		}
 
-        // Выполняем проверку с небольшой задержкой, чтобы значение успело установиться
-        setTimeout(checkInitialValue, 0)
-    }, [isEditing])
+		// Выполняем проверку с небольшой задержкой, чтобы значение успело установиться
+		setTimeout(checkInitialValue, 0)
+	}, [isEditing])
 
-    // Функция для форматирования отображаемого текста с заменой маркера на визуальный элемент
-    const updateDisplayValue = (value: string) => {
-        setDisplayValue(value)
-    }
+	// Функция для форматирования отображаемого текста с заменой маркера на визуальный элемент
+	const updateDisplayValue = (value: string) => {
+		setDisplayValue(value)
+	}
 
-    // Функция для преобразования текста с маркером {blank} в React элементы
-    const formatTextWithBlank = (text: string): ReactNode[] => {
-        if (!text) return []
+	// Функция для преобразования текста с маркером {blank} в React элементы
+	const formatTextWithBlank = (text: string): ReactNode[] => {
+		if (!text) return []
 
-        const parts = text.split("{blank}")
-        if (parts.length === 1) return [text] // нет маркера
+		const parts = text.split("{blank}")
+		if (parts.length === 1) return [text] // нет маркера
 
-        const result: ReactNode[] = []
-        parts.forEach((part, index) => {
-            if (index > 0) {
-                result.push(<BlankMarkerDisplay key={`blank-${index}`} />)
-            }
-            if (part) {
-                result.push(<span key={`text-${index}`}>{part}</span>)
-            }
-        })
+		const result: ReactNode[] = []
+		parts.forEach((part, index) => {
+			if (index > 0) {
+				result.push(<BlankMarkerDisplay key={`blank-${index}`} />)
+			}
+			if (part) {
+				result.push(<span key={`text-${index}`}>{part}</span>)
+			}
+		})
 
-        return result
-    }
+		return result
+	}
 
-    // Функция для вставки маркера пропуска с пробелами по бокам
-    const insertBlankMarker = () => {
-        if (inputRef.current && !hasBlank) {
-            const input = inputRef.current
-            const cursorPosition = input.selectionStart || 0
-            const currentValue = input.value
+	// Функция для вставки маркера пропуска с пробелами по бокам
+	const insertBlankMarker = () => {
+		if (inputRef.current && !hasBlank) {
+			const input = inputRef.current
+			const cursorPosition = input.selectionStart || 0
+			const currentValue = input.value
 
-            // Проверяем, нужно ли добавить пробелы до и после маркера
-            const needSpaceBefore = cursorPosition > 0 && currentValue[cursorPosition - 1] !== " "
-            const needSpaceAfter = cursorPosition < currentValue.length && currentValue[cursorPosition] !== " "
+			// Проверяем, нужно ли добавить пробелы до и после маркера
+			const needSpaceBefore = cursorPosition > 0 && currentValue[cursorPosition - 1] !== " "
+			const needSpaceAfter = cursorPosition < currentValue.length && currentValue[cursorPosition] !== " "
 
-            // Формируем маркер с пробелами при необходимости
-            const markerWithSpaces = (needSpaceBefore ? " " : "") + "{blank}" + (needSpaceAfter ? " " : "")
+			// Формируем маркер с пробелами при необходимости
+			const markerWithSpaces = (needSpaceBefore ? " " : "") + "{blank}" + (needSpaceAfter ? " " : "")
 
-            // Вставляем маркер в позицию курсора
-            const newValue =
-                currentValue.substring(0, cursorPosition) + markerWithSpaces + currentValue.substring(cursorPosition)
+			// Вставляем маркер в позицию курсора
+			const newValue =
+				currentValue.substring(0, cursorPosition) + markerWithSpaces + currentValue.substring(cursorPosition)
 
-            // Обновляем значение в форме
-            setValue("question", newValue, { shouldValidate: true })
-            setHasBlank(true)
+			// Обновляем значение в форме
+			setValue("question", newValue, { shouldValidate: true })
+			setHasBlank(true)
 
-            // Устанавливаем фокус и позицию курсора после вставленного маркера
-            const newCursorPosition = cursorPosition + markerWithSpaces.length
-            setTimeout(() => {
-                input.focus()
-                input.setSelectionRange(newCursorPosition, newCursorPosition)
-            }, 0)
-        }
-    }
+			// Устанавливаем фокус и позицию курсора после вставленного маркера
+			const newCursorPosition = cursorPosition + markerWithSpaces.length
+			setTimeout(() => {
+				input.focus()
+				input.setSelectionRange(newCursorPosition, newCursorPosition)
+			}, 0)
+		}
+	}
 
-    // Функция для удаления маркера пропуска
-    const removeBlankMarker = () => {
-        if (inputRef.current && hasBlank) {
-            const input = inputRef.current
-            const currentValue = input.value
+	// Функция для удаления маркера пропуска
+	const removeBlankMarker = () => {
+		if (inputRef.current && hasBlank) {
+			const input = inputRef.current
+			const currentValue = input.value
 
-            // Находим позицию маркера
-            const blankPosition = currentValue.indexOf("{blank}")
-            if (blankPosition !== -1) {
-                // Проверяем наличие пробелов до и после маркера для удаления
-                const hasPrevSpace = blankPosition > 0 && currentValue[blankPosition - 1] === " "
-                const hasNextSpace = blankPosition + 7 < currentValue.length && currentValue[blankPosition + 7] === " "
+			// Находим позицию маркера
+			const blankPosition = currentValue.indexOf("{blank}")
+			if (blankPosition !== -1) {
+				// Проверяем наличие пробелов до и после маркера для удаления
+				const hasPrevSpace = blankPosition > 0 && currentValue[blankPosition - 1] === " "
+				const hasNextSpace = blankPosition + 7 < currentValue.length && currentValue[blankPosition + 7] === " "
 
-                // Определяем начало и конец для удаления (включая пробелы, если они были добавлены автоматически)
-                const startPos = hasPrevSpace ? blankPosition - 1 : blankPosition
-                const endPos = hasNextSpace ? blankPosition + 8 : blankPosition + 7
+				// Определяем начало и конец для удаления (включая пробелы, если они были добавлены автоматически)
+				const startPos = hasPrevSpace ? blankPosition - 1 : blankPosition
+				const endPos = hasNextSpace ? blankPosition + 8 : blankPosition + 7
 
-                // Удаляем маркер и пробелы
-                const newValue = currentValue.substring(0, startPos) + currentValue.substring(endPos)
+				// Удаляем маркер и пробелы
+				const newValue = currentValue.substring(0, startPos) + currentValue.substring(endPos)
 
-                // Обновляем значение в форме
-                setValue("question", newValue, { shouldValidate: true })
-                setHasBlank(false)
+				// Обновляем значение в форме
+				setValue("question", newValue, { shouldValidate: true })
+				setHasBlank(false)
 
-                // Устанавливаем фокус и позицию курсора
-                setTimeout(() => {
-                    input.focus()
-                    input.setSelectionRange(startPos, startPos)
-                }, 0)
-            }
-        }
-    }
+				// Устанавливаем фокус и позицию курсора
+				setTimeout(() => {
+					input.focus()
+					input.setSelectionRange(startPos, startPos)
+				}, 0)
+			}
+		}
+	}
 
-    return (
-        <form onSubmit={onSubmit} className={styles.form}>
-            <div className={styles.questionInputContainer}>
-                <ValidatedInput
-                    clearable
-                    placeholder="Вопрос"
-                    name="question"
-                    trigger={trigger}
-                    register={register}
-                    setValue={setValue}
-                    errors={errors?.question}
-                    multiline
-                    validationRules={questionValidationFillInTextRules}
-                    inputRef={(element: HTMLInputElement | null) => {
-                        inputRef.current = element
-                    }}
-                />
+	return (
+		<form
+			onSubmit={onSubmit}
+			className={styles.form}
+		>
+			<div className={styles.questionInputContainer}>
+				<ValidatedInput
+					clearable
+					placeholder="Вопрос"
+					name="question"
+					trigger={trigger}
+					register={register}
+					setValue={setValue}
+					errors={errors?.question}
+					multiline
+					validationRules={questionValidationFillInTextRules}
+					inputRef={(element: HTMLInputElement | null) => {
+						inputRef.current = element
+					}}
+				/>
 
-                {/* Отображение текста с визуальным представлением пропуска */}
-                {displayValue && (
-                    <div className={styles.previewContainer}>
-                        <div className={styles.previewLabel}>Предпросмотр:</div>
-                        <div className={styles.previewContent}>{formatTextWithBlank(displayValue)}</div>
-                    </div>
-                )}
+				{/* Отображение текста с визуальным представлением пропуска */}
+				{displayValue && (
+					<div className={styles.previewContainer}>
+						<div className={styles.previewLabel}>Предпросмотр:</div>
+						<div className={styles.previewContent}>{formatTextWithBlank(displayValue)}</div>
+					</div>
+				)}
 
-                <div className={styles.blankButtonsContainer}>
-                    <Button
-                        type="button"
-                        onClick={insertBlankMarker}
-                        className={styles.insertBlankButton}
-                        disabled={hasBlank}>
-                        Вставить пропуск
-                    </Button>
-                    <Button
-                        type="button"
-                        onClick={removeBlankMarker}
-                        className={styles.removeBlankButton}
-                        disabled={!hasBlank}
-                        variant="secondary">
-                        Удалить пропуск
-                    </Button>
-                </div>
-            </div>
-            <br />
-            <ValidatedInput
-                clearable
-                placeholder="Правильный ответ"
-                name="answer"
-                trigger={trigger}
-                register={register}
-                setValue={setValue}
-                errors={errors?.answer}
-                validationRules={answerValidationRules}
-            />
+				<div className={styles.blankButtonsContainer}>
+					<Button
+						type="button"
+						onClick={insertBlankMarker}
+						className={styles.insertBlankButton}
+						disabled={hasBlank}
+					>
+						Вставить пропуск
+					</Button>
+					<Button
+						type="button"
+						onClick={removeBlankMarker}
+						className={styles.removeBlankButton}
+						disabled={!hasBlank}
+						variant="secondary"
+					>
+						Удалить пропуск
+					</Button>
+				</div>
+			</div>
+			<br />
+			<ValidatedInput
+				clearable
+				placeholder="Правильный ответ"
+				name="answer"
+				trigger={trigger}
+				register={register}
+				setValue={setValue}
+				errors={errors?.answer}
+				validationRules={answerValidationRules}
+			/>
 
-            <ImageUpload onImageSelect={handleImageSelect} currentImage={imageValue} />
-        </form>
-    )
+			<ImageUpload
+				onImageSelect={handleImageSelect}
+				currentImage={imageValue}
+			/>
+		</form>
+	)
 }
 
 export default FillInTheBlankQuestionForm

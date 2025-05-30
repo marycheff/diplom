@@ -6,19 +6,22 @@ import { BrowserRouter } from "react-router-dom"
 import AppRouter from "./router/AppRouter"
 import "./styles/global.scss"
 const App = () => {
-    useEffect(() => {
-        initSocket()
-        return () => {
-            closeSocket()
-        }
-    }, [])
-    return (
-        <BrowserRouter>
-            <InternetConnectionStatus />
-            <AppRouter />
-            <Toaster position="top-right" reverseOrder={true} />
-        </BrowserRouter>
-    )
+	useEffect(() => {
+		initSocket()
+		return () => {
+			closeSocket()
+		}
+	}, [])
+	return (
+		<BrowserRouter>
+			<InternetConnectionStatus />
+			<AppRouter />
+			<Toaster
+				position="top-right"
+				reverseOrder={true}
+			/>
+		</BrowserRouter>
+	)
 }
 
 export default App

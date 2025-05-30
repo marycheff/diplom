@@ -1,59 +1,59 @@
 .attemptsData {
-    margin-top: 5px;
+	margin-top: 5px;
 
-    .attemptsCount {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 0 15px;
-        margin-bottom: 10px;
-        h3 {
-            margin: 0;
-            font-size: 1rem;
-        }
-    }
+	.attemptsCount {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin: 0 15px;
+		margin-bottom: 10px;
+		h3 {
+			margin: 0;
+			font-size: 1rem;
+		}
+	}
 
-    .tableResponsive {
-        width: 100%;
-        overflow-x: auto;
-        border-radius: 16px 16px 0 0;
+	.tableResponsive {
+		width: 100%;
+		overflow-x: auto;
+		border-radius: 16px 16px 0 0;
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            border: 2px solid $secondary-600;
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			border: 2px solid $secondary-600;
 
-            th,
-            td {
-                padding: 10px;
-                text-align: left;
-                max-width: 200px;
-                max-height: 60px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
+			th,
+			td {
+				padding: 10px;
+				text-align: left;
+				max-width: 200px;
+				max-height: 60px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
 
-            th {
-                background-color: $secondary-600;
+			th {
+				background-color: $secondary-600;
 
-                color: white;
-                font-weight: 600;
-            }
+				color: white;
+				font-weight: 600;
+			}
 
-            td {
-                border-bottom: 1px solid #e0e0e0;
-                border-right: 1px solid #e0e0e0;
-            }
+			td {
+				border-bottom: 1px solid #e0e0e0;
+				border-right: 1px solid #e0e0e0;
+			}
 
-            tr:last-child td {
-                border-bottom: none;
-                border-radius: 0 0 16px 16px;
-            }
-        }
-    }
+			tr:last-child td {
+				border-bottom: none;
+				border-radius: 0 0 16px 16px;
+			}
+		}
+	}
 }
 .emptyField {
-    color: $secondary-400;
-    font-style: italic;
+	color: $secondary-400;
+	font-style: italic;
 }

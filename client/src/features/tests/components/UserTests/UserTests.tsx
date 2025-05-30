@@ -11,74 +11,81 @@ import { useParams } from "react-router-dom"
 import styles from "./UserTests.module.scss"
 
 const UserTests = () => {
-    const { userId } = useParams<{ userId: string }>()
+	const { userId } = useParams<{ userId: string }>()
 
-    if (!userId) {
-        return <NothingFound title="ID пользователя не указан" />
-    }
-    if (!isValidUUID(userId)) {
-        return <NothingFound title="Невалидный ID пользователя" />
-    }
+	if (!userId) {
+		return <NothingFound title="ID пользователя не указан" />
+	}
+	if (!isValidUUID(userId)) {
+		return <NothingFound title="Невалидный ID пользователя" />
+	}
 
-    const [tests, setTests] = useState<TestDTO[]>([])
-    const [total, setTotal] = useState<number | null>(null)
-    const [limit] = useState<number>(USER_TABLE_LIMIT)
-    const [page, setPage] = useState<number>(1)
+	const [tests, setTests] = useState<TestDTO[]>([])
+	const [total, setTotal] = useState<number | null>(null)
+	const [limit] = useState<number>(USER_TABLE_LIMIT)
+	const [page, setPage] = useState<number>(1)
 
-    const { getUserTests, isFetching } = useTestStore()
+	const { getUserTests, isFetching } = useTestStore()
 
-    const fetchData = useCallback(
-        async (currentPage: number) => {
-            if (isFetching) return
+	const fetchData = useCallback(
+		async (currentPage: number) => {
+			if (isFetching) return
 
-            const data = await getUserTests(userId, currentPage, limit)
-            if (data) {
-                setTests(data.tests)
-                setTotal(data.total)
-            }
-        },
-        [getUserTests, limit, userId]
-    )
+			const data = await getUserTests(userId, currentPage, limit)
+			if (data) {
+				setTests(data.tests)
+				setTotal(data.total)
+			}
+		},
+		[getUserTests, limit, userId]
+	)
 
-    useEffect(() => {
-        fetchData(page)
-    }, [fetchData, page])
+	useEffect(() => {
+		fetchData(page)
+	}, [fetchData, page])
 
-    const handlePageChange = (newPage: number) => {
-        setPage(newPage)
-    }
+	const handlePageChange = (newPage: number) => {
+		setPage(newPage)
+	}
 
-    // const handleUpdateButton = () => {
-    //     fetchData(page)
-    // }
+	// const handleUpdateButton = () => {
+	//     fetchData(page)
+	// }
 
-    const isDataLoaded = total !== null
-    const totalPages = total !== null ? Math.ceil(total / limit) : 0
-    const shouldShowContent = totalPages > 0 && page <= totalPages
-    const emptyTestsPage = total === 0 && page === 1 && isDataLoaded
+	const isDataLoaded = total !== null
+	const totalPages = total !== null ? Math.ceil(total / limit) : 0
+	const shouldShowContent = totalPages > 0 && page <= totalPages
+	const emptyTestsPage = total === 0 && page === 1 && isDataLoaded
 
-    return (
-        <div className={styles.userTestsContainer}>
-            {isFetching || !isDataLoaded ? (
-                <TableSkeleton />
-            ) : emptyTestsPage ? (
-                <div className={styles.emptyState}>
-                    <p className={styles.description}>Пользователь еще не создавал тесты</p>
-                </div>
-            ) : (
-                <>
-                    {shouldShowContent ? (
-                        <div className={styles.contentContainer}>
-                            <UserTestsTable tests={tests} total={total || 0} />
-                            <Pagination page={page} totalPages={totalPages} changePage={handlePageChange} />
-                        </div>
-                    ) : (
-                        <NothingFound />
-                    )}
-                </>
-            )}
-        </div>
-    )
+	return (
+		<div className={styles.userTestsContainer}>
+			{isFetching || !isDataLoaded ? (
+				<TableSkeleton />
+			) : emptyTestsPage ? (
+				<div className={styles.emptyState}>
+					<p className={styles.description}>Пользователь еще не создавал тесты</p>
+				</div>
+			) : (
+				<>
+					{shouldShowContent ? (
+						<div className={styles.contentContainer}>
+							<UserTestsTable
+								tests={tests}
+								total={total || 0}
+							/>
+							<Pagination
+								page={page}
+								totalPages={totalPages}
+								changePage={handlePageChange}
+							/>
+						</div>
+					) : (
+						<NothingFound />
+					)}
+				</>
+			)}
+		</div>
+	)
 }
 
 export default UserTests

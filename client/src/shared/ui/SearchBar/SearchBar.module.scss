@@ -1,61 +1,61 @@
 .searchBar {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 0.5rem 0.75rem;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: $shadow-medium;
-    border: 1px solid $border-secondary;
-    transition: box-shadow 0.1s ease;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	max-width: 480px;
+	margin: 0 auto;
+	padding: 0.5rem 0.75rem;
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: $shadow-medium;
+	border: 1px solid $border-secondary;
+	transition: box-shadow 0.1s ease;
 
-    &:focus-within {
-        box-shadow: 0 0 0 1px $accent-primary-hover;
-    }
+	&:focus-within {
+		box-shadow: 0 0 0 1px $accent-primary-hover;
+	}
 }
 
 .input {
-    flex-grow: 1;
-    border: none;
-    background-color: transparent;
-    font-size: 15px;
-    color: $text-primary;
-    outline: none;
-    padding: 0.5rem 0;
+	flex-grow: 1;
+	border: none;
+	background-color: transparent;
+	font-size: 15px;
+	color: $text-primary;
+	outline: none;
+	padding: 0.5rem 0;
 
-    &::placeholder {
-        color: $text-secondary;
-    }
+	&::placeholder {
+		color: $text-secondary;
+	}
 }
 
 .clearButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    color: $accent-red;
-    margin-right: 0.5rem;
-    transition: color 0.1s ease;
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 20px;
+	color: $accent-red;
+	margin-right: 0.5rem;
+	transition: color 0.1s ease;
 
-    &:hover {
-        color: $accent-red-hover;
-    }
+	&:hover {
+		color: $accent-red-hover;
+	}
 }
 
 .searchButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: $accent-primary;
-    padding: 0.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.1s ease;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: $accent-primary;
+	padding: 0.25rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: color 0.1s ease;
 
-    &:hover {
-        color: $accent-primary-hover;
-    }
+	&:hover {
+		color: $accent-primary-hover;
+	}
 }

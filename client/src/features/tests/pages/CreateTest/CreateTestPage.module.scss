@@ -1,13 +1,11 @@
 .pageWrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: $section-padding;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: $section-padding;
 }
 
 .content {
-    width: 100%;
-    max-width: 1200px;
+	width: 100%;
+	max-width: 1200px;
 }
-
-

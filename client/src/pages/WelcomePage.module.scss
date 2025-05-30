@@ -1,153 +1,153 @@
 .wrapper {
-    min-height: 100vh;
-    background-color: $background-200;
-    display: flex;
-    flex-direction: column;
+	min-height: 100vh;
+	background-color: $background-200;
+	display: flex;
+	flex-direction: column;
 }
 
 .main {
-    flex: 1;
-    padding: 3rem 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 4rem;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+	flex: 1;
+	padding: 3rem 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 4rem;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 }
 
 .hero {
-    max-width: 700px;
+	max-width: 700px;
 
-    h1 {
-        font-size: 3rem;
-        color: $primary-600;
-        margin-bottom: 1rem;
-    }
+	h1 {
+		font-size: 3rem;
+		color: $primary-600;
+		margin-bottom: 1rem;
+	}
 
-    p {
-        font-size: 1.25rem;
-        color: $secondary-400;
-        margin-bottom: 2rem;
-    }
+	p {
+		font-size: 1.25rem;
+		color: $secondary-400;
+		margin-bottom: 2rem;
+	}
 }
 
 .features {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    justify-content: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2rem;
+	justify-content: center;
 }
 
 .featureCard {
-    background-color: $background-100;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-    max-width: 300px;
-    flex: 1 1 260px;
-    transition: transform 0.2s ease;
+	background-color: $background-100;
+	padding: 2rem;
+	border-radius: 20px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+	max-width: 300px;
+	flex: 1 1 260px;
+	transition: transform 0.2s ease;
 
-    &:hover {
-        transform: translateY(-4px);
-    }
+	&:hover {
+		transform: translateY(-4px);
+	}
 
-    h3 {
-        color: $primary-600;
-        margin-bottom: 0.5rem;
-    }
+	h3 {
+		color: $primary-600;
+		margin-bottom: 0.5rem;
+	}
 
-    p {
-        color: $secondary-600;
-    }
+	p {
+		color: $secondary-600;
+	}
 }
 
 .footer {
-    background-color: $primary-800;
-    color: white;
-    padding: 1.5rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
+	background-color: $primary-800;
+	color: white;
+	padding: 1.5rem 2rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	border-top-left-radius: 16px;
+	border-top-right-radius: 16px;
 }
 
 .footerLinks {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
+	display: flex;
+	gap: 1.5rem;
+	flex-wrap: wrap;
+	justify-content: center;
 
-    a {
-        color: white;
-        text-decoration: none;
+	a {
+		color: white;
+		text-decoration: none;
 
-        &:hover {
-            text-decoration: underline;
-        }
-    }
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }
 
 @media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
+	.header {
+		flex-direction: column;
+		gap: 1rem;
+		text-align: center;
+	}
 
-    .main {
-        padding: 2rem 1rem;
-    }
+	.main {
+		padding: 2rem 1rem;
+	}
 
-    .hero h1 {
-        font-size: 2.2rem;
-    }
+	.hero h1 {
+		font-size: 2.2rem;
+	}
 
-    .hero p {
-        font-size: 1rem;
-    }
+	.hero p {
+		font-size: 1rem;
+	}
 
-    .features {
-        flex-direction: column;
-        align-items: center;
-    }
+	.features {
+		flex-direction: column;
+		align-items: center;
+	}
 
-    .featureCard {
-        max-width: 90%;
-    }
+	.featureCard {
+		max-width: 90%;
+	}
 
-    .footer {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
+	.footer {
+		flex-direction: column;
+		gap: 1rem;
+		text-align: center;
+	}
 
-    .footerLinks {
-        justify-content: center;
-    }
+	.footerLinks {
+		justify-content: center;
+	}
 }
 
 @media (max-width: 480px) {
-    .hero h1 {
-        font-size: 1.8rem;
-    }
+	.hero h1 {
+		font-size: 1.8rem;
+	}
 
-    .hero p {
-        font-size: 0.95rem;
-    }
+	.hero p {
+		font-size: 0.95rem;
+	}
 
-    .authButtons {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
+	.authButtons {
+		flex-direction: column;
+		gap: 0.5rem;
+	}
 
-    .featureCard {
-        padding: 1.5rem;
-    }
+	.featureCard {
+		padding: 1.5rem;
+	}
 
-    .footer {
-        padding: 1rem;
-    }
+	.footer {
+		padding: 1rem;
+	}
 }

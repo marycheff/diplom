@@ -1,41 +1,41 @@
 /* Стили для секции */
 .section {
-    padding-top: 30px;
-    background: #fff;
+	padding-top: 30px;
+	background: #fff;
 }
 .titleInput {
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 .form {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 }
 
 .formContentWrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
 }
 
 .formContent {
-    flex: 1;
-    padding-bottom: 20px;
+	flex: 1;
+	padding-bottom: 20px;
 }
 
 .formActions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    padding-top: 10px;
-    border-top: 1px solid #e0e0e0;
-    margin-top: auto;
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	padding-top: 10px;
+	border-top: 1px solid #e0e0e0;
+	margin-top: auto;
 }
 
 /* Стили для кнопок (если нужно повторить стили из модалки) */
 .formActions button {
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-weight: 500;
+	padding: 8px 16px;
+	border-radius: 6px;
+	font-weight: 500;
 }

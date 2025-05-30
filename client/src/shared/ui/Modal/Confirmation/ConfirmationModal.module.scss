@@ -1,47 +1,47 @@
 .confirmationForm {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 }
 
 .modalBody {
-    flex: 1;
-    overflow-y: auto;
-    margin: 10px 0;
-    padding-bottom: 20px;
+	flex: 1;
+	overflow-y: auto;
+	margin: 10px 0;
+	padding-bottom: 20px;
 }
 
 .modalFooter {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    padding-top: 10px;
-    border-top: 1px solid #e0e0e0;
-    margin-top: auto;
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	padding-top: 10px;
+	border-top: 1px solid #e0e0e0;
+	margin-top: auto;
 }
 
 .cancelButton {
-    padding: 8px 16px;
-    border-radius: 6px;
-    background: transparent;
-    border: 1px solid $secondary-200;
-    color: $secondary-400;
-    font-weight: 500;
+	padding: 8px 16px;
+	border-radius: 6px;
+	background: transparent;
+	border: 1px solid $secondary-200;
+	color: $secondary-400;
+	font-weight: 500;
 
-    &:hover {
-        background-color: $background-200;
-        color: $secondary-600;
-    }
+	&:hover {
+		background-color: $background-200;
+		color: $secondary-600;
+	}
 }
 
 .confirmButton {
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-weight: 500;
-    // color: white;
+	padding: 8px 16px;
+	border-radius: 6px;
+	font-weight: 500;
+	// color: white;
 }
 
 :global(.modalOverlay) .confirmationForm {
-    // Увеличиваем z-index для вложенного модального окна
-    z-index: 1100;
+	// Увеличиваем z-index для вложенного модального окна
+	z-index: 1100;
 }

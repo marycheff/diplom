@@ -1,147 +1,147 @@
 .testsData {
-    max-width: 1200px;
-    margin: 0 auto;
+	max-width: 1200px;
+	margin: 0 auto;
 }
 
 .testsCount {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0 15px;
-    margin-bottom: 10px;
-    h3 {
-        margin: 0;
-        font-size: 1rem;
-    }
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 15px;
+	margin-bottom: 10px;
+	h3 {
+		margin: 0;
+		font-size: 1rem;
+	}
 }
 
 .cardsContainer {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-unit;
-    width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-unit;
+	width: 100%;
 }
 
 .card {
-    background-color: $bg-surface;
-    border-radius: 8px;
-    box-shadow: $shadow-medium;
-    padding: $spacing-unit;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid $border-secondary;
-    transition: transform 0.2s, box-shadow 0.2s;
+	background-color: $bg-surface;
+	border-radius: 8px;
+	box-shadow: $shadow-medium;
+	padding: $spacing-unit;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid $border-secondary;
+	transition: transform 0.2s, box-shadow 0.2s;
 
-    &:hover {
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-    }
+	&:hover {
+		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+	}
 }
 
 .cardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $spacing-unit;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: $spacing-unit;
 
-    h3 {
-        margin: 0;
-        color: $text-primary;
-        font-size: 1.1rem;
-        font-weight: 600;
-    }
+	h3 {
+		margin: 0;
+		color: $text-primary;
+		font-size: 1.1rem;
+		font-weight: 600;
+	}
 }
 
 .cardContent {
-    display: flex;
-    justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 
-    @media (max-width: 768px) {
-        flex-direction: column;
-    }
+	@media (max-width: 768px) {
+		flex-direction: column;
+	}
 }
 
 .cardInfo {
-    flex: 1;
+	flex: 1;
 }
 
 .cardActions {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-left: $spacing-unit;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-left: $spacing-unit;
 
-    @media (max-width: 768px) {
-        padding-left: 0;
-        margin-top: $spacing-unit;
-    }
+	@media (max-width: 768px) {
+		padding-left: 0;
+		margin-top: $spacing-unit;
+	}
 }
 
 .infoRow {
-    display: flex;
-    margin-bottom: 0.5rem;
+	display: flex;
+	margin-bottom: 0.5rem;
 
-    &:last-child {
-        margin-bottom: 0;
-    }
+	&:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .label {
-    color: $text-secondary;
-    min-width: 170px;
-    margin-right: 0.5rem;
+	color: $text-secondary;
+	min-width: 170px;
+	margin-right: 0.5rem;
 }
 
 .value {
-    color: $text-primary;
-    font-weight: 500;
+	color: $text-primary;
+	font-weight: 500;
 }
 
 .actionLink {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background-color: $secondary-800;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: 500;
-    transition: background-color 0.2s;
+	display: inline-block;
+	padding: 0.5rem 1rem;
+	background-color: $secondary-800;
+	color: #fff;
+	text-decoration: none;
+	border-radius: 5px;
+	font-weight: 500;
+	transition: background-color 0.2s;
 
-    &:hover {
-        background-color: $secondary-600;
-    }
+	&:hover {
+		background-color: $secondary-600;
+	}
 
-    @media (max-width: 768px) {
-        width: 100%;
-        margin: 0 auto;
-        text-align: center;
-        padding: 0.25rem 0.5rem;
-    }
+	@media (max-width: 768px) {
+		width: 100%;
+		margin: 0 auto;
+		text-align: center;
+		padding: 0.25rem 0.5rem;
+	}
 }
 
 .statusBadge {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    background-color: rgba($secondary-400, 0.1);
-    color: $secondary-400;
+	display: inline-block;
+	padding: 0.25rem 0.5rem;
+	border-radius: 4px;
+	font-size: 0.85rem;
+	font-weight: 500;
+	background-color: rgba($secondary-400, 0.1);
+	color: $secondary-400;
 }
 
 .statusBadge {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 500;
+	display: inline-block;
+	padding: 0.25rem 0.5rem;
+	border-radius: 4px;
+	font-size: 0.85rem;
+	font-weight: 500;
 
-    &.published {
-        background-color: $green-100;
-        color: #333;
-    }
+	&.published {
+		background-color: $green-100;
+		color: #333;
+	}
 
-    &.hidden {
-        background-color: rgba($secondary-400, 0.1);
-        color: $secondary-400;
-    }
+	&.hidden {
+		background-color: rgba($secondary-400, 0.1);
+		color: $secondary-400;
+	}
 }

@@ -1,17 +1,17 @@
 // @import url("../Base/Input.module");
 @use "../Base/Input.module";
 .editableField {
-    margin-bottom: 16px;
+	margin-bottom: 16px;
 }
 
 .label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
+	display: block;
+	margin-bottom: 8px;
+	font-weight: bold;
 }
 
 .rowContainer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
 }

@@ -5,24 +5,24 @@ const SOCKET_URL = import.meta.env.VITE_SERVER_URL
 let socket: Socket | null = null
 
 export const initSocket = () => {
-    if (!socket) {
-        const token = localStorage.getItem("token") // Получение токена из localStorage
-        socket = io(SOCKET_URL, {
-            withCredentials: true,
-            auth: token ? { token } : {}, // Передача токена, если он есть, иначе пустой объект
-        })
-    }
-    return socket
+	if (!socket) {
+		const token = localStorage.getItem("token") // Получение токена из localStorage
+		socket = io(SOCKET_URL, {
+			withCredentials: true,
+			auth: token ? { token } : {} // Передача токена, если он есть, иначе пустой объект
+		})
+	}
+	return socket
 }
 
 export const getSocket = () => {
-    if (!socket) throw new Error("Сокет не инициализирован")
-    return socket
+	if (!socket) throw new Error("Сокет не инициализирован")
+	return socket
 }
 
 export const closeSocket = () => {
-    if (socket) {
-        socket.disconnect()
-        socket = null
-    }
+	if (socket) {
+		socket.disconnect()
+		socket = null
+	}
 }

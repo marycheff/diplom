@@ -1,23 +1,23 @@
 .questionButton {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    min-width: auto;
-    height: auto;
-    transition: opacity 0.2s ease;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 0.5rem;
+	min-width: auto;
+	height: auto;
+	transition: opacity 0.2s ease;
 
-    &:hover {
-        opacity: 0.7;
-    }
+	&:hover {
+		opacity: 0.7;
+	}
 
-    &:focus {
-        outline: none;
-        opacity: 0.8;
-    }
+	&:focus {
+		outline: none;
+		opacity: 0.8;
+	}
 }
 
 .icon {
-    width: 1.25rem;
-    height: 1.25rem;
+	width: 1.25rem;
+	height: 1.25rem;
 }

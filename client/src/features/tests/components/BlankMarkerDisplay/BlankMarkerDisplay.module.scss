@@ -1,32 +1,20 @@
-// .blankMarker {
-//     display: inline-block;
-//     min-width: 120px;
-//     padding: 0 5px;
-//     margin: 0 2px;
-//     color: #666;
-//     font-weight: bold;
-//     text-align: l;
-//     border-bottom: 2px solid #3498db;
-//     position: relative;
-//     background-color: rgba(52, 152, 219, 0.05);
-//     border-radius: 3px;
-// }
+
 
 .blankMarker {
-    display: inline-flex;
-    align-items: center;
-    vertical-align: middle;
-    width: 150px;
-    height: 2rem;
-    padding: 5px 10px;
-    margin: 0 5px;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.2s;
-    color: #666;
-    font-weight: bold;
-    border-bottom: 2px solid #3498db;
-    border-color: var(--primary-color);
-    position: relative;
-    background-color: rgba(154, 154, 154, 0.05);
+	display: inline-flex;
+	align-items: center;
+	vertical-align: middle;
+	width: 150px;
+	height: 2rem;
+	padding: 5px 10px;
+	margin: 0 5px;
+	border-radius: 4px;
+	font-size: 16px;
+	transition: border-color 0.2s;
+	color: #666;
+	font-weight: bold;
+	border-bottom: 2px solid #3498db;
+	border-color: var(--primary-color);
+	position: relative;
+	background-color: rgba(154, 154, 154, 0.05);
 }

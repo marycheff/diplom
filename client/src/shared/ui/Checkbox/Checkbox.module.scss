@@ -1,72 +1,72 @@
 .checkboxWrapper {
-    --size: 15px;
-    position: relative;
+	--size: 15px;
+	position: relative;
 
-    *,
-    *:before,
-    *:after {
-        box-sizing: border-box;
-    }
+	*,
+	*:before,
+	*:after {
+		box-sizing: border-box;
+	}
 
-    .promotedInputCheckbox {
-        border: 0;
-        clip: rect(0 0 0 0);
-        height: 1px;
-        margin: -1px;
-        overflow: hidden;
-        padding: 0;
-        position: absolute;
-        width: 1px;
-    }
+	.promotedInputCheckbox {
+		border: 0;
+		clip: rect(0 0 0 0);
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		padding: 0;
+		position: absolute;
+		width: 1px;
+	}
 
-    input:checked ~ svg {
-        height: calc(var(--size) * 0.6);
-        animation: draw-checkbox-28 ease-in-out 0.2s forwards;
-    }
+	input:checked ~ svg {
+		height: calc(var(--size) * 0.6);
+		animation: draw-checkbox-28 ease-in-out 0.2s forwards;
+	}
 
-    label {
-        color: $secondary-400;
-        line-height: var(--size);
-        cursor: pointer;
-        position: relative;
+	label {
+		color: $secondary-400;
+		line-height: var(--size);
+		cursor: pointer;
+		position: relative;
 
-        &:active::after {
-            background-color: #e6e6e6;
-        }
+		&:active::after {
+			background-color: #e6e6e6;
+		}
 
-        &:after {
-            content: "";
-            height: var(--size);
-            width: var(--size);
-            margin-right: 8px;
-            float: left;
-            border: 2px solid $secondary-400;
-            border-radius: 3px;
-            transition: 0.15s all ease-out;
-        }
-    }
+		&:after {
+			content: "";
+			height: var(--size);
+			width: var(--size);
+			margin-right: 8px;
+			float: left;
+			border: 2px solid $secondary-400;
+			border-radius: 3px;
+			transition: 0.15s all ease-out;
+		}
+	}
 
-    svg {
-        stroke: $secondary-400;
-        stroke-width: 5px;
-        height: 0;
-        width: calc(var(--size) * 0.6);
-        position: absolute;
-        left: calc(var(--size) * 0.21);
-        top: calc(var(--size) * 0.2);
-        stroke-dasharray: 33;
-    }
-    input:disabled ~ label {
-        cursor: default;
-        opacity: 0.5;
-    }
+	svg {
+		stroke: $secondary-400;
+		stroke-width: 5px;
+		height: 0;
+		width: calc(var(--size) * 0.6);
+		position: absolute;
+		left: calc(var(--size) * 0.21);
+		top: calc(var(--size) * 0.2);
+		stroke-dasharray: 33;
+	}
+	input:disabled ~ label {
+		cursor: default;
+		opacity: 0.5;
+	}
 }
 
 @keyframes draw-checkbox-28 {
-    0% {
-        stroke-dashoffset: 33;
-    }
-    100% {
-        stroke-dashoffset: 0;
-    }
+	0% {
+		stroke-dashoffset: 33;
+	}
+	100% {
+		stroke-dashoffset: 0;
+	}
 }

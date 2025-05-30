@@ -17,8 +17,6 @@ $background-400: #f0f7f4; // Основной оттенок
 $background-600: #d8e5e0;
 $background-800: #c0d3cc;
 
-
-
 // Semantic variables
 $text-primary: $primary-400;
 $text-secondary: $secondary-600;
@@ -31,28 +29,21 @@ $bg-surface: $background-100;
 $accent-primary: $primary-400;
 $accent-secondary: $secondary-400;
 
-
-
-
 $accent-primary-hover: $primary-600;
 
 $border-primary: $primary-200;
 $border-secondary: $secondary-200;
-
-
 
 $green-100: #c8e6c9;
 $green-200: #a5d6a7;
 $green-400: #388e3c; // Основной оттенок
 $green-600: #2e7d32;
 
-
 $red-100: #ffcdd2;
 $red-200: #ef9a9a;
 $red-400: #cc4644; // Основной оттенок
 $red-600: #d32f2f;
 $red-800: #c62828;
-
 
 $shadow-color: rgba($primary-800, 0.15);
 $shadow-medium: 0 4px 12px $shadow-color;

@@ -25,53 +25,53 @@ import { ROUTES } from "@/router/paths"
 
 // Конфигурация админских роутов
 export const adminRoutes = [
-    { path: ROUTES.ADMIN, element: <AdminPage /> },
-    { path: ROUTES.ADMIN_USERS, element: <AllUsersPage /> },
-    { path: ROUTES.ADMIN_USER_INFO, element: <UserInfoPage /> },
-    { path: ROUTES.ADMIN_CREATE_USER, element: <CreateUserPage /> },
-    { path: ROUTES.ADMIN_TESTS, element: <AllTestsPage /> },
-    { path: ROUTES.ADMIN_UNMODERATED_TESTS, element: <UnmoderatedTestsPage /> },
-    { path: ROUTES.ADMIN_TEST_INFO, element: <TestInfoPage /> },
-    { path: ROUTES.ADMIN_UNMODERATED_TEST_INFO, element: <TestInfoPage /> },
-    { path: ROUTES.ADMIN_TEST_ATTEMPTS, element: <TestAttemptsPage /> },
-    { path: ROUTES.ADMIN_UNMODERATED_TEST_ATTEMPTS, element: <TestAttemptsPage /> },
-    { path: ROUTES.ADMIN_ATTEMPT_INFO, element: <AttemptInfoPage /> },
-    { path: ROUTES.ADMIN_ALL_ATTEMPTS, element: <AllAttemptsPage /> },
-    { path: ROUTES.ADMIN_ADD_QUESTIONS, element: <TestInfoPage /> },
-    { path: ROUTES.ADMIN_EDIT_SETTINGS, element: <TestInfoPage /> },
-    { path: ROUTES.ADMIN_CREATE_TEST, element: <CreateTestPage /> },
-    { path: ROUTES.ADMIN_PROFILE, element: <UserProfilePage /> },
-    { path: ROUTES.ADMIN_MY_TESTS, element: <MyTestsPage /> },
-    { path: ROUTES.ADMIN_MY_TEST_INFO, element: <TestInfoPage /> },
-    { path: ROUTES.ADMIN_MY_ATTEMPTS, element: <MyAttemptsPage /> },
-    { path: ROUTES.ADMIN_MY_ATTEMPT_INFO, element: <AttemptInfoPage /> },
+	{ path: ROUTES.ADMIN, element: <AdminPage /> },
+	{ path: ROUTES.ADMIN_USERS, element: <AllUsersPage /> },
+	{ path: ROUTES.ADMIN_USER_INFO, element: <UserInfoPage /> },
+	{ path: ROUTES.ADMIN_CREATE_USER, element: <CreateUserPage /> },
+	{ path: ROUTES.ADMIN_TESTS, element: <AllTestsPage /> },
+	{ path: ROUTES.ADMIN_UNMODERATED_TESTS, element: <UnmoderatedTestsPage /> },
+	{ path: ROUTES.ADMIN_TEST_INFO, element: <TestInfoPage /> },
+	{ path: ROUTES.ADMIN_UNMODERATED_TEST_INFO, element: <TestInfoPage /> },
+	{ path: ROUTES.ADMIN_TEST_ATTEMPTS, element: <TestAttemptsPage /> },
+	{ path: ROUTES.ADMIN_UNMODERATED_TEST_ATTEMPTS, element: <TestAttemptsPage /> },
+	{ path: ROUTES.ADMIN_ATTEMPT_INFO, element: <AttemptInfoPage /> },
+	{ path: ROUTES.ADMIN_ALL_ATTEMPTS, element: <AllAttemptsPage /> },
+	{ path: ROUTES.ADMIN_ADD_QUESTIONS, element: <TestInfoPage /> },
+	{ path: ROUTES.ADMIN_EDIT_SETTINGS, element: <TestInfoPage /> },
+	{ path: ROUTES.ADMIN_CREATE_TEST, element: <CreateTestPage /> },
+	{ path: ROUTES.ADMIN_PROFILE, element: <UserProfilePage /> },
+	{ path: ROUTES.ADMIN_MY_TESTS, element: <MyTestsPage /> },
+	{ path: ROUTES.ADMIN_MY_TEST_INFO, element: <TestInfoPage /> },
+	{ path: ROUTES.ADMIN_MY_ATTEMPTS, element: <MyAttemptsPage /> },
+	{ path: ROUTES.ADMIN_MY_ATTEMPT_INFO, element: <AttemptInfoPage /> }
 ]
 
 // Конфигурация пользовательских роутов (для авторизованных пользователей)
 export const userRoutes = [
-    { path: ROUTES.HOME, element: <HomePage /> },
-    { path: ROUTES.CREATE_TEST, element: <CreateTestPage /> },
-    { path: ROUTES.PROFILE, element: <UserProfilePage /> },
-    { path: ROUTES.MY_TESTS, element: <MyTestsPage /> },
-    { path: ROUTES.MY_TEST_INFO, element: <TestInfoPage /> },
-    { path: ROUTES.MY_TEST_ADD_QUESTIONS, element: <TestInfoPage /> },
-    { path: ROUTES.MY_TEST_EDIT_SETTINGS, element: <TestInfoPage /> },
-    { path: ROUTES.MY_ATTEMPTS, element: <MyAttemptsPage /> },
-    { path: ROUTES.MY_TEST_ATTEMPTS, element: <TestAttemptsPage /> },
-    // TODO: изменить AttemptInfoPage
-    { path: ROUTES.MY_TEST_ATTEMPT_INFO, element: <AttemptInfoPage /> },
+	{ path: ROUTES.HOME, element: <HomePage /> },
+	{ path: ROUTES.CREATE_TEST, element: <CreateTestPage /> },
+	{ path: ROUTES.PROFILE, element: <UserProfilePage /> },
+	{ path: ROUTES.MY_TESTS, element: <MyTestsPage /> },
+	{ path: ROUTES.MY_TEST_INFO, element: <TestInfoPage /> },
+	{ path: ROUTES.MY_TEST_ADD_QUESTIONS, element: <TestInfoPage /> },
+	{ path: ROUTES.MY_TEST_EDIT_SETTINGS, element: <TestInfoPage /> },
+	{ path: ROUTES.MY_ATTEMPTS, element: <MyAttemptsPage /> },
+	{ path: ROUTES.MY_TEST_ATTEMPTS, element: <TestAttemptsPage /> },
+	// TODO: изменить AttemptInfoPage
+	{ path: ROUTES.MY_TEST_ATTEMPT_INFO, element: <AttemptInfoPage /> }
 ]
 // Конфигурация публичных роутов
 export const publicRoutes = [
-    { path: ROUTES.START_ATTEMPT, element: <StartAttemptPage /> },
-    { path: ROUTES.PASS_ATTEMPT, element: <TestTaking /> },
-    { path: ROUTES.ATTEMPT_RESULTS, element: <AttemptResultsPage /> },
-    { path: ROUTES.ACTIVATION_ERROR, element: <ActivationErrorPage /> },
-    { path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> },
+	{ path: ROUTES.START_ATTEMPT, element: <StartAttemptPage /> },
+	{ path: ROUTES.PASS_ATTEMPT, element: <TestTaking /> },
+	{ path: ROUTES.ATTEMPT_RESULTS, element: <AttemptResultsPage /> },
+	{ path: ROUTES.ACTIVATION_ERROR, element: <ActivationErrorPage /> },
+	{ path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> }
 ]
 // Конфигурация роутов для неавторизованных пользователей
 export const unauthorizedRoutes = [
-    { path: ROUTES.LOGIN, element: <LoginPage /> },
-    { path: ROUTES.REGISTER, element: <RegisterPage /> },
-    { path: ROUTES.WELCOME, element: <WelcomePage /> },
+	{ path: ROUTES.LOGIN, element: <LoginPage /> },
+	{ path: ROUTES.REGISTER, element: <RegisterPage /> },
+	{ path: ROUTES.WELCOME, element: <WelcomePage /> }
 ]

@@ -1,5 +1,5 @@
 export interface LoaderProps {
-    delay?: number
-    text?: string
-    fullScreen?: boolean
+	delay?: number
+	text?: string
+	fullScreen?: boolean
 }

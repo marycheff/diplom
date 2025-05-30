@@ -21,390 +21,396 @@ import { generatePath, useNavigate, useParams } from "react-router-dom"
 import styles from "./TestTaking.module.scss"
 
 const TestTaking = () => {
-    // Параметры маршрута
-    const { attemptId } = useParams<{ attemptId: string }>()
-    const timerRef = useRef<{ syncTime: () => Promise<void> }>(null)
+	// Параметры маршрута
+	const { attemptId } = useParams<{ attemptId: string }>()
+	const timerRef = useRef<{ syncTime: () => Promise<void> }>(null)
 
-    // Состояния компонента
-    const [selectedAnswers, setSelectedAnswers] = useState<string[]>([])
-    const [textAnswer, setTextAnswer] = useState<string>("")
-    const [allAnswers, setAllAnswers] = useState<Record<string, string[]>>({})
-    const [allTextAnswers, setAllTextAnswers] = useState<Record<string, string>>({})
-    const [test, setTest] = useState<UserTestDTO | null>(null)
-    const [attempt, setAttempt] = useState<TestAttemptUserDTO | null>(null)
-    const [currentPage, setCurrentPage] = useState(1)
-    const [timeLimit, setTimeLimit] = useState(0)
-    const [isAttemptLoaded, setIsAttemptLoaded] = useState(false)
-    const [isTestLoaded, setIsTestLoaded] = useState(false)
+	// Состояния компонента
+	const [selectedAnswers, setSelectedAnswers] = useState<string[]>([])
+	const [textAnswer, setTextAnswer] = useState<string>("")
+	const [allAnswers, setAllAnswers] = useState<Record<string, string[]>>({})
+	const [allTextAnswers, setAllTextAnswers] = useState<Record<string, string>>({})
+	const [test, setTest] = useState<UserTestDTO | null>(null)
+	const [attempt, setAttempt] = useState<TestAttemptUserDTO | null>(null)
+	const [currentPage, setCurrentPage] = useState(1)
+	const [timeLimit, setTimeLimit] = useState(0)
+	const [isAttemptLoaded, setIsAttemptLoaded] = useState(false)
+	const [isTestLoaded, setIsTestLoaded] = useState(false)
 
-    const navigate = useNavigate()
+	const navigate = useNavigate()
 
-    // Хуки из store
-    const { getTestForAttempt } = useTestStore()
-    const { getAttemptForUserById, saveAnswers, completeAttempt, isLoading } = useAttemptStore()
-    const isSubmittingRef = useRef<boolean>(false)
-    // Проверка валидности attemptId
-    if (!attemptId) {
-        return <NothingFound title="ID попытки не указан" />
-    }
-    if (!isValidUUID(attemptId)) {
-        return <NothingFound title="Невалидный ID попытки" />
-    }
+	// Хуки из store
+	const { getTestForAttempt } = useTestStore()
+	const { getAttemptForUserById, saveAnswers, completeAttempt, isLoading } = useAttemptStore()
+	const isSubmittingRef = useRef<boolean>(false)
+	// Проверка валидности attemptId
+	if (!attemptId) {
+		return <NothingFound title="ID попытки не указан" />
+	}
+	if (!isValidUUID(attemptId)) {
+		return <NothingFound title="Невалидный ID попытки" />
+	}
 
-    // Проверка, завершена ли попытка
-    const isAttemptCompleted = (attempt && attempt.status !== AttemptStatus.IN_PROGRESS) || false
+	// Проверка, завершена ли попытка
+	const isAttemptCompleted = (attempt && attempt.status !== AttemptStatus.IN_PROGRESS) || false
 
-    // Загрузка сохраненных ответов из localStorage при монтировании
-    useEffect(() => {
-        const loadSavedAnswers = async () => {
-            try {
-                const savedAnswers = localStorage.getItem(`test_answers_${attemptId}`)
-                const savedTextAnswers = localStorage.getItem(`test_text_answers_${attemptId}`)
-                if (savedAnswers) {
-                    setAllAnswers(JSON.parse(savedAnswers))
-                }
-                if (savedTextAnswers) {
-                    setAllTextAnswers(JSON.parse(savedTextAnswers))
-                }
-            } catch {
-                toast.error("Ошибка в получении сохраненных ответов")
-            }
-        }
-        loadSavedAnswers()
-    }, [attemptId])
+	// Загрузка сохраненных ответов из localStorage при монтировании
+	useEffect(() => {
+		const loadSavedAnswers = async () => {
+			try {
+				const savedAnswers = localStorage.getItem(`test_answers_${attemptId}`)
+				const savedTextAnswers = localStorage.getItem(`test_text_answers_${attemptId}`)
+				if (savedAnswers) {
+					setAllAnswers(JSON.parse(savedAnswers))
+				}
+				if (savedTextAnswers) {
+					setAllTextAnswers(JSON.parse(savedTextAnswers))
+				}
+			} catch {
+				toast.error("Ошибка в получении сохраненных ответов")
+			}
+		}
+		loadSavedAnswers()
+	}, [attemptId])
 
-    // Загрузка ответов из БД для завершенной попытки
-    useEffect(() => {
-        if (isAttemptCompleted && attempt && attempt.answers && attempt.answers.length > 0) {
-            const userAnswers: Record<string, string[]> = {}
+	// Загрузка ответов из БД для завершенной попытки
+	useEffect(() => {
+		if (isAttemptCompleted && attempt && attempt.answers && attempt.answers.length > 0) {
+			const userAnswers: Record<string, string[]> = {}
 
-            attempt.answers.forEach(answer => {
-                if (!userAnswers[answer.questionId]) {
-                    userAnswers[answer.questionId] = []
-                }
-                userAnswers[answer.questionId].push(answer.answerId)
-            })
+			attempt.answers.forEach((answer) => {
+				if (!userAnswers[answer.questionId]) {
+					userAnswers[answer.questionId] = []
+				}
+				userAnswers[answer.questionId].push(answer.answerId)
+			})
 
-            setAllAnswers(userAnswers)
-        }
-    }, [attempt, isAttemptCompleted])
+			setAllAnswers(userAnswers)
+		}
+	}, [attempt, isAttemptCompleted])
 
-    // Сохранение ответов в localStorage при изменении allAnswers и allTextAnswers
-    useEffect(() => {
-        if (!isAttemptCompleted && attemptId) {
-            if (Object.keys(allAnswers).length > 0) {
-                localStorage.setItem(`test_answers_${attemptId}`, JSON.stringify(allAnswers))
-            }
-            if (Object.keys(allTextAnswers).length > 0) {
-                localStorage.setItem(`test_text_answers_${attemptId}`, JSON.stringify(allTextAnswers))
-            }
-        }
-    }, [allAnswers, allTextAnswers, attemptId])
+	// Сохранение ответов в localStorage при изменении allAnswers и allTextAnswers
+	useEffect(() => {
+		if (!isAttemptCompleted && attemptId) {
+			if (Object.keys(allAnswers).length > 0) {
+				localStorage.setItem(`test_answers_${attemptId}`, JSON.stringify(allAnswers))
+			}
+			if (Object.keys(allTextAnswers).length > 0) {
+				localStorage.setItem(`test_text_answers_${attemptId}`, JSON.stringify(allTextAnswers))
+			}
+		}
+	}, [allAnswers, allTextAnswers, attemptId])
 
-    // Загрузка данных попытки
-    const fetchAttempt = async () => {
-        try {
-            const fetchedAttempt = await getAttemptForUserById(attemptId)
-            if (fetchedAttempt) {
-                setAttempt(fetchedAttempt)
-            }
-            setIsAttemptLoaded(true)
-        } catch (error) {
-            setIsAttemptLoaded(true)
-            setIsTestLoaded(true)
-            return <AttemptNotFound />
-        }
-    }
+	// Загрузка данных попытки
+	const fetchAttempt = async () => {
+		try {
+			const fetchedAttempt = await getAttemptForUserById(attemptId)
+			if (fetchedAttempt) {
+				setAttempt(fetchedAttempt)
+			}
+			setIsAttemptLoaded(true)
+		} catch (error) {
+			setIsAttemptLoaded(true)
+			setIsTestLoaded(true)
+			return <AttemptNotFound />
+		}
+	}
 
-    // Загрузка данных теста
-    const fetchTest = async () => {
-        try {
-            if (!attempt) return
-            const fetchedTest = await getTestForAttempt(attempt.testId, attemptId)
-            setTest(fetchedTest || null)
-            setTimeLimit(fetchedTest?.settings?.timeLimit || 0)
+	// Загрузка данных теста
+	const fetchTest = async () => {
+		try {
+			if (!attempt) return
+			const fetchedTest = await getTestForAttempt(attempt.testId, attemptId)
+			setTest(fetchedTest || null)
+			setTimeLimit(fetchedTest?.settings?.timeLimit || 0)
 
-            setIsTestLoaded(true)
-        } catch (error) {
-            setIsTestLoaded(true)
-            return <TestNotFound />
-        }
-    }
+			setIsTestLoaded(true)
+		} catch (error) {
+			setIsTestLoaded(true)
+			return <TestNotFound />
+		}
+	}
 
-    // Инициализация данных при монтировании
-    useEffect(() => {
-        fetchAttempt()
-    }, [attemptId])
+	// Инициализация данных при монтировании
+	useEffect(() => {
+		fetchAttempt()
+	}, [attemptId])
 
-    useEffect(() => {
-        if (attempt) fetchTest()
-    }, [attempt])
+	useEffect(() => {
+		if (attempt) fetchTest()
+	}, [attempt])
 
-    const [showUpdateModal, setShowUpdateModal] = useState(false)
+	const [showUpdateModal, setShowUpdateModal] = useState(false)
 
-    useTestSocket(attempt?.testId || "", () => {
-        if (attempt && !isAttemptCompleted && !isSubmittingRef.current) {
-            fetchTest()
-            setShowUpdateModal(true)
-        }
-    })
+	useTestSocket(attempt?.testId || "", () => {
+		if (attempt && !isAttemptCompleted && !isSubmittingRef.current) {
+			fetchTest()
+			setShowUpdateModal(true)
+		}
+	})
 
-    // Обновление выбранных ответов при смене страницы
-    useEffect(() => {
-        if (test?.questions?.length) {
-            const currentQuestion = test.questions[currentPage - 1]
-            if (currentQuestion.type === "TEXT_INPUT" || currentQuestion.type === "FILL_IN_THE_BLANK") {
-                setTextAnswer(allTextAnswers[currentQuestion.id] || "")
-            } else {
-                setSelectedAnswers(allAnswers[currentQuestion.id] || [])
-            }
-        }
-    }, [currentPage, test, allAnswers, allTextAnswers])
+	// Обновление выбранных ответов при смене страницы
+	useEffect(() => {
+		if (test?.questions?.length) {
+			const currentQuestion = test.questions[currentPage - 1]
+			if (currentQuestion.type === "TEXT_INPUT" || currentQuestion.type === "FILL_IN_THE_BLANK") {
+				setTextAnswer(allTextAnswers[currentQuestion.id] || "")
+			} else {
+				setSelectedAnswers(allAnswers[currentQuestion.id] || [])
+			}
+		}
+	}, [currentPage, test, allAnswers, allTextAnswers])
 
-    // Предотвращение случайного закрытия страницы
-    usePreventLeave({
-        shouldPrevent: !isAttemptCompleted && Object.keys(allAnswers).length > 0,
-    })
+	// Предотвращение случайного закрытия страницы
+	usePreventLeave({
+		shouldPrevent: !isAttemptCompleted && Object.keys(allAnswers).length > 0
+	})
 
-    // Обработчики событий
+	// Обработчики событий
 
-    // Обработчик изменения страницы
-    const handlePageChange = (newPage: number) => {
-        saveCurrentQuestionAnswers()
-        setCurrentPage(newPage)
-    }
+	// Обработчик изменения страницы
+	const handlePageChange = (newPage: number) => {
+		saveCurrentQuestionAnswers()
+		setCurrentPage(newPage)
+	}
 
-    // Обработчик истечения времени
-    const handleTimeExpired = async () => {
-        if (isSubmittingRef.current || isAttemptCompleted) return
-        toast.error("Время закончилось. Ваши ответы будут отправлены автоматически.")
-        await submitAnswers()
-    }
+	// Обработчик истечения времени
+	const handleTimeExpired = async () => {
+		if (isSubmittingRef.current || isAttemptCompleted) return
+		toast.error("Время закончилось. Ваши ответы будут отправлены автоматически.")
+		await submitAnswers()
+	}
 
-    // Вспомогательные функции
-    const saveCurrentQuestionAnswers = () => {
-        if (!currentQuestion) return
-        if (currentQuestion.type === "TEXT_INPUT" || currentQuestion.type === "FILL_IN_THE_BLANK") {
-            setAllTextAnswers(prev => ({ ...prev, [currentQuestion.id]: textAnswer }))
-        } else {
-            setAllAnswers(prev => ({ ...prev, [currentQuestion.id]: selectedAnswers }))
-        }
-    }
+	// Вспомогательные функции
+	const saveCurrentQuestionAnswers = () => {
+		if (!currentQuestion) return
+		if (currentQuestion.type === "TEXT_INPUT" || currentQuestion.type === "FILL_IN_THE_BLANK") {
+			setAllTextAnswers((prev) => ({ ...prev, [currentQuestion.id]: textAnswer }))
+		} else {
+			setAllAnswers((prev) => ({ ...prev, [currentQuestion.id]: selectedAnswers }))
+		}
+	}
 
-    const updateAnswerTime = (questionId: string) => {
-        const timeKey = `answer_time_${attemptId}_${questionId}`
-        const currentTime = new Date().toISOString()
-        saveEncryptedTime(timeKey, currentTime)
-    }
+	const updateAnswerTime = (questionId: string) => {
+		const timeKey = `answer_time_${attemptId}_${questionId}`
+		const currentTime = new Date().toISOString()
+		saveEncryptedTime(timeKey, currentTime)
+	}
 
-    // Обработчик изменения ответа
-    const handleAnswerChange = (questionId: string, answers: string[]) => {
-        setSelectedAnswers(answers)
-        setAllAnswers(prev => ({ ...prev, [questionId]: answers }))
-        updateAnswerTime(questionId)
-    }
+	// Обработчик изменения ответа
+	const handleAnswerChange = (questionId: string, answers: string[]) => {
+		setSelectedAnswers(answers)
+		setAllAnswers((prev) => ({ ...prev, [questionId]: answers }))
+		updateAnswerTime(questionId)
+	}
 
-    // Обработчик изменения текстового ответа
-    const handleTextAnswerChange = (questionId: string, text: string) => {
-        setTextAnswer(text)
-        setAllTextAnswers(prev => ({ ...prev, [questionId]: text }))
-        updateAnswerTime(questionId)
-    }
+	// Обработчик изменения текстового ответа
+	const handleTextAnswerChange = (questionId: string, text: string) => {
+		setTextAnswer(text)
+		setAllTextAnswers((prev) => ({ ...prev, [questionId]: text }))
+		updateAnswerTime(questionId)
+	}
 
-    // Состояние для модального окна подтверждения
-    const [showConfirmationModal, setShowConfirmationModal] = useState(false)
-    const [pendingSubmit, setPendingSubmit] = useState(false)
+	// Состояние для модального окна подтверждения
+	const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+	const [pendingSubmit, setPendingSubmit] = useState(false)
 
-    // Отправка результатов
-    const handleSubmitAnswers = async () => {
-        saveCurrentQuestionAnswers()
+	// Отправка результатов
+	const handleSubmitAnswers = async () => {
+		saveCurrentQuestionAnswers()
 
-        // Проверка, что не на все вопросы есть заполненные ответы
-        const hasUnansweredQuestions = test?.questions?.some(question => {
-            if (question.type === "TEXT_INPUT" || question.type === "FILL_IN_THE_BLANK") {
-                return !allTextAnswers[question.id] || allTextAnswers[question.id].trim() === ""
-            }
-            return !allAnswers[question.id] || allAnswers[question.id].length === 0
-        })
-        if (hasUnansweredQuestions) {
-            setPendingSubmit(true)
-            setShowConfirmationModal(true)
-            return
-        }
+		// Проверка, что не на все вопросы есть заполненные ответы
+		const hasUnansweredQuestions = test?.questions?.some((question) => {
+			if (question.type === "TEXT_INPUT" || question.type === "FILL_IN_THE_BLANK") {
+				return !allTextAnswers[question.id] || allTextAnswers[question.id].trim() === ""
+			}
+			return !allAnswers[question.id] || allAnswers[question.id].length === 0
+		})
+		if (hasUnansweredQuestions) {
+			setPendingSubmit(true)
+			setShowConfirmationModal(true)
+			return
+		}
 
-        await submitAnswers()
-    }
+		await submitAnswers()
+	}
 
-    const submitAnswers = async () => {
-        if (isSubmittingRef.current || isAttemptCompleted) {
-            return // Предотвращаем повторную отправку
-        }
-        isSubmittingRef.current = true
+	const submitAnswers = async () => {
+		if (isSubmittingRef.current || isAttemptCompleted) {
+			return // Предотвращаем повторную отправку
+		}
+		isSubmittingRef.current = true
 
-        try {
-            // Синхронизация времени перед отправкой ответов (закомментировано, так как синхронизация отключена)
-            // if (timerRef.current) {
-            //     await timerRef.current.syncTime()
-            // }
+		try {
+			// Синхронизация времени перед отправкой ответов (закомментировано, так как синхронизация отключена)
+			// if (timerRef.current) {
+			//     await timerRef.current.syncTime()
+			// }
 
-            if (!test || !test.questions) return
+			if (!test || !test.questions) return
 
-            // Фильтрация ответов
-            const filteredAnswers = Object.fromEntries(
-                Object.entries(allAnswers).filter(([questionId]) => test.questions!.some(q => q.id === questionId))
-            )
-            const filteredTextAnswers = Object.fromEntries(
-                Object.entries(allTextAnswers).filter(([questionId]) => test.questions!.some(q => q.id === questionId))
-            )
+			// Фильтрация ответов
+			const filteredAnswers = Object.fromEntries(
+				Object.entries(allAnswers).filter(([questionId]) => test.questions!.some((q) => q.id === questionId))
+			)
+			const filteredTextAnswers = Object.fromEntries(
+				Object.entries(allTextAnswers).filter(([questionId]) => test.questions!.some((q) => q.id === questionId))
+			)
 
-            // Обновление состояния
-            setAllAnswers(filteredAnswers)
-            setAllTextAnswers(filteredTextAnswers)
+			// Обновление состояния
+			setAllAnswers(filteredAnswers)
+			setAllTextAnswers(filteredTextAnswers)
 
-            // Очистка localStorage от удаленных вопросов
-            Object.keys(allAnswers).forEach(qId => {
-                if (!test.questions!.some(q => q.id === qId)) {
-                    localStorage.removeItem(`answer_time_${attemptId}_${qId}`)
-                }
-            })
+			// Очистка localStorage от удаленных вопросов
+			Object.keys(allAnswers).forEach((qId) => {
+				if (!test.questions!.some((q) => q.id === qId)) {
+					localStorage.removeItem(`answer_time_${attemptId}_${qId}`)
+				}
+			})
 
-            const formattedAnswers: AttemptAnswer[] = []
+			const formattedAnswers: AttemptAnswer[] = []
 
-            // Форматирование обычных ответов
-            Object.entries(filteredAnswers).forEach(([questionId, answersIds]) => {
-                const timeKey = `answer_time_${attemptId}_${questionId}`
-                const answeredAt = getDecryptedTime(timeKey)
-                formattedAnswers.push({
-                    questionId,
-                    answersIds,
-                    textAnswer: null,
-                    answeredAt,
-                })
-            })
+			// Форматирование обычных ответов
+			Object.entries(filteredAnswers).forEach(([questionId, answersIds]) => {
+				const timeKey = `answer_time_${attemptId}_${questionId}`
+				const answeredAt = getDecryptedTime(timeKey)
+				formattedAnswers.push({
+					questionId,
+					answersIds,
+					textAnswer: null,
+					answeredAt
+				})
+			})
 
-            // Форматирование текстовых ответов
-            Object.entries(filteredTextAnswers).forEach(([questionId, textAnswer]) => {
-                const timeKey = `answer_time_${attemptId}_${questionId}`
-                const answeredAt = getDecryptedTime(timeKey)
-                formattedAnswers.push({
-                    questionId,
-                    answersIds: [],
-                    textAnswer,
-                    answeredAt,
-                })
-            })
+			// Форматирование текстовых ответов
+			Object.entries(filteredTextAnswers).forEach(([questionId, textAnswer]) => {
+				const timeKey = `answer_time_${attemptId}_${questionId}`
+				const answeredAt = getDecryptedTime(timeKey)
+				formattedAnswers.push({
+					questionId,
+					answersIds: [],
+					textAnswer,
+					answeredAt
+				})
+			})
 
-            await saveAnswers(attemptId, formattedAnswers)
-            await completeAttempt(attemptId)
+			await saveAnswers(attemptId, formattedAnswers)
+			await completeAttempt(attemptId)
 
-            // Очистка localStorage
-            localStorage.removeItem(`test_answers_${attemptId}`)
-            localStorage.removeItem(`test_text_answers_${attemptId}`)
-            Object.keys(allAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
-            Object.keys(allTextAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
+			// Очистка localStorage
+			localStorage.removeItem(`test_answers_${attemptId}`)
+			localStorage.removeItem(`test_text_answers_${attemptId}`)
+			Object.keys(allAnswers).forEach((qId) => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
+			Object.keys(allTextAnswers).forEach((qId) => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
 
-            toast.success("Ответы успешно отправлены. Попытка завершена.")
-            if (attempt) {
-                navigate(generatePath(ROUTES.ATTEMPT_RESULTS, { attemptId: attempt.id }))
-            } else {
-                navigate(ROUTES.HOME)
-            }
+			toast.success("Ответы успешно отправлены. Попытка завершена.")
+			if (attempt) {
+				navigate(generatePath(ROUTES.ATTEMPT_RESULTS, { attemptId: attempt.id }))
+			} else {
+				navigate(ROUTES.HOME)
+			}
 
-            setAllAnswers({})
-            setAllTextAnswers({})
-        } catch (error) {
-            console.error("Ошибка при отправке ответов:", error)
-            toast.error("Ошибка при отправке ответов")
-        } finally {
-            isSubmittingRef.current = false
-        }
-    }
+			setAllAnswers({})
+			setAllTextAnswers({})
+		} catch (error) {
+			console.error("Ошибка при отправке ответов:", error)
+			toast.error("Ошибка при отправке ответов")
+		} finally {
+			isSubmittingRef.current = false
+		}
+	}
 
-    // Состояния загрузки
-    if (!isAttemptLoaded || !isTestLoaded) return <Loader fullScreen />
-    if (!attempt) return <AttemptNotFound />
-    if (!test) return <TestNotFound />
-    if (!test.questions?.length) {
-        return (
-            <NothingFound
-                title="В тесте нет вопросов"
-                description="Данный тест не доступен для прохождения, так как в нем нет вопросов"
-            />
-        )
-    }
+	// Состояния загрузки
+	if (!isAttemptLoaded || !isTestLoaded) return <Loader fullScreen />
+	if (!attempt) return <AttemptNotFound />
+	if (!test) return <TestNotFound />
+	if (!test.questions?.length) {
+		return (
+			<NothingFound
+				title="В тесте нет вопросов"
+				description="Данный тест не доступен для прохождения, так как в нем нет вопросов"
+			/>
+		)
+	}
 
-    const currentQuestion = test.questions[currentPage - 1]
-    const totalPages = test.questions.length
+	const currentQuestion = test.questions[currentPage - 1]
+	const totalPages = test.questions.length
 
-    return (
-        <>
-            <Header />
-            <div className={styles.questionsContainer}>
-                {isAttemptCompleted && (
-                    <div className={styles.completedBanner}>Попытка завершена. Изменение ответов недоступно.</div>
-                )}
+	return (
+		<>
+			<Header />
+			<div className={styles.questionsContainer}>
+				{isAttemptCompleted && (
+					<div className={styles.completedBanner}>Попытка завершена. Изменение ответов недоступно.</div>
+				)}
 
-                {timeLimit > 0 && !isAttemptCompleted && (
-                    <TestTimer
-                        ref={timerRef}
-                        attemptId={attemptId}
-                        timeLimit={timeLimit}
-                        startedAt={attempt?.startedAt || new Date()}
-                        onTimeExpired={handleTimeExpired}
-                    />
-                )}
+				{timeLimit > 0 && !isAttemptCompleted && (
+					<TestTimer
+						ref={timerRef}
+						attemptId={attemptId}
+						timeLimit={timeLimit}
+						startedAt={attempt?.startedAt || new Date()}
+						onTimeExpired={handleTimeExpired}
+					/>
+				)}
 
-                <TestPagination page={currentPage} totalPages={totalPages} changePage={handlePageChange} />
+				<TestPagination
+					page={currentPage}
+					totalPages={totalPages}
+					changePage={handlePageChange}
+				/>
 
-                <div className={styles.questionHeader}>
-                    <h2>
-                        Вопрос {currentPage} из {totalPages}
-                    </h2>
-                </div>
+				<div className={styles.questionHeader}>
+					<h2>
+						Вопрос {currentPage} из {totalPages}
+					</h2>
+				</div>
 
-                <QuestionRenderer
-                    question={currentQuestion}
-                    selectedAnswers={selectedAnswers}
-                    textAnswer={textAnswer}
-                    isCompleted={isAttemptCompleted}
-                    onAnswerChange={handleAnswerChange}
-                    onTextAnswerChange={handleTextAnswerChange}
-                    onNextQuestion={currentPage < totalPages ? () => setCurrentPage(currentPage + 1) : undefined}
-                    onSubmitAnswers={handleSubmitAnswers}
-                    isLastQuestion={currentPage === totalPages}
-                    isLoading={isLoading}
-                />
+				<QuestionRenderer
+					question={currentQuestion}
+					selectedAnswers={selectedAnswers}
+					textAnswer={textAnswer}
+					isCompleted={isAttemptCompleted}
+					onAnswerChange={handleAnswerChange}
+					onTextAnswerChange={handleTextAnswerChange}
+					onNextQuestion={currentPage < totalPages ? () => setCurrentPage(currentPage + 1) : undefined}
+					onSubmitAnswers={handleSubmitAnswers}
+					isLastQuestion={currentPage === totalPages}
+					isLoading={isLoading}
+				/>
 
-                <ConfirmationModal
-                    isOpen={showConfirmationModal}
-                    onClose={() => {
-                        setShowConfirmationModal(false)
-                        setPendingSubmit(false)
-                    }}
-                    onConfirm={() => {
-                        setShowConfirmationModal(false)
-                        if (pendingSubmit) {
-                            submitAnswers()
-                        }
-                    }}
-                    title="Подтверждение отправки"
-                    confirmText="Отправить"
-                    cancelText="Отмена">
-                    <p>Вы ответили не на все вопросы. Вы уверены, что хотите отправить ответы?</p>
-                </ConfirmationModal>
+				<ConfirmationModal
+					isOpen={showConfirmationModal}
+					onClose={() => {
+						setShowConfirmationModal(false)
+						setPendingSubmit(false)
+					}}
+					onConfirm={() => {
+						setShowConfirmationModal(false)
+						if (pendingSubmit) {
+							submitAnswers()
+						}
+					}}
+					title="Подтверждение отправки"
+					confirmText="Отправить"
+					cancelText="Отмена"
+				>
+					<p>Вы ответили не на все вопросы. Вы уверены, что хотите отправить ответы?</p>
+				</ConfirmationModal>
 
-                <ConfirmationModal
-                    isOpen={showUpdateModal}
-                    onClose={() => setShowUpdateModal(false)}
-                    onConfirm={() => setShowUpdateModal(false)}
-                    title="Обновление теста"
-                    confirmText="Ок"
-                    hideCancel={true}>
-                    <p>Тест был обновлен автором. Изменения вступили в силу</p>
-                </ConfirmationModal>
-            </div>
-        </>
-    )
+				<ConfirmationModal
+					isOpen={showUpdateModal}
+					onClose={() => setShowUpdateModal(false)}
+					onConfirm={() => setShowUpdateModal(false)}
+					title="Обновление теста"
+					confirmText="Ок"
+					hideCancel={true}
+				>
+					<p>Тест был обновлен автором. Изменения вступили в силу</p>
+				</ConfirmationModal>
+			</div>
+		</>
+	)
 }
 
 export default TestTaking

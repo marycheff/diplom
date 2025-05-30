@@ -6,107 +6,107 @@ $border-radius: 16px;
 $transition: all 0.3s ease;
 
 .profilePage {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-    // background: #f3f4f6;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 2rem;
+	// background: #f3f4f6;
 
-    @media (max-width: 768px) {
-        margin: 1rem;
-        padding: 1rem;
-    }
+	@media (max-width: 768px) {
+		margin: 1rem;
+		padding: 1rem;
+	}
 }
 
 .section {
-    margin-bottom: 2rem;
-    padding: 2rem;
-    background: $bg-surface;
-    // background: $background-200;
-    border-radius: $border-radius;
-    box-shadow: $shadow-medium;
-    transition: $transition;
+	margin-bottom: 2rem;
+	padding: 2rem;
+	background: $bg-surface;
+	// background: $background-200;
+	border-radius: $border-radius;
+	box-shadow: $shadow-medium;
+	transition: $transition;
 
-    // &:hover {
-    //     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-    // }
+	// &:hover {
+	//     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+	// }
 
-    h2 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #111827;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #e5e7eb;
-    }
+	h2 {
+		font-size: 1.5rem;
+		font-weight: 600;
+		color: #111827;
+		margin-bottom: 1.5rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 2px solid #e5e7eb;
+	}
 }
 
 .accountInfo {
-    .emailStatus {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
+	.emailStatus {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 1rem;
 
-        label {
-            font-weight: 500;
-            color: $secondary-color;
-        }
+		label {
+			font-weight: 500;
+			color: $secondary-color;
+		}
 
-        span {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: bold;
-            color: $secondary-color;
+		span {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			font-weight: bold;
+			color: $secondary-color;
 
-            &.activated {
-                color: $success-color;
-            }
-            &.notActivated {
-                color: $red-color;
-            }
-        }
-    }
+			&.activated {
+				color: $success-color;
+			}
+			&.notActivated {
+				color: $red-color;
+			}
+		}
+	}
 
-    .activationButton {
-        margin-top: 1rem;
-    }
+	.activationButton {
+		margin-top: 1rem;
+	}
 }
 
 .personalInfo {
-    .fields {
-        display: grid;
-        gap: 1.5rem;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
+	.fields {
+		display: grid;
+		gap: 1.5rem;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	}
 
-    .saveButton {
-        margin-top: 2rem;
-        width: 100%;
-        // max-width: 200px;
-        padding: 8px 0;
-        font-size: 1rem;
+	.saveButton {
+		margin-top: 2rem;
+		width: 100%;
+		// max-width: 200px;
+		padding: 8px 0;
+		font-size: 1rem;
 
-        @media (max-width: 768px) {
-            max-width: 100%;
-        }
-    }
+		@media (max-width: 768px) {
+			max-width: 100%;
+		}
+	}
 }
 
 .security {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: $border-radius;
-    border-left: 4px solid $primary-color;
+	background-color: #ffffff;
+	padding: 2rem;
+	border-radius: $border-radius;
+	border-left: 4px solid $primary-color;
 
-    h2 {
-        color: #1f2937;
-    }
+	h2 {
+		color: #1f2937;
+	}
 }
 
 .loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 200px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 200px;
 }

@@ -1,150 +1,150 @@
 .container {
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    width: 100%;
-    // height: calc(80vh - 100px);
-    height: calc(80vh - 77px);
-    height: calc(80vh - 77px);
-    overflow: hidden;
+	display: flex;
+	flex-direction: row;
+	gap: 2rem;
+	width: 100%;
+	// height: calc(80vh - 100px);
+	height: calc(80vh - 77px);
+	height: calc(80vh - 77px);
+	overflow: hidden;
 
-    @media (max-width: 768px) {
-        flex-direction: column;
-        gap: 1rem;
-        height: auto;
-    }
-    @media screen and (max-height: 1000px) {
-        height: calc(92vh - 77px);
-    }
+	@media (max-width: 768px) {
+		flex-direction: column;
+		gap: 1rem;
+		height: auto;
+	}
+	@media screen and (max-height: 1000px) {
+		height: calc(92vh - 77px);
+	}
 }
 
 .questionsList {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 40%;
-    position: relative;
-    // background: #f8f9fa;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 40%;
+	position: relative;
+	// background: #f8f9fa;
 
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    padding: 0 2px;
+	border-radius: 8px;
+	border: 1px solid #e0e0e0;
+	padding: 0 2px;
 
-    @media (max-width: 768px) {
-        width: 100%;
-        height: auto;
-    }
+	@media (max-width: 768px) {
+		width: 100%;
+		height: auto;
+	}
 }
 
 .questionsContainer {
-    overflow-x: hidden;
+	overflow-x: hidden;
 }
 
 .newQuestionForm {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1rem 2rem 1rem 2rem; /* Оставляем padding сверху, снизу и слева */
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    width: 60%;
-    overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 1rem 2rem 1rem 2rem; /* Оставляем padding сверху, снизу и слева */
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	width: 60%;
+	overflow-y: auto;
 
-    @media (max-width: 768px) {
-        width: 100%;
-        height: auto;
-    }
+	@media (max-width: 768px) {
+		width: 100%;
+		height: auto;
+	}
 }
 
 .title {
-    text-align: center;
-    font-weight: bold;
-    font-size: 1.5rem;
-    margin: 0;
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.5rem;
+	margin: 0;
 }
 
 .formContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    overflow-y: auto;
-    background-color: var(--bg-color);
-    border-radius: 8px;
-    margin-right: -2rem;
-    padding-right: calc(2rem - 4px);
-    box-sizing: content-box; /* Убедимся, что padding не влияет на ширину */
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	overflow-y: auto;
+	background-color: var(--bg-color);
+	border-radius: 8px;
+	margin-right: -2rem;
+	padding-right: calc(2rem - 4px);
+	box-sizing: content-box; /* Убедимся, что padding не влияет на ширину */
 }
 
 .questionTypeSelector {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .typeSelect {
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-color);
-    font-size: 14px;
-    min-width: 200px;
+	padding: 8px 12px;
+	border-radius: 4px;
+	border: 1px solid var(--border-color);
+	background-color: var(--bg-color);
+	font-size: 14px;
+	min-width: 200px;
 }
 
 .formActions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid #e0e0e0;
-    justify-content: space-between;
+	display: flex;
+	gap: 1rem;
+	margin-top: 0.5rem;
+	padding-top: 0.5rem;
+	border-top: 1px solid #e0e0e0;
+	justify-content: space-between;
 }
 
 .finalActions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1rem;
-    width: 100%;
-    // box-shadow: 0 15px 15px -10px rgba(0, 0, 0, 0.386);
+	display: flex;
+	justify-content: center;
+	gap: 1rem;
+	margin-top: 1rem;
+	width: 100%;
+	// box-shadow: 0 15px 15px -10px rgba(0, 0, 0, 0.386);
 }
 
 .cancelButton {
-    background-color: #6c757d;
-    color: white;
+	background-color: #6c757d;
+	color: white;
 
-    &:hover {
-        background-color: #5a6268;
-    }
+	&:hover {
+		background-color: #5a6268;
+	}
 }
 .questionTypeSelector {
-    display: flex;
-    align-items: center;
-    // justify-content: space-between;
-    margin-bottom: 1rem;
-    gap: 1rem;
+	display: flex;
+	align-items: center;
+	// justify-content: space-between;
+	margin-bottom: 1rem;
+	gap: 1rem;
 }
 
 .questionTypeSelector label {
-    flex: 1;
-    white-space: nowrap;
-    font-weight: 500;
+	flex: 1;
+	white-space: nowrap;
+	font-weight: 500;
 }
 
 .selectInput {
-    // flex-shrink: 0;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
-    font-size: 1rem;
-    min-width: 200px;
-    width: 100%;
+	// flex-shrink: 0;
+	padding: 0.5rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background-color: white;
+	font-size: 1rem;
+	min-width: 200px;
+	width: 100%;
 
-    &:focus {
-        outline: none;
-        border-color: #3f51b5;
-        box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
-    }
+	&:focus {
+		outline: none;
+		border-color: #3f51b5;
+		box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+	}
 }
