@@ -424,6 +424,78 @@ class AttemptService {
         }
     }
 
+    // Сохранить ответы для вопроса типа SEQUENCE (последовательность)
+   //  async saveSequenceAnswers(
+   //      attemptId: string,
+   //      questionId: string,
+   //      sequenceOrder: { answerId: string; position: number }[]
+   //  ): Promise<void> {
+   //      logger.debug(`[${LOG_NAMESPACE}] Сохранение ответов на вопрос-последовательность`, { attemptId, questionId })
+   //      try {
+   //          const attempt = await attemptRepository.findWithTest(attemptId)
+   //          if (!attempt) {
+   //              logger.warn(`[${LOG_NAMESPACE}] Попытка не существует`, { attemptId })
+   //              throw ApiError.BadRequest("Попытка не существует")
+   //          }
+   //          if (attempt.status === TestAttemptStatus.COMPLETED || attempt.completedAt) {
+   //              logger.warn(`[${LOG_NAMESPACE}] Попытка уже завершена`, { attemptId })
+   //              throw ApiError.BadRequest("Попытка уже завершена")
+   //          }
+
+   //          const question = await questionRepository.findWithAnswers(questionId)
+   //          if (!question || question.testId !== attempt.testId) {
+   //              logger.warn(`[${LOG_NAMESPACE}] Вопрос не принадлежит тесту`, {
+   //                  questionId,
+   //                  testId: attempt.testId,
+   //              })
+   //              throw ApiError.BadRequest(`Вопрос ${questionId} не принадлежит тесту`)
+   //          }
+
+   //          if (question.type !== "SEQUENCE") {
+   //              logger.warn(`[${LOG_NAMESPACE}] Вопрос не является вопросом-последовательностью`, { questionId })
+   //              throw ApiError.BadRequest(`Вопрос ${questionId} не является вопросом-последовательностью`)
+   //          }
+
+   //          // Проверка валидности ответов
+   //          const validAnswerIds = question.answers.map(a => a.id)
+   //          const allAnswersValid = sequenceOrder.every(order => validAnswerIds.includes(order.answerId))
+   //          if (!allAnswersValid) {
+   //              logger.warn(`[${LOG_NAMESPACE}] Один или несколько ответов не принадлежат вопросу`, { questionId })
+   //              throw ApiError.BadRequest(`Один или несколько ответов не принадлежат вопросу ${questionId}`)
+   //          }
+
+   //          // Проверка, что все позиции уникальны и последовательны
+   //          const positions = sequenceOrder.map(order => order.position).sort((a, b) => a - b)
+   //          const isSequential = positions.every((pos, index) => pos === index + 1)
+   //          if (!isSequential) {
+   //              logger.warn(`[${LOG_NAMESPACE}] Позиции ответов должны быть последовательными числами от 1 до N`, {
+   //                  questionId,
+   //              })
+   //              throw ApiError.BadRequest(
+   //                  `Позиции ответов для вопроса ${questionId} должны быть последовательными числами от 1 до N`
+   //              )
+   //          }
+
+   //          await attemptRepository.saveSequenceAnswers(attemptId, questionId, sequenceOrder)
+   //          await deleteAttemptCache(attemptId)
+
+   //          logger.debug(`[${LOG_NAMESPACE}] Ответы на вопрос-последовательность успешно сохранены`, {
+   //              attemptId,
+   //              questionId,
+   //          })
+   //      } catch (error) {
+   //          if (error instanceof ApiError) {
+   //              throw error
+   //          }
+   //          logger.error(`[${LOG_NAMESPACE}] Ошибка при сохранении ответов на вопрос-последовательность`, {
+   //              attemptId,
+   //              questionId,
+   //              error: error instanceof Error ? error.message : String(error),
+   //          })
+   //          throw ApiError.InternalError("Ошибка при сохранении ответов на вопрос-последовательность")
+   //      }
+   //  }
+
     //Получить попытки пользователя
     async getUserAttempts(userId: string, page = 1, limit = 10): Promise<AttemptsWithSnapshotListDTO> {
         logger.debug(`[${LOG_NAMESPACE}] Получение попыток пользователя`, { userId, page, limit })

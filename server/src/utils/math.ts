@@ -30,6 +30,7 @@ type UserAnswer = {
     questionId: string
     answerId: string
     isCorrect?: boolean | null
+    position?: number
 }
 
 export const calculateTestScore = (questionsWithAnswers: QuestionWithAnswers[], userAnswers: UserAnswer[]): number => {
@@ -43,7 +44,24 @@ export const calculateTestScore = (questionsWithAnswers: QuestionWithAnswers[], 
                 userAnswersForQuestion.length > 0 && userAnswersForQuestion.every(a => a.isCorrect === true)
 
             if (allCorrect) correctQuestionsCount++
-        } else {
+      //   } else if (question.type === "SEQUENCE") {
+      //       // Для вопросов типа SEQUENCE проверяем правильность порядка ответов
+      //       // Сортируем ответы пользователя по позиции
+      //       const sortedUserAnswers = [...userAnswersForQuestion].sort((a, b) => {
+      //           return (a.position || 0) - (b.position || 0)
+      //       })
+
+      //       // Получаем ID ответов в правильном порядке (предполагается, что ответы в question.answers уже в правильном порядке)
+      //       const correctAnswerIds = question.answers.map(a => a.id)
+      //       const userAnswerIds = sortedUserAnswers.map(a => a.answerId)
+
+      //       // Проверяем, что все ответы присутствуют и в правильном порядке
+      //       const correctSequence =
+      //           correctAnswerIds.length === userAnswerIds.length &&
+      //           correctAnswerIds.every((id, index) => id === userAnswerIds[index])
+
+      //       if (correctSequence) correctQuestionsCount++
+      //   } else {
             const correctAnswerIds = question.answers.map(a => a.id)
             const userAnswerIds = userAnswersForQuestion.map(a => a.answerId)
 

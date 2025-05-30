@@ -70,7 +70,7 @@ class AttemptRepository {
                         createdAt: true,
                     },
                 },
-                sequenceAnswers: true, // Включаем данные о последовательности ответов
+               //  sequenceAnswers: true, // Включаем данные о последовательности ответов
                 test: {
                     include: {
                         questions: {
@@ -162,7 +162,7 @@ class AttemptRepository {
                 answers: {
                     include: { answer: true },
                 },
-                sequenceAnswers: true, // Включаем данные о последовательности ответов
+               //  sequenceAnswers: true, // Включаем данные о последовательности ответов
                 test: {
                     include: {
                         questions: {
@@ -192,7 +192,7 @@ class AttemptRepository {
                         createdAt: true,
                     },
                 },
-                sequenceAnswers: true, // Включаем данные о последовательности ответов
+               //  sequenceAnswers: true, // Включаем данные о последовательности ответов
             },
         })
     }
@@ -370,27 +370,27 @@ class AttemptRepository {
             }
         })
     }
-    async saveSequenceAnswers(
-        attemptId: string,
-        questionId: string,
-        sequenceOrder: { answerId: string; position: number }[]
-    ) {
-        return prisma.$transaction(async tx => {
-            await tx.userSequenceOrder.deleteMany({
-                where: { attemptId, questionId },
-            })
+   //  async saveSequenceAnswers(
+   //      attemptId: string,
+   //      questionId: string,
+   //      sequenceOrder: { answerId: string; position: number }[]
+   //  ) {
+   //      return prisma.$transaction(async tx => {
+   //          await tx.userSequenceOrder.deleteMany({
+   //              where: { attemptId, questionId },
+   //          })
 
-            await tx.userSequenceOrder.createMany({
-                data: sequenceOrder.map(order => ({
-                    attemptId,
-                    questionId,
-                    answerId: order.answerId,
-                    position: order.position,
-                    answeredAt: new Date(),
-                })),
-            })
-        })
-    }
+   //          await tx.userSequenceOrder.createMany({
+   //              data: sequenceOrder.map(order => ({
+   //                  attemptId,
+   //                  questionId,
+   //                  answerId: order.answerId,
+   //                  position: order.position,
+   //                  answeredAt: new Date(),
+   //              })),
+   //          })
+   //      })
+   //  }
     async updateSnapshotId(attemptId: string, snapshotId: string | null) {
         return prisma.testAttempt.update({
             where: { id: attemptId },

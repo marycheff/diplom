@@ -2,105 +2,101 @@ import { AnswerDTO, PreTestUserDataType, TestDTO, TestSnapshotDTO, UserDTO } fro
 import { QuestionType, TestAttemptStatus } from "@prisma/client"
 
 export interface TestAttemptDTO {
-    id: string
-    status: TestAttemptStatus
-    score: number | null
-    user: UserDTO | null
-    preTestUserData: PreTestUserDataType | null
-    test: TestDTO
-    questions: AttemptQuestionDTO[]
-    timeSpent: number | null
-    startedAt: Date
-    completedAt: Date | null
-    snapshotId: string
+	id: string
+	status: TestAttemptStatus
+	score: number | null
+	user: UserDTO | null
+	preTestUserData: PreTestUserDataType | null
+	test: TestDTO
+	questions: AttemptQuestionDTO[]
+	timeSpent: number | null
+	startedAt: Date
+	completedAt: Date | null
+	snapshotId: string
 }
 
 export interface AttemptWithSnapshotDTO {
-    id: string
-    status: TestAttemptStatus
-    score: number | null
-    user: UserDTO | null
-    preTestUserData: PreTestUserDataType | null
-    timeSpent: number | null
-    snapshot: TestSnapshotDTO | null
-    startedAt: Date
-    completedAt: Date | null
+	id: string
+	status: TestAttemptStatus
+	score: number | null
+	user: UserDTO | null
+	preTestUserData: PreTestUserDataType | null
+	timeSpent: number | null
+	snapshot: TestSnapshotDTO | null
+	startedAt: Date
+	completedAt: Date | null
 }
 
 export interface TestAttemptResultDTO {
-    id: string
-    status: TestAttemptStatus
-    startedAt: Date
-    completedAt: Date | null
-    score: number | null
-    timeSpent: number | null
-    // user: UserDTO | null
-    // preTestUserData: PreTestUserDataType | null
-    // test: TestDTO
-    questions: AttemptQuestionDTO[]
-    // snapshotId: string
+	id: string
+	status: TestAttemptStatus
+	startedAt: Date
+	completedAt: Date | null
+	score: number | null
+	timeSpent: number | null
+	// user: UserDTO | null
+	// preTestUserData: PreTestUserDataType | null
+	// test: TestDTO
+	questions: AttemptQuestionDTO[]
+	// snapshotId: string
 }
 export interface TestAttemptUserDTO {
-    id: string
-    testId: string
-    testSnapshotId: string | null
-    userId?: string | null
-    status: string
-    startedAt: Date
-    completedAt: Date | null
-    score: number | null
-    timeSpent: number
-    answers: UserAnswerDTO[]
+	id: string
+	testId: string
+	testSnapshotId: string | null
+	userId?: string | null
+	status: string
+	startedAt: Date
+	completedAt: Date | null
+	score: number | null
+	timeSpent: number
+	answers: UserAnswerDTO[]
 }
 export interface AttemptsListDTO {
-    attempts: TestAttemptDTO[]
-    total: number
+	attempts: TestAttemptDTO[]
+	total: number
 }
 export interface AttemptsWithSnapshotListDTO {
-    attempts: AttemptWithSnapshotDTO[]
-    total: number
+	attempts: AttemptWithSnapshotDTO[]
+	total: number
 }
 
 export interface AttemptQuestionDTO {
-    question: {
-        id: string
-        text: string
-        order?: number
-        type: QuestionType
-    }
-    answers: AnswerDTO[]
-    userAnswers: {
-        answers: Array<{
-            userAnswerId: string
-            answer: AnswerDTO
-        }>
-        textAnswer: string | null
-        isCorrect: boolean | null
-
-        timeSpent: number | null
-        answeredAt: Date | null
-        createdAt: Date
-    } | null
+	question: {
+		id: string
+		text: string
+		order?: number
+		type: QuestionType
+	}
+	answers: AnswerDTO[]
+	userAnswers: {
+		answers: Array<{
+			userAnswerId: string
+			answer: AnswerDTO
+			// position?: number // Добавляем позицию для вопросов типа SEQUENCE
+		}>
+		textAnswer: string | null
+		isCorrect: boolean | null
+		answeredAt: Date | null
+		createdAt: Date
+	} | null
 }
 
 export interface UserAnswerDTO {
-    id: string
-    attemptId: string
-    questionId: string
-    answerId: string
-    textAnswer: string | null
-    isCorrect: boolean | null
-
-    answeredAt: Date | null
-    timeSpent: number | null
-    createdAt: Date
+	id: string
+	attemptId: string
+	questionId: string
+	answerId: string
+	textAnswer: string | null
+	isCorrect: boolean | null
+	answeredAt: Date | null
+	createdAt: Date
 }
 export interface AttemptAnswer {
-    questionId: string
-    answersIds: string[]
-    textAnswer: string | null
-    isCorrect: boolean | null
-
-    timeSpent?: number
-    answeredAt?: Date
+	questionId: string
+	answersIds: string[]
+	textAnswer: string | null
+	isCorrect: boolean | null
+	// sequenceOrder?: { answerId: string; position: number }[];
+	answeredAt?: Date
 }

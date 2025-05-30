@@ -186,7 +186,7 @@ class GigaChatService {
                     id: `answer-${questionCounter}-${answerCounter}`,
                     text: answerText,
                     isCorrect: answerCounter === 1, // Первый ответ всегда правильный
-                    sequencePosition: null,
+                  //   sequencePosition: null,
                 })
             }
 

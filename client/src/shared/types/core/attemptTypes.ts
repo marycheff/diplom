@@ -119,7 +119,7 @@ export interface AttemptAnswer {
 	questionId: string
 	answersIds: string[]
 	textAnswer: string | null
-	sequenceOrder?: { answerId: string; position: number }[]
+	// sequenceOrder?: { answerId: string; position: number }[]
 	timeSpent?: number
 	answeredAt?: Date
 }
