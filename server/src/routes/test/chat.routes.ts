@@ -6,10 +6,10 @@ import { Router } from "express"
 const router = Router()
 
 router.post(
-    "/generate-answers",
-    authMiddleware,
-    validateRequest(generateAnswersSchema),
-    gigaChatController.generateAnswers
+	"/generate-answers",
+	authMiddleware,
+	validateRequest(generateAnswersSchema),
+	gigaChatController.generateAnswers
 )
 router.post("/generate-test", authMiddleware, validateRequest(generateTestSchema), gigaChatController.generateTest)
 

@@ -1,10 +1,10 @@
 import { testController } from "@/controllers"
 import {
-    accountActivationMiddleware,
-    adminMiddleware,
-    authMiddleware,
-    testOwnershipMiddleware,
-    validateRequest,
+	accountActivationMiddleware,
+	adminMiddleware,
+	authMiddleware,
+	testOwnershipMiddleware,
+	validateRequest
 } from "@/middleware"
 import { attemptRoutes, questionRoutes } from "@/routes"
 import { getTestSnapshotSchema, shortInfoSchema, testIdSchema, testSettingsSchema } from "@/schemas/test.schema"
@@ -40,39 +40,39 @@ router.get("/my-tests/search", authMiddleware, testController.searchMyTests)
 
 // Создание теста
 router.post(
-    "/create",
-    authMiddleware,
-    accountActivationMiddleware,
-    validateRequest(shortInfoSchema),
-    testController.createTest
+	"/create",
+	authMiddleware,
+	accountActivationMiddleware,
+	validateRequest(shortInfoSchema),
+	testController.createTest
 )
 
 // Изменение настроек теста
 router.put(
-    "/:testId/settings",
-    authMiddleware,
-    accountActivationMiddleware,
-    testOwnershipMiddleware,
-    validateRequest(testSettingsSchema),
-    testController.updateTestSettings
+	"/:testId/settings",
+	authMiddleware,
+	accountActivationMiddleware,
+	testOwnershipMiddleware,
+	validateRequest(testSettingsSchema),
+	testController.updateTestSettings
 )
 
 // Изменение короткой информацией о тесте
 router.put(
-    "/:testId/short-info",
-    authMiddleware,
-    testOwnershipMiddleware,
-    validateRequest(shortInfoSchema),
-    testController.updateShortInfo
+	"/:testId/short-info",
+	authMiddleware,
+	testOwnershipMiddleware,
+	validateRequest(shortInfoSchema),
+	testController.updateShortInfo
 )
 
 // Изменение статуса Модерации теста
 router.put(
-    "/:testId/visibility",
-    authMiddleware,
-    accountActivationMiddleware,
-    testOwnershipMiddleware,
-    testController.updateVisibilityStatus
+	"/:testId/visibility",
+	authMiddleware,
+	accountActivationMiddleware,
+	testOwnershipMiddleware,
+	testController.updateVisibilityStatus
 )
 router.put("/:testId/moderation-status", authMiddleware, adminMiddleware, testController.updateModerationStatus)
 
@@ -88,10 +88,10 @@ router.delete("/:testId", authMiddleware, testOwnershipMiddleware, testControlle
 
 // Получение снимка теста по ID
 router.get(
-    "/snapshot/:snapshotId",
-    authMiddleware,
-    validateRequest(getTestSnapshotSchema),
-    testController.getTestSnapshot
+	"/snapshot/:snapshotId",
+	authMiddleware,
+	validateRequest(getTestSnapshotSchema),
+	testController.getTestSnapshot
 )
 
 export const testRoutes = router

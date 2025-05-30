@@ -1,13 +1,13 @@
 import { authController, passwordResetController, userController } from "@/controllers"
 import { authMiddleware, validateRequest } from "@/middleware"
 import {
-    loginSchema,
-    registrationSchema,
-    resetPasswordRequestSchema,
-    resetPasswordSchema,
-    updateActivationLinkSchema,
-    updatePasswordSchema,
-    verifyResetCodeSchema,
+	loginSchema,
+	registrationSchema,
+	resetPasswordRequestSchema,
+	resetPasswordSchema,
+	updateActivationLinkSchema,
+	updatePasswordSchema,
+	verifyResetCodeSchema
 } from "@/schemas/auth.schema"
 import express from "express"
 
@@ -30,17 +30,17 @@ router.get("/refresh", authController.refresh)
 
 // Отправка новой ссылки для активации аккаунта
 router.post(
-    "/send-update-activation-link",
-    authMiddleware,
-    validateRequest(updateActivationLinkSchema),
-    authController.updateActivationLink
+	"/send-update-activation-link",
+	authMiddleware,
+	validateRequest(updateActivationLinkSchema),
+	authController.updateActivationLink
 )
 
 // Запрос на сброс пароля
 router.post(
-    "/reset-password-request",
-    validateRequest(resetPasswordRequestSchema),
-    passwordResetController.requestReset
+	"/reset-password-request",
+	validateRequest(resetPasswordRequestSchema),
+	passwordResetController.requestReset
 )
 
 // Проверка кода сброса пароля

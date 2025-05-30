@@ -1,311 +1,311 @@
 generator client {
-  provider = "prisma-client-js"
-  // output   = "app/generated/prisma/client"
+   provider = "prisma-client-js"
+   // output   = "app/generated/prisma/client"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+   provider = "postgresql"
+   url      = env("DATABASE_URL")
 }
 
 model User {
-  id                String        @id @default(uuid())
-  email             String        @unique @db.VarChar(255)
-  name              String?       @db.VarChar(50)
-  surname           String?       @db.VarChar(50)
-  patronymic        String?       @db.VarChar(50)
-  password          String        @db.Char(60)
-  isActivated       Boolean       @default(false)
-  role              Role          @default(USER)
-  activationLink    String?       @db.VarChar(255)
-  resetCode         String?       @db.VarChar(255)
-  isBlocked         Boolean       @default(false)
-  activationLinkExp DateTime?
-  resetCodeExp      DateTime?
-  // TIMESTAMPS
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  // RELATIONS
-  testAttempts      TestAttempt[] @relation("TestAttemptUser")
-  testsCreated      Test[]        @relation("TestAuthor")
-  refreshToken      Token?
+   id                String        @id @default(uuid())
+   email             String        @unique @db.VarChar(255)
+   name              String?       @db.VarChar(50)
+   surname           String?       @db.VarChar(50)
+   patronymic        String?       @db.VarChar(50)
+   password          String        @db.Char(60)
+   isActivated       Boolean       @default(false)
+   role              Role          @default(USER)
+   activationLink    String?       @db.VarChar(255)
+   resetCode         String?       @db.VarChar(255)
+   isBlocked         Boolean       @default(false)
+   activationLinkExp DateTime?
+   resetCodeExp      DateTime?
+   // TIMESTAMPS
+   createdAt         DateTime      @default(now())
+   updatedAt         DateTime      @updatedAt
+   // RELATIONS
+   testAttempts      TestAttempt[] @relation("TestAttemptUser")
+   testsCreated      Test[]        @relation("TestAuthor")
+   refreshToken      Token?
 
-  // INDEXES
-  @@index([name])
-  @@index([surname])
-  @@index([patronymic])
-  @@index([createdAt])
-  @@map("users")
+   // INDEXES
+   @@index([name])
+   @@index([surname])
+   @@index([patronymic])
+   @@index([createdAt])
+   @@map("users")
 }
 
 model Token {
-  id           String   @id @default(uuid())
-  userId       String   @unique
-  refreshToken String   @unique
-  // TIMESTAMPS
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  // RELATIONS
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+   id           String   @id @default(uuid())
+   userId       String   @unique
+   refreshToken String   @unique
+   // TIMESTAMPS
+   createdAt    DateTime @default(now())
+   updatedAt    DateTime @updatedAt
+   // RELATIONS
+   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("tokens")
+   @@map("tokens")
 }
 
 model TestSettings {
-  id                  String   @id @default(uuid())
-  testId              String   @unique
-  requireRegistration Boolean  @default(false)
-  inputFields         Json?
-  showDetailedResults Boolean  @default(false)
-  timeLimit           Int?
-  shuffleAnswers      Boolean  @default(true)
-  shuffleQuestions    Boolean  @default(false)
-  allowRetake         Boolean  @default(true)
-  retakeLimit         Int?
-  // TIMESTAMPS
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  // Relations
-  test                Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+   id                  String   @id @default(uuid())
+   testId              String   @unique
+   requireRegistration Boolean  @default(false)
+   inputFields         Json?
+   showDetailedResults Boolean  @default(false)
+   timeLimit           Int?
+   shuffleAnswers      Boolean  @default(true)
+   shuffleQuestions    Boolean  @default(false)
+   allowRetake         Boolean  @default(true)
+   retakeLimit         Int?
+   // TIMESTAMPS
+   createdAt           DateTime @default(now())
+   updatedAt           DateTime @updatedAt
+   // Relations
+   test                Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
 
-  @@map("test_settings")
+   @@map("test_settings")
 }
 
 model Test {
-  id               String               @id @default(uuid())
-  authorId         String
-  title            String               @db.VarChar(100)
-  description      String?              @db.VarChar(500)
-  moderationStatus ModerationStatus     @default(APPROVED)
-  visibilityStatus TestVisibilityStatus @default(PUBLISHED)
-  version          Int                  @default(1)
-  moderatedBy      String?
-  moderatedAt      DateTime?
-  // TIMESTAMPS
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
-  // RELATIONS
-  questions        Question[]
-  testAttempts     TestAttempt[]
-  settings         TestSettings?
-  snapshots        TestSnapshot[]
-  author           User                 @relation("TestAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+   id               String               @id @default(uuid())
+   authorId         String
+   title            String               @db.VarChar(100)
+   description      String?              @db.VarChar(500)
+   moderationStatus ModerationStatus     @default(APPROVED)
+   visibilityStatus TestVisibilityStatus @default(PUBLISHED)
+   version          Int                  @default(1)
+   moderatedBy      String?
+   moderatedAt      DateTime?
+   // TIMESTAMPS
+   createdAt        DateTime             @default(now())
+   updatedAt        DateTime             @updatedAt
+   // RELATIONS
+   questions        Question[]
+   testAttempts     TestAttempt[]
+   settings         TestSettings?
+   snapshots        TestSnapshot[]
+   author           User                 @relation("TestAuthor", fields: [authorId], references: [id], onDelete: Cascade)
 
-  // INDEXES
-  @@index([title])
-  @@index([description])
-  @@index([authorId])
-  @@index([createdAt])
-  @@map("tests")
+   // INDEXES
+   @@index([title])
+   @@index([description])
+   @@index([authorId])
+   @@index([createdAt])
+   @@map("tests")
 }
 
 model Question {
-  id          String       @id @default(uuid())
-  testId      String
-  text        String       @db.VarChar(500)
-  order       Int
-  type        QuestionType @default(SINGLE_CHOICE)
-  image       String?      @db.VarChar(255)
-  // TIMESTAMPS
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  // Relations
-  answers     Answer[]
-  test        Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
-  userAnswers UserAnswer[]
+   id          String       @id @default(uuid())
+   testId      String
+   text        String       @db.VarChar(500)
+   order       Int
+   type        QuestionType @default(SINGLE_CHOICE)
+   image       String?      @db.VarChar(255)
+   // TIMESTAMPS
+   createdAt   DateTime     @default(now())
+   updatedAt   DateTime     @updatedAt
+   // Relations
+   answers     Answer[]
+   test        Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
+   userAnswers UserAnswer[]
 
-  // INDEXES
-  @@index([testId])
-  @@index([text])
-  @@map("questions")
+   // INDEXES
+   @@index([testId])
+   @@index([text])
+   @@map("questions")
 }
 
 model Answer {
-  id               String              @id @default(uuid())
-  questionId       String
-  text             String              @db.VarChar(255)
-  isCorrect        Boolean             @default(false)
-  isGenerated      Boolean             @default(false)
-  // Новое поле для хранения правильного порядка в последовательности
-  sequencePosition Int?
-  // TIMESTAMPS
-  createdAt        DateTime            @default(now())
-  updatedAt        DateTime            @updatedAt
-  // RELATIONS
-  question         Question            @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  userAnswers      UserAnswer[]
-  // Новая связь для хранения порядка ответов пользователя
-  sequenceAnswers  UserSequenceOrder[]
+   id               String              @id @default(uuid())
+   questionId       String
+   text             String              @db.VarChar(255)
+   isCorrect        Boolean             @default(false)
+   isGenerated      Boolean             @default(false)
+   // Новое поле для хранения правильного порядка в последовательности
+   sequencePosition Int?
+   // TIMESTAMPS
+   createdAt        DateTime            @default(now())
+   updatedAt        DateTime            @updatedAt
+   // RELATIONS
+   question         Question            @relation(fields: [questionId], references: [id], onDelete: Cascade)
+   userAnswers      UserAnswer[]
+   // Новая связь для хранения порядка ответов пользователя
+   sequenceAnswers  UserSequenceOrder[]
 
-  // INDEXES
-  @@index([questionId])
-  @@index([text])
-  @@map("answers")
+   // INDEXES
+   @@index([questionId])
+   @@index([text])
+   @@map("answers")
 }
 
 // Новая таблица для хранения порядка ответов в вопросах типа SEQUENCE
 model UserSequenceOrder {
-  id         String      @id @default(uuid())
-  attemptId  String
-  questionId String
-  answerId   String
-  position   Int // Позиция, которую пользователь присвоил этому ответу
-  timeSpent  Int?
-  answeredAt DateTime?
-  // TIMESTAMPS
-  createdAt  DateTime    @default(now())
-  // RELATIONS
-  answer     Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
-  attempt    TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+   id         String      @id @default(uuid())
+   attemptId  String
+   questionId String
+   answerId   String
+   position   Int // Позиция, которую пользователь присвоил этому ответу
+   timeSpent  Int?
+   answeredAt DateTime?
+   // TIMESTAMPS
+   createdAt  DateTime    @default(now())
+   // RELATIONS
+   answer     Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
+   attempt    TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
 
-  @@unique([attemptId, questionId, answerId])
-  @@unique([attemptId, questionId, position])
-  @@map("user_sequence_orders")
+   @@unique([attemptId, questionId, answerId])
+   @@unique([attemptId, questionId, position])
+   @@map("user_sequence_orders")
 }
 
 model TestAttempt {
-  id              String              @id @default(uuid())
-  testId          String
-  userId          String?
-  preTestUserData Json?
-  score           Float?
-  status          TestAttemptStatus
-  testSnapshotId  String?
-  timeSpent       Int                 @default(0)
-  startedAt       DateTime            @default(now())
-  // TIMESTAMPS
-  updatedAt       DateTime            @updatedAt
-  completedAt     DateTime?
-  // RELATIONS
-  test            Test                @relation(fields: [testId], references: [id], onDelete: Cascade)
-  snapshot        TestSnapshot?       @relation(fields: [testSnapshotId], references: [id])
-  user            User?               @relation("TestAttemptUser", fields: [userId], references: [id])
-  answers         UserAnswer[]
-  // Новая связь для вопросов типа SEQUENCE
-  sequenceAnswers UserSequenceOrder[]
+   id              String              @id @default(uuid())
+   testId          String
+   userId          String?
+   preTestUserData Json?
+   score           Float?
+   status          TestAttemptStatus
+   testSnapshotId  String?
+   timeSpent       Int                 @default(0)
+   startedAt       DateTime            @default(now())
+   // TIMESTAMPS
+   updatedAt       DateTime            @updatedAt
+   completedAt     DateTime?
+   // RELATIONS
+   test            Test                @relation(fields: [testId], references: [id], onDelete: Cascade)
+   snapshot        TestSnapshot?       @relation(fields: [testSnapshotId], references: [id])
+   user            User?               @relation("TestAttemptUser", fields: [userId], references: [id])
+   answers         UserAnswer[]
+   // Новая связь для вопросов типа SEQUENCE
+   sequenceAnswers UserSequenceOrder[]
 
-  @@map("test_attempts")
+   @@map("test_attempts")
 }
 
 model UserAnswer {
-  id         String      @id @default(uuid())
-  attemptId  String
-  questionId String
-  answerId   String
-  textAnswer String?     @db.VarChar(255)
-  answeredAt DateTime?
-  isCorrect  Boolean?
-  // TIMESTAMPS
-  createdAt  DateTime    @default(now())
-  // RELATIONS
-  answer     Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
-  attempt    TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+   id         String      @id @default(uuid())
+   attemptId  String
+   questionId String
+   answerId   String
+   textAnswer String?     @db.VarChar(255)
+   answeredAt DateTime?
+   isCorrect  Boolean?
+   // TIMESTAMPS
+   createdAt  DateTime    @default(now())
+   // RELATIONS
+   answer     Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
+   attempt    TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+   question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-  @@map("user_answers")
+   @@map("user_answers")
 }
 
 model TestSnapshot {
-  id               String                @id @default(uuid())
-  testId           String
-  title            String                @db.VarChar(100)
-  description      String?               @db.VarChar(500)
-  moderationStatus ModerationStatus
-  visibilityStatus TestVisibilityStatus  @default(PUBLISHED)
-  version          Int                   @default(1)
-  // TIMESTAMPS
-  createdAt        DateTime              @default(now())
-  updatedAt        DateTime              @updatedAt
-  // RELATIONS
-  questions        QuestionSnapshot[]
-  attempts         TestAttempt[]
-  settings         TestSettingsSnapshot?
-  originalTest     Test                  @relation(fields: [testId], references: [id], onDelete: Cascade)
+   id               String                @id @default(uuid())
+   testId           String
+   title            String                @db.VarChar(100)
+   description      String?               @db.VarChar(500)
+   moderationStatus ModerationStatus
+   visibilityStatus TestVisibilityStatus  @default(PUBLISHED)
+   version          Int                   @default(1)
+   // TIMESTAMPS
+   createdAt        DateTime              @default(now())
+   updatedAt        DateTime              @updatedAt
+   // RELATIONS
+   questions        QuestionSnapshot[]
+   attempts         TestAttempt[]
+   settings         TestSettingsSnapshot?
+   originalTest     Test                  @relation(fields: [testId], references: [id], onDelete: Cascade)
 
-  @@map("test_snapshots")
+   @@map("test_snapshots")
 }
 
 model QuestionSnapshot {
-  id             String           @id @default(uuid())
-  testSnapshotId String
-  originalId     String
-  text           String           @db.VarChar(500)
-  order          Int
-  image          String?          @db.VarChar(255)
-  type           QuestionType
-  // TIMESTAMPS
-  createdAt      DateTime         @default(now())
-  // RELATIONS
-  answers        AnswerSnapshot[]
-  testSnapshot   TestSnapshot     @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
+   id             String           @id @default(uuid())
+   testSnapshotId String
+   originalId     String
+   text           String           @db.VarChar(500)
+   order          Int
+   image          String?          @db.VarChar(255)
+   type           QuestionType
+   // TIMESTAMPS
+   createdAt      DateTime         @default(now())
+   // RELATIONS
+   answers        AnswerSnapshot[]
+   testSnapshot   TestSnapshot     @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
 
-  @@map("question_snapshots")
+   @@map("question_snapshots")
 }
 
 model AnswerSnapshot {
-  id               String           @id @default(uuid())
-  questionId       String
-  originalId       String
-  text             String           @db.VarChar(255)
-  isCorrect        Boolean          @default(false)
-  // Новое поле для snapshots
-  sequencePosition Int?
-  // TIMESTAMPS
-  createdAt        DateTime         @default(now())
-  // RELATIONS
-  question         QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
+   id               String           @id @default(uuid())
+   questionId       String
+   originalId       String
+   text             String           @db.VarChar(255)
+   isCorrect        Boolean          @default(false)
+   // Новое поле для snapshots
+   sequencePosition Int?
+   // TIMESTAMPS
+   createdAt        DateTime         @default(now())
+   // RELATIONS
+   question         QuestionSnapshot @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-  @@map("answer_snapshots")
+   @@map("answer_snapshots")
 }
 
 model TestSettingsSnapshot {
-  id                  String       @id @default(uuid())
-  testSnapshotId      String       @unique
-  requireRegistration Boolean      @default(false)
-  inputFields         Json?
-  showDetailedResults Boolean      @default(false)
-  shuffleQuestions    Boolean      @default(false)
-  shuffleAnswers      Boolean      @default(true)
-  allowRetake         Boolean      @default(true)
-  retakeLimit         Int?
-  timeLimit           Int?
-  // TIMESTAMPS
-  createdAt           DateTime     @default(now())
-  // RELATIONS
-  snapshot            TestSnapshot @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
+   id                  String       @id @default(uuid())
+   testSnapshotId      String       @unique
+   requireRegistration Boolean      @default(false)
+   inputFields         Json?
+   showDetailedResults Boolean      @default(false)
+   shuffleQuestions    Boolean      @default(false)
+   shuffleAnswers      Boolean      @default(true)
+   allowRetake         Boolean      @default(true)
+   retakeLimit         Int?
+   timeLimit           Int?
+   // TIMESTAMPS
+   createdAt           DateTime     @default(now())
+   // RELATIONS
+   snapshot            TestSnapshot @relation(fields: [testSnapshotId], references: [id], onDelete: Cascade)
 
-  @@map("test_settings_snapshots")
+   @@map("test_settings_snapshots")
 }
 
 enum Role {
-  USER
-  ADMIN
+   USER
+   ADMIN
 }
 
 enum ModerationStatus {
-  PENDING
-  APPROVED
-  REJECTED
+   PENDING
+   APPROVED
+   REJECTED
 }
 
 enum TestAttemptStatus {
-  EXPIRED
-  IN_PROGRESS
-  COMPLETED
+   EXPIRED
+   IN_PROGRESS
+   COMPLETED
 }
 
 enum QuestionType {
-  SINGLE_CHOICE // Одиночный выбор 
-  MULTIPLE_CHOICE // Множественный выбор 
-  TEXT_INPUT // Текстовый ввод 
-  MATCHING // Сопоставление элементов 
-  FILL_IN_THE_BLANK // Вставка пропущенного слова
-  SEQUENCE // Вопрос на последовательность 
+   SINGLE_CHOICE // Одиночный выбор 
+   MULTIPLE_CHOICE // Множественный выбор 
+   TEXT_INPUT // Текстовый ввод 
+   MATCHING // Сопоставление элементов 
+   FILL_IN_THE_BLANK // Вставка пропущенного слова
+   SEQUENCE // Вопрос на последовательность 
 }
 
 enum TestVisibilityStatus {
-  HIDDEN
-  PUBLISHED
+   HIDDEN
+   PUBLISHED
 }
 
 // 13 таблиц 3 enum

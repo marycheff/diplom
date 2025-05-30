@@ -1,26 +1,26 @@
 {
-    "compilerOptions": {
-        "module": "ESNext",
-        // "module": "CommonJS",
-        "target": "ES2020",
-        // "noUnusedLocals": true,
-        // "noUnusedParameters": true,
-        "strict": true,
-        // "noEmit": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "declaration": true,
-        "noImplicitAny": true,
-        "resolveJsonModule": true,
-        "moduleResolution": "node",
-        "outDir": "dist/src",
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["./src/*"]
-        }
-    },
-    "include": ["src/**/*"],
-    "files": ["src/types/express.d.ts"],
-    "exclude": ["node_modules", "**/*.test.ts"]
+	"compilerOptions": {
+		"module": "ESNext",
+		// "module": "CommonJS",
+		"target": "ES2020",
+		// "noUnusedLocals": true,
+		// "noUnusedParameters": true,
+		"strict": true,
+		// "noEmit": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"declaration": true,
+		"noImplicitAny": true,
+		"resolveJsonModule": true,
+		"moduleResolution": "node",
+		"outDir": "dist/src",
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	},
+	"include": ["src/**/*"],
+	"files": ["src/types/express.d.ts"],
+	"exclude": ["node_modules", "**/*.test.ts"]
 }

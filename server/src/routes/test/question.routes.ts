@@ -11,11 +11,11 @@ const router = express.Router()
 
 // Добавление вопросов к тесту
 router.put(
-    "/:testId/questions-upsert",
-    authMiddleware,
-    testOwnershipMiddleware,
-    validateRequest(upsertQuestionsSchema),
-    questionController.upsertQuestions
+	"/:testId/questions-upsert",
+	authMiddleware,
+	testOwnershipMiddleware,
+	validateRequest(upsertQuestionsSchema),
+	questionController.upsertQuestions
 )
 
 export const questionRoutes = router

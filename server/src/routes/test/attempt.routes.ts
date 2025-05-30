@@ -1,17 +1,17 @@
 import { attemptController } from "@/controllers"
 import {
-    adminMiddleware,
-    attemptOwnershipMiddleware,
-    authMiddleware,
-    conditionalAuthMiddleware,
-    testOwnershipMiddleware,
-    validateRequest,
+	adminMiddleware,
+	attemptOwnershipMiddleware,
+	authMiddleware,
+	conditionalAuthMiddleware,
+	testOwnershipMiddleware,
+	validateRequest
 } from "@/middleware"
 import {
-    completeTestAttemptSchema,
-    getAttemptSchema,
-    saveAnswersSchema,
-    startTestAttemptSchema,
+	completeTestAttemptSchema,
+	getAttemptSchema,
+	saveAnswersSchema,
+	startTestAttemptSchema
 } from "@/schemas/test.schema"
 import express from "express"
 
@@ -35,18 +35,18 @@ router.get("/attempts/users/:userId", attemptController.getUserAttempts)
 
 // Начало попытки прохождения теста
 router.post(
-    "/:testId/start",
-    conditionalAuthMiddleware,
-    validateRequest(startTestAttemptSchema),
-    attemptController.startAttempt
+	"/:testId/start",
+	conditionalAuthMiddleware,
+	validateRequest(startTestAttemptSchema),
+	attemptController.startAttempt
 )
 
 // Сохранение ответов во время попытки
 router.post(
-    "/attempts/:attemptId/answers",
-    conditionalAuthMiddleware,
-    validateRequest(saveAnswersSchema),
-    attemptController.saveAnswers
+	"/attempts/:attemptId/answers",
+	conditionalAuthMiddleware,
+	validateRequest(saveAnswersSchema),
+	attemptController.saveAnswers
 )
 
 // Синхронизация таймера теста
@@ -54,34 +54,34 @@ router.post("/attempts/:attemptId/time-spent", conditionalAuthMiddleware, attemp
 
 // Завершение попытки
 router.post(
-    "/attempts/:attemptId/complete",
-    validateRequest(completeTestAttemptSchema),
-    attemptController.completeAttempt
+	"/attempts/:attemptId/complete",
+	validateRequest(completeTestAttemptSchema),
+	attemptController.completeAttempt
 )
 
 // Получение попытки для тестируемого
 router.get(
-    "/attempts/:attemptId/for-user",
-    conditionalAuthMiddleware,
-    validateRequest(getAttemptSchema),
-    attemptController.getAttemptForUser
+	"/attempts/:attemptId/for-user",
+	conditionalAuthMiddleware,
+	validateRequest(getAttemptSchema),
+	attemptController.getAttemptForUser
 )
 
 // Получение результатов попытки (прохождения)
 router.get(
-    "/attempts/:attemptId/results",
-    conditionalAuthMiddleware,
-    validateRequest(getAttemptSchema),
-    attemptController.getAttemptResults
+	"/attempts/:attemptId/results",
+	conditionalAuthMiddleware,
+	validateRequest(getAttemptSchema),
+	attemptController.getAttemptResults
 )
 
 // Получение попытки
 router.get(
-    "/attempts/:attemptId/",
-    authMiddleware,
-    attemptOwnershipMiddleware,
-    validateRequest(getAttemptSchema),
-    attemptController.getAttempt
+	"/attempts/:attemptId/",
+	authMiddleware,
+	attemptOwnershipMiddleware,
+	validateRequest(getAttemptSchema),
+	attemptController.getAttempt
 )
 
 export const attemptRoutes = router

@@ -8,39 +8,39 @@ import qs from "querystring"
 const LOG_NAMESPACE = "GigaChatTokenService"
 
 class GigaChatTokenService {
-    httpsAgent = new https.Agent({ rejectUnauthorized: false })
+	httpsAgent = new https.Agent({ rejectUnauthorized: false })
 
-    getAccessToken = async (authData: string): Promise<string> => {
-        logger.debug(`[${LOG_NAMESPACE}] Запрос токена GigaChat`)
+	getAccessToken = async (authData: string): Promise<string> => {
+		logger.debug(`[${LOG_NAMESPACE}] Запрос токена GigaChat`)
 
-        const postData = qs.stringify({ scope: "GIGACHAT_API_PERS" })
+		const postData = qs.stringify({ scope: "GIGACHAT_API_PERS" })
 
-        const config = {
-            method: "POST",
-            url: envConfig.GIGACHAT_AUTH_URL,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                Accept: "application/json",
-                RqUID: crypto.randomUUID(),
-                Authorization: `Bearer ${authData}`,
-            },
-            data: postData,
-            httpsAgent: this.httpsAgent,
-        }
+		const config = {
+			method: "POST",
+			url: envConfig.GIGACHAT_AUTH_URL,
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+				Accept: "application/json",
+				RqUID: crypto.randomUUID(),
+				Authorization: `Bearer ${authData}`
+			},
+			data: postData,
+			httpsAgent: this.httpsAgent
+		}
 
-        try {
-            const { data } = await axios(config)
-            if (data?.access_token) {
-                logger.debug(`[${LOG_NAMESPACE}] Токен успешно получен`)
-                return data.access_token
-            }
+		try {
+			const { data } = await axios(config)
+			if (data?.access_token) {
+				logger.debug(`[${LOG_NAMESPACE}] Токен успешно получен`)
+				return data.access_token
+			}
 
-            throw ApiError.InternalError("Ошибка нейросети")
-        } catch (error) {
-            logger.error(`[${LOG_NAMESPACE}] Ошибка получения токена: ${error}`)
-            throw ApiError.InternalError("Ошибка получения токена доступа")
-        }
-    }
+			throw ApiError.InternalError("Ошибка нейросети")
+		} catch (error) {
+			logger.error(`[${LOG_NAMESPACE}] Ошибка получения токена: ${error}`)
+			throw ApiError.InternalError("Ошибка получения токена доступа")
+		}
+	}
 }
 
 export const gigaChatTokenService = new GigaChatTokenService()
