@@ -388,7 +388,7 @@ class TestRepository {
     async cleanupUnusedSnapshots(testId: string, tx?: Prisma.TransactionClient) {
         const client = tx || prisma
 
-        // Находим все снапшоты, к которым нет привязанных попыток
+        // Нахождение всех снапшотов, к которым нет привязанных попыток
         const unusedSnapshots = await client.testSnapshot.findMany({
             where: {
                 testId: testId,
@@ -396,44 +396,10 @@ class TestRepository {
                     none: {}, // нет связанных attempts
                 },
             },
-            include: {
-                questions: {
-                    include: {
-                        answers: true,
-                    },
-                },
-                settings: true,
-            },
         })
 
-        // Удаляем найденные снапшоты и связанные данные
+        // Удаление найденных снапшотов
         for (const snapshot of unusedSnapshots) {
-            // Сначала удаляем ответы для каждого вопроса
-            for (const question of snapshot.questions) {
-                await client.answerSnapshot.deleteMany({
-                    where: {
-                        questionId: question.id,
-                    },
-                })
-            }
-
-            // Затем удаляем вопросы
-            await client.questionSnapshot.deleteMany({
-                where: {
-                    testSnapshotId: snapshot.id,
-                },
-            })
-
-            // Удаляем настройки
-            if (snapshot.settings) {
-                await client.testSettingsSnapshot.delete({
-                    where: {
-                        testSnapshotId: snapshot.id,
-                    },
-                })
-            }
-
-            // Наконец удаляем сам снапшот
             await client.testSnapshot.delete({
                 where: {
                     id: snapshot.id,
@@ -571,6 +537,13 @@ class TestRepository {
             where: { id: testId },
             data: { version: currentVersion + 1 },
         })
+    }
+    async snapshotExists(snapshotId: string): Promise<boolean> {
+        const snapshot = await prisma.testSnapshot.findUnique({
+            where: { id: snapshotId },
+            select: { id: true },
+        })
+        return !!snapshot
     }
 }
 

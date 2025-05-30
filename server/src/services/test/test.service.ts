@@ -2,6 +2,7 @@ import { ApiError } from "@/exceptions"
 import { mapTest, mapToTestSnapshotDTO, mapToTestSnapshotForAttemptDTO, mapUserTest } from "@/mappers"
 import { attemptRepository, testRepository, userRepository } from "@/repositories"
 import { mailService } from "@/services"
+import { getIO } from "@/sockets"
 import {
     CreateTest,
     ShortTestInfo,

@@ -96,11 +96,13 @@ export const mapTest = (
 export const mapToAttemptQuestionDTO = (
     question: Question & { answers: Answer[] },
     userAnswers: UserAnswer[],
-    allAnswers: Answer[]
+    allAnswers: Answer[],
+    sequenceAnswers?: { attemptId: string; questionId: string; answerId: string; position: number }[]
 ): AttemptQuestionDTO => {
     const userAnswersForQuestion = userAnswers.filter(a => a.questionId === question.id)
+    const sequenceAnswersForQuestion = sequenceAnswers?.filter(a => a.questionId === question.id) || []
 
-    if (userAnswersForQuestion.length === 0) {
+    if (userAnswersForQuestion.length === 0 && sequenceAnswersForQuestion.length === 0) {
         return {
             question: {
                 id: question.id,
@@ -115,6 +117,40 @@ export const mapToAttemptQuestionDTO = (
 
     // Берем метаданные из первого ответа (предполагаем что они одинаковые для всех ответов на вопрос)
     const firstAnswer = userAnswersForQuestion[0]
+
+    // Для вопросов типа SEQUENCE используем данные из sequenceAnswers
+    if (question.type === "SEQUENCE" && sequenceAnswersForQuestion.length > 0) {
+        // Сортируем ответы по позиции
+        const sortedSequenceAnswers = [...sequenceAnswersForQuestion].sort((a, b) => a.position - b.position)
+
+        return {
+            question: {
+                id: question.id,
+                text: question.text,
+                order: question.order,
+                type: question.type,
+            },
+            answers: question.answers.map(mapAnswer),
+            userAnswers: {
+                answers: sortedSequenceAnswers.map(seqAnswer => {
+                    const answer = allAnswers.find(a => a.id === seqAnswer.answerId)
+                    if (!answer) {
+                        throw new Error(`Answer with id ${seqAnswer.answerId} not found`)
+                    }
+
+                    return {
+                        userAnswerId: seqAnswer.answerId, // Используем answerId как userAnswerId
+                        answer: mapAnswer(answer),
+                        position: seqAnswer.position, // Добавляем позицию для вопросов типа SEQUENCE
+                    }
+                }),
+                textAnswer: null,
+                isCorrect: null, // Правильность определяется при расчете оценки
+                answeredAt: new Date(), //sequenceAnswersForQuestion[0]?.answeredAt || new Date(),
+                createdAt: new Date(),
+            },
+        }
+    }
 
     return {
         question: {
@@ -136,11 +172,10 @@ export const mapToAttemptQuestionDTO = (
                     answer: mapAnswer(answer),
                 }
             }),
-            textAnswer: firstAnswer.textAnswer,
-            isCorrect: firstAnswer.isCorrect,
-            timeSpent: firstAnswer.timeSpent,
-            answeredAt: firstAnswer.answeredAt,
-            createdAt: firstAnswer.createdAt,
+            textAnswer: firstAnswer?.textAnswer || null,
+            isCorrect: firstAnswer?.isCorrect || null,
+            answeredAt: firstAnswer?.answeredAt || new Date(),
+            createdAt: firstAnswer?.createdAt || new Date(),
         },
     }
 }
@@ -159,6 +194,13 @@ export const mapToTestAttemptDTO = (
         }
         user: User | null
         answers: UserAnswer[]
+        sequenceAnswers?: {
+            attemptId: string
+            questionId: string
+            answerId: string
+            position: number
+            answeredAt?: Date | null
+        }[]
     }
 ): TestAttemptDTO => {
     const allAnswers = attempt.test.questions.flatMap(q => q.answers)
@@ -174,7 +216,9 @@ export const mapToTestAttemptDTO = (
         preTestUserData: attempt.preTestUserData as PreTestUserDataType,
         test: mapTest(attempt.test),
         timeSpent: attempt.timeSpent,
-        questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
+        questions: attempt.test.questions.map(q =>
+            mapToAttemptQuestionDTO(q, attempt.answers, allAnswers, attempt.sequenceAnswers)
+        ),
     }
 }
 
@@ -221,6 +265,14 @@ export const mapToAttemptWithResultsDTO = (
         }
         user: User | null
         answers: UserAnswer[]
+        sequenceAnswers?: {
+            attemptId: string
+            questionId: string
+            answerId: string
+            position: number
+            timeSpent?: number | null
+            answeredAt?: Date | null
+        }[]
     }
 ): TestAttemptResultDTO => {
     const allAnswers = attempt.test.questions.flatMap(q => q.answers)
@@ -237,7 +289,9 @@ export const mapToAttemptWithResultsDTO = (
         // user: attempt.user ? mapUserToDto(attempt.user) : null,
         // preTestUserData: attempt.preTestUserData as PreTestUserDataType,
         // test: mapTest(attempt.test),
-        questions: attempt.test.questions.map(q => mapToAttemptQuestionDTO(q, attempt.answers, allAnswers)),
+        questions: attempt.test.questions.map(q =>
+            mapToAttemptQuestionDTO(q, attempt.answers, allAnswers, attempt.sequenceAnswers)
+        ),
     }
 }
 export const mapToTestAttemptUserDTO = (
@@ -261,7 +315,6 @@ export const mapToTestAttemptUserDTO = (
             questionId: answer.questionId,
             answerId: answer.answerId,
             textAnswer: answer.textAnswer,
-            timeSpent: answer.timeSpent,
             isCorrect: answer.isCorrect,
             answeredAt: answer.answeredAt,
             createdAt: answer.createdAt,
@@ -304,6 +357,7 @@ export const mapToTestSnapshotDTO = (
             text: q.text,
             order: q.order,
             type: q.type,
+            image: q.image,
             createdAt: q.createdAt,
             answers: q.answers.map(a => ({
                 id: a.id,
@@ -357,6 +411,7 @@ export const mapUserQuestion = (question: Question & { answers: Answer[] }): Use
         id: question.id,
         text: question.text,
         type: question.type as QuestionType,
+        image: question.image,
         answers:
             question.type === "FILL_IN_THE_BLANK" || question.type === "TEXT_INPUT"
                 ? question.answers.map(answer => mapUserAnswerWithoutText(answer))
@@ -412,6 +467,7 @@ export const mapSnapshotQuestionToUser = (
         id: question.originalId, // originalId для совместимости
         text: question.text,
         type: question.type as QuestionType,
+        image: null,
         answers:
             question.type === "FILL_IN_THE_BLANK" || question.type === "TEXT_INPUT"
                 ? question.answers.map(answer => mapSnapshotAnswerToUserWithoutText(answer))

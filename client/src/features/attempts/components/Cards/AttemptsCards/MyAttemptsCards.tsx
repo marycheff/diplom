@@ -70,29 +70,32 @@ const MyAttemptsCards: FC<MyAttemptsCardsProps> = ({ attempts, total }) => {
                                         </div>
                                     </div>
 
-                                    <div className={styles.cardActions}>
-                                        {attempt.status === AttemptStatus.IN_PROGRESS ? (
-                                            <Link
-                                                to={generatePath(ROUTES.PASS_ATTEMPT, { attemptId: attempt.id })}
-                                                className={styles.actionLink}>
-                                                Продолжить выполнение
-                                            </Link>
-                                        ) : (
-                                            <Link
-                                                to={
-                                                    isAdmin
-                                                        ? generatePath(ROUTES.ADMIN_ATTEMPT_INFO, {
-                                                              attemptId: attempt.id,
-                                                          })
-                                                        : generatePath(ROUTES.ATTEMPT_RESULTS, {
-                                                              attemptId: attempt.id,
-                                                          })
-                                                }
-                                                className={styles.actionLink}>
-                                                Перейти
-                                            </Link>
-                                        )}
-                                    </div>
+                                    {attempt.status !== AttemptStatus.EXPIRED && (
+                                        <div className={styles.cardActions}>
+                                            {attempt.status === AttemptStatus.IN_PROGRESS ? (
+                                                <Link
+                                                    to={generatePath(ROUTES.PASS_ATTEMPT, { attemptId: attempt.id })}
+                                                    className={styles.actionLink}>
+                                                    Продолжить выполнение
+                                                </Link>
+                                            ) : (
+                                                <Link
+                                                    to={
+                                                        isAdmin
+                                                            ? generatePath(ROUTES.ADMIN_ATTEMPT_INFO, {
+                                                                  attemptId: attempt.id,
+                                                              })
+                                                            : generatePath(ROUTES.ATTEMPT_RESULTS, {
+                                                                  attemptId: attempt.id,
+                                                              })
+                                                    }
+                                                    className={styles.actionLink}>
+                                                    Перейти
+                                                </Link>
+                                            )}
+                                        </div>
+                                    )}
+
                                     {isAdmin && attempt.status === AttemptStatus.IN_PROGRESS && (
                                         <div className={styles.cardActions}>
                                             <Link

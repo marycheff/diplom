@@ -241,24 +241,45 @@ class AttemptService {
                 throw ApiError.BadRequest("Попытка не найдена")
             }
             if (attempt.completedAt) {
-                logger.warn(`[${LOG_NAMESPACE}] Тест уже завершен`, { attemptId })
-                throw ApiError.BadRequest("Тест уже завершен")
+                logger.warn(`[${LOG_NAMESPACE}] Попытка уже завершена`, { attemptId })
+                throw ApiError.BadRequest("Попытка уже завершена")
             }
 
+            // Рассчитываем и обновляем timeSpent
+            const now = new Date()
+            const startedAt = new Date(attempt.startedAt)
+            const timeSpent = Math.floor((now.getTime() - startedAt.getTime()) / 1000) // В секундах
+
+            if (timeSpent < 0) {
+                logger.warn(`[${LOG_NAMESPACE}] Некорректное время начала попытки`, { attemptId, startedAt })
+                throw ApiError.InternalError("Некорректное время начала попытки")
+            }
+
+            await attemptRepository.updateTimeSpent(attemptId, timeSpent)
+            logger.debug(`[${LOG_NAMESPACE}] Время попытки обновлено`, { attemptId, timeSpent })
+
             const questionsWithAnswers = await questionRepository.findWithCorrectAnswers(attempt.testId)
+
             const score = calculateTestScore(questionsWithAnswers, attempt.answers)
             await attemptRepository.updateScore(attemptId, score)
 
+            // Очистка неиспользуемых снимков перед обновлением snapshotId
+            await testRepository.cleanupUnusedSnapshots(attempt.testId)
+
+            // Проверка последнего снимка
             const latestSnapshot = await testRepository.findLatestSnapshot(attempt.testId)
-            if (!latestSnapshot) {
-                logger.warn(`[${LOG_NAMESPACE}] Не найден актуальный снапшот теста`, { testId: attempt.testId })
-                throw ApiError.NotFound("Не найден актуальный снапшот теста")
-            }
-            if (latestSnapshot.id !== attempt.testSnapshotId) {
-                attemptRepository.updateSnapshotId(attemptId, latestSnapshot.id)
+            if (latestSnapshot && latestSnapshot.id !== attempt.testSnapshotId) {
+                // Проверяем, существует ли snapshot в базе данных
+                const snapshotExists = await testRepository.snapshotExists(latestSnapshot.id)
+                if (snapshotExists) {
+                    await attemptRepository.updateSnapshotId(attemptId, latestSnapshot.id)
+                } else {
+                    logger.warn(`[${LOG_NAMESPACE}] Снимок не существует`, { snapshotId: latestSnapshot.id })
+                    // Устанавливаем testSnapshotId в null, если снимок недоступен
+                    await attemptRepository.updateSnapshotId(attemptId, null)
+                }
             }
 
-            testRepository.cleanupUnusedSnapshots(attempt.testId)
             await deleteAttemptCache(attemptId)
 
             logger.debug(`[${LOG_NAMESPACE}] Попытка теста успешно завершена`, { attemptId, score })
@@ -338,7 +359,7 @@ class AttemptService {
                 logger.warn(`[${LOG_NAMESPACE}] Попытка не найдена`, { attemptId })
                 throw ApiError.BadRequest("Попытка не найдена")
             }
-            if (attempt.status !== TestAttemptStatus.COMPLETED) {
+            if (attempt.status === TestAttemptStatus.IN_PROGRESS) {
                 if (user?.role !== Role.ADMIN) {
                     logger.warn(`[${LOG_NAMESPACE}] Попытка не завершена`, { attemptId })
                     throw ApiError.BadRequest("Попытка не завершена")

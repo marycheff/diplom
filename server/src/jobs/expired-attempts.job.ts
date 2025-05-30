@@ -1,6 +1,6 @@
 import { attemptRepository } from "@/repositories"
 import { logger } from "@/utils/logger"
-import { redisClient } from "@/utils/redis"
+import { deleteAttemptCache } from "@/utils/redis"
 import { TestAttemptStatus } from "@prisma/client"
 import cron from "node-cron"
 
@@ -52,15 +52,11 @@ class ExpiredAttemptsJob {
                 // Извлечение ID попыток для массового обновления
                 const attemptIds = expiredAttempts.map(attempt => attempt.id)
 
-                // Обновление статус в базе данных
+                // Обновление статусов в базе данных
                 await attemptRepository.updateStatuses(attemptIds, TestAttemptStatus.EXPIRED)
 
                 // Очистка кеша в Redis для каждой просроченной попытки
-                const redisPromises = []
-                for (const attempt of expiredAttempts) {
-                    redisPromises.push(redisClient.del(`attempt:${attempt.id}`))
-                    redisPromises.push(redisClient.del(`user-attempt:${attempt.userId}`))
-                }
+                const redisPromises = expiredAttempts.map(attempt => deleteAttemptCache(attempt.id))
 
                 // Ожидание завершения всех операций с Redis
                 await Promise.all(redisPromises)

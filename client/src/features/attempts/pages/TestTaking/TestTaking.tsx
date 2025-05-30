@@ -42,7 +42,7 @@ const TestTaking = () => {
     // Хуки из store
     const { getTestForAttempt } = useTestStore()
     const { getAttemptForUserById, saveAnswers, completeAttempt, isLoading } = useAttemptStore()
-
+    const isSubmittingRef = useRef<boolean>(false)
     // Проверка валидности attemptId
     if (!attemptId) {
         return <NothingFound title="ID попытки не указан" />
@@ -123,7 +123,7 @@ const TestTaking = () => {
             const fetchedTest = await getTestForAttempt(attempt.testId, attemptId)
             setTest(fetchedTest || null)
             setTimeLimit(fetchedTest?.settings?.timeLimit || 0)
-            
+
             setIsTestLoaded(true)
         } catch (error) {
             setIsTestLoaded(true)
@@ -143,8 +143,10 @@ const TestTaking = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false)
 
     useTestSocket(attempt?.testId || "", () => {
-        if (attempt) fetchTest()
-        setShowUpdateModal(true)
+        if (attempt && !isAttemptCompleted && !isSubmittingRef.current) {
+            fetchTest()
+            setShowUpdateModal(true)
+        }
     })
 
     // Обновление выбранных ответов при смене страницы
@@ -174,6 +176,7 @@ const TestTaking = () => {
 
     // Обработчик истечения времени
     const handleTimeExpired = async () => {
+        if (isSubmittingRef.current || isAttemptCompleted) return
         toast.error("Время закончилось. Ваши ответы будут отправлены автоматически.")
         await submitAnswers()
     }
@@ -233,77 +236,88 @@ const TestTaking = () => {
     }
 
     const submitAnswers = async () => {
-        // Синхронизация времени перед отправкой ответов
-        if (timerRef.current) {
-            await timerRef.current.syncTime()
+        if (isSubmittingRef.current || isAttemptCompleted) {
+            return // Предотвращаем повторную отправку
         }
+        isSubmittingRef.current = true
 
-        if (!test || !test.questions) return
+        try {
+            // Синхронизация времени перед отправкой ответов (закомментировано, так как синхронизация отключена)
+            // if (timerRef.current) {
+            //     await timerRef.current.syncTime()
+            // }
 
-        // Фильтрация ответов: остаются только существующие вопросы
-        const filteredAnswers = Object.fromEntries(
-            Object.entries(allAnswers).filter(([questionId]) => test.questions!.some(q => q.id === questionId))
-        )
+            if (!test || !test.questions) return
 
-        const filteredTextAnswers = Object.fromEntries(
-            Object.entries(allTextAnswers).filter(([questionId]) => test.questions!.some(q => q.id === questionId))
-        )
+            // Фильтрация ответов
+            const filteredAnswers = Object.fromEntries(
+                Object.entries(allAnswers).filter(([questionId]) => test.questions!.some(q => q.id === questionId))
+            )
+            const filteredTextAnswers = Object.fromEntries(
+                Object.entries(allTextAnswers).filter(([questionId]) => test.questions!.some(q => q.id === questionId))
+            )
 
-        // Обновление состояния актуальными ответами
-        setAllAnswers(filteredAnswers)
-        setAllTextAnswers(filteredTextAnswers)
+            // Обновление состояния
+            setAllAnswers(filteredAnswers)
+            setAllTextAnswers(filteredTextAnswers)
 
-        // Очистка localStorage от удаленных вопросов
-        Object.keys(allAnswers).forEach(qId => {
-            if (!test.questions!.some(q => q.id === qId)) {
-                localStorage.removeItem(`answer_time_${attemptId}_${qId}`)
+            // Очистка localStorage от удаленных вопросов
+            Object.keys(allAnswers).forEach(qId => {
+                if (!test.questions!.some(q => q.id === qId)) {
+                    localStorage.removeItem(`answer_time_${attemptId}_${qId}`)
+                }
+            })
+
+            const formattedAnswers: AttemptAnswer[] = []
+
+            // Форматирование обычных ответов
+            Object.entries(filteredAnswers).forEach(([questionId, answersIds]) => {
+                const timeKey = `answer_time_${attemptId}_${questionId}`
+                const answeredAt = getDecryptedTime(timeKey)
+                formattedAnswers.push({
+                    questionId,
+                    answersIds,
+                    textAnswer: null,
+                    answeredAt,
+                })
+            })
+
+            // Форматирование текстовых ответов
+            Object.entries(filteredTextAnswers).forEach(([questionId, textAnswer]) => {
+                const timeKey = `answer_time_${attemptId}_${questionId}`
+                const answeredAt = getDecryptedTime(timeKey)
+                formattedAnswers.push({
+                    questionId,
+                    answersIds: [],
+                    textAnswer,
+                    answeredAt,
+                })
+            })
+
+            await saveAnswers(attemptId, formattedAnswers)
+            await completeAttempt(attemptId)
+
+            // Очистка localStorage
+            localStorage.removeItem(`test_answers_${attemptId}`)
+            localStorage.removeItem(`test_text_answers_${attemptId}`)
+            Object.keys(allAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
+            Object.keys(allTextAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
+
+            toast.success("Ответы успешно отправлены. Попытка завершена.")
+            if (attempt) {
+                navigate(generatePath(ROUTES.ATTEMPT_RESULTS, { attemptId: attempt.id }))
+            } else {
+                navigate(ROUTES.HOME)
             }
-        })
 
-        const formattedAnswers: AttemptAnswer[] = []
-
-        // Форматирование обычных ответов
-        Object.entries(filteredAnswers).forEach(([questionId, answersIds]) => {
-            const timeKey = `answer_time_${attemptId}_${questionId}`
-            const answeredAt = getDecryptedTime(timeKey)
-            formattedAnswers.push({
-                questionId,
-                answersIds,
-                textAnswer: null,
-                answeredAt,
-            })
-        })
-
-        // Форматирование текстовых ответов
-        Object.entries(filteredTextAnswers).forEach(([questionId, textAnswer]) => {
-            const timeKey = `answer_time_${attemptId}_${questionId}`
-            const answeredAt = getDecryptedTime(timeKey)
-            formattedAnswers.push({
-                questionId,
-                answersIds: [],
-                textAnswer,
-                answeredAt,
-            })
-        })
-
-        await saveAnswers(attemptId, formattedAnswers)
-        await completeAttempt(attemptId)
-
-        // Очистка localStorage
-        localStorage.removeItem(`test_answers_${attemptId}`)
-        localStorage.removeItem(`test_text_answers_${attemptId}`)
-        Object.keys(allAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
-        Object.keys(allTextAnswers).forEach(qId => localStorage.removeItem(`answer_time_${attemptId}_${qId}`))
-
-        toast.success("Ответы успешно отправлены. Попытка завершена.")
-        if (attempt) {
-            navigate(generatePath(ROUTES.ATTEMPT_RESULTS, { attemptId: attempt.id }))
-        } else {
-            navigate(ROUTES.HOME)
+            setAllAnswers({})
+            setAllTextAnswers({})
+        } catch (error) {
+            console.error("Ошибка при отправке ответов:", error)
+            toast.error("Ошибка при отправке ответов")
+        } finally {
+            isSubmittingRef.current = false
         }
-
-        setAllAnswers({})
-        setAllTextAnswers({})
     }
 
     // Состояния загрузки
@@ -334,8 +348,8 @@ const TestTaking = () => {
                     <TestTimer
                         ref={timerRef}
                         attemptId={attemptId}
-                        defaultTime={timeLimit}
-                        timeSpent={attempt.timeSpent}
+                        timeLimit={timeLimit}
+                        startedAt={attempt?.startedAt || new Date()}
                         onTimeExpired={handleTimeExpired}
                     />
                 )}

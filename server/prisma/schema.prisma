@@ -171,7 +171,6 @@ model TestAttempt {
   score           Float?
   status          TestAttemptStatus
   testSnapshotId  String?
-  expirationTime  DateTime?
   timeSpent       Int                 @default(0)
   startedAt       DateTime            @default(now())
   // TIMESTAMPS

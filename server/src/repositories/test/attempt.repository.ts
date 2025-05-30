@@ -11,17 +11,6 @@ class AttemptRepository {
         preTestUserData?: PreTestUserDataType | null
     }) {
         return prisma.$transaction(async tx => {
-            const testSnapshot = await tx.testSnapshot.findUnique({
-                where: { id: data.testSnapshotId },
-                include: { settings: true },
-            })
-
-            const timeLimit = testSnapshot?.settings?.timeLimit
-            let expirationTime = null
-            if (timeLimit && timeLimit > 0) {
-                expirationTime = new Date(Date.now() + timeLimit * 1000)
-            }
-
             const attempt = await tx.testAttempt.create({
                 data: {
                     testId: data.testId,
@@ -29,7 +18,6 @@ class AttemptRepository {
                     userId: data.userId,
                     preTestUserData: data.preTestUserData === null ? Prisma.JsonNull : data.preTestUserData,
                     status: TestAttemptStatus.IN_PROGRESS,
-                    expirationTime,
                 },
             })
 
@@ -79,10 +67,10 @@ class AttemptRepository {
                         textAnswer: true,
                         isCorrect: true,
                         answeredAt: true,
-                        timeSpent: true,
                         createdAt: true,
                     },
                 },
+                sequenceAnswers: true, // Включаем данные о последовательности ответов
                 test: {
                     include: {
                         questions: {
@@ -174,6 +162,7 @@ class AttemptRepository {
                 answers: {
                     include: { answer: true },
                 },
+                sequenceAnswers: true, // Включаем данные о последовательности ответов
                 test: {
                     include: {
                         questions: {
@@ -199,10 +188,11 @@ class AttemptRepository {
                         answerId: true,
                         isCorrect: true,
                         answeredAt: true,
-                        timeSpent: true,
+
                         createdAt: true,
                     },
                 },
+                sequenceAnswers: true, // Включаем данные о последовательности ответов
             },
         })
     }
@@ -229,14 +219,38 @@ class AttemptRepository {
 
         return completedAttempt !== null
     }
-
     async findExpired(batchSize: number): Promise<TestAttempt[]> {
-        return prisma.testAttempt.findMany({
+        // Получаем все попытки в статусе IN_PROGRESS с их снимками и настройками
+        const attempts = await prisma.testAttempt.findMany({
             where: {
                 status: TestAttemptStatus.IN_PROGRESS,
-                expirationTime: { lt: new Date() },
+                snapshot: {
+                    settings: {
+                        timeLimit: { not: null, gt: 0 },
+                    },
+                },
+            },
+            include: {
+                test: {
+                    include: {
+                        settings: true,
+                    },
+                },
             },
             take: batchSize,
+        })
+
+        const now = new Date()
+        // Фильтруем попытки, у которых истек timeLimit
+        return attempts.filter(attempt => {
+            const timeLimit = attempt.test?.settings?.timeLimit
+            if (!timeLimit || timeLimit === 0) {
+                return false // Нет лимита времени или он равен 0
+            }
+
+            const startedAt = new Date(attempt.startedAt)
+            const timeSpentSeconds = Math.floor((now.getTime() - startedAt.getTime()) / 1000)
+            return timeSpentSeconds >= timeLimit // Попытка просрочена, если время превысило лимит
         })
     }
 
@@ -265,6 +279,18 @@ class AttemptRepository {
             data: { timeSpent: timeSpent },
         })
     }
+    async updateStatusesWithTimeSpent(attempts: { id: string; timeSpent: number }[]): Promise<void> {
+        const updates = attempts.map(attempt =>
+            prisma.testAttempt.update({
+                where: { id: attempt.id },
+                data: {
+                    status: TestAttemptStatus.EXPIRED,
+                    timeSpent: attempt.timeSpent,
+                },
+            })
+        )
+        await Promise.all(updates)
+    }
 
     // COUNT
     async count(where?: Prisma.TestAttemptWhereInput): Promise<number> {
@@ -289,7 +315,7 @@ class AttemptRepository {
     async saveAnswers(attemptId: string, answers: AttemptAnswer[]) {
         return prisma.$transaction(async tx => {
             for (const answer of answers) {
-                const { questionId, answersIds, textAnswer, timeSpent = 0, answeredAt } = answer
+                const { questionId, answersIds, textAnswer, answeredAt } = answer
 
                 // Получаем тип вопроса
                 const question = await tx.question.findUnique({
@@ -326,7 +352,6 @@ class AttemptRepository {
                             answerId: correctAnswer?.id || "", // Связываем с правильным ответом
                             textAnswer, // Сохраняем текстовый ответ пользователя
                             isCorrect, // Добавить это поле в модель UserAnswer
-                            timeSpent,
                             answeredAt: answeredAt || new Date(),
                         },
                     })
@@ -338,12 +363,38 @@ class AttemptRepository {
                             attemptId,
                             questionId,
                             answerId,
-                            timeSpent,
                             answeredAt: answeredAt || new Date(),
                         })),
                     })
                 }
             }
+        })
+    }
+    async saveSequenceAnswers(
+        attemptId: string,
+        questionId: string,
+        sequenceOrder: { answerId: string; position: number }[]
+    ) {
+        return prisma.$transaction(async tx => {
+            await tx.userSequenceOrder.deleteMany({
+                where: { attemptId, questionId },
+            })
+
+            await tx.userSequenceOrder.createMany({
+                data: sequenceOrder.map(order => ({
+                    attemptId,
+                    questionId,
+                    answerId: order.answerId,
+                    position: order.position,
+                    answeredAt: new Date(),
+                })),
+            })
+        })
+    }
+    async updateSnapshotId(attemptId: string, snapshotId: string | null) {
+        return prisma.testAttempt.update({
+            where: { id: attemptId },
+            data: { testSnapshotId: snapshotId },
         })
     }
 }

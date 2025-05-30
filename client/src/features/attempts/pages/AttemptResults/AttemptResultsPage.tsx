@@ -88,7 +88,7 @@ const AttemptResultsPage = () => {
     }, [attemptId])
 
     useEffect(() => {
-        if (attemptForUser && attemptForUser.status === AttemptStatus.COMPLETED) {
+        if (attemptForUser && attemptForUser.status !== AttemptStatus.IN_PROGRESS) {
             fetchTest()
             fetchAttempt()
         }
@@ -99,6 +99,9 @@ const AttemptResultsPage = () => {
     if (!attemptForUser) return <AttemptNotFound />
     if (attemptForUser.status === AttemptStatus.IN_PROGRESS) {
         return <NothingFound title="Попытка не завершения" description="Завершите попытку и вернитесь позже" />
+    }
+    if (attemptForUser.status === AttemptStatus.EXPIRED) {
+        return <NothingFound title="Попытка истекала" description="Попытка истекла. Посмотреть результаты невозможно" />
     }
     if (!test) return <TestNotFound />
     if (!attempt) return <AttemptNotFound />

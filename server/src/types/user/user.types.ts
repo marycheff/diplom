@@ -10,7 +10,10 @@ export interface UserDTO {
     surname?: string | null
     patronymic?: string | null
 }
-
+export interface JwtPayload extends UserDTO {
+    iat: number 
+    exp: number
+}
 export interface UsersListDTO {
     users: UserDTO[]
     total: number

@@ -1,149 +1,70 @@
-import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
-import { decryptData, encryptData } from "@/shared/utils/crypto"
 import { formatSeconds } from "@/shared/utils/formatter"
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import styles from "./TestTimer.module.scss"
-
-const TIMER_SYNC_INTERVAL = 10000 // 10 секунд
 
 interface TestTimerProps {
     attemptId: string
-    defaultTime: number
+    timeLimit: number // Лимит времени в секундах
+    startedAt: Date // Время начала попытки
     onTimeExpired: () => void
     isActive?: boolean
-    timeSpent: number
 }
 
 const TestTimer = React.forwardRef<{ syncTime: () => Promise<void> }, TestTimerProps>(
-    ({ attemptId, defaultTime, timeSpent, onTimeExpired, isActive = true }, ref) => {
-        const { updateTimeSpent } = useAttemptStore()
-        const [timeRemaining, setTimeRemaining] = useState(defaultTime)
-        const [timerActive, setTimerActive] = useState(isActive)
-        const [initialized, setInitialized] = useState(false)
-        const isSyncing = useRef(false)
+    ({ attemptId, timeLimit, startedAt, onTimeExpired, isActive = true }, ref) => {
+        const [timeRemaining, setTimeRemaining] = useState<number>(timeLimit)
+        const [timerActive, setTimerActive] = useState<boolean>(isActive)
+        const hasExpiredRef = useRef<boolean>(false) // Флаг для предотвращения повторных вызовов
+        const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-        const timeRemainingRef = useRef(timeRemaining)
+        // Функция для расчета оставшегося времени
+        const calculateTimeRemaining = () => {
+            const now = new Date()
+            const startedAtDate = new Date(startedAt)
+            const timeSpent = Math.floor((now.getTime() - startedAtDate.getTime()) / 1000) // Время в секундах
+            const remaining = timeLimit - timeSpent
+            return remaining > 0 ? remaining : 0
+        }
 
+        // Инициализация и обновление таймера
         useEffect(() => {
-            timeRemainingRef.current = timeRemaining
-        }, [timeRemaining])
+            if (hasExpiredRef.current || !timerActive) return
 
-        // Сохранение времени в localStorage
-        const saveTime = useCallback(
-            (time: number) => {
-                if (time >= 0) {
-                    try {
-                        const encryptedTime = encryptData(time.toString())
-                        localStorage.setItem(`test_time_${attemptId}`, encryptedTime)
-                    } catch (error) {
-                        console.error("Ошибка при сохранении времени:", error)
-                    }
+            // Пересчитываем оставшееся время
+            const initialRemaining = calculateTimeRemaining()
+            setTimeRemaining(initialRemaining)
+
+            if (initialRemaining <= 0) {
+                setTimerActive(false)
+                hasExpiredRef.current = true // Помечаем, что время истекло
+                onTimeExpired()
+                return
+            }
+
+            // Запускаем таймер
+            timerRef.current = setInterval(() => {
+                const remaining = calculateTimeRemaining()
+                setTimeRemaining(remaining)
+                if (remaining <= 0) {
+                    setTimerActive(false)
+                    hasExpiredRef.current = true // Помечаем, что время истекло
+                    if (timerRef.current) clearInterval(timerRef.current)
+                    onTimeExpired()
                 }
-            },
-            [attemptId]
-        )
-
-        // Загрузка сохраненного времени из localStorage
-        const loadSavedTime = useCallback(() => {
-            try {
-                const encryptedTime = localStorage.getItem(`test_time_${attemptId}`)
-                if (encryptedTime) {
-                    const decryptedTime = decryptData(encryptedTime)
-                    if (decryptedTime) {
-                        const parsedTime = parseInt(decryptedTime, 10)
-                        if (!isNaN(parsedTime)) {
-                            return parsedTime
-                        }
-                    }
-                }
-                return null
-            } catch (error) {
-                console.error("Ошибка при загрузке сохраненного времени:", error)
-                return null
-            }
-        }, [attemptId])
-
-        // Синхронизация с сервером
-        const syncWithServer = useCallback(async () => {
-            if (isSyncing.current) return
-
-            isSyncing.current = true
-            try {
-                const currentTimeSpent = defaultTime - timeRemainingRef.current
-                await updateTimeSpent(attemptId, currentTimeSpent)
-            } catch (error) {
-                console.error("Sync failed:", error)
-            } finally {
-                isSyncing.current = false
-            }
-        }, [attemptId, defaultTime, updateTimeSpent])
-
-        // Экспорт метода синхронизации через ref
-        useEffect(() => {
-            if (ref && "current" in ref) {
-                ref.current = {
-                    syncTime: syncWithServer,
-                }
-            }
-        }, [ref, syncWithServer])
-
-        // Инициализация таймера при монтировании
-        useEffect(() => {
-            const savedTime = loadSavedTime()
-            if (savedTime !== null) {
-                setTimeRemaining(savedTime)
-            } else if (timeSpent > 0) {
-                const remaining = defaultTime - timeSpent
-                setTimeRemaining(remaining > 0 ? remaining : 0)
-                saveTime(remaining > 0 ? remaining : 0)
-            } else {
-                setTimeRemaining(defaultTime)
-                saveTime(defaultTime)
-            }
-            setInitialized(true)
-        }, [defaultTime, timeSpent, loadSavedTime, saveTime])
-
-        // Реакция на изменение defaultTime
-        useEffect(() => {
-            if (initialized) {
-                const newTimeRemaining = defaultTime - timeSpent
-                setTimeRemaining(newTimeRemaining > 0 ? newTimeRemaining : 0)
-                saveTime(newTimeRemaining > 0 ? newTimeRemaining : 0)
-            }
-        }, [defaultTime, timeSpent, initialized, saveTime])
-
-        // Логика таймера и синхронизации
-        useEffect(() => {
-            if (!initialized || !timerActive || timeRemaining <= 0) return
-
-            const uiTimer = window.setInterval(() => {
-                setTimeRemaining(prev => {
-                    const newTime = prev - 1
-                    saveTime(newTime)
-                    return newTime
-                })
             }, 1000)
 
-            const syncTimer = window.setInterval(() => {
-                syncWithServer()
-            }, TIMER_SYNC_INTERVAL)
-
-            syncWithServer()
-
             return () => {
-                window.clearInterval(uiTimer)
-                window.clearInterval(syncTimer)
+                if (timerRef.current) clearInterval(timerRef.current)
             }
-        }, [timerActive, initialized, syncWithServer, saveTime])
+        }, [timeLimit, startedAt, timerActive, onTimeExpired])
 
-        // Обработка истечения времени
-        useEffect(() => {
-            if (timeRemaining <= 0 && timerActive) {
-                setTimerActive(false)
-                localStorage.removeItem(`test_time_${attemptId}`)
-                syncWithServer().finally(onTimeExpired)
-            }
-        }, [timeRemaining, timerActive, attemptId, onTimeExpired, syncWithServer])
+        // // Временно отключенная синхронизация с сервером
+        // const syncTime = async () => {
+        //     // Логика синхронизации с сервером (закомментирована)
+        // }
+        // React.useImperativeHandle(ref, () => ({
+        //     syncTime,
+        // }))
 
         return (
             <div className={styles.timerContainer}>
