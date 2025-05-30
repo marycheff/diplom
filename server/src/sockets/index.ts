@@ -31,7 +31,7 @@ export const initSocketIO = (httpServer: HttpServer) => {
 
     io.on("connection", socket => {
         const userId = socket.data.user?.id || "не авторизован"
-        console.log(`⚡: Новое подключение сокета (id: ${socket.id}, userId: ${userId})`)
+        console.log(`+ : Новое подключение сокета (id: ${socket.id}, userId: ${userId})`)
 
         socket.on("join:test", (testId: string) => {
             if (!testId || typeof testId !== "string") {
@@ -51,7 +51,7 @@ export const initSocketIO = (httpServer: HttpServer) => {
                      socket.leave(room)
                  }
              })
-             console.log(`🔥: Пользователь отключился (id: ${socket.id}, userId: ${userId})`)
+             console.log(`- : Пользователь отключился (id: ${socket.id}, userId: ${userId})`)
          })
 
         socket.on("error", error => {

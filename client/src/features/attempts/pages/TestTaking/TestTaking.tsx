@@ -139,9 +139,11 @@ const TestTaking = () => {
         if (attempt) fetchTest()
     }, [attempt])
 
+    const [showUpdateModal, setShowUpdateModal] = useState(false)
+
     useTestSocket(attempt?.testId || "", () => {
         if (attempt) fetchTest()
-        toast("Вопросы были обновлены")
+        setShowUpdateModal(true)
     })
 
     // Обновление выбранных ответов при смене страницы
@@ -374,6 +376,16 @@ const TestTaking = () => {
                     confirmText="Отправить"
                     cancelText="Отмена">
                     <p>Вы ответили не на все вопросы. Вы уверены, что хотите отправить ответы?</p>
+                </ConfirmationModal>
+
+                <ConfirmationModal
+                    isOpen={showUpdateModal}
+                    onClose={() => setShowUpdateModal(false)}
+                    onConfirm={() => setShowUpdateModal(false)}
+                    title="Обновление вопросов"
+                    confirmText="Ок"
+                    hideCancel={true}>
+                    <p>Вопросы были обновлены автором теста. Изменения вступили в силу</p>
                 </ConfirmationModal>
             </div>
         </>

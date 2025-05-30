@@ -1,36 +1,33 @@
-// hooks/useTestSocket.ts
 import { getSocket } from "@/shared/utils/socket"
-import { useEffect, useRef } from "react"
+import { useCallback, useEffect } from "react"
 
 export const useTestSocket = (testId: string, onUpdate: () => void) => {
-    const hasJoined = useRef(false)
-
+    // Эффект для присоединения и покидания комнаты
     useEffect(() => {
         if (!testId) return
-
         const socket = getSocket()
-
-        // Присоединяемся к комнате теста только если ещё не присоединились
-        if (!hasJoined.current) {
-            socket.emit("join:test", testId)
-            hasJoined.current = true
+        socket.emit("join:test", testId)
+        return () => {
+            socket.emit("leave:test", testId)
         }
+    }, [testId])
 
-        const handleUpdate = (data: { testId: string }) => {
+    // Мемоизация обработчика события
+    const handleUpdate = useCallback(
+        (data: { testId: string }) => {
             if (data.testId === testId) {
                 onUpdate()
             }
-        }
+        },
+        [testId, onUpdate]
+    )
 
+    // Эффект для установки слушателя события
+    useEffect(() => {
+        const socket = getSocket()
         socket.on("questions:updated", handleUpdate)
-
         return () => {
             socket.off("questions:updated", handleUpdate)
-            // Отписываемся от комнаты только при полном размонтировании
-            if (hasJoined.current) {
-                socket.emit("leave:test", testId)
-                hasJoined.current = false
-            }
         }
-    }, [testId, onUpdate])
+    }, [handleUpdate])
 }

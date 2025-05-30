@@ -13,6 +13,7 @@ interface ConfirmationModalProps<T = any> {
     confirmText?: string
     cancelText?: string
     fullScreen?: boolean
+    hideCancel?: boolean
 }
 
 const ConfirmationModal = <T extends Record<string, any> = {}>({
@@ -23,6 +24,7 @@ const ConfirmationModal = <T extends Record<string, any> = {}>({
     children,
     confirmText = "Подтвердить",
     cancelText = "Отмена",
+    hideCancel = false,
 }: ConfirmationModalProps<T>) => {
     const { handleSubmit, reset } = useForm<T>()
 
@@ -49,9 +51,11 @@ const ConfirmationModal = <T extends Record<string, any> = {}>({
             <form onSubmit={handleSubmit(handleConfirm)} className={styles.confirmationForm}>
                 <div className={styles.modalBody}>{children}</div>
                 <footer className={styles.modalFooter}>
-                    <Button className={styles.cancelButton} onClick={handleClose}>
-                        {cancelText}
-                    </Button>
+                    {!hideCancel && (
+                        <Button className={styles.cancelButton} onClick={handleClose}>
+                            {cancelText}
+                        </Button>
+                    )}
                     <Button type="submit" className={styles.confirmButton}>
                         {confirmText}
                     </Button>
