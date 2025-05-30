@@ -7,8 +7,8 @@ class QuestionController {
         try {
             const { testId } = req.params
             const questions = req.body.questions
-
             const updatedQuestions = await questionService.upsertQuestions(testId, questions)
+            // Отправка события о обновлении вопросов через сокеты
             emitQuestionsUpdated(testId)
             res.status(200).json({
                 message: "Вопросы успешно обновлены",

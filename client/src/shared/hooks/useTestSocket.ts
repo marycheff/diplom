@@ -22,12 +22,14 @@ export const useTestSocket = (testId: string, onUpdate: () => void) => {
         [testId, onUpdate]
     )
 
-    // Эффект для установки слушателя события
+    // Эффект для установки слушателей событий
     useEffect(() => {
         const socket = getSocket()
         socket.on("questions:updated", handleUpdate)
+        socket.on("settings:updated", handleUpdate) // Добавляем обработку нового события
         return () => {
             socket.off("questions:updated", handleUpdate)
+            socket.off("settings:updated", handleUpdate) // Убираем слушатель при очистке
         }
     }, [handleUpdate])
 }

@@ -1,5 +1,6 @@
 import { ApiError } from "@/exceptions"
 import { testService } from "@/services"
+import { emitSettingsUpdated } from "@/sockets"
 import { CreateTest, ShortTestInfo, TestSettingsDTO } from "@/types"
 import { ModerationStatus, TestVisibilityStatus } from "@prisma/client"
 import { NextFunction, Request, Response } from "express"
@@ -160,6 +161,8 @@ class TestController {
                 throw ApiError.BadRequest("Лимит времени должен быть положительным числом или null")
             }
             await testService.updateTestSettings(testId!, settings)
+
+            emitSettingsUpdated(testId!)
             res.status(200).json({ message: "Настройки теста успешно изменены" })
         } catch (error) {
             next(error)

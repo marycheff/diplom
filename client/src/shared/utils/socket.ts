@@ -6,15 +6,17 @@ let socket: Socket | null = null
 
 export const initSocket = () => {
     if (!socket) {
+        const token = localStorage.getItem("token") // Получение токена из localStorage
         socket = io(SOCKET_URL, {
             withCredentials: true,
+            auth: token ? { token } : {}, // Передача токена, если он есть, иначе пустой объект
         })
     }
     return socket
 }
 
 export const getSocket = () => {
-    if (!socket) throw new Error("Socket not initialized")
+    if (!socket) throw new Error("Сокет не инициализирован")
     return socket
 }
 

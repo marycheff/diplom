@@ -4,10 +4,12 @@ import { testTitleValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
 
+import { ROUTES } from "@/router/paths"
 import Select from "@/shared/ui/Select/Select"
+import { formatSpaces } from "@/shared/utils/formatter"
 import { SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import styles from "../CreateTestForm/CreateTestForm.module.scss"
 
 interface GenerateTest {
@@ -51,11 +53,11 @@ const GenerateTestForm = () => {
 
     const onSubmit: SubmitHandler<GenerateTest> = async data => {
         console.log(Number(data.numOfQuestions))
-        // const response = await generateTest(formatSpaces(data.topic), Number(data.numOfQuestions))
+        const response = await generateTest(formatSpaces(data.topic), Number(data.numOfQuestions))
         toast.success(`Тест создан`)
-        // isAdmin
-        //     ? navigate(generatePath(ROUTES.ADMIN_MY_TEST_INFO, { testId: response?.id }))
-        //     : navigate(generatePath(ROUTES.MY_TEST_INFO, { testId: response?.id }))
+        isAdmin
+            ? navigate(generatePath(ROUTES.ADMIN_MY_TEST_INFO, { testId: response?.id }))
+            : navigate(generatePath(ROUTES.MY_TEST_INFO, { testId: response?.id }))
     }
 
     const topic = watch("topic")

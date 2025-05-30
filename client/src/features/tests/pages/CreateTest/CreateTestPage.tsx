@@ -43,7 +43,15 @@ const CreateTestPage = () => {
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.content}>
-                {/* <CreateTestForm /> */}
+                <CreateTestForm />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+               
                 <GenerateTestForm />
             </div>
         </div>

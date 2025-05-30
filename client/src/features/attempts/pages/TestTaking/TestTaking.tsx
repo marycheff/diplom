@@ -123,6 +123,7 @@ const TestTaking = () => {
             const fetchedTest = await getTestForAttempt(attempt.testId, attemptId)
             setTest(fetchedTest || null)
             setTimeLimit(fetchedTest?.settings?.timeLimit || 0)
+            
             setIsTestLoaded(true)
         } catch (error) {
             setIsTestLoaded(true)
@@ -382,10 +383,10 @@ const TestTaking = () => {
                     isOpen={showUpdateModal}
                     onClose={() => setShowUpdateModal(false)}
                     onConfirm={() => setShowUpdateModal(false)}
-                    title="Обновление вопросов"
+                    title="Обновление теста"
                     confirmText="Ок"
                     hideCancel={true}>
-                    <p>Вопросы были обновлены автором теста. Изменения вступили в силу</p>
+                    <p>Тест был обновлен автором. Изменения вступили в силу</p>
                 </ConfirmationModal>
             </div>
         </>

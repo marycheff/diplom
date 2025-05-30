@@ -12,7 +12,6 @@ interface TestTimerProps {
     onTimeExpired: () => void
     isActive?: boolean
     timeSpent: number
-    ref?: React.RefObject<{ syncTime: () => Promise<void> }>
 }
 
 const TestTimer = React.forwardRef<{ syncTime: () => Promise<void> }, TestTimerProps>(
@@ -25,7 +24,6 @@ const TestTimer = React.forwardRef<{ syncTime: () => Promise<void> }, TestTimerP
 
         const timeRemainingRef = useRef(timeRemaining)
 
-        // Обновляем ref при изменении timeRemaining
         useEffect(() => {
             timeRemainingRef.current = timeRemaining
         }, [timeRemaining])
@@ -33,7 +31,7 @@ const TestTimer = React.forwardRef<{ syncTime: () => Promise<void> }, TestTimerP
         // Сохранение времени в localStorage
         const saveTime = useCallback(
             (time: number) => {
-                if (time > 0) {
+                if (time >= 0) {
                     try {
                         const encryptedTime = encryptData(time.toString())
                         localStorage.setItem(`test_time_${attemptId}`, encryptedTime)
@@ -95,17 +93,24 @@ const TestTimer = React.forwardRef<{ syncTime: () => Promise<void> }, TestTimerP
             if (savedTime !== null) {
                 setTimeRemaining(savedTime)
             } else if (timeSpent > 0) {
-                // Вход с другого устройства: используем timeSpent
                 const remaining = defaultTime - timeSpent
                 setTimeRemaining(remaining > 0 ? remaining : 0)
                 saveTime(remaining > 0 ? remaining : 0)
             } else {
-                // Новая попытка: используем defaultTime
                 setTimeRemaining(defaultTime)
                 saveTime(defaultTime)
             }
             setInitialized(true)
         }, [defaultTime, timeSpent, loadSavedTime, saveTime])
+
+        // Реакция на изменение defaultTime
+        useEffect(() => {
+            if (initialized) {
+                const newTimeRemaining = defaultTime - timeSpent
+                setTimeRemaining(newTimeRemaining > 0 ? newTimeRemaining : 0)
+                saveTime(newTimeRemaining > 0 ? newTimeRemaining : 0)
+            }
+        }, [defaultTime, timeSpent, initialized, saveTime])
 
         // Логика таймера и синхронизации
         useEffect(() => {
@@ -139,21 +144,6 @@ const TestTimer = React.forwardRef<{ syncTime: () => Promise<void> }, TestTimerP
                 syncWithServer().finally(onTimeExpired)
             }
         }, [timeRemaining, timerActive, attemptId, onTimeExpired, syncWithServer])
-
-        // Синхронизация с серверным временем, если разница > 12 секунд
-        useEffect(() => {
-            if (initialized && timerActive && timeSpent > 0) {
-                const savedTime = loadSavedTime()
-                if (savedTime !== null) {
-                    const localTimeSpent = defaultTime - savedTime
-                    if (Math.abs(localTimeSpent - timeSpent) > 12) {
-                        const remaining = defaultTime - timeSpent
-                        setTimeRemaining(remaining > 0 ? remaining : 0)
-                        saveTime(remaining > 0 ? remaining : 0)
-                    }
-                }
-            }
-        }, [timeSpent, initialized, timerActive, defaultTime, loadSavedTime, saveTime])
 
         return (
             <div className={styles.timerContainer}>

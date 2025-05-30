@@ -48,7 +48,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 
     useEffect(() => {
         if (requireRegistration === "Нет") {
-            setValue("allowRetake", "Нет")
+            setValue("allowRetake", "Да")
         }
     }, [requireRegistration, setValue])
 

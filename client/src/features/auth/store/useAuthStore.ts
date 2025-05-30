@@ -76,11 +76,6 @@ export const useAuthStore = create<AuthState>(set => {
                 })
             }
             return await withAuthChecking(operation)
-            // try {
-            // } catch (error) {
-            //     console.log(error)
-            //     throw error
-            // }
         },
 
         updateActivationLink: async (email: string) => {
