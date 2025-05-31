@@ -8,7 +8,7 @@ import {
 	StartAttemptDTO,
 	TestAttemptDTO,
 	TestAttemptResultDTO,
-	TestAttemptUserDTO
+	TestAttemptUserDTO,
 } from "@/shared/types"
 import { AxiosResponse } from "axios"
 
@@ -17,8 +17,8 @@ class AttemptService {
 		return axiosInstance.get<AttemptsListDTO>(`/tests/${testId}/attempts`, {
 			params: {
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 	getAttemptById(id: string): Promise<AxiosResponse<TestAttemptDTO>> {
@@ -36,42 +36,42 @@ class AttemptService {
 		return axiosInstance.get<AttemptsListDTO>("/tests/attempts/all", {
 			params: {
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 	startTestAttempt(testId: string, preTestUserData?: PreTestUserDataType): Promise<AxiosResponse<StartAttemptDTO>> {
 		return axiosInstance.post<StartAttemptDTO>(`/tests/${testId}/start`, {
-			userData: preTestUserData
+			userData: preTestUserData,
 		})
 	}
 	saveAnswers(attemptId: string, answers: AttemptAnswer[]): Promise<AxiosResponse<void>> {
 		return axiosInstance.post<void>(`/tests/attempts/${attemptId}/answers`, {
-			answers
+			answers,
 		})
 	}
 	completeAttempt(attemptId: string): Promise<AxiosResponse<CompleteAttemptResponse>> {
-		return axiosInstance.post<CompleteAttemptResponse>(`/tests/attempts/${attemptId}/complete`)
+		return axiosInstance.post<CompleteAttemptResponse>(`/tests/attempts/$s{attemptId}/complete`)
 	}
 	getMyAttempts(page = 1, limit = 10): Promise<AxiosResponse<AttemptsWithSnapshotListDTO>> {
 		return axiosInstance.get<AttemptsWithSnapshotListDTO>("/tests/attempts/my-attempts", {
 			params: {
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 	getUserAttempts(userId: string, page = 1, limit = 10): Promise<AxiosResponse<AttemptsWithSnapshotListDTO>> {
 		return axiosInstance.get<AttemptsWithSnapshotListDTO>(`/tests/attempts/users/${userId}`, {
 			params: {
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 	updateTimeSpent(attemptId: string, timeSpent: number): Promise<AxiosResponse<void>> {
 		return axiosInstance.post<void>(`/tests/attempts/${attemptId}/time-spent`, {
-			timeSpent
+			timeSpent,
 		})
 	}
 }

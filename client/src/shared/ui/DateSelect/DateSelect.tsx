@@ -22,7 +22,7 @@ const DateSelect: FC<DateSelectProps> = ({
 	value,
 	error = false,
 	required = false,
-	label
+	label,
 }) => {
 	// Получаем текущий год и вычисляем диапазон годов (от текущего года - 100 до текущего года)
 	const currentYear = new Date().getFullYear()

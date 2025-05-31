@@ -15,7 +15,7 @@ class PasswordResetService {
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при сохранении кода сброса пароля`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при сохранении кода сброса пароля")
 		}
@@ -38,7 +38,7 @@ class PasswordResetService {
 			if (user.resetCodeExp && user.resetCodeExp < new Date()) {
 				logger.warn(`[${LOG_NAMESPACE}] Срок действия кода сброса истек`, {
 					userId: user.id,
-					expiredAt: user.resetCodeExp
+					expiredAt: user.resetCodeExp,
 				})
 				throw ApiError.BadRequest("Срок действия кода сброса истек, запросите новый")
 			}
@@ -46,7 +46,7 @@ class PasswordResetService {
 			const isValid = await bcrypt.compare(code, user.resetCode)
 			logger.debug(`[${LOG_NAMESPACE}] Результат проверки кода сброса пароля`, {
 				userId: user.id,
-				isValid
+				isValid,
 			})
 			return isValid
 		} catch (error) {
@@ -55,7 +55,7 @@ class PasswordResetService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при проверке кода сброса пароля`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при проверке кода сброса пароля")
 		}
@@ -70,7 +70,7 @@ class PasswordResetService {
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при сбросе пароля пользователя`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при сбросе пароля пользователя")
 		}

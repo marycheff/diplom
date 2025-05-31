@@ -15,7 +15,7 @@ const fieldLabels: { [key: string]: string } = {
 	surname: "Фамилия",
 	name: "Имя",
 	patronymic: "Отчество",
-	email: "Электронная почта"
+	email: "Электронная почта",
 }
 
 const UserProfilePage = () => {
@@ -49,7 +49,7 @@ const UserProfilePage = () => {
 	const handleFieldChange = (field: string, value: string) => {
 		setUserFields((prevFields) => ({
 			...prevFields,
-			[field]: value
+			[field]: value,
 		}))
 	}
 
@@ -57,7 +57,7 @@ const UserProfilePage = () => {
 	const handleEditingChange = (field: string, isEditing: boolean) => {
 		setIsEditingFields((prevFields) => ({
 			...prevFields,
-			[field]: isEditing
+			[field]: isEditing,
 		}))
 	}
 

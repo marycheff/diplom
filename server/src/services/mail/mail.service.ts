@@ -16,8 +16,8 @@ class MailService {
 			secure: true,
 			auth: {
 				user: envConfig.SMTP_USER,
-				pass: envConfig.SMTP_PASSWORD
-			}
+				pass: envConfig.SMTP_PASSWORD,
+			},
 		} as SMTPTransport.Options)
 	}
 
@@ -35,12 +35,12 @@ class MailService {
                     <h1>Для активации перейдите по ссылке</h1>
                     <a href="${link}">${link}</a>
                 </div>
-            `
+            `,
 			})
 			logger.info(`[${LOG_NAMESPACE}] Письмо активации успешно отправлено`)
 		} catch (error: any) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма активации`, {
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			if (error.responseCode === 550) {
 				throw ApiError.BadRequest(`Ошибка отправки письма: почтовый ящик ${to} не найден`)
@@ -63,12 +63,12 @@ class MailService {
                     <h1>Ваш код для сброса пароля</h1>
                     ${code}
                 </div>
-            `
+            `,
 			})
 			logger.info(`[${LOG_NAMESPACE}] Письмо для сброса пароля успешно отправлено`)
 		} catch (error: any) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма для сброса пароля`, {
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			if (error.responseCode === 550) {
 				throw ApiError.BadRequest(`Ошибка отправки письма: почтовый ящик ${to} не найден`)
@@ -91,12 +91,12 @@ class MailService {
                     <p>Ваш аккаунт был заблокирован администрацией платформы.</p>
                     <p>Если вы считаете, что это ошибка — свяжитесь с нами.</p>
                 </div>
-            `
+            `,
 			})
 			logger.info(`[${LOG_NAMESPACE}] Письмо о блокировке успешно отправлено`)
 		} catch (error: any) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о блокировке`, {
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError()
 		}
@@ -115,12 +115,12 @@ class MailService {
                     <h1>Здравствуйте, ${name}!</h1>
                     <p>Ваш аккаунт был успешно разблокирован. Теперь вы можете снова пользоваться всеми функциями платформы.</p>
                 </div>
-            `
+            `,
 			})
 			logger.info(`[${LOG_NAMESPACE}] Письмо о разблокировке успешно отправлено`)
 		} catch (error: any) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о разблокировке`, {
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError()
 		}
@@ -139,11 +139,11 @@ class MailService {
                     <h1>Здравствуйте, ${name}!</h1>
                     <p>Ваш тест <strong>"${testTitle}"</strong> успешно отправлен на модерацию. Мы уведомим вас, когда решение будет принято.</p>
                 </div>
-            `
+            `,
 			})
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о статусе 'PENDING'`, {
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 		}
 	}
@@ -161,11 +161,11 @@ class MailService {
                     <h1>Поздравляем, ${name}!</h1>
                     <p>Ваш тест <strong>"${testTitle}"</strong> успешно прошёл модерацию и теперь доступен другим пользователям.</p>
                 </div>
-            `
+            `,
 			})
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о статусе 'APPROVED'`, {
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 		}
 	}
@@ -184,11 +184,11 @@ class MailService {
                     <p>К сожалению, ваш тест <strong>"${testTitle}"</strong> не прошёл модерацию.</p>
                     <p>Пожалуйста, проверьте требования к контенту и попробуйте снова.</p>
                 </div>
-            `
+            `,
 			})
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о статусе 'REJECTED'`, {
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 		}
 	}

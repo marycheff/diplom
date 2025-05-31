@@ -20,7 +20,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 		forwardedRef
 	) => {
 		const innerRef = useRef<HTMLButtonElement>(null)
-		// Синхронизируем внутренний ref с переданным извне
+		// Синхронизация внутреннего ref с переданным извне
 		useImperativeHandle(forwardedRef, () => innerRef.current!)
 
 		return (

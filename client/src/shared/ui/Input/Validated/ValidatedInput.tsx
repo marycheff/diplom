@@ -23,7 +23,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
 	maskChar = "_",
 	control,
 	trigger,
-	inputRef
+	inputRef,
 }) => {
 	const [isFocused, setIsFocused] = useState(false)
 	const [inputValue, setInputValue] = useState(defaultValue)

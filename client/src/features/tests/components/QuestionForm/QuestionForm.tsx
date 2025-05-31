@@ -28,7 +28,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
 	setValue,
 	trigger,
 	watch,
-	withGenerateButton = true
+	withGenerateButton = true,
 }) => {
 	const imageValue = watch("image")
 

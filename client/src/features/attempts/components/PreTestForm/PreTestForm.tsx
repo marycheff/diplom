@@ -31,9 +31,9 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 		formState: { errors, isValid },
 		setValue,
 		control,
-		trigger
+		trigger,
 	} = useForm<UserDataFormValues>({
-		mode: "onChange"
+		mode: "onChange",
 		// reValidateMode: "onChange",
 		// shouldFocusError: false,
 	})
@@ -49,7 +49,7 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 			[PreTestUserData.LastName]: safeString(user.surname),
 			[PreTestUserData.FirstName]: safeString(user.name),
 			[PreTestUserData.Patronymic]: safeString(user.patronymic),
-			[PreTestUserData.Email]: safeString(user.email)
+			[PreTestUserData.Email]: safeString(user.email),
 		}
 
 		inputFields.forEach((field) => {
@@ -90,7 +90,7 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 
 	const getFieldValidationRules = (field: string) => {
 		const baseRule = {
-			required: `Поле "${PreTestUserDataLabels[field as PreTestUserData]}" обязательно для заполнения`
+			required: `Поле "${PreTestUserDataLabels[field as PreTestUserData]}" обязательно для заполнения`,
 		}
 
 		switch (field) {
@@ -99,36 +99,36 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 					...baseRule,
 					pattern: {
 						value: /^[0-9]+$/,
-						message: "Возраст должен быть числом"
+						message: "Возраст должен быть числом",
 					},
 					min: {
 						value: 1,
-						message: "Возраст должен быть положительным числом"
+						message: "Возраст должен быть положительным числом",
 					},
 					max: {
 						value: 120,
-						message: "Возраст не может быть больше 120"
-					}
+						message: "Возраст не может быть больше 120",
+					},
 				}
 			case PreTestUserData.Phone:
 				return {
 					...baseRule,
 					pattern: {
 						value: /^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/,
-						message: "Телефон должен быть в формате +7 (999) 999-99-99"
-					}
+						message: "Телефон должен быть в формате +7 (999) 999-99-99",
+					},
 				}
 			case PreTestUserData.School: {
 				return {
 					...baseRule,
 					pattern: {
 						value: /^[0-9]+$/,
-						message: "Номер школы должна содержать только цифры"
+						message: "Номер школы должна содержать только цифры",
 					},
 					min: {
 						value: 1,
-						message: "Номер школы должен быть положительным числом"
-					}
+						message: "Номер школы должен быть положительным числом",
+					},
 				}
 			}
 			case PreTestUserData.Email:
@@ -136,8 +136,8 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 					...baseRule,
 					pattern: {
 						value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-						message: "Некорректный адрес электронной почты"
-					}
+						message: "Некорректный адрес электронной почты",
+					},
 				}
 			default:
 				return baseRule
@@ -170,7 +170,7 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 					label={PreTestUserDataLabels[field as PreTestUserData]}
 					options={[
 						{ value: "male", label: "Мужской" },
-						{ value: "female", label: "Женский" }
+						{ value: "female", label: "Женский" },
 					]}
 				/>
 			)

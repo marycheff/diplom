@@ -16,7 +16,7 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
 	const onSubmit: SubmitHandler<ShortTestInfo> = (data) => {
 		onChangingComplete({
 			title: data.title,
-			description: data.description
+			description: data.description,
 		})
 	}
 
@@ -27,15 +27,15 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
 		setValue,
 		formState,
 		watch,
-		trigger
+		trigger,
 	} = useForm<ShortTestInfo>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
 		shouldFocusError: false,
 		defaultValues: {
 			title: data.title,
-			description: data.description
-		}
+			description: data.description,
+		},
 	})
 	const currentValues = watch()
 

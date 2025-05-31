@@ -34,11 +34,11 @@ const ResetPasswordForm: FC = () => {
 		formState: { errors: passwordErrors },
 		setValue: setPasswordValue,
 		handleSubmit: handlePasswordSubmit,
-		trigger: passwordTrigger
+		trigger: passwordTrigger,
 	} = useForm<ResetPasswordFormData>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
-		shouldFocusError: false
+		shouldFocusError: false,
 	})
 
 	const {
@@ -47,11 +47,11 @@ const ResetPasswordForm: FC = () => {
 		setValue: setEmailValue,
 		handleSubmit: handleEmailSubmit,
 		reset: emailReset,
-		trigger: emailTrigger
+		trigger: emailTrigger,
 	} = useForm<EmailFormData>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
-		shouldFocusError: false
+		shouldFocusError: false,
 	})
 
 	const {
@@ -59,11 +59,11 @@ const ResetPasswordForm: FC = () => {
 		formState: { errors: codeErrors },
 		setValue: setCodeValue,
 		handleSubmit: handleCodeSubmit,
-		trigger: codeTrigger
+		trigger: codeTrigger,
 	} = useForm<CodeFormData>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
-		shouldFocusError: false
+		shouldFocusError: false,
 	})
 
 	// Таймер для блокировки кнопки повторной отправки
@@ -139,8 +139,8 @@ const ResetPasswordForm: FC = () => {
 							required: "Код подтверждения обязателен",
 							pattern: {
 								value: /^[0-9]+$/,
-								message: "Код должен содержать только цифры"
-							}
+								message: "Код должен содержать только цифры",
+							},
 						}}
 					/>
 					<Button

@@ -13,7 +13,7 @@ import {
 	TestSettingsDTO,
 	TestSnapshotDTO,
 	UserQuestionDTO,
-	UserTestDTO
+	UserTestDTO,
 } from "@/types"
 
 import {
@@ -27,14 +27,14 @@ import {
 	TestSettingsSnapshot,
 	TestSnapshot,
 	User,
-	UserAnswer
+	UserAnswer,
 } from "@prisma/client"
 
 export const mapAnswer = (answer: Answer): AnswerDTO => {
 	return {
 		id: answer.id,
 		text: answer.text,
-		isCorrect: answer.isCorrect
+		isCorrect: answer.isCorrect,
 	}
 }
 export const mapQuestion = (question: Question & { answers?: Answer[] }): QuestionDTO => {
@@ -44,7 +44,7 @@ export const mapQuestion = (question: Question & { answers?: Answer[] }): Questi
 		order: question.order,
 		type: question.type,
 		image: question.image || null,
-		answers: question.answers?.map((answer) => mapAnswer(answer)) || []
+		answers: question.answers?.map((answer) => mapAnswer(answer)) || [],
 	}
 }
 
@@ -69,7 +69,7 @@ export const mapTest = (
 			email: test.author.email,
 			name: test.author.name,
 			surname: test.author.surname,
-			patronymic: test.author.patronymic
+			patronymic: test.author.patronymic,
 		},
 		title: test.title,
 		description: test.description || null,
@@ -87,10 +87,10 @@ export const mapTest = (
 					allowRetake: test.settings.allowRetake,
 					retakeLimit: test.settings.retakeLimit,
 					timeLimit: test.settings.timeLimit,
-					inputFields: test.settings.inputFields
+					inputFields: test.settings.inputFields,
 			  }
 			: ({} as TestSettingsDTO),
-		questions: test.questions?.map((question) => mapQuestion(question)) || []
+		questions: test.questions?.map((question) => mapQuestion(question)) || [],
 	}
 }
 export const mapToAttemptQuestionDTO = (
@@ -111,10 +111,10 @@ export const mapToAttemptQuestionDTO = (
 				id: question.id,
 				text: question.text,
 				order: question.order,
-				type: question.type
+				type: question.type,
 			},
 			answers: question.answers.map(mapAnswer),
-			userAnswers: null
+			userAnswers: null,
 		}
 	}
 
@@ -160,7 +160,7 @@ export const mapToAttemptQuestionDTO = (
 			id: question.id,
 			text: question.text,
 			order: question.order,
-			type: question.type
+			type: question.type,
 		},
 		answers: question.answers.map(mapAnswer),
 		userAnswers: {
@@ -172,14 +172,14 @@ export const mapToAttemptQuestionDTO = (
 
 				return {
 					userAnswerId: userAnswer.id,
-					answer: mapAnswer(answer)
+					answer: mapAnswer(answer),
 				}
 			}),
 			textAnswer: firstAnswer?.textAnswer || null,
 			isCorrect: firstAnswer?.isCorrect || null,
 			answeredAt: firstAnswer?.answeredAt || new Date(),
-			createdAt: firstAnswer?.createdAt || new Date()
-		}
+			createdAt: firstAnswer?.createdAt || new Date(),
+		},
 	}
 }
 
@@ -226,7 +226,7 @@ export const mapToTestAttemptDTO = (
 				allAnswers
 				// , attempt.sequenceAnswers
 			)
-		)
+		),
 	}
 }
 
@@ -253,9 +253,9 @@ export const mapToAttemptWithSnapshotDTO = (
 					title: attempt.snapshot.title,
 					description: attempt.snapshot.description,
 					status: attempt.snapshot.moderationStatus,
-					createdAt: attempt.snapshot.createdAt
+					createdAt: attempt.snapshot.createdAt,
 			  }
-			: null
+			: null,
 	}
 }
 
@@ -304,7 +304,7 @@ export const mapToAttemptWithResultsDTO = (
 				allAnswers
 				// , attempt.sequenceAnswers
 			)
-		)
+		),
 	}
 }
 export const mapToTestAttemptUserDTO = (
@@ -330,8 +330,8 @@ export const mapToTestAttemptUserDTO = (
 			textAnswer: answer.textAnswer,
 			isCorrect: answer.isCorrect,
 			answeredAt: answer.answeredAt,
-			createdAt: answer.createdAt
-		}))
+			createdAt: answer.createdAt,
+		})),
 	}
 }
 
@@ -360,7 +360,7 @@ export const mapToTestSnapshotDTO = (
 					allowRetake: snapshot.settings.allowRetake,
 					retakeLimit: snapshot.settings.retakeLimit,
 					timeLimit: snapshot.settings.timeLimit,
-					createdAt: snapshot.settings.createdAt
+					createdAt: snapshot.settings.createdAt,
 			  }
 			: undefined,
 		questions: snapshot.questions.map((q) => ({
@@ -378,9 +378,9 @@ export const mapToTestSnapshotDTO = (
 				originalId: a.originalId,
 				text: a.text,
 				isCorrect: a.isCorrect,
-				createdAt: a.createdAt
-			}))
-		}))
+				createdAt: a.createdAt,
+			})),
+		})),
 	}
 }
 
@@ -411,10 +411,10 @@ export const mapUserTest = (
 					allowRetake: test.settings.allowRetake,
 					retakeLimit: test.settings.retakeLimit,
 					timeLimit: test.settings.timeLimit,
-					inputFields: test.settings.inputFields
+					inputFields: test.settings.inputFields,
 			  }
 			: ({} as TestSettingsDTO),
-		questions: test.questions?.map((question) => mapUserQuestion(question)) || []
+		questions: test.questions?.map((question) => mapUserQuestion(question)) || [],
 	}
 }
 
@@ -428,7 +428,7 @@ export const mapUserQuestion = (question: Question & { answers: Answer[] }): Use
 		answers:
 			question.type === "FILL_IN_THE_BLANK" || question.type === "TEXT_INPUT"
 				? question.answers.map((answer) => mapUserAnswerWithoutText(answer))
-				: question.answers.map((answer) => mapUserAnswer(answer))
+				: question.answers.map((answer) => mapUserAnswer(answer)),
 	}
 }
 
@@ -436,12 +436,12 @@ export const mapUserQuestion = (question: Question & { answers: Answer[] }): Use
 export const mapUserAnswer = (answer: Answer): AnswerUserDTO => {
 	return {
 		id: answer.id,
-		text: answer.text
+		text: answer.text,
 	}
 }
 export const mapUserAnswerWithoutText = (answer: Answer): AnswerUserDTO => {
 	return {
-		id: answer.id
+		id: answer.id,
 	}
 }
 
@@ -465,10 +465,10 @@ export const mapToTestSnapshotForAttemptDTO = (
 					allowRetake: snapshot.settings.allowRetake,
 					retakeLimit: snapshot.settings.retakeLimit,
 					timeLimit: snapshot.settings.timeLimit,
-					inputFields: snapshot.settings.inputFields
+					inputFields: snapshot.settings.inputFields,
 			  }
 			: ({} as TestSettingsDTO),
-		questions: snapshot.questions.map((question) => mapSnapshotQuestionToUser(question))
+		questions: snapshot.questions.map((question) => mapSnapshotQuestionToUser(question)),
 	}
 }
 
@@ -484,7 +484,7 @@ export const mapSnapshotQuestionToUser = (
 		answers:
 			question.type === "FILL_IN_THE_BLANK" || question.type === "TEXT_INPUT"
 				? question.answers.map((answer) => mapSnapshotAnswerToUserWithoutText(answer))
-				: question.answers.map((answer) => mapSnapshotAnswerToUser(answer))
+				: question.answers.map((answer) => mapSnapshotAnswerToUser(answer)),
 	}
 }
 
@@ -492,12 +492,12 @@ export const mapSnapshotQuestionToUser = (
 export const mapSnapshotAnswerToUser = (answer: AnswerSnapshot): AnswerUserDTO => {
 	return {
 		id: answer.originalId, // originalId для совместимости
-		text: answer.text
+		text: answer.text,
 	}
 }
 
 export const mapSnapshotAnswerToUserWithoutText = (answer: AnswerSnapshot): AnswerUserDTO => {
 	return {
-		id: answer.originalId // originalId для совместимости
+		id: answer.originalId, // originalId для совместимости
 	}
 }

@@ -9,7 +9,7 @@ export const useAttemptsCache = () => {
 		setCache,
 		clearCache: clearCacheFromStore,
 		lastCacheUpdateDate,
-		CACHE_EXPIRATION_TIME
+		CACHE_EXPIRATION_TIME,
 	} = useAttemptStore()
 	const [cacheVersion, setCacheVersion] = useState(0)
 	const location = useLocation()
@@ -69,6 +69,6 @@ export const useAttemptsCache = () => {
 		saveToCache,
 		clearCache,
 		cacheVersion,
-		lastUpdateDate: lastCacheUpdateDate
+		lastUpdateDate: lastCacheUpdateDate,
 	}
 }

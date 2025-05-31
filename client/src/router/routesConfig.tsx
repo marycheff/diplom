@@ -44,7 +44,7 @@ export const adminRoutes = [
 	{ path: ROUTES.ADMIN_MY_TESTS, element: <MyTestsPage /> },
 	{ path: ROUTES.ADMIN_MY_TEST_INFO, element: <TestInfoPage /> },
 	{ path: ROUTES.ADMIN_MY_ATTEMPTS, element: <MyAttemptsPage /> },
-	{ path: ROUTES.ADMIN_MY_ATTEMPT_INFO, element: <AttemptInfoPage /> }
+	{ path: ROUTES.ADMIN_MY_ATTEMPT_INFO, element: <AttemptInfoPage /> },
 ]
 
 // Конфигурация пользовательских роутов (для авторизованных пользователей)
@@ -59,7 +59,7 @@ export const userRoutes = [
 	{ path: ROUTES.MY_ATTEMPTS, element: <MyAttemptsPage /> },
 	{ path: ROUTES.MY_TEST_ATTEMPTS, element: <TestAttemptsPage /> },
 	// TODO: изменить AttemptInfoPage
-	{ path: ROUTES.MY_TEST_ATTEMPT_INFO, element: <AttemptInfoPage /> }
+	{ path: ROUTES.MY_TEST_ATTEMPT_INFO, element: <AttemptInfoPage /> },
 ]
 // Конфигурация публичных роутов
 export const publicRoutes = [
@@ -67,11 +67,11 @@ export const publicRoutes = [
 	{ path: ROUTES.PASS_ATTEMPT, element: <TestTaking /> },
 	{ path: ROUTES.ATTEMPT_RESULTS, element: <AttemptResultsPage /> },
 	{ path: ROUTES.ACTIVATION_ERROR, element: <ActivationErrorPage /> },
-	{ path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> }
+	{ path: ROUTES.ACTIVATION_SUCCESS, element: <ActivationSuccessPage /> },
 ]
 // Конфигурация роутов для неавторизованных пользователей
 export const unauthorizedRoutes = [
 	{ path: ROUTES.LOGIN, element: <LoginPage /> },
 	{ path: ROUTES.REGISTER, element: <RegisterPage /> },
-	{ path: ROUTES.WELCOME, element: <WelcomePage /> }
+	{ path: ROUTES.WELCOME, element: <WelcomePage /> },
 ]

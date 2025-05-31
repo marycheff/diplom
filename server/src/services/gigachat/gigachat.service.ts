@@ -107,7 +107,7 @@ class GigaChatService {
 			model,
 			messages: [{ role: "user", content }],
 			stream: false,
-			repetition_penalty: 1
+			repetition_penalty: 1,
 		}
 	}
 
@@ -119,10 +119,10 @@ class GigaChatService {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
-				Authorization: `Bearer ${token}`
+				Authorization: `Bearer ${token}`,
 			},
 			data: postData,
-			httpsAgent
+			httpsAgent,
 		}
 	}
 
@@ -185,7 +185,7 @@ class GigaChatService {
 				answers.push({
 					id: `answer-${questionCounter}-${answerCounter}`,
 					text: answerText,
-					isCorrect: answerCounter === 1 // Первый ответ всегда правильный
+					isCorrect: answerCounter === 1, // Первый ответ всегда правильный
 					//   sequencePosition: null,
 				})
 			}
@@ -196,7 +196,7 @@ class GigaChatService {
 				type: "SINGLE_CHOICE",
 				order: questionCounter,
 				answers,
-				image: null
+				image: null,
 			})
 		}
 

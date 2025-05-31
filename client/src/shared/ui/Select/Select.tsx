@@ -13,7 +13,7 @@ const Select: FC<SelectProps> = ({
 	label,
 	required = false,
 	disabled = false,
-	onChange
+	onChange,
 }: SelectProps) => {
 	const [isOpen, setOpen] = useState(false)
 	const [selected, setSelected] = useState(value || options[0]?.value || "")
@@ -71,7 +71,7 @@ const Select: FC<SelectProps> = ({
 			setPosition({
 				top: rect.bottom + window.scrollY,
 				left: rect.left + window.scrollX,
-				width: rect.width
+				width: rect.width,
 			})
 		}
 	}
@@ -126,7 +126,7 @@ const Select: FC<SelectProps> = ({
 		styles.container,
 		isOpen ? styles.open : "",
 		error ? styles.error : "",
-		disabled ? styles.disabled : ""
+		disabled ? styles.disabled : "",
 	].join(" ")
 
 	return (
@@ -177,7 +177,7 @@ const Select: FC<SelectProps> = ({
 						style={{
 							top: `${position.top}px`,
 							left: `${position.left}px`,
-							width: `${position.width}px`
+							width: `${position.width}px`,
 						}}
 					>
 						{options.map((item) => (

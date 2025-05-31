@@ -11,7 +11,7 @@ const EditableInput = <T extends Record<string, any>>({
 	value,
 	onChange,
 	placeholder,
-	onEditingChange
+	onEditingChange,
 }: EditableInputProps<T>): JSX.Element => {
 	const [isEditing, setIsEditing] = useState(false)
 	const safeValue = value === null ? "" : value

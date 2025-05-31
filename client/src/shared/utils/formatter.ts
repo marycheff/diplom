@@ -9,7 +9,7 @@ export const formatDate = (date: Date | null) => {
 		year: "numeric",
 		hour: "2-digit",
 		minute: "2-digit",
-		second: "2-digit"
+		second: "2-digit",
 	})
 }
 // Форматирование времени
@@ -21,7 +21,7 @@ export const formatSeconds = (seconds: number) => {
 	const formattedTime = [
 		hours > 0 ? `${hours}ч.` : "",
 		minutes > 0 ? `${minutes}мин.` : "",
-		remainingSeconds > 0 ? `${remainingSeconds}сек.` : ""
+		remainingSeconds > 0 ? `${remainingSeconds}сек.` : "",
 	]
 		.filter(Boolean)
 		.join(" ")

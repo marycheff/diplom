@@ -43,7 +43,7 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total, type = "all" }) => {
 													to={
 														type === "unmoderated"
 															? generatePath(ROUTES.ADMIN_UNMODERATED_TEST_INFO, {
-																	testId: test.id
+																	testId: test.id,
 															  })
 															: generatePath(ROUTES.ADMIN_TEST_INFO, { testId: test.id })
 													}
@@ -57,7 +57,7 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total, type = "all" }) => {
 											<td>
 												<Link
 													to={generatePath(ROUTES.ADMIN_USER_INFO, {
-														userId: test.author.id
+														userId: test.author.id,
 													})}
 													className="actionLink"
 													title={test.author.email}
@@ -77,10 +77,10 @@ const TestsTable: FC<TestsTableProps> = ({ tests, total, type = "all" }) => {
 														to={
 															type === "unmoderated"
 																? generatePath(ROUTES.ADMIN_UNMODERATED_TEST_ATTEMPTS, {
-																		testId: test.id
+																		testId: test.id,
 																  })
 																: generatePath(ROUTES.ADMIN_TEST_ATTEMPTS, {
-																		testId: test.id
+																		testId: test.id,
 																  })
 														}
 														className="actionLink"

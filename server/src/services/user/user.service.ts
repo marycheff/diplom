@@ -21,7 +21,7 @@ class UserService {
 				throw ApiError.BadRequest(`Пользователь c email ${email} не найден`)
 			}
 			logger.debug(`[${LOG_NAMESPACE}] Пользователь по email успешно получен`, {
-				userId: user.id
+				userId: user.id,
 			})
 			return mapUserToDto(user)
 		} catch (error) {
@@ -30,7 +30,7 @@ class UserService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении пользователя по email`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при получении данных пользователя")
 		}
@@ -54,7 +54,7 @@ class UserService {
 			const userDto = mapUserToDto(user)
 			await redisClient.setEx(`user:${id}`, 3600, JSON.stringify(userDto))
 			logger.debug(`[${LOG_NAMESPACE}] Пользователь по ID успешно получен и кэширован`, {
-				userId: user.id
+				userId: user.id,
 			})
 			return userDto
 		} catch (error) {
@@ -64,7 +64,7 @@ class UserService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении пользователя по ID`, {
 				id,
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при получении данных пользователя")
 		}
@@ -81,11 +81,11 @@ class UserService {
 				count: users.length,
 				total,
 				page,
-				limit
+				limit,
 			})
 			return {
 				users: users.map((user) => mapUserToDto(user)),
-				total
+				total,
 			}
 		} catch (error) {
 			if (error instanceof ApiError) {
@@ -95,7 +95,7 @@ class UserService {
 				page,
 				limit,
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при получении списка пользователей")
 		}
@@ -113,7 +113,7 @@ class UserService {
 			const isValid = await bcrypt.compare(password, user.password)
 			logger.debug(`[${LOG_NAMESPACE}] Результат проверки пароля`, {
 				userId: user.id,
-				isValid
+				isValid,
 			})
 			return isValid
 		} catch (error) {
@@ -122,7 +122,7 @@ class UserService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при проверке пароля`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при проверке пароля")
 		}
@@ -145,7 +145,7 @@ class UserService {
 			const hashedNewPassword = await bcrypt.hash(newPassword, 10)
 			const user = await userRepository.updatePassword(email, hashedNewPassword)
 			logger.info(`[${LOG_NAMESPACE}] Пароль пользователя успешно обновлен`, {
-				userId: user.id
+				userId: user.id,
 			})
 			return user
 		} catch (error) {
@@ -154,7 +154,7 @@ class UserService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при обновлении пароля пользователя`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при обновлении пароля")
 		}
@@ -163,7 +163,7 @@ class UserService {
 	async updateUser(id: string, updateData: UpdateUserDTO): Promise<void> {
 		logger.info(`[${LOG_NAMESPACE}] Обновление данных пользователя`, {
 			id,
-			fields: Object.keys(updateData)
+			fields: Object.keys(updateData),
 		})
 		try {
 			await userRepository.update(id, updateData)
@@ -178,7 +178,7 @@ class UserService {
 				id,
 				fields: Object.keys(updateData),
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при обновлении данных пользователя")
 		}
@@ -198,7 +198,7 @@ class UserService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при удалении пользователя`, {
 				id,
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при удалении пользователя")
 		}
@@ -211,7 +211,7 @@ class UserService {
 
 			if (candidate) {
 				logger.warn(`[${LOG_NAMESPACE}] Попытка создания пользователя с существующим email`, {
-					email: userData.email
+					email: userData.email,
 				})
 				throw ApiError.BadRequest(`Пользователь с email ${userData.email} уже существует`)
 			}
@@ -229,7 +229,7 @@ class UserService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при создании пользователя`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при создании пользователя")
 		}
@@ -251,7 +251,7 @@ class UserService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при блокировке пользователя`, {
 				id,
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при блокировке пользователя")
 		}
@@ -273,7 +273,7 @@ class UserService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при разблокировке пользователя`, {
 				id,
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при разблокировке пользователя")
 		}
@@ -288,8 +288,8 @@ class UserService {
 					{ email: { contains: query } },
 					{ name: { contains: query } },
 					{ surname: { contains: query } },
-					{ patronymic: { contains: query } }
-				]
+					{ patronymic: { contains: query } },
+				],
 			}
 
 			const data = await userRepository.search(query, skip, limit)
@@ -299,11 +299,11 @@ class UserService {
 				count: data.length,
 				total,
 				page,
-				limit
+				limit,
 			})
 			return {
 				users: data.map((user) => mapUserToDto(user)),
-				total
+				total,
 			}
 		} catch (error) {
 			if (error instanceof ApiError) {
@@ -314,7 +314,7 @@ class UserService {
 				page,
 				limit,
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при поиске пользователей")
 		}

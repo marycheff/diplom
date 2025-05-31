@@ -17,8 +17,8 @@ class AttemptRepository {
 					testSnapshotId: data.testSnapshotId,
 					userId: data.userId,
 					preTestUserData: data.preTestUserData === null ? Prisma.JsonNull : data.preTestUserData,
-					status: TestAttemptStatus.IN_PROGRESS
-				}
+					status: TestAttemptStatus.IN_PROGRESS,
+				},
 			})
 
 			return attempt
@@ -37,19 +37,19 @@ class AttemptRepository {
 						author: true,
 						questions: {
 							include: { answers: true },
-							orderBy: { order: "asc" }
-						}
-					}
+							orderBy: { order: "asc" },
+						},
+					},
 				},
 				user: true,
 				answers: {
 					include: {
 						question: true,
-						answer: true
-					}
-				}
+						answer: true,
+					},
+				},
 			},
-			orderBy: { startedAt: "desc" }
+			orderBy: { startedAt: "desc" },
 		})
 		return attempts
 	}
@@ -67,28 +67,28 @@ class AttemptRepository {
 						textAnswer: true,
 						isCorrect: true,
 						answeredAt: true,
-						createdAt: true
-					}
+						createdAt: true,
+					},
 				},
 				//  sequenceAnswers: true, // Включаем данные о последовательности ответов
 				test: {
 					include: {
 						questions: {
-							include: { answers: true }
+							include: { answers: true },
 						},
-						author: true
-					}
+						author: true,
+					},
 				},
 				user: true,
 				snapshot: {
 					include: {
 						questions: {
-							include: { answers: true }
+							include: { answers: true },
 						},
-						settings: true
-					}
-				}
-			}
+						settings: true,
+					},
+				},
+			},
 		})
 	}
 
@@ -104,31 +104,31 @@ class AttemptRepository {
 						author: true,
 						questions: {
 							include: {
-								answers: true
+								answers: true,
 							},
-							orderBy: { order: "asc" }
-						}
-					}
+							orderBy: { order: "asc" },
+						},
+					},
 				},
 				user: true,
 				answers: {
 					include: {
 						question: true,
-						answer: true
-					}
+						answer: true,
+					},
 				},
 				snapshot: {
 					include: {
 						questions: {
 							include: {
-								answers: true
-							}
+								answers: true,
+							},
 						},
-						settings: true
-					}
-				}
+						settings: true,
+					},
+				},
 			},
-			orderBy: { startedAt: "desc" }
+			orderBy: { startedAt: "desc" },
 		})
 		return attempts
 	}
@@ -141,9 +141,9 @@ class AttemptRepository {
 			where: { userId },
 			include: {
 				user: true,
-				snapshot: true
+				snapshot: true,
 			},
-			orderBy: { startedAt: "desc" }
+			orderBy: { startedAt: "desc" },
 		})
 		return attempts
 	}
@@ -151,7 +151,7 @@ class AttemptRepository {
 	async findWithTest(attemptId: string) {
 		return prisma.testAttempt.findUnique({
 			where: { id: attemptId },
-			include: { test: true }
+			include: { test: true },
 		})
 	}
 
@@ -160,17 +160,17 @@ class AttemptRepository {
 			where: { id: attemptId },
 			include: {
 				answers: {
-					include: { answer: true }
+					include: { answer: true },
 				},
 				//  sequenceAnswers: true, // Включаем данные о последовательности ответов
 				test: {
 					include: {
 						questions: {
-							include: { answers: true }
-						}
-					}
-				}
-			}
+							include: { answers: true },
+						},
+					},
+				},
+			},
 		})
 	}
 
@@ -189,11 +189,11 @@ class AttemptRepository {
 						isCorrect: true,
 						answeredAt: true,
 
-						createdAt: true
-					}
-				}
+						createdAt: true,
+					},
+				},
 				//  sequenceAnswers: true, // Включаем данные о последовательности ответов
-			}
+			},
 		})
 	}
 
@@ -201,8 +201,8 @@ class AttemptRepository {
 		const inProgressAttempt = await prisma.testAttempt.findFirst({
 			where: {
 				userId: userId,
-				status: TestAttemptStatus.IN_PROGRESS
-			}
+				status: TestAttemptStatus.IN_PROGRESS,
+			},
 		})
 
 		return inProgressAttempt !== null
@@ -213,8 +213,8 @@ class AttemptRepository {
 			where: {
 				userId: userId,
 				testId: testId,
-				status: TestAttemptStatus.COMPLETED
-			}
+				status: TestAttemptStatus.COMPLETED,
+			},
 		})
 
 		return completedAttempt !== null
@@ -226,18 +226,18 @@ class AttemptRepository {
 				status: TestAttemptStatus.IN_PROGRESS,
 				snapshot: {
 					settings: {
-						timeLimit: { not: null, gt: 0 }
-					}
-				}
+						timeLimit: { not: null, gt: 0 },
+					},
+				},
 			},
 			include: {
 				test: {
 					include: {
-						settings: true
-					}
-				}
+						settings: true,
+					},
+				},
 			},
-			take: batchSize
+			take: batchSize,
 		})
 
 		const now = new Date()
@@ -261,22 +261,22 @@ class AttemptRepository {
 			data: {
 				score: Math.round(score * 100) / 100,
 				status: TestAttemptStatus.COMPLETED,
-				completedAt: new Date()
-			}
+				completedAt: new Date(),
+			},
 		})
 	}
 
 	async updateStatuses(attemptIds: string[], status: TestAttemptStatus) {
 		return prisma.testAttempt.updateMany({
 			where: { id: { in: attemptIds } },
-			data: { status }
+			data: { status },
 		})
 	}
 
 	async updateTimeSpent(attemptId: string, timeSpent: number) {
 		return prisma.testAttempt.update({
 			where: { id: attemptId },
-			data: { timeSpent: timeSpent }
+			data: { timeSpent: timeSpent },
 		})
 	}
 	async updateStatusesWithTimeSpent(attempts: { id: string; timeSpent: number }[]): Promise<void> {
@@ -285,8 +285,8 @@ class AttemptRepository {
 				where: { id: attempt.id },
 				data: {
 					status: TestAttemptStatus.EXPIRED,
-					timeSpent: attempt.timeSpent
-				}
+					timeSpent: attempt.timeSpent,
+				},
 			})
 		)
 		await Promise.all(updates)
@@ -295,7 +295,7 @@ class AttemptRepository {
 	// COUNT
 	async count(where?: Prisma.TestAttemptWhereInput): Promise<number> {
 		return prisma.testAttempt.count({
-			where
+			where,
 		})
 	}
 
@@ -304,8 +304,8 @@ class AttemptRepository {
 			where: {
 				userId: userId,
 				testId: testId,
-				status: TestAttemptStatus.COMPLETED
-			}
+				status: TestAttemptStatus.COMPLETED,
+			},
 		})
 
 		return count
@@ -320,12 +320,12 @@ class AttemptRepository {
 				// Получаем тип вопроса
 				const question = await tx.question.findUnique({
 					where: { id: questionId },
-					select: { type: true }
+					select: { type: true },
 				})
 
 				// Удаляем предыдущие ответы на этот вопрос
 				await tx.userAnswer.deleteMany({
-					where: { attemptId, questionId }
+					where: { attemptId, questionId },
 				})
 
 				// Для вопросов с текстовым вводом и вопросов с пропусками
@@ -334,8 +334,8 @@ class AttemptRepository {
 					const correctAnswer = await tx.answer.findFirst({
 						where: {
 							questionId,
-							isCorrect: true
-						}
+							isCorrect: true,
+						},
 					})
 
 					// Определяем, правильный ли ответ
@@ -349,8 +349,8 @@ class AttemptRepository {
 							answerId: correctAnswer?.id || "", // Связываем с правильным ответом
 							textAnswer, // Сохраняем текстовый ответ пользователя
 							isCorrect, // Добавить это поле в модель UserAnswer
-							answeredAt: answeredAt || new Date()
-						}
+							answeredAt: answeredAt || new Date(),
+						},
 					})
 				}
 				// Для вопросов с выбором ответов
@@ -360,8 +360,8 @@ class AttemptRepository {
 							attemptId,
 							questionId,
 							answerId,
-							answeredAt: answeredAt || new Date()
-						}))
+							answeredAt: answeredAt || new Date(),
+						})),
 					})
 				}
 			}
@@ -391,7 +391,7 @@ class AttemptRepository {
 	async updateSnapshotId(attemptId: string, snapshotId: string | null) {
 		return prisma.testAttempt.update({
 			where: { id: attemptId },
-			data: { testSnapshotId: snapshotId }
+			data: { testSnapshotId: snapshotId },
 		})
 	}
 }

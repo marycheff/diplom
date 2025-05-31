@@ -78,7 +78,7 @@ export function useCache<T>(
 		saveToCache,
 		clearCache,
 		cacheVersion,
-		lastUpdateDate: lastCacheUpdateDate
+		lastUpdateDate: lastCacheUpdateDate,
 	}
 }
 

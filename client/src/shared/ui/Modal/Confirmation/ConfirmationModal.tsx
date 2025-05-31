@@ -24,7 +24,7 @@ const ConfirmationModal = <T extends Record<string, any> = {}>({
 	children,
 	confirmText = "Подтвердить",
 	cancelText = "Отмена",
-	hideCancel = false
+	hideCancel = false,
 }: ConfirmationModalProps<T>) => {
 	const { handleSubmit, reset } = useForm<T>()
 

@@ -17,8 +17,8 @@ class UserRepository {
 				password: hashedPassword,
 				activationLink,
 				activationLinkExp: getActivationLinkExpDate(),
-				role
-			}
+				role,
+			},
 		})
 	}
 
@@ -27,43 +27,43 @@ class UserRepository {
 		return prisma.user.findMany({
 			skip,
 			take: limit,
-			orderBy: { createdAt: "desc" }
+			orderBy: { createdAt: "desc" },
 		})
 	}
 
 	async findById(id: string): Promise<User | null> {
 		return prisma.user.findUnique({
-			where: { id }
+			where: { id },
 		})
 	}
 
 	async findByEmail(email: string): Promise<User | null> {
 		return prisma.user.findUnique({
-			where: { email }
+			where: { email },
 		})
 	}
 
 	async findByActivationLink(activationLink: string): Promise<User | null> {
 		return prisma.user.findFirst({
-			where: { activationLink }
+			where: { activationLink },
 		})
 	}
 
 	async findExpiredActivationLinks(batchSize: number): Promise<User[]> {
 		return prisma.user.findMany({
 			where: {
-				activationLinkExp: { lt: new Date() }
+				activationLinkExp: { lt: new Date() },
 			},
-			take: batchSize
+			take: batchSize,
 		})
 	}
 
 	async findExpiredResetCodes(batchSize: number): Promise<User[]> {
 		return prisma.user.findMany({
 			where: {
-				resetCodeExp: { lt: new Date() }
+				resetCodeExp: { lt: new Date() },
 			},
-			take: batchSize
+			take: batchSize,
 		})
 	}
 
@@ -71,21 +71,21 @@ class UserRepository {
 	async update(id: string, data: Partial<User>): Promise<User> {
 		return prisma.user.update({
 			where: { id },
-			data
+			data,
 		})
 	}
 
 	async updateActivationLink(email: string, activationLink: string): Promise<User> {
 		return prisma.user.update({
 			where: { email },
-			data: { activationLink, activationLinkExp: getActivationLinkExpDate() }
+			data: { activationLink, activationLinkExp: getActivationLinkExpDate() },
 		})
 	}
 
 	async updatePassword(email: string, newPasswordHash: string): Promise<User> {
 		return prisma.user.update({
 			where: { email },
-			data: { password: newPasswordHash }
+			data: { password: newPasswordHash },
 		})
 	}
 
@@ -97,14 +97,14 @@ class UserRepository {
 	async deleteActivationLinksByUsersIds(userIds: string[]): Promise<Prisma.BatchPayload> {
 		return prisma.user.updateMany({
 			where: { id: { in: userIds } },
-			data: { activationLink: null, activationLinkExp: null }
+			data: { activationLink: null, activationLinkExp: null },
 		})
 	}
 
 	async deleteResetCodesByUsersIds(userIds: string[]): Promise<Prisma.BatchPayload> {
 		return prisma.user.updateMany({
 			where: { id: { in: userIds } },
-			data: { resetCode: null, resetCodeExp: null }
+			data: { resetCode: null, resetCodeExp: null },
 		})
 	}
 
@@ -120,8 +120,8 @@ class UserRepository {
 			data: {
 				isActivated: true,
 				activationLink: null,
-				activationLinkExp: null
-			}
+				activationLinkExp: null,
+			},
 		})
 	}
 
@@ -131,21 +131,21 @@ class UserRepository {
 				{ email: { contains: query } },
 				{ name: { contains: query } },
 				{ surname: { contains: query } },
-				{ patronymic: { contains: query } }
-			]
+				{ patronymic: { contains: query } },
+			],
 		}
 		return prisma.user.findMany({
 			skip,
 			take,
 			where,
-			orderBy: { createdAt: "desc" }
+			orderBy: { createdAt: "desc" },
 		})
 	}
 
 	async saveResetCode(email: string, hashedCode: string): Promise<User> {
 		return prisma.user.update({
 			where: { email },
-			data: { resetCode: hashedCode, resetCodeExp: getResetCodeExpDate() }
+			data: { resetCode: hashedCode, resetCodeExp: getResetCodeExpDate() },
 		})
 	}
 
@@ -155,8 +155,8 @@ class UserRepository {
 			data: {
 				password: hashedPassword,
 				resetCode: null,
-				resetCodeExp: null
-			}
+				resetCodeExp: null,
+			},
 		})
 	}
 }

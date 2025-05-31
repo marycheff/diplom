@@ -4,7 +4,7 @@ import {
 	adminMiddleware,
 	authMiddleware,
 	testOwnershipMiddleware,
-	validateRequest
+	validateRequest,
 } from "@/middleware"
 import { attemptRoutes, questionRoutes } from "@/routes"
 import { getTestSnapshotSchema, shortInfoSchema, testIdSchema, testSettingsSchema } from "@/schemas/test.schema"

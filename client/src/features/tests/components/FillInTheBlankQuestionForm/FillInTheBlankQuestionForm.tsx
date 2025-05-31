@@ -31,7 +31,7 @@ const FillInTheBlankQuestionForm: FC<FillInTheBlankQuestionFormProps> = ({
 	setValue,
 	trigger,
 	isEditing = false,
-	watch
+	watch,
 }) => {
 	const imageValue = watch("image")
 	const handleImageSelect = useCallback(

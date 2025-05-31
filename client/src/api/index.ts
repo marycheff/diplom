@@ -10,7 +10,7 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 const axiosInstance: AxiosInstance = axios.create({
 	withCredentials: true,
-	baseURL: API_URL
+	baseURL: API_URL,
 })
 
 // Интерцептор для добавления токена в заголовки

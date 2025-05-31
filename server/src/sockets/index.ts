@@ -11,8 +11,8 @@ export const initSocketIO = (httpServer: HttpServer) => {
 		cors: {
 			origin: envConfig.CLIENT_URL,
 			methods: ["GET", "POST"],
-			credentials: true
-		}
+			credentials: true,
+		},
 	})
 
 	// Middleware для опциональной аутентификации

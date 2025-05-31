@@ -12,7 +12,7 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
 			logger.warn(`[${LOG_NAMESPACE}] Попытка доступа к ресурсу администратора без данных пользователя`, {
 				path: req.path,
 				method: req.method,
-				ip: req.ip
+				ip: req.ip,
 			})
 			return next(ApiError.Unauthorized())
 		}
@@ -23,7 +23,7 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
 				role: user.role,
 				path: req.path,
 				method: req.method,
-				ip: req.ip
+				ip: req.ip,
 			})
 			return next(ApiError.Forbidden())
 		}
@@ -31,7 +31,7 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
 		logger.debug(`[${LOG_NAMESPACE}] Успешная авторизация администратора`, {
 			userId: user.id,
 			path: req.path,
-			method: req.method
+			method: req.method,
 		})
 
 		next()
@@ -40,7 +40,7 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
 			path: req.path,
 			method: req.method,
 			ip: req.ip,
-			error: error instanceof Error ? error.message : String(error)
+			error: error instanceof Error ? error.message : String(error),
 		})
 		return next(ApiError.Unauthorized())
 	}

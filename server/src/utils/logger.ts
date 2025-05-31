@@ -15,7 +15,7 @@ const levels = {
 	warn: 1, // Предупреждения
 	info: 2, // Информационные сообщения
 	http: 3, // HTTP запросы
-	debug: 4 // Отладочная информация
+	debug: 4, // Отладочная информация
 }
 
 // Настройка цветов для консоли
@@ -24,7 +24,7 @@ const colors = {
 	warn: "yellow",
 	info: "green",
 	http: "magenta",
-	debug: "white"
+	debug: "white",
 }
 
 // Добавляем цвета к уровням
@@ -55,7 +55,7 @@ const transports = [
 	// Всегда пишем в консоль
 	new winston.transports.Console({
 		level,
-		format: consoleFormat
+		format: consoleFormat,
 	}),
 
 	// Логи уровня error и выше записываем в отдельный файл
@@ -64,7 +64,7 @@ const transports = [
 		level: "error",
 		format: fileFormat,
 		maxsize: 5242880, // 5MB
-		maxFiles: 5
+		maxFiles: 5,
 	}),
 
 	// Все логи записываем в общий файл
@@ -73,8 +73,8 @@ const transports = [
 		level,
 		format: fileFormat,
 		maxsize: 5242880, // 5MB
-		maxFiles: 5
-	})
+		maxFiles: 5,
+	}),
 ]
 
 // Создаем и экспортируем логгер
@@ -82,5 +82,5 @@ export const logger = winston.createLogger({
 	levels,
 	level,
 	transports,
-	exitOnError: false
+	exitOnError: false,
 })

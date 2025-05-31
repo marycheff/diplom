@@ -163,7 +163,7 @@ const TestTaking = () => {
 
 	// Предотвращение случайного закрытия страницы
 	usePreventLeave({
-		shouldPrevent: !isAttemptCompleted && Object.keys(allAnswers).length > 0
+		shouldPrevent: !isAttemptCompleted && Object.keys(allAnswers).length > 0,
 	})
 
 	// Обработчики событий
@@ -278,7 +278,7 @@ const TestTaking = () => {
 					questionId,
 					answersIds,
 					textAnswer: null,
-					answeredAt
+					answeredAt,
 				})
 			})
 
@@ -290,7 +290,7 @@ const TestTaking = () => {
 					questionId,
 					answersIds: [],
 					textAnswer,
-					answeredAt
+					answeredAt,
 				})
 			})
 

@@ -21,7 +21,7 @@ import {
 	TestDTO,
 	TestSettingsDTO,
 	TestsListDTO,
-	TestVisibilityStatus
+	TestVisibilityStatus,
 } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
@@ -56,7 +56,7 @@ const TestInfoPage = () => {
 		isVisibilityUpdating,
 		changeModerationStatus,
 		isModerationStatusUpdating,
-		deleteTest
+		deleteTest,
 	} = useTestStore()
 	const { user: currentUser, isAdmin } = useAuthStore()
 	const { clearCache } = useCache<TestsListDTO>(useTestStore, "tests")
@@ -155,7 +155,7 @@ const TestInfoPage = () => {
 		if (!test) return
 		const updatedTest = {
 			...test,
-			settings: updatedSettings
+			settings: updatedSettings,
 		}
 		await updateTestSettings(test.id, updatedSettings)
 		setTest(updatedTest)
@@ -168,7 +168,7 @@ const TestInfoPage = () => {
 		const updatedTest = {
 			...test,
 			title: formatSpaces(updatedShortInfo.title),
-			description: formatSpaces(updatedShortInfo.description)
+			description: formatSpaces(updatedShortInfo.description),
 		}
 		await updateShortInfo(testId, { title: updatedShortInfo.title, description: updatedShortInfo.description })
 		setTest(updatedTest)
@@ -183,7 +183,7 @@ const TestInfoPage = () => {
 
 		const updatedTest = {
 			...test,
-			questions: updatedQuestions
+			questions: updatedQuestions,
 		}
 
 		await upsertQuestions(test.id, updatedQuestions)
@@ -208,7 +208,7 @@ const TestInfoPage = () => {
 			prev
 				? {
 						...prev,
-						visibilityStatus: newStatus
+						visibilityStatus: newStatus,
 				  }
 				: null
 		)
@@ -224,7 +224,7 @@ const TestInfoPage = () => {
 			prev
 				? {
 						...prev,
-						moderationStatus: status
+						moderationStatus: status,
 				  }
 				: null
 		)

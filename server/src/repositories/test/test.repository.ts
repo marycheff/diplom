@@ -26,7 +26,7 @@ class TestRepository {
 			data: {
 				title: testData.title,
 				description: testData.description,
-				authorId: authorId
+				authorId: authorId,
 			},
 			include: {
 				author: {
@@ -35,16 +35,16 @@ class TestRepository {
 						email: true,
 						name: true,
 						surname: true,
-						patronymic: true
-					}
-				}
-			}
+						patronymic: true,
+					},
+				},
+			},
 		})
 
 		const settings = await client.testSettings.create({
 			data: {
-				testId: createdTest.id
-			}
+				testId: createdTest.id,
+			},
 		})
 
 		return { createdTest, settings }
@@ -59,8 +59,8 @@ class TestRepository {
 				version: test.version,
 				title: test.title,
 				description: test.description,
-				moderationStatus: test.moderationStatus
-			}
+				moderationStatus: test.moderationStatus,
+			},
 		})
 
 		for (const question of test.questions) {
@@ -71,8 +71,8 @@ class TestRepository {
 					text: question.text,
 					order: question.order,
 					type: question.type,
-					image: question.image
-				}
+					image: question.image,
+				},
 			})
 
 			await client.answerSnapshot.createMany({
@@ -80,8 +80,8 @@ class TestRepository {
 					questionId: questionSnapshot.id,
 					originalId: answer.id,
 					text: answer.text,
-					isCorrect: answer.isCorrect
-				}))
+					isCorrect: answer.isCorrect,
+				})),
 			})
 		}
 
@@ -95,8 +95,7 @@ class TestRepository {
 					shuffleQuestions: test.settings.shuffleQuestions,
 					shuffleAnswers: test.settings.shuffleAnswers,
 					timeLimit: test.settings.timeLimit,
-
-				}
+				},
 			})
 		}
 
@@ -112,8 +111,8 @@ class TestRepository {
 			include: {
 				questions: {
 					include: {
-						answers: true
-					}
+						answers: true,
+					},
 				},
 				settings: true,
 				author: {
@@ -122,11 +121,11 @@ class TestRepository {
 						email: true,
 						name: true,
 						surname: true,
-						patronymic: true
-					}
-				}
+						patronymic: true,
+					},
+				},
 			},
-			orderBy: { createdAt: "desc" }
+			orderBy: { createdAt: "desc" },
 		})
 	}
 
@@ -136,15 +135,15 @@ class TestRepository {
 			where: { id: testId },
 			include: {
 				questions: { include: { answers: true } },
-				settings: true
-			}
+				settings: true,
+			},
 		})
 	}
 
 	async findSettingsByTestId(testId: string, tx?: Prisma.TransactionClient): Promise<TestSettings | null> {
 		const client = tx || prisma
 		return client.testSettings.findUnique({
-			where: { testId }
+			where: { testId },
 		})
 	}
 
@@ -161,10 +160,10 @@ class TestRepository {
 						email: true,
 						name: true,
 						surname: true,
-						patronymic: true
-					}
-				}
-			}
+						patronymic: true,
+					},
+				},
+			},
 		})
 	}
 
@@ -176,8 +175,8 @@ class TestRepository {
 			include: {
 				questions: {
 					include: {
-						answers: true
-					}
+						answers: true,
+					},
 				},
 				settings: true,
 				author: {
@@ -186,11 +185,11 @@ class TestRepository {
 						email: true,
 						name: true,
 						surname: true,
-						patronymic: true
-					}
-				}
+						patronymic: true,
+					},
+				},
 			},
-			orderBy: { createdAt: "desc" }
+			orderBy: { createdAt: "desc" },
 		})
 	}
 
@@ -202,9 +201,9 @@ class TestRepository {
 				settings: true,
 				questions: {
 					include: {
-						answers: true
+						answers: true,
 					},
-					orderBy: { order: "asc" }
+					orderBy: { order: "asc" },
 				},
 				author: {
 					select: {
@@ -212,10 +211,10 @@ class TestRepository {
 						email: true,
 						name: true,
 						surname: true,
-						patronymic: true
-					}
-				}
-			}
+						patronymic: true,
+					},
+				},
+			},
 		})
 	}
 
@@ -231,10 +230,10 @@ class TestRepository {
 						email: true,
 						name: true,
 						surname: true,
-						patronymic: true
-					}
-				}
-			}
+						patronymic: true,
+					},
+				},
+			},
 		})
 	}
 
@@ -250,29 +249,29 @@ class TestRepository {
 								email: true,
 								name: true,
 								surname: true,
-								patronymic: true
-							}
+								patronymic: true,
+							},
 						},
 						questions: {
 							include: { answers: true },
-							orderBy: { order: "asc" }
+							orderBy: { order: "asc" },
 						},
-						settings: true
-					}
+						settings: true,
+					},
 				},
 				questions: {
 					include: { answers: true },
-					orderBy: { order: "asc" }
+					orderBy: { order: "asc" },
 				},
-				settings: true
-			}
+				settings: true,
+			},
 		})
 	}
 
 	async findLatestSnapshot(testId: string) {
 		return prisma.testSnapshot.findFirst({
 			where: { testId },
-			orderBy: { version: "desc" }
+			orderBy: { version: "desc" },
 		})
 	}
 
@@ -284,17 +283,17 @@ class TestRepository {
 			where: { id: testId },
 			data: {
 				title: updatedShortInfo.title,
-				description: updatedShortInfo.description
+				description: updatedShortInfo.description,
 			},
 			include: {
 				questions: {
 					include: {
-						answers: true
-					}
+						answers: true,
+					},
 				},
 				settings: true,
-				author: true
-			}
+				author: true,
+			},
 		})
 	}
 
@@ -302,7 +301,7 @@ class TestRepository {
 		const client = tx || prisma
 		return client.test.update({
 			where: { id: testId },
-			data: { version }
+			data: { version },
 		})
 	}
 
@@ -314,8 +313,8 @@ class TestRepository {
 			include: {
 				questions: {
 					include: {
-						answers: true
-					}
+						answers: true,
+					},
 				},
 				settings: true,
 				author: {
@@ -324,10 +323,10 @@ class TestRepository {
 						email: true,
 						name: true,
 						surname: true,
-						patronymic: true
-					}
-				}
-			}
+						patronymic: true,
+					},
+				},
+			},
 		})
 	}
 
@@ -344,8 +343,8 @@ class TestRepository {
 			include: {
 				questions: {
 					include: {
-						answers: true
-					}
+						answers: true,
+					},
 				},
 				settings: true,
 				author: {
@@ -354,10 +353,10 @@ class TestRepository {
 						email: true,
 						name: true,
 						surname: true,
-						patronymic: true
-					}
-				}
-			}
+						patronymic: true,
+					},
+				},
+			},
 		})
 	}
 
@@ -370,19 +369,19 @@ class TestRepository {
 				...testSettings,
 				testId,
 				inputFields: testSettings.inputFields as Prisma.InputJsonValue,
-				timeLimit: testSettings.timeLimit
+				timeLimit: testSettings.timeLimit,
 			},
 			update: {
 				...testSettings,
-				inputFields: testSettings.inputFields as Prisma.InputJsonValue
-			}
+				inputFields: testSettings.inputFields as Prisma.InputJsonValue,
+			},
 		})
 	}
 
 	// DELETE
 	async deleteById(testId: string) {
 		return prisma.test.delete({
-			where: { id: testId }
+			where: { id: testId },
 		})
 	}
 
@@ -394,17 +393,17 @@ class TestRepository {
 			where: {
 				testId: testId,
 				attempts: {
-					none: {} // нет связанных attempts
-				}
-			}
+					none: {}, // нет связанных attempts
+				},
+			},
 		})
 
 		// Удаление найденных снапшотов
 		for (const snapshot of unusedSnapshots) {
 			await client.testSnapshot.delete({
 				where: {
-					id: snapshot.id
-				}
+					id: snapshot.id,
+				},
 			})
 		}
 
@@ -415,7 +414,7 @@ class TestRepository {
 		const client = tx || prisma
 		return client.test.update({
 			where: { id: testId },
-			data: { moderatedAt: null, moderatedBy: null }
+			data: { moderatedAt: null, moderatedBy: null },
 		})
 	}
 
@@ -430,9 +429,9 @@ class TestRepository {
 			include: {
 				questions: {
 					include: {
-						answers: true
+						answers: true,
 					},
-					orderBy: { order: "asc" }
+					orderBy: { order: "asc" },
 				},
 				settings: true,
 				author: {
@@ -441,18 +440,18 @@ class TestRepository {
 						email: true,
 						name: true,
 						surname: true,
-						patronymic: true
-					}
-				}
+						patronymic: true,
+					},
+				},
 			},
-			orderBy: { createdAt: "desc" }
+			orderBy: { createdAt: "desc" },
 		})
 	}
 
 	async searchUserTests(query: string, userId: string, skip: number, limit: number) {
 		const whereCondition = {
 			authorId: userId,
-			OR: this.getSearchConditions(query).OR
+			OR: this.getSearchConditions(query).OR,
 		}
 
 		return prisma.test.findMany({
@@ -462,7 +461,7 @@ class TestRepository {
 			include: {
 				questions: {
 					include: { answers: true },
-					orderBy: { order: "asc" }
+					orderBy: { order: "asc" },
 				},
 				settings: true,
 				author: {
@@ -471,11 +470,11 @@ class TestRepository {
 						email: true,
 						name: true,
 						surname: true,
-						patronymic: true
-					}
-				}
+						patronymic: true,
+					},
+				},
 			},
-			orderBy: { createdAt: "desc" }
+			orderBy: { createdAt: "desc" },
 		})
 	}
 
@@ -486,7 +485,7 @@ class TestRepository {
 
 	async countByAuthor(userId: string) {
 		return prisma.test.count({
-			where: { authorId: userId }
+			where: { authorId: userId },
 		})
 	}
 
@@ -498,20 +497,20 @@ class TestRepository {
 			{
 				questions: {
 					some: {
-						text: { contains: query, mode: "insensitive" }
-					}
-				}
+						text: { contains: query, mode: "insensitive" },
+					},
+				},
 			},
 			{
 				questions: {
 					some: {
 						answers: {
 							some: {
-								text: { contains: query, mode: "insensitive" }
-							}
-						}
-					}
-				}
+								text: { contains: query, mode: "insensitive" },
+							},
+						},
+					},
+				},
 			},
 			{
 				author: {
@@ -519,10 +518,10 @@ class TestRepository {
 						{ email: { contains: query, mode: "insensitive" } },
 						{ name: { contains: query, mode: "insensitive" } },
 						{ surname: { contains: query, mode: "insensitive" } },
-						{ patronymic: { contains: query, mode: "insensitive" } }
-					]
-				}
-			}
+						{ patronymic: { contains: query, mode: "insensitive" } },
+					],
+				},
+			},
 		]
 
 		if (isValidUUID(query)) {
@@ -536,13 +535,13 @@ class TestRepository {
 		const client = tx || prisma
 		return client.test.update({
 			where: { id: testId },
-			data: { version: currentVersion + 1 }
+			data: { version: currentVersion + 1 },
 		})
 	}
 	async snapshotExists(snapshotId: string): Promise<boolean> {
 		const snapshot = await prisma.testSnapshot.findUnique({
 			where: { id: snapshotId },
-			select: { id: true }
+			select: { id: true },
 		})
 		return !!snapshot
 	}

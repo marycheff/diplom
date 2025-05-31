@@ -7,8 +7,8 @@ class UserService {
 		return axiosInstance.get<UsersListDTO>("/users", {
 			params: {
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 
@@ -40,8 +40,8 @@ class UserService {
 			params: {
 				query,
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 	createUser(userData: CreateUserDTO): Promise<AxiosResponse<UserDTO>> {

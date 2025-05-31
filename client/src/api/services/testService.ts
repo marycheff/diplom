@@ -9,7 +9,7 @@ import {
 	TestSettingsDTO,
 	TestsListDTO,
 	TestVisibilityStatus,
-	UserTestDTO
+	UserTestDTO,
 } from "@/shared/types"
 import { AxiosResponse } from "axios"
 
@@ -18,8 +18,8 @@ class TestService {
 		return axiosInstance.get<TestsListDTO>("/tests/all-tests", {
 			params: {
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 	deleteTest(testId: string): Promise<AxiosResponse<void>> {
@@ -29,8 +29,8 @@ class TestService {
 		return axiosInstance.get<TestsListDTO>("/tests/all-unmoderated-tests", {
 			params: {
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 
@@ -39,8 +39,8 @@ class TestService {
 			params: {
 				query,
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 	searchMyTests(query: string, page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
@@ -48,8 +48,8 @@ class TestService {
 			params: {
 				query,
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 
@@ -59,7 +59,7 @@ class TestService {
 
 	getTestForAttempt(testId: string, attemptId: string): Promise<AxiosResponse<UserTestDTO>> {
 		return axiosInstance.get<UserTestDTO>(`/tests/${testId}/for-attempt`, {
-			params: { attemptId }
+			params: { attemptId },
 		})
 	}
 	getBasicTestInfo(testId: string): Promise<AxiosResponse<UserTestDTO>> {
@@ -68,7 +68,7 @@ class TestService {
 
 	getTestSnapshotForAttempt(snapshotId: string, attemptId?: string): Promise<AxiosResponse<UserTestDTO>> {
 		return axiosInstance.get<UserTestDTO>(`/tests/snapshot/${snapshotId}/for-attempt`, {
-			params: { attemptId }
+			params: { attemptId },
 		})
 	}
 
@@ -76,16 +76,16 @@ class TestService {
 		return axiosInstance.get<TestsListDTO>("/tests/my-tests", {
 			params: {
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 	getUserTests(userId: string, page = 1, limit = 10): Promise<AxiosResponse<TestsListDTO>> {
 		return axiosInstance.get<TestsListDTO>(`/tests/users/${userId}`, {
 			params: {
 				page,
-				limit
-			}
+				limit,
+			},
 		})
 	}
 
@@ -97,13 +97,13 @@ class TestService {
 		return axiosInstance.post<string[]>("/chat/generate-answers", {
 			question: data.question,
 			answer: data.answer,
-			numOfAnswers: Number(data.numOfAnswers)
+			numOfAnswers: Number(data.numOfAnswers),
 		})
 	}
 	generateTest = (topic: string, numOfQuestions = 10): Promise<AxiosResponse<TestDTO>> => {
 		return axiosInstance.post<TestDTO>("/chat/generate-test", {
 			topic,
-			numOfQuestions
+			numOfQuestions,
 		})
 	}
 	updateTestSettings = (testId: string, updatedSettings: TestSettingsDTO) => {

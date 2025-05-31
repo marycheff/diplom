@@ -26,26 +26,29 @@ class BadWordsService {
 			for (const raw of words) {
 				const word = raw.trim().toLowerCase()
 
-				const isRegex = /[\\.*+?^${}()[\]|]/.test(word)
+				// const isRegex = /[\\.*+?^${}()[\]|]/.test(word)
 
-				if (isRegex) {
-					// Заменяем псевдо-\w и экранируем вручную
-					try {
-						const pattern = word
-							.replace(/\\w\*/g, "[\\p{L}\\p{N}_]*")
-							.replace(/\\w\+/g, "[\\p{L}\\p{N}_]+")
-							.replace(/\\w/g, "[\\p{L}\\p{N}_]")
-							.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // экранируем всё остальное
-							.replace(/\\\[\\p\{L}\\\\p\{N}_]([*+]?)/g, "[\\p{L}\\p{N}_]$1") // возвращаем \p блоки после экранирования
+				// if (isRegex) {
+				// 	// Заменяем псевдо-\w и экранируем вручную
+				// 	try {
+				// 		const pattern = word
+				// 			.replace(/\\w\*/g, "[\\p{L}\\p{N}_]*")
+				// 			.replace(/\\w\+/g, "[\\p{L}\\p{N}_]+")
+				// 			.replace(/\\w/g, "[\\p{L}\\p{N}_]")
+				// 			.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // экранируем всё остальное
+				// 			.replace(/\\\[\\p\{L}\\\\p\{N}_]([*+]?)/g, "[\\p{L}\\p{N}_]$1") // возвращаем \p блоки после экранирования
 
-						const regex = new RegExp(pattern, "iu") // поддержка Юникода
-						this.regexBadWords.push(regex)
-					} catch (err) {
-						logger.warn(`[${LOG_NAMESPACE}] Невалидный шаблон: ${word}`)
-					}
-				} else {
-					this.plainBadWords.push(word)
-				}
+				// 		const regex = new RegExp(pattern, "iu") // поддержка Юникода
+				// 		console.log(regex)
+				// 		this.regexBadWords.push(regex)
+				// 	} catch (err) {
+				// 		logger.warn(`[${LOG_NAMESPACE}] Невалидный шаблон: ${word}`)
+				// 	}
+				// } else {
+				// 	this.plainBadWords.push(word)
+				// }
+				this.plainBadWords.push(word)
+
 			}
 
 			this.initialized = true
@@ -97,7 +100,7 @@ class BadWordsService {
 
 		return {
 			hasBadWords: foundWords.length > 0,
-			foundWords
+			foundWords,
 		}
 	}
 

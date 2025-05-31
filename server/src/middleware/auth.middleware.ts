@@ -13,7 +13,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 			logger.warn(`[${LOG_NAMESPACE}] Попытка доступа без токена авторизации`, {
 				path: req.path,
 				method: req.method,
-				ip: req.ip
+				ip: req.ip,
 			})
 			return next(ApiError.Unauthorized())
 		}
@@ -23,7 +23,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 			logger.warn(`[${LOG_NAMESPACE}] Некорректный формат токена авторизации`, {
 				path: req.path,
 				method: req.method,
-				ip: req.ip
+				ip: req.ip,
 			})
 			return next(ApiError.Unauthorized())
 		}
@@ -33,7 +33,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 			logger.warn(`[${LOG_NAMESPACE}] Недействительный токен авторизации`, {
 				path: req.path,
 				method: req.method,
-				ip: req.ip
+				ip: req.ip,
 			})
 			return next(ApiError.Unauthorized())
 		}
@@ -43,7 +43,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 				userId: userData.id,
 				path: req.path,
 				method: req.method,
-				ip: req.ip
+				ip: req.ip,
 			})
 			return next(ApiError.Forbidden())
 		}
@@ -51,7 +51,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 		logger.debug(`[${LOG_NAMESPACE}] Успешная авторизация пользователя`, {
 			userId: userData.id,
 			path: req.path,
-			method: req.method
+			method: req.method,
 		})
 
 		// Добавляем userData в req
@@ -62,7 +62,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 			path: req.path,
 			method: req.method,
 			ip: req.ip,
-			error: error instanceof Error ? error.message : String(error)
+			error: error instanceof Error ? error.message : String(error),
 		})
 		return next(ApiError.Unauthorized())
 	}

@@ -28,7 +28,7 @@ class AnswerService {
 					answer,
 					question: answer.question ? mapQuestion(answer.question) : null,
 					test: null,
-					belongsToTest: false
+					belongsToTest: false,
 				}
 			}
 
@@ -37,12 +37,12 @@ class AnswerService {
 				answer,
 				question: mapQuestion(answer.question),
 				test: mapTest(answer.question.test),
-				belongsToTest: true
+				belongsToTest: true,
 			}
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при проверке принадлежности ответа к тесту`, {
 				answerId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при проверке принадлежности ответа к тесту")
 		}
@@ -75,7 +75,7 @@ class AnswerService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при проверке принадлежности ответа к вопросу`, {
 				answerId,
 				questionId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при проверке принадлежности ответа к вопросу")
 		}

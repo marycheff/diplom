@@ -15,7 +15,7 @@ export const testOwnershipMiddleware = async (req: Request, res: Response, next:
 		logger.debug(`${context} Начало проверки прав на тест`, {
 			testId,
 			userId: user?.id,
-			path: req.path
+			path: req.path,
 		})
 
 		if (!isValidUUID(testId)) {
@@ -33,21 +33,21 @@ export const testOwnershipMiddleware = async (req: Request, res: Response, next:
 			logger.warn(`${context} Отказ в доступе`, {
 				userId: user?.id,
 				testAuthorId: test.author.id,
-				userRole: user?.role
+				userRole: user?.role,
 			})
 			return next(ApiError.Forbidden())
 		}
 
 		logger.info(`${context} Доступ разрешен`, {
 			testId,
-			userId: user?.id
+			userId: user?.id,
 		})
 		req.test = test
 		next()
 	} catch (error) {
 		logger.error(`${context} Ошибка проверки прав`, {
 			error: error instanceof Error ? error.stack : error,
-			testId: req.params.testId
+			testId: req.params.testId,
 		})
 		next(error)
 	}
@@ -63,7 +63,7 @@ export const attemptOwnershipMiddleware = async (req: Request, res: Response, ne
 		logger.debug(`${context} Начало проверки прав на попытку теста`, {
 			attemptId,
 			userId: user?.id,
-			path: req.path
+			path: req.path,
 		})
 		if (!isValidUUID(attemptId)) {
 			logger.warn(`${context} Некорректный UUID теста`, { attemptId })
@@ -79,19 +79,19 @@ export const attemptOwnershipMiddleware = async (req: Request, res: Response, ne
 			logger.warn(`${context} Отказ в доступе`, {
 				userId: user?.id,
 				testAuthorId: attempt.test.author.id,
-				userRole: user?.role
+				userRole: user?.role,
 			})
 			return next(ApiError.Forbidden())
 		}
 		logger.info(`${context} Доступ разрешен`, {
 			attemptId,
-			userId: user?.id
+			userId: user?.id,
 		})
 		next()
 	} catch (error) {
 		logger.error(`${context} Ошибка проверки прав`, {
 			error: error instanceof Error ? error.stack : error,
-			testId: req.params.testId
+			testId: req.params.testId,
 		})
 		next(error)
 	}

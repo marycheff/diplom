@@ -25,7 +25,7 @@ const TextInputQuestionForm: FC<TextInputQuestionFormProps> = ({
 	onSubmit,
 	setValue,
 	trigger,
-	watch
+	watch,
 }) => {
 	const imageValue = watch("image")
 	const handleImageSelect = useCallback(

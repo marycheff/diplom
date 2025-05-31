@@ -7,13 +7,13 @@ const BackButton = () => {
 
 	// Функция для проверки, можно ли вернуться назад в рамках вашего приложения
 	const canGoBack = () => {
-		// Проверяем, есть ли предыдущая запись в истории роутера
+		// Есть ли предыдущая запись в истории роутера
 		return window.history.length > 1 && location.key !== "default"
 	}
 
 	const goBack = () => {
 		if (canGoBack()) {
-			navigate(-1) // Переходим назад только внутри приложения
+			navigate(-1) 
 		}
 	}
 

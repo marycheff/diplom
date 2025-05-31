@@ -17,7 +17,7 @@ import {
 	KeyboardSensor,
 	PointerSensor,
 	useSensor,
-	useSensors
+	useSensors,
 } from "@dnd-kit/core"
 import { restrictToParentElement } from "@dnd-kit/modifiers"
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
@@ -47,7 +47,7 @@ const createDefaultAnswers = () =>
 		.map((_, index) => ({
 			id: `temp-${Date.now()}-${index}`,
 			text: "",
-			isCorrect: index === 0
+			isCorrect: index === 0,
 		}))
 
 const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, setHasUnsavedChanges, isLoading }) => {
@@ -62,7 +62,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 	// Используем useRef для стабильного initialState
 	const initialStateRef = useRef({
 		form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
-		answers: createDefaultAnswers()
+		answers: createDefaultAnswers(),
 	})
 
 	const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(initialStateRef.current.answers)
@@ -73,7 +73,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 		mode: "onSubmit",
 		reValidateMode: "onChange",
 		shouldFocusError: false,
-		defaultValues: { numOfAnswers: DEFAULT_NUM_OF_ANSWERS }
+		defaultValues: { numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
 	})
 
 	const currentQuestion = watch("question")
@@ -116,7 +116,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates
+			coordinateGetter: sortableKeyboardCoordinates,
 		})
 	)
 
@@ -137,7 +137,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 			// Обновление ref
 			initialStateRef.current = {
 				form: { question: editingQuestion.text, answer: correctAnswer, numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
-				answers: editingQuestion.answers
+				answers: editingQuestion.answers,
 			}
 		} else {
 			reset()
@@ -147,7 +147,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 			// Обновление ref
 			initialStateRef.current = {
 				form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
-				answers: newAnswers
+				answers: newAnswers,
 			}
 		}
 	}, [editingQuestion, setValue, reset])
@@ -161,7 +161,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 		setCurrentAnswers((prev) =>
 			prev.map((answer, i) => ({
 				...answer,
-				isCorrect: i === index ? !answer.isCorrect : answer.isCorrect
+				isCorrect: i === index ? !answer.isCorrect : answer.isCorrect,
 			}))
 		)
 	}, [])
@@ -200,13 +200,13 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 			const correctAnswer = {
 				id: `temp-${Date.now()}-0`,
 				text: watch("answer") || "",
-				isCorrect: true
+				isCorrect: true,
 			}
 
 			const incorrectAnswers = res.slice(0, numOfAnswers).map((answer: string, index) => ({
 				id: `temp-${Date.now()}-${index + 1}`,
 				text: answer,
-				isCorrect: false
+				isCorrect: false,
 			}))
 
 			const newAnswers = [correctAnswer, ...incorrectAnswers]
@@ -229,7 +229,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 					text: formatSpaces(data.question),
 					type: questionType,
 					image: data.image || null,
-					answers: [{ id: `temp-${Date.now()}-0`, text: formatSpaces(data.answer), isCorrect: true }]
+					answers: [{ id: `temp-${Date.now()}-0`, text: formatSpaces(data.answer), isCorrect: true }],
 				}
 				setQuestions((prev) =>
 					editingQuestion ? prev.map((q) => (q.id === editingQuestion.id ? newQuestion : q)) : [...prev, newQuestion]
@@ -246,7 +246,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 				text: formatSpaces(data.question),
 				type: numOfCorrectAnswers === 1 ? QuestionType.SINGLE_CHOICE : QuestionType.MULTIPLE_CHOICE,
 				image: data.image || null,
-				answers: validAnswers
+				answers: validAnswers,
 			}
 			setQuestions((prev) =>
 				editingQuestion ? prev.map((q) => (q.id === editingQuestion.id ? newQuestion : q)) : [...prev, newQuestion]
@@ -259,7 +259,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 			// Обновляем ref
 			initialStateRef.current = {
 				form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
-				answers: newAnswers
+				answers: newAnswers,
 			}
 		},
 		[editingQuestion, questionType, currentAnswers, reset]
@@ -277,7 +277,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 		// Обновляем ref
 		initialStateRef.current = {
 			form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
-			answers: newAnswers
+			answers: newAnswers,
 		}
 	}, [reset, setValue])
 

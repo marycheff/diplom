@@ -10,12 +10,12 @@ class TokenService {
 	generateTokens(payload: object): { accessToken: string; refreshToken: string } {
 		logger.debug(`[${LOG_NAMESPACE}] Генерация токенов`)
 		const accessToken = jwt.sign(payload, envConfig.JWT_ACCESS_SECRET, {
-			expiresIn: "29d"
+			expiresIn: "29d",
 			// expiresIn: "15s",
 		})
 		const refreshToken = jwt.sign(payload, envConfig.JWT_REFRESH_SECRET, {
 			// expiresIn: "30s",
-			expiresIn: "30d"
+			expiresIn: "30d",
 		})
 		logger.debug(`[${LOG_NAMESPACE}] Токены успешно сгенерированы`)
 		return { accessToken, refreshToken }
@@ -31,7 +31,7 @@ class TokenService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при сохранении токена`, {
 				userId,
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw error
 		}
@@ -46,7 +46,7 @@ class TokenService {
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при удалении токена`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw error
 		}
@@ -60,7 +60,7 @@ class TokenService {
 			return result as JwtPayload
 		} catch (e) {
 			logger.warn(`[${LOG_NAMESPACE}] Ошибка валидации access токена`, {
-				error: e instanceof Error ? e.message : String(e)
+				error: e instanceof Error ? e.message : String(e),
 			})
 			return null
 		}
@@ -74,7 +74,7 @@ class TokenService {
 			return result as JwtPayload
 		} catch (e) {
 			logger.warn(`[${LOG_NAMESPACE}] Ошибка валидации refresh токена`, {
-				error: e instanceof Error ? e.message : String(e)
+				error: e instanceof Error ? e.message : String(e),
 			})
 			return null
 		}
@@ -89,7 +89,7 @@ class TokenService {
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при поиске токена`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw error
 		}

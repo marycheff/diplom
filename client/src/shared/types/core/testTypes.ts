@@ -3,7 +3,7 @@ import {
 	QuestionSnapshotDTO,
 	TestSettingsDTO,
 	TestSettingsSnapshotDTO,
-	UserQuestionDTO
+	UserQuestionDTO,
 } from "@/shared/types"
 
 export interface TestState {
@@ -119,20 +119,20 @@ export interface TestSnapshotDTO {
 }
 export enum TestVisibilityStatus {
 	HIDDEN = "HIDDEN",
-	PUBLISHED = "PUBLISHED"
+	PUBLISHED = "PUBLISHED",
 }
 export const VisibilityStatusLabels: Record<TestVisibilityStatus, string> = {
 	[TestVisibilityStatus.HIDDEN]: "Скрыт",
-	[TestVisibilityStatus.PUBLISHED]: "Публикуется"
+	[TestVisibilityStatus.PUBLISHED]: "Публикуется",
 }
 
 export enum ModerationStatus {
 	PENDING = "PENDING",
 	APPROVED = "APPROVED",
-	REJECTED = "REJECTED"
+	REJECTED = "REJECTED",
 }
 export const ModerationStatusLabels: Record<ModerationStatus, string> = {
 	[ModerationStatus.PENDING]: "В обработке",
 	[ModerationStatus.APPROVED]: "Одобрен",
-	[ModerationStatus.REJECTED]: "Отклонен"
+	[ModerationStatus.REJECTED]: "Отклонен",
 }

@@ -21,7 +21,7 @@ interface QuestionItemProps {
 const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, onToggle, onEdit, onDelete }) => {
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id,
-		animateLayoutChanges: () => false
+		animateLayoutChanges: () => false,
 	})
 
 	const questionTextRef = useRef<HTMLParagraphElement>(null) // Ссылка на элемент <p>
@@ -33,7 +33,7 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
 		position: isDragging ? "relative" : "static",
 		boxShadow: isDragging ? "0 5px 15px rgba(0, 0, 0, 0.2)" : "none",
 		backgroundColor: isDragging ? "#f8f8f8" : undefined,
-		opacity: isDragging ? 0.8 : 1
+		opacity: isDragging ? 0.8 : 1,
 	}
 
 	return (

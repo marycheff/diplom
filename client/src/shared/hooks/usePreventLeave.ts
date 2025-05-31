@@ -9,7 +9,7 @@ interface UsePreventLeaveOptions {
 export const usePreventLeave = ({
 	shouldPrevent = true,
 	message = "Вы уверены, что хотите покинуть страницу? Все несохраненные данные будут потеряны.",
-	onBeforeUnload
+	onBeforeUnload,
 }: UsePreventLeaveOptions = {}) => {
 	useEffect(() => {
 		const handleBeforeUnload = (e: BeforeUnloadEvent) => {

@@ -12,9 +12,9 @@ class AnswerRepository {
 							include: {
 								questions: {
 									include: {
-										answers: true
+										answers: true,
 									},
-									orderBy: { order: "asc" }
+									orderBy: { order: "asc" },
 								},
 								author: {
 									select: {
@@ -22,14 +22,14 @@ class AnswerRepository {
 										email: true,
 										name: true,
 										surname: true,
-										patronymic: true
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+										patronymic: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		})
 	}
 }

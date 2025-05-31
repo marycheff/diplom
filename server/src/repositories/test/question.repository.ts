@@ -18,14 +18,14 @@ class QuestionRepository {
 					create: questionData.answers.map((answer) => ({
 						text: answer.text,
 						isCorrect: answer.isCorrect,
-						isGenerated: false
+						isGenerated: false,
 						// sequencePosition: answer.sequencePosition,
-					}))
-				}
+					})),
+				},
 			},
 			include: {
-				answers: true
-			}
+				answers: true,
+			},
 		})
 	}
 
@@ -35,14 +35,14 @@ class QuestionRepository {
 		return client.question.findMany({
 			where: { testId },
 			include: { answers: true },
-			orderBy: { order: "asc" }
+			orderBy: { order: "asc" },
 		})
 	}
 
 	async findById(questionId: string, tx?: Prisma.TransactionClient) {
 		const client = tx || prisma
 		return client.question.findUnique({
-			where: { id: questionId }
+			where: { id: questionId },
 		})
 	}
 
@@ -50,7 +50,7 @@ class QuestionRepository {
 		const client = tx || prisma
 		return client.question.findUnique({
 			where: { id: questionId },
-			select: { testId: true }
+			select: { testId: true },
 		})
 	}
 
@@ -64,9 +64,9 @@ class QuestionRepository {
 					include: {
 						questions: {
 							include: {
-								answers: true
+								answers: true,
 							},
-							orderBy: { order: "asc" }
+							orderBy: { order: "asc" },
 						},
 						author: {
 							select: {
@@ -74,12 +74,12 @@ class QuestionRepository {
 								email: true,
 								name: true,
 								surname: true,
-								patronymic: true
-							}
-						}
-					}
-				}
-			}
+								patronymic: true,
+							},
+						},
+					},
+				},
+			},
 		})
 	}
 
@@ -89,9 +89,9 @@ class QuestionRepository {
 			where: {
 				testId,
 				id: {
-					notIn: updatedQuestionIds
-				}
-			}
+					notIn: updatedQuestionIds,
+				},
+			},
 		})
 	}
 
@@ -99,7 +99,7 @@ class QuestionRepository {
 		const client = tx || prisma
 		return client.question.findUnique({
 			where: { id: questionId },
-			include: { answers: true }
+			include: { answers: true },
 		})
 	}
 
@@ -110,9 +110,9 @@ class QuestionRepository {
 				include: {
 					answers: {
 						where: { isCorrect: true },
-						select: { id: true }
-					}
-				}
+						select: { id: true },
+					},
+				},
 			})
 		})
 	}
@@ -128,13 +128,13 @@ class QuestionRepository {
 				text: updateData.text,
 				order: updateData.order,
 				type: updateData.type,
-				image: updateData.image
-			}
+				image: updateData.image,
+			},
 		})
 
 		// Получение текущих ответов
 		const currentAnswers = await client.answer.findMany({
-			where: { questionId }
+			where: { questionId },
 		})
 
 		const currentAnswersMap = new Map(currentAnswers.map((a) => [a.id, a]))
@@ -147,9 +147,9 @@ class QuestionRepository {
 					where: { id: answer.id },
 					data: {
 						text: answer.text,
-						isCorrect: answer.isCorrect
+						isCorrect: answer.isCorrect,
 						// sequencePosition: answer.sequencePosition,
-					}
+					},
 				})
 			} else {
 				// Создание нового ответа
@@ -158,9 +158,9 @@ class QuestionRepository {
 						text: answer.text,
 						isCorrect: answer.isCorrect,
 						questionId: questionId,
-						isGenerated: false
+						isGenerated: false,
 						// sequencePosition: answer.sequencePosition,
-					}
+					},
 				})
 			}
 		}
@@ -172,27 +172,27 @@ class QuestionRepository {
 		if (answersToDelete.length > 0) {
 			await client.answer.deleteMany({
 				where: {
-					id: { in: answersToDelete }
-				}
+					id: { in: answersToDelete },
+				},
 			})
 		}
 
 		// Возврат обновленного вопроса с ответами
 		const updatedQuestion = await client.question.findUnique({
 			where: { id: questionId },
-			include: { answers: true }
+			include: { answers: true },
 		})
 
 		return {
 			...updateData,
-			answers: updatedQuestion?.answers
+			answers: updatedQuestion?.answers,
 		}
 	}
 	async updateImage(questionId: string, image: string, tx?: Prisma.TransactionClient) {
 		const client = tx || prisma
 		return await client.question.update({
 			where: { id: questionId },
-			data: { image }
+			data: { image },
 		})
 	}
 
@@ -201,12 +201,12 @@ class QuestionRepository {
 		const client = tx || prisma
 		// Удаление всех связанных ответов
 		await client.answer.deleteMany({
-			where: { questionId }
+			where: { questionId },
 		})
 
 		// Удаление самого вопроса
 		return await client.question.delete({
-			where: { id: questionId }
+			where: { id: questionId },
 		})
 	}
 
@@ -220,15 +220,15 @@ class QuestionRepository {
 			await client.answer.deleteMany({
 				where: {
 					questionId: {
-						in: questionIds
-					}
-				}
+						in: questionIds,
+					},
+				},
 			})
 		}
 
 		// Удаление всех вопросов теста
 		return await client.question.deleteMany({
-			where: { testId }
+			where: { testId },
 		})
 	}
 }

@@ -27,7 +27,7 @@ const questionOptions = [
 	{ value: "7", label: "7 вопросов" },
 	{ value: "8", label: "8 вопросов" },
 	{ value: "9", label: "9 вопросов" },
-	{ value: "10", label: "10 вопросов" }
+	{ value: "10", label: "10 вопросов" },
 ]
 
 const GenerateTestForm = () => {
@@ -41,14 +41,14 @@ const GenerateTestForm = () => {
 		formState: { errors },
 		setValue,
 		trigger,
-		watch
+		watch,
 	} = useForm<GenerateTest>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
 		shouldFocusError: false,
 		defaultValues: {
-			numOfQuestions: 5
-		}
+			numOfQuestions: 5,
+		},
 	})
 
 	const onSubmit: SubmitHandler<GenerateTest> = async (data) => {

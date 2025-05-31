@@ -48,8 +48,6 @@ const UserAttempts = () => {
 		setPage(newPage)
 	}
 
-
-
 	const isDataLoaded = total !== null
 	const totalPages = total !== null ? Math.ceil(total / limit) : 0
 	const shouldShowPagination = totalPages > 0 && page <= totalPages

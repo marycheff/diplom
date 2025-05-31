@@ -25,11 +25,11 @@ const LoginPage = () => {
 		handleSubmit,
 		formState: { errors },
 		setValue,
-		trigger
+		trigger,
 	} = useForm<LoginFormData>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
-		shouldFocusError: false
+		shouldFocusError: false,
 	})
 
 	const handleResetPasswordClick = () => {

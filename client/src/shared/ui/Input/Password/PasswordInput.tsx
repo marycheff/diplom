@@ -16,7 +16,7 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
 	clearable = false,
 	noValidation = false,
 	label,
-	trigger
+	trigger,
 }) => {
 	const [localValue, setLocalValue] = useState("")
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
@@ -49,8 +49,8 @@ const PasswordInput: FC<PasswordInputProps<any>> = ({
 			onBlur: () => {
 				setIsFocused(false)
 				trigger?.(name) // Триггерим валидацию при потере фокуса
-			}
-		})
+			},
+		}),
 	}
 
 	// Добавим эффект для инициализации значения

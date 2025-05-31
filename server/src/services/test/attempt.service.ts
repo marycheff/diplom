@@ -3,7 +3,7 @@ import {
 	mapToAttemptWithResultsDTO,
 	mapToAttemptWithSnapshotDTO,
 	mapToTestAttemptDTO,
-	mapToTestAttemptUserDTO
+	mapToTestAttemptUserDTO,
 } from "@/mappers"
 import { attemptRepository, questionRepository, testRepository } from "@/repositories"
 import {
@@ -16,7 +16,7 @@ import {
 	TestAttemptDTO,
 	TestAttemptResultDTO,
 	TestAttemptUserDTO,
-	UserDTO
+	UserDTO,
 } from "@/types"
 import { logger } from "@/utils/logger"
 import { calculateTestScore } from "@/utils/math"
@@ -62,7 +62,7 @@ class AttemptService {
 					logger.warn(`[${LOG_NAMESPACE}] Не все обязательные поля заполнены`, {
 						testId,
 						missingLabels,
-						missingLabelsRu
+						missingLabelsRu,
 					})
 					throw ApiError.BadRequest(
 						`Не все обязательные поля заполнены: ${missingLabelsRu.join(", ")} (${missingLabels.join(", ")})`
@@ -74,7 +74,7 @@ class AttemptService {
 				if (extraFields.length > 0) {
 					logger.warn(`[${LOG_NAMESPACE}] Обнаружены недопустимые поля`, {
 						testId,
-						extraFields
+						extraFields,
 					})
 					throw ApiError.BadRequest(`Обнаружены недопустимые поля: ${extraFields.join(", ")}`)
 				}
@@ -109,7 +109,7 @@ class AttemptService {
 							testId,
 							userId,
 							completedAttempts: completedAttemptsCount,
-							limit: settings.retakeLimit
+							limit: settings.retakeLimit,
 						})
 						throw ApiError.BadRequest(`Превышен лимит попыток прохождения теста (${settings.retakeLimit})`)
 					}
@@ -119,7 +119,7 @@ class AttemptService {
 				testId,
 				testSnapshotId: latestSnapshot.id,
 				userId,
-				preTestUserData: preTestUserData
+				preTestUserData: preTestUserData,
 			})
 
 			// Чтобы сбрасывалось кол-во попыток
@@ -134,7 +134,7 @@ class AttemptService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при начале теста`, {
 				testId,
 				userId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при начале теста")
 		}
@@ -161,7 +161,7 @@ class AttemptService {
 				if (!question || question.testId !== attempt.testId) {
 					logger.warn(`[${LOG_NAMESPACE}] Вопрос не принадлежит тесту`, {
 						questionId,
-						testId: attempt.testId
+						testId: attempt.testId,
 					})
 					throw ApiError.BadRequest(`Вопрос ${questionId} не принадлежит тесту`)
 				}
@@ -170,7 +170,7 @@ class AttemptService {
 				if (question.type === "TEXT_INPUT") {
 					if (!textAnswer && textAnswer !== "") {
 						logger.warn(`[${LOG_NAMESPACE}] Для вопроса с текстовым вводом должен быть указан текстовый ответ`, {
-							questionId
+							questionId,
 						})
 						throw ApiError.BadRequest(`Для вопроса ${questionId} с текстовым вводом должен быть указан текстовый ответ`)
 					}
@@ -179,7 +179,7 @@ class AttemptService {
 
 				if (question.type === "SINGLE_CHOICE" && answersIds.length > 1) {
 					logger.warn(`[${LOG_NAMESPACE}] Для вопроса с одиночным выбором можно указать только один ответ`, {
-						questionId
+						questionId,
 					})
 					throw ApiError.BadRequest(`Для вопроса ${questionId} с одиночным выбором можно указать только один ответ`)
 				}
@@ -190,7 +190,7 @@ class AttemptService {
 					if (!allAnswersValid) {
 						if (question.type == "MULTIPLE_CHOICE") {
 							logger.warn(`[${LOG_NAMESPACE}] Один или несколько ответов не принадлежат вопросу`, {
-								questionId
+								questionId,
 							})
 							throw ApiError.BadRequest(`Один или несколько ответов не принадлежат вопросу ${questionId}`)
 						}
@@ -210,7 +210,7 @@ class AttemptService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при сохранении ответов`, {
 				attemptId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при сохранении ответов")
 		}
@@ -277,7 +277,7 @@ class AttemptService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при завершении теста`, {
 				attemptId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при завершении теста")
 		}
@@ -293,13 +293,13 @@ class AttemptService {
 			logger.debug(`[${LOG_NAMESPACE}] Все попытки успешно получены`, { count: attempts.length })
 			return {
 				attempts: attempts.map((attempt) => mapToTestAttemptDTO(attempt)),
-				total
+				total,
 			}
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении списка попыток`, {
 				page,
 				limit,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении списка попыток")
 		}
@@ -330,7 +330,7 @@ class AttemptService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении попытки`, {
 				attemptId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении попытки")
 		}
@@ -361,7 +361,7 @@ class AttemptService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении попытки с результатами`, {
 				attemptId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении попытки")
 		}
@@ -404,7 +404,7 @@ class AttemptService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении попытки для пользователя`, {
 				attemptId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении попытки")
 		}
@@ -492,7 +492,7 @@ class AttemptService {
 			logger.debug(`[${LOG_NAMESPACE}] Попытки пользователя успешно получены`, { userId, count: attempts.length })
 			return {
 				attempts: attempts.map((attempt) => mapToAttemptWithSnapshotDTO(attempt)),
-				total
+				total,
 			}
 		} catch (error) {
 			if (error instanceof ApiError) {
@@ -502,7 +502,7 @@ class AttemptService {
 				userId,
 				page,
 				limit,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении попыток пользователя")
 		}
@@ -516,7 +516,7 @@ class AttemptService {
 			logger.debug(`[${LOG_NAMESPACE}] Попытки теста успешно получены`, { testId, count: attempts.length })
 			return {
 				attempts: attempts.map((attempt) => mapToTestAttemptDTO(attempt)),
-				total
+				total,
 			}
 		} catch (error) {
 			if (error instanceof ApiError) {
@@ -526,7 +526,7 @@ class AttemptService {
 				testId,
 				page,
 				limit,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении попытки")
 		}
@@ -543,7 +543,7 @@ class AttemptService {
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка обновления общего времени`, {
 				attemptId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка обновления общего времени")
 		}

@@ -20,9 +20,9 @@ const UpdatePasswordForm = () => {
 		setValue,
 		handleSubmit,
 		trigger,
-		watch
+		watch,
 	} = useForm<ChangePasswordFormData>({
-		mode: "onBlur"
+		mode: "onBlur",
 	})
 	const oldPassword = watch("oldPassword")
 	const newPassword = watch("newPassword")

@@ -5,13 +5,13 @@ class TokenRepository {
 	// FIND
 	async findById(refreshToken: string) {
 		return prisma.token.findFirst({
-			where: { refreshToken }
+			where: { refreshToken },
 		})
 	}
 
 	async findByToken(refreshToken: string): Promise<Token | null> {
 		return prisma.token.findUnique({
-			where: { refreshToken }
+			where: { refreshToken },
 		})
 	}
 
@@ -20,14 +20,14 @@ class TokenRepository {
 		return prisma.token.upsert({
 			where: { userId },
 			update: { refreshToken },
-			create: { userId, refreshToken }
+			create: { userId, refreshToken },
 		})
 	}
 
 	// DELETE
 	async delete(refreshToken: string) {
 		return prisma.token.delete({
-			where: { refreshToken }
+			where: { refreshToken },
 		})
 	}
 }

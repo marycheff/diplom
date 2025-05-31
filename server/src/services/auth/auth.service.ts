@@ -29,7 +29,7 @@ class AuthService {
 			const userDto = mapUserToDto(user)
 
 			const tokens = tokenService.generateTokens({
-				...userDto
+				...userDto,
 			})
 			await tokenRepository.upsert(user.id, tokens.refreshToken)
 			logger.info(`[${LOG_NAMESPACE}] Успешный вход в систему`, { userId: user.id })
@@ -41,7 +41,7 @@ class AuthService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при входе в систему`, {
 				email,
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при входе в систему")
 		}
@@ -69,7 +69,7 @@ class AuthService {
 
 			// Генерация и сохранение токенов
 			const tokens = tokenService.generateTokens({
-				...userDto
+				...userDto,
 			})
 
 			// Сохраняем токен в базе данных
@@ -83,7 +83,7 @@ class AuthService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при регистрации пользователя`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при регистрации пользователя")
 		}
@@ -101,7 +101,7 @@ class AuthService {
 			}
 			if (user.isActivated) {
 				logger.warn(`[${LOG_NAMESPACE}] Попытка обновления ссылки для уже активированного аккаунта`, {
-					userId: user.id
+					userId: user.id,
 				})
 				throw ApiError.BadRequest(`Аккаунт пользователя c email ${email} уже активирован`)
 			}
@@ -116,7 +116,7 @@ class AuthService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при обновлении ссылки активации`, {
 				email,
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при обновлении ссылки активации")
 		}
@@ -141,7 +141,7 @@ class AuthService {
 			if (user.activationLinkExp && user.activationLinkExp < new Date()) {
 				logger.warn(`[${LOG_NAMESPACE}] Срок действия ссылки активации истек`, {
 					userId: user.id,
-					expiredAt: user.activationLinkExp
+					expiredAt: user.activationLinkExp,
 				})
 				throw ApiError.BadRequest("Срок действия ссылки активации истек")
 			}
@@ -164,7 +164,7 @@ class AuthService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при активации аккаунта`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при активации аккаунта")
 		}
@@ -212,7 +212,7 @@ class AuthService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при обновлении токенов доступа`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при обновлении токенов доступа")
 		}
@@ -234,7 +234,7 @@ class AuthService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при выходе из системы`, {
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			})
 			throw ApiError.InternalError("Ошибка при выходе из системы")
 		}

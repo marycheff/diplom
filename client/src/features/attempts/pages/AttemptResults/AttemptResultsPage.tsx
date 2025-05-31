@@ -11,7 +11,7 @@ import {
 	QuestionTypeLabels,
 	TestAttemptResultDTO,
 	TestAttemptUserDTO,
-	UserTestDTO
+	UserTestDTO,
 } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
 import { formatSeconds } from "@/shared/utils/formatter"

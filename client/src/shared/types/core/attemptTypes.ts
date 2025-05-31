@@ -5,7 +5,7 @@ import {
 	QuestionType,
 	TestDTO,
 	TestSnapshotDTO,
-	UserDTO
+	UserDTO,
 } from "@/shared/types"
 
 export interface AttemptState {
@@ -141,11 +141,11 @@ export interface UserAnswerDTO {
 export enum AttemptStatus {
 	IN_PROGRESS = "IN_PROGRESS",
 	COMPLETED = "COMPLETED",
-	EXPIRED = "EXPIRED"
+	EXPIRED = "EXPIRED",
 }
 
 export const AttemptStatusLabels: Record<AttemptStatus, string> = {
 	[AttemptStatus.IN_PROGRESS]: "В процессе",
 	[AttemptStatus.COMPLETED]: "Завершена",
-	[AttemptStatus.EXPIRED]: "Истекла"
+	[AttemptStatus.EXPIRED]: "Истекла",
 }

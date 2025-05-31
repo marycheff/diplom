@@ -10,7 +10,7 @@ export const accountActivationMiddleware = (req: Request, res: Response, next: N
 				userId: req.user?.id,
 				path: req.path,
 				method: req.method,
-				ip: req.ip
+				ip: req.ip,
 			})
 			return next(ApiError.BadRequest("Аккаунт не активирован"))
 		}
@@ -18,7 +18,7 @@ export const accountActivationMiddleware = (req: Request, res: Response, next: N
 			userId: req.user.id,
 			path: req.path,
 			method: req.method,
-			ip: req.ip
+			ip: req.ip,
 		})
 		next()
 	} catch (error) {
@@ -26,7 +26,7 @@ export const accountActivationMiddleware = (req: Request, res: Response, next: N
 			path: req.path,
 			method: req.method,
 			ip: req.ip,
-			error: error instanceof Error ? error.message : String(error)
+			error: error instanceof Error ? error.message : String(error),
 		})
 		return next(ApiError.Unauthorized())
 	}

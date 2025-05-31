@@ -12,7 +12,7 @@ class QuestionController {
 			emitQuestionsUpdated(testId)
 			res.status(200).json({
 				message: "Вопросы успешно обновлены",
-				questions: updatedQuestions
+				questions: updatedQuestions,
 			})
 		} catch (error) {
 			next(error)

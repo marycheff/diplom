@@ -22,11 +22,11 @@ const CreateUserPage = () => {
 		handleSubmit,
 		formState: { errors },
 		setValue,
-		trigger
+		trigger,
 	} = useForm<CreateUserDTO>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
-		shouldFocusError: false
+		shouldFocusError: false,
 	})
 
 	const onSubmit: SubmitHandler<CreateUserDTO> = async (data) => {
@@ -38,7 +38,7 @@ const CreateUserPage = () => {
 
 	const roleOptions = [
 		{ value: "ADMIN", label: "Администратор" },
-		{ value: "USER", label: "Пользователь" }
+		{ value: "USER", label: "Пользователь" },
 	]
 
 	return (

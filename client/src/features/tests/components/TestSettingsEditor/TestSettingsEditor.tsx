@@ -27,7 +27,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 		retakeLimit: settings.retakeLimit,
 		hours: Math.floor((settings.timeLimit ?? 0) / 3600),
 		minutes: Math.floor(((settings.timeLimit ?? 0) % 3600) / 60),
-		seconds: (settings.timeLimit ?? 0) % 60
+		seconds: (settings.timeLimit ?? 0) % 60,
 	}
 	const {
 		register,
@@ -35,12 +35,12 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 		setValue,
 		watch,
 		trigger,
-		formState: { errors }
+		formState: { errors },
 	} = useForm({
 		mode: "onBlur",
 		reValidateMode: "onChange",
 		shouldFocusError: false,
-		defaultValues: initialValues
+		defaultValues: initialValues,
 	})
 
 	const watchedValues = watch()
@@ -94,7 +94,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 			allowRetake: data.allowRetake === "Да",
 			retakeLimit: Number(data.retakeLimit) === 0 ? null : Number(data.retakeLimit),
 			timeLimit: Number(data.hours) * 3600 + Number(data.minutes) * 60 + Number(data.seconds),
-			inputFields: sortedInputFields
+			inputFields: sortedInputFields,
 		})
 	}
 
@@ -119,7 +119,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 								name="requireRegistration"
 								options={[
 									{ value: "Да", label: "Да" },
-									{ value: "Нет", label: "Нет" }
+									{ value: "Нет", label: "Нет" },
 								]}
 								value={settings.requireRegistration ? "Да" : "Нет"}
 							/>
@@ -131,7 +131,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 							name="showDetailedResults"
 							options={[
 								{ value: "Да", label: "Да" },
-								{ value: "Нет", label: "Нет" }
+								{ value: "Нет", label: "Нет" },
 							]}
 							value={settings.showDetailedResults ? "Да" : "Нет"}
 						/>
@@ -142,7 +142,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 							name="shuffleQuestions"
 							options={[
 								{ value: "Да", label: "Да" },
-								{ value: "Нет", label: "Нет" }
+								{ value: "Нет", label: "Нет" },
 							]}
 							value={settings.shuffleQuestions ? "Да" : "Нет"}
 						/>
@@ -153,7 +153,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 							name="shuffleAnswers"
 							options={[
 								{ value: "Да", label: "Да" },
-								{ value: "Нет", label: "Нет" }
+								{ value: "Нет", label: "Нет" },
 							]}
 							value={settings.shuffleAnswers ? "Да" : "Нет"}
 						/>
@@ -166,7 +166,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 								name="allowRetake"
 								options={[
 									{ value: "Да", label: "Да" },
-									{ value: "Нет", label: "Нет" }
+									{ value: "Нет", label: "Нет" },
 								]}
 								value={settings.allowRetake ? "Да" : "Нет"}
 								disabled={watchedValues.requireRegistration !== "Да"}
@@ -186,7 +186,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 									validationRules={{
 										min: { value: 1, message: "Минимум 1 раз" },
 										max: { value: 20, message: "Максимум 20 раз" },
-										validate: (value) => !isNaN(Number(value)) || "Некорректное значение"
+										validate: (value) => !isNaN(Number(value)) || "Некорректное значение",
 									}}
 								/>
 							</div>
@@ -227,7 +227,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 										required: "Обязательное поле",
 										min: { value: 0, message: "Минимум 0 часов" },
 										max: { value: 4, message: "Максимум 4 часа" },
-										validate: (value) => !isNaN(Number(value)) || "Некорректное значение"
+										validate: (value) => !isNaN(Number(value)) || "Некорректное значение",
 									}}
 								/>
 							</div>
@@ -245,7 +245,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 										required: "Обязательное поле",
 										min: { value: 0, message: "Минимум 0 минут" },
 										max: { value: 59, message: "Максимум 59 минут" },
-										validate: (value) => !isNaN(Number(value)) || "Некорректное значение"
+										validate: (value) => !isNaN(Number(value)) || "Некорректное значение",
 									}}
 								/>
 							</div>
@@ -263,7 +263,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 										required: "Обязательное поле",
 										min: { value: 0, message: "Минимум 0 секунд" },
 										max: { value: 59, message: "Максимум 59 секунд" },
-										validate: (value) => !isNaN(Number(value)) || "Некорректное значение"
+										validate: (value) => !isNaN(Number(value)) || "Некорректное значение",
 									}}
 								/>
 							</div>

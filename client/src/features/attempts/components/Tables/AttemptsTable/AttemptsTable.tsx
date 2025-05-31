@@ -5,7 +5,7 @@ import {
 	GenderLabels,
 	PreTestUserData,
 	PreTestUserDataLabels,
-	TestAttemptDTO
+	TestAttemptDTO,
 } from "@/shared/types"
 import { formatDate } from "@/shared/utils/formatter"
 import { FC } from "react"
@@ -47,11 +47,11 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
 												to={
 													isAdmin
 														? generatePath(ROUTES.ADMIN_ATTEMPT_INFO, {
-																attemptId: attempt.id
+																attemptId: attempt.id,
 														  })
 														: generatePath(ROUTES.MY_TEST_ATTEMPT_INFO, {
 																testId: attempt.test.id,
-																attemptId: attempt.id
+																attemptId: attempt.id,
 														  })
 												}
 												className="actionLink"
@@ -66,7 +66,7 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
 												isAdmin ? (
 													<Link
 														to={generatePath(ROUTES.ADMIN_USER_INFO, {
-															userId: attempt.user.id
+															userId: attempt.user.id,
 														})}
 														className="actionLink"
 													>
@@ -97,7 +97,7 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
 										<td>
 											<Link
 												to={generatePath(ROUTES.ADMIN_TEST_INFO, {
-													testId: attempt.test.id
+													testId: attempt.test.id,
 												})}
 												className="actionLink"
 											>

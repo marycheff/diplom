@@ -9,7 +9,7 @@ const initialState = {
 	isTimeUpdating: false,
 	cache: {},
 	CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
-	lastCacheUpdateDate: null
+	lastCacheUpdateDate: null,
 }
 
 export const useAttemptStore = create<AttemptState>((set) => {
@@ -24,10 +24,10 @@ export const useAttemptStore = create<AttemptState>((set) => {
 					...state.cache,
 					[key]: {
 						data,
-						timestamp: new Date()
-					}
+						timestamp: new Date(),
+					},
 				},
-				lastCacheUpdateDate: new Date()
+				lastCacheUpdateDate: new Date(),
 			}))
 		},
 		clearCache: () => {
@@ -108,6 +108,6 @@ export const useAttemptStore = create<AttemptState>((set) => {
 				await attemptService.updateTimeSpent(attemptId, timeSpent)
 			}
 			return withTimeUpdating(operation)
-		}
+		},
 	}
 })

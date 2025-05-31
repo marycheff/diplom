@@ -23,11 +23,11 @@ const RegisterPage = () => {
 		formState: { errors },
 		setValue,
 		handleSubmit,
-		trigger
+		trigger,
 	} = useForm<Register>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
-		shouldFocusError: false
+		shouldFocusError: false,
 	})
 	const onSubmit: SubmitHandler<Register> = async (data) => {
 		if (data.password !== data.confirmPassword) {

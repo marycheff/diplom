@@ -21,7 +21,7 @@ class QuestionService {
 	async upsertQuestions(testId: string, questions: QuestionDTO[], testGenerating = false): Promise<QuestionDTO[]> {
 		logger.info(`[${LOG_NAMESPACE}] Полное обновление вопросов теста`, {
 			testId,
-			questionsCount: questions.length
+			questionsCount: questions.length,
 		})
 
 		// Проверка на недопустимые слова перед обновлением, если тест не генерируется
@@ -61,7 +61,7 @@ class QuestionService {
 						if (!existingQuestionsMap.has(questionId)) {
 							logger.warn(`[${LOG_NAMESPACE}] Вопрос с указанным ID не найден в текущем тесте`, {
 								questionId,
-								testId
+								testId,
 							})
 							throw ApiError.NotFound("Вопрос с указанным ID не найден в текущем тесте")
 						}
@@ -75,7 +75,7 @@ class QuestionService {
 							if (!belongsToQuestion) {
 								logger.warn(`[${LOG_NAMESPACE}] Ответ не принадлежит вопросу`, {
 									answerId: answer.id,
-									questionId
+									questionId,
 								})
 								throw ApiError.BadRequest("Ответ не принадлежит указанному вопросу")
 							}
@@ -112,7 +112,7 @@ class QuestionService {
 
 					logger.error(`[${LOG_NAMESPACE}] Ошибка при обработке вопроса`, {
 						questionId: question.id,
-						error
+						error,
 					})
 
 					throw error
@@ -127,7 +127,7 @@ class QuestionService {
 			)
 			for (const questionToDelete of questionsToDelete) {
 				logger.debug(`[${LOG_NAMESPACE}] Удаление вопроса, которого нет в обновленном списке`, {
-					questionId: questionToDelete.id
+					questionId: questionToDelete.id,
 				})
 				await questionRepository.delete(questionToDelete.id, tx)
 				if (questionToDelete.image) {
@@ -167,7 +167,7 @@ class QuestionService {
 			logger.debug(`[${LOG_NAMESPACE}] Результат проверки принадлежности вопроса к тесту`, {
 				questionId,
 				testId,
-				belongsToTest
+				belongsToTest,
 			})
 			return belongsToTest
 		} catch (error) {
@@ -177,7 +177,7 @@ class QuestionService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при проверке принадлежности вопроса к тесту`, {
 				questionId,
 				testId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при проверке принадлежности вопроса к тесту")
 		}
@@ -203,19 +203,19 @@ class QuestionService {
 				return {
 					question: mapQuestion(question),
 					test: null,
-					belongsToTest: false
+					belongsToTest: false,
 				}
 			}
 			logger.debug(`[${LOG_NAMESPACE}] Вопрос принадлежит тесту`, { questionId })
 			return {
 				question: mapQuestion(question),
 				test: mapTest(question.test),
-				belongsToTest: true
+				belongsToTest: true,
 			}
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при проверке принадлежности вопроса к любому тесту`, {
 				questionId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при проверке принадлежности вопроса к любому тесту")
 		}
@@ -242,7 +242,7 @@ class QuestionService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении вопроса по ID`, {
 				questionId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении вопроса по ID")
 		}
@@ -256,13 +256,13 @@ class QuestionService {
 				const blankCount = (question.text.match(/{blank}/g) || []).length
 				if (blankCount === 0) {
 					logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK отсутствует маркер {blank}`, {
-						questionId: question.id
+						questionId: question.id,
 					})
 					throw ApiError.BadRequest("В вопросе с пропуском должен быть указан маркер {blank}")
 				}
 				if (blankCount > 1) {
 					logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK должно быть только одно поле {blank}`, {
-						questionId: question.id
+						questionId: question.id,
 					})
 					throw ApiError.BadRequest("В вопросе с пропуском должно быть только одно поле {blank}")
 				}
@@ -271,7 +271,7 @@ class QuestionService {
 				const correctAnswers = question.answers.filter((answer) => answer.isCorrect)
 				if (correctAnswers.length !== 1) {
 					logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK должен быть ровно один правильный ответ`, {
-						questionId: question.id
+						questionId: question.id,
 					})
 					throw ApiError.BadRequest("В вопросе с пропуском должен быть ровно один правильный ответ")
 				}
@@ -293,7 +293,7 @@ class QuestionService {
 				logger.warn(`[${LOG_NAMESPACE}] Обнаружены недопустимые слова в тексте вопроса`, {
 					questionNumber,
 					questionText: question.text,
-					foundWords: questionCheck.foundWords
+					foundWords: questionCheck.foundWords,
 				})
 				throw ApiError.BadRequest(`Обнаружены недопустимые слова в тексте вопроса №${questionNumber}`)
 			}
@@ -305,7 +305,7 @@ class QuestionService {
 					logger.warn(`[${LOG_NAMESPACE}] Обнаружены недопустимые слова в тексте ответа`, {
 						questionNumber,
 						answerText: answer.text,
-						foundWords: answerCheck.foundWords
+						foundWords: answerCheck.foundWords,
 					})
 					throw ApiError.BadRequest(
 						`Обнаружены недопустимые слова в тексте ответа вопроса №${questionNumber} ${answer.text}`

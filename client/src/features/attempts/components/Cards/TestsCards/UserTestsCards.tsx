@@ -69,10 +69,10 @@ const UserTestsCards: FC<UserTestsCardsProps> = ({ tests, total }) => {
 														to={
 															isAdmin
 																? generatePath(ROUTES.ADMIN_TEST_ATTEMPTS, {
-																		testId: test.id
+																		testId: test.id,
 																  })
 																: generatePath(ROUTES.MY_TEST_ATTEMPTS, {
-																		testId: test.id
+																		testId: test.id,
 																  })
 														}
 														className="actionLink"

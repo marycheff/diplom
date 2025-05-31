@@ -168,7 +168,7 @@ const MyTestsPage = () => {
 						name="viewMode"
 						options={[
 							{ value: "table", label: "Таблицей" },
-							{ value: "cards", label: "Карточками" }
+							{ value: "cards", label: "Карточками" },
 						]}
 						value={viewMode}
 						onChange={handleViewModeChange}

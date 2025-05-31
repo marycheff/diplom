@@ -17,7 +17,7 @@ export async function deleteTestCache(testId: string): Promise<void> {
 	} catch (error) {
 		logger.error(`[${LOG_NAMESPACE}] Ошибка при удалении кэша теста`, {
 			testId,
-			error: error instanceof Error ? error.message : String(error)
+			error: error instanceof Error ? error.message : String(error),
 		})
 	}
 }
@@ -37,7 +37,7 @@ export async function deleteAttemptCache(attemptId: string): Promise<void> {
 	} catch (error) {
 		logger.error(`[${LOG_NAMESPACE}] Ошибка при удалении кэша попытки`, {
 			attemptId,
-			error: error instanceof Error ? error.message : String(error)
+			error: error instanceof Error ? error.message : String(error),
 		})
 	}
 }

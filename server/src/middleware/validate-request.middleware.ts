@@ -9,17 +9,17 @@ export const validateRequest = (schema: AnyZodObject) => {
 		try {
 			logger.debug(`[${LOG_NAMESPACE}] Начало валидации запроса`, {
 				path: req.path,
-				method: req.method
+				method: req.method,
 			})
 
 			await schema.parseAsync({
 				body: req.body,
 				query: req.query,
-				params: req.params
+				params: req.params,
 			})
 
 			logger.debug(`[${LOG_NAMESPACE}] Валидация успешна`, {
-				path: req.path
+				path: req.path,
 			})
 			next()
 		} catch (error) {
@@ -31,14 +31,14 @@ export const validateRequest = (schema: AnyZodObject) => {
 					path: req.path,
 					errors: error.issues.map((i) => ({
 						path: i.path,
-						message: i.message
-					}))
+						message: i.message,
+					})),
 				})
 
 				next(ApiError.BadRequest(message, error.issues))
 			} else {
 				logger.error(`[${LOG_NAMESPACE}] Неизвестная ошибка`, {
-					error: error instanceof Error ? error.stack : error
+					error: error instanceof Error ? error.stack : error,
 				})
 				next(error)
 			}

@@ -66,7 +66,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 		active: "#f1f1f1",
 		text: "#333333",
 		border: "#e0e0e0",
-		exit: "#f44336" // Красный для кнопки выхода
+		exit: "#f44336", // Красный для кнопки выхода
 	}
 
 	const menuItemStyles = {
@@ -75,15 +75,15 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 			color: active ? colors.primary : colors.text,
 			"&:hover": {
 				backgroundColor: active ? colors.active : colors.hover,
-				color: colors.primary
+				color: colors.primary,
 			},
 			padding: "10px 16px",
 			fontSize: "14px",
 			display: "flex",
 			alignItems: "center",
 			gap: "12px",
-			transition: "all 0.3s ease"
-		})
+			transition: "all 0.3s ease",
+		}),
 	}
 
 	// Компонент заголовка категории
@@ -96,7 +96,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 					fontWeight: "600",
 					color: color,
 					borderLeft: `4px solid ${color}`,
-					background: `linear-gradient(90deg, ${color}22 0%, transparent 100%)`
+					background: `linear-gradient(90deg, ${color}22 0%, transparent 100%)`,
 					// margin: "3px 0",
 				}}
 			>
@@ -158,7 +158,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 				style={{
 					marginBottom: "8px",
 					borderBottom: `1px solid ${colors.border}`,
-					paddingBottom: "8px"
+					paddingBottom: "8px",
 				}}
 			>
 				{!collapsed && "Главная"}
@@ -246,7 +246,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 				style={{
 					marginBottom: "8px",
 					borderBottom: `1px solid ${colors.border}`,
-					paddingBottom: "8px"
+					paddingBottom: "8px",
 				}}
 			>
 				{!collapsed && "Главная"}
@@ -315,8 +315,8 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 						transition: "all 0.3s ease-in-out", // Плавная анимация
 						display: "flex",
 						flexDirection: "column",
-						height: "100%"
-					}
+						height: "100%",
+					},
 				}}
 				width="240px"
 				collapsedWidth="70px" // Фиксированная ширина при свернутом состоянии
@@ -329,7 +329,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 							style={{
 								fontWeight: 600,
 								borderBottom: `1px solid ${colors.border}`,
-								padding: "14px 16px"
+								padding: "14px 16px",
 							}}
 							icon={<FiMenu />}
 						>
@@ -344,7 +344,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 					style={{
 						borderTop: `1px solid ${colors.border}`,
 						marginTop: "auto",
-						width: "100%"
+						width: "100%",
 					}}
 				>
 					<Menu menuItemStyles={menuItemStyles}>
@@ -355,7 +355,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 							icon={<FiLogOut style={{ color: colors.exit }} />}
 							style={{
 								padding: "16px",
-								fontWeight: 600
+								fontWeight: 600,
 							}}
 						>
 							{!collapsed && "Выйти"}

@@ -11,7 +11,7 @@ import {
 	PreTestUserDataLabels,
 	QuestionType,
 	QuestionTypeLabels,
-	TestAttemptDTO
+	TestAttemptDTO,
 } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"

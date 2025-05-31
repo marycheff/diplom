@@ -12,14 +12,14 @@ export const conditionalAuthMiddleware = (req: Request, res: Response, next: Nex
 
 			if (accessToken) {
 				logger.debug(`[${LOG_NAMESPACE}] Проверка access токена`, {
-					tokenPrefix: accessToken.slice(0, 6) + "..."
+					tokenPrefix: accessToken.slice(0, 6) + "...",
 				})
 
 				const userData = tokenService.validateAccessToken(accessToken) as UserDTO
 
 				if (userData) {
 					logger.info(`[${LOG_NAMESPACE}] Успешная условная авторизация`, {
-						userId: userData.id
+						userId: userData.id,
 					})
 					req.user = userData
 				} else {
@@ -30,7 +30,7 @@ export const conditionalAuthMiddleware = (req: Request, res: Response, next: Nex
 		next()
 	} catch (e) {
 		logger.error(`[${LOG_NAMESPACE}] Ошибка при условной авторизации`, {
-			error: e instanceof Error ? e.stack : e
+			error: e instanceof Error ? e.stack : e,
 		})
 		next()
 	}

@@ -17,7 +17,7 @@ const Breadcrumbs = () => {
 		ROUTES.ACTIVATION_SUCCESS,
 		ROUTES.START_ATTEMPT,
 		ROUTES.PASS_ATTEMPT,
-		ROUTES.WELCOME
+		ROUTES.WELCOME,
 	]
 	const shouldDisplayBreadcrumbs = !excludedPaths.some((excludedPath) => {
 		// Для динамических путей
@@ -49,7 +49,7 @@ const Breadcrumbs = () => {
 		"my-tests": "Мои тесты",
 		"add-questions": "Добавление вопросов",
 		"edit-settings": "Редактирование вопросов",
-		"my-attempts": "Мои попытки"
+		"my-attempts": "Мои попытки",
 	}
 
 	return (

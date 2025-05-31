@@ -15,8 +15,8 @@ interface ModerationStatusEditorProps {
 const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus, onChangingComplete, onCancel }) => {
 	const { register, handleSubmit, setValue, trigger } = useForm<{ status: ModerationStatus }>({
 		defaultValues: {
-			status: currentStatus
-		}
+			status: currentStatus,
+		},
 	})
 
 	const onSubmit = (data: { status: ModerationStatus }) => {
@@ -38,16 +38,16 @@ const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus
 						options={[
 							{
 								value: ModerationStatus.PENDING,
-								label: ModerationStatusLabels[ModerationStatus.PENDING]
+								label: ModerationStatusLabels[ModerationStatus.PENDING],
 							},
 							{
 								value: ModerationStatus.APPROVED,
-								label: ModerationStatusLabels[ModerationStatus.APPROVED]
+								label: ModerationStatusLabels[ModerationStatus.APPROVED],
 							},
 							{
 								value: ModerationStatus.REJECTED,
-								label: ModerationStatusLabels[ModerationStatus.REJECTED]
-							}
+								label: ModerationStatusLabels[ModerationStatus.REJECTED],
+							},
 						]}
 					/>
 					<br />

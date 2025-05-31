@@ -46,4 +46,4 @@ export const ROUTES = {
 	ADMIN_MY_TEST_INFO: "/admin/my-tests/:testId",
 	ADMIN_MY_ATTEMPTS: "/admin/my-attempts",
 	ADMIN_MY_ATTEMPT_INFO: "admin/my-attempts/:attemptId",
-};
+}

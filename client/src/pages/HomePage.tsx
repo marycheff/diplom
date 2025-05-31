@@ -8,7 +8,7 @@ const HomePage = () => {
 		{ to: ROUTES.PROFILE, icon: <FiUser />, label: "Профиль", color: "accent-secondary" },
 		{ to: ROUTES.CREATE_TEST, icon: <FiEdit />, label: "Создать тест", color: "accent-secondary" },
 		{ to: ROUTES.MY_TESTS, icon: <FiArchive />, label: "Мои тесты", color: "accent-secondary" },
-		{ to: ROUTES.MY_ATTEMPTS, icon: <FiFileText />, label: "Мои результаты", color: "accent-secondary" }
+		{ to: ROUTES.MY_ATTEMPTS, icon: <FiFileText />, label: "Мои результаты", color: "accent-secondary" },
 	]
 
 	return (

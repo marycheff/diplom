@@ -5,13 +5,13 @@ import {
 	authMiddleware,
 	conditionalAuthMiddleware,
 	testOwnershipMiddleware,
-	validateRequest
+	validateRequest,
 } from "@/middleware"
 import {
 	completeTestAttemptSchema,
 	getAttemptSchema,
 	saveAnswersSchema,
-	startTestAttemptSchema
+	startTestAttemptSchema,
 } from "@/schemas/test.schema"
 import express from "express"
 

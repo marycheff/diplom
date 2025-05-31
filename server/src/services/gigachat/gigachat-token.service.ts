@@ -22,10 +22,10 @@ class GigaChatTokenService {
 				"Content-Type": "application/x-www-form-urlencoded",
 				Accept: "application/json",
 				RqUID: crypto.randomUUID(),
-				Authorization: `Bearer ${authData}`
+				Authorization: `Bearer ${authData}`,
 			},
 			data: postData,
-			httpsAgent: this.httpsAgent
+			httpsAgent: this.httpsAgent,
 		}
 
 		try {

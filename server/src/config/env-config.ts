@@ -18,7 +18,7 @@ const requiredEnvVars = [
 	"GIGACHAT_ANSWERS_MODEL",
 	"GIGACHAT_TEST_MODEL",
 	"ALLOWED_ORIGINS",
-	"NODE_ENV"
+	"NODE_ENV",
 ]
 
 for (const envVar of requiredEnvVars) {
@@ -44,5 +44,5 @@ export const envConfig = {
 	GIGACHAT_TEST_MODEL: process.env.GIGACHAT_TEST_MODEL!,
 	NODE_ENV: process.env.NODE_ENV || "development",
 	PORT: process.env.PORT ? parseInt(process.env.PORT, 10) : 5000,
-	ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS
+	ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
 }

@@ -11,7 +11,7 @@ export enum PreTestUserData {
 	Email = "email",
 	School = "school",
 	Grade = "grade",
-	Group = "group"
+	Group = "group",
 }
 
 export const PreTestUserDataLabels: Record<PreTestUserData, string> = {
@@ -27,11 +27,11 @@ export const PreTestUserDataLabels: Record<PreTestUserData, string> = {
 	[PreTestUserData.Email]: "Электронная почта",
 	[PreTestUserData.School]: "Номер школы",
 	[PreTestUserData.Grade]: "Класс",
-	[PreTestUserData.Group]: "Группа"
+	[PreTestUserData.Group]: "Группа",
 }
 export const GenderLabels: Record<string, string> = {
 	male: "Мужской",
-	female: "Женский"
+	female: "Женский",
 }
 
 export interface PreTestUserDataType {

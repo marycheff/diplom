@@ -22,11 +22,11 @@ const CreateTestForm = () => {
 		formState: { errors },
 		setValue,
 		trigger,
-		watch
+		watch,
 	} = useForm<ShortTestInfo>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
-		shouldFocusError: false
+		shouldFocusError: false,
 	})
 	const onSubmit: SubmitHandler<ShortTestInfo> = async (data) => {
 		const response = await createTest(formatSpaces(data.title), formatSpaces(data.description))

@@ -4,7 +4,7 @@ export enum QuestionType {
 	TEXT_INPUT = "TEXT_INPUT",
 	MATCHING = "MATCHING",
 	FILL_IN_THE_BLANK = "FILL_IN_THE_BLANK",
-	SEQUENCE = "SEQUENCE"
+	SEQUENCE = "SEQUENCE",
 }
 
 export const QuestionTypeLabels: Record<QuestionType, string> = {
@@ -13,7 +13,7 @@ export const QuestionTypeLabels: Record<QuestionType, string> = {
 	[QuestionType.TEXT_INPUT]: "Текстовый ввод",
 	[QuestionType.MATCHING]: "Сопоставление",
 	[QuestionType.FILL_IN_THE_BLANK]: "Заполнение пропуска",
-	[QuestionType.SEQUENCE]: "Последовательность"
+	[QuestionType.SEQUENCE]: "Последовательность",
 }
 
 export interface QuestionDTO {

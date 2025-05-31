@@ -14,7 +14,7 @@ const prisma = new PrismaClient().$extends({
 					model,
 					operation,
 					duration: `${duration}ms`,
-					args
+					args,
 				})
 				return result
 			} catch (error) {
@@ -25,12 +25,12 @@ const prisma = new PrismaClient().$extends({
 					operation,
 					duration: `${duration}ms`,
 					args,
-					error: error instanceof Error ? error.message : String(error)
+					error: error instanceof Error ? error.message : String(error),
 				})
 				throw error
 			}
-		}
-	}
+		},
+	},
 })
 // Функция для выполнения транзакций, которую можно использовать из любого репозитория
 const executeTransaction = async <T>(callback: (tx: any) => Promise<T>): Promise<T> => {

@@ -9,7 +9,7 @@ export const initSocket = () => {
 		const token = localStorage.getItem("token") // Получение токена из localStorage
 		socket = io(SOCKET_URL, {
 			withCredentials: true,
-			auth: token ? { token } : {} // Передача токена, если он есть, иначе пустой объект
+			auth: token ? { token } : {}, // Передача токена, если он есть, иначе пустой объект
 		})
 	}
 	return socket

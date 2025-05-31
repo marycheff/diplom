@@ -10,6 +10,6 @@ export const mapUserToDto = (user: User): UserDTO => {
 		role: user.role,
 		name: user.name,
 		surname: user.surname,
-		patronymic: user.patronymic
+		patronymic: user.patronymic,
 	}
 }

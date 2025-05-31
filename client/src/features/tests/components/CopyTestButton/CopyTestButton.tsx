@@ -29,13 +29,13 @@ const CopyTestButton = ({ test, className }: CopyTestButtonProps) => {
 				}
 				await updateShortInfo(copiedTest.id, {
 					title: `Копия: ${test.title}`,
-					description: test.description || ""
+					description: test.description || "",
 				})
 				if (test.questions && test.questions.length > 0) {
 					const questionsWithoutIds = test.questions.map((question) => ({
 						...question,
 						id: "",
-						answers: question.answers?.map((answer) => ({ ...answer, id: "" })) || []
+						answers: question.answers?.map((answer) => ({ ...answer, id: "" })) || [],
 					}))
 					await upsertQuestions(copiedTest.id, questionsWithoutIds)
 				}

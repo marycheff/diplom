@@ -19,7 +19,7 @@ const AnswersList: FC<AnswersListProps> = ({
 	handleAnswerChange,
 	handleCorrectChange,
 	removeAnswer,
-	addAnswer
+	addAnswer,
 }) => {
 	return (
 		<div className={styles.wrapper}>

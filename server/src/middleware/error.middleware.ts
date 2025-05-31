@@ -12,11 +12,11 @@ export const errorMiddleware = (err: any, req: Request, res: Response, next: Nex
 			errors: err.errors,
 			path: req.path,
 			method: req.method,
-			userId: req.user?.id
+			userId: req.user?.id,
 		})
 		return res.status(err.status).json({
 			message: err.message,
-			errors: err.errors
+			errors: err.errors,
 		})
 	}
 
@@ -28,12 +28,12 @@ export const errorMiddleware = (err: any, req: Request, res: Response, next: Nex
 			status: apiErr.status,
 			path: req.path,
 			method: req.method,
-			userId: req.user?.id
+			userId: req.user?.id,
 		})
 
 		return res.status(apiErr.status).json({
 			message: apiErr.message,
-			errors: apiErr.errors
+			errors: apiErr.errors,
 		})
 	}
 
@@ -44,11 +44,11 @@ export const errorMiddleware = (err: any, req: Request, res: Response, next: Nex
 		method: req.method,
 		body: req.body,
 		userId: req.user?.id,
-		ip: req.ip
+		ip: req.ip,
 	})
 
 	return res.status(500).json({
 		message: "Непредвиденная ошибка",
-		error: process.env.NODE_ENV === "development" ? err.message : undefined
+		error: process.env.NODE_ENV === "development" ? err.message : undefined,
 	})
 }

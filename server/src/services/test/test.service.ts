@@ -9,7 +9,7 @@ import {
 	TestDTO,
 	TestSettingsDTO,
 	TestsListDTO,
-	UserTestDTO
+	UserTestDTO,
 } from "@/types"
 import { logger } from "@/utils/logger"
 import { generateSeedFromAttemptId, shuffleArray } from "@/utils/math"
@@ -34,7 +34,7 @@ class TestService {
 					{
 						...createdTest,
 						settings,
-						questions: []
+						questions: [],
 					},
 					tx
 				)
@@ -49,14 +49,14 @@ class TestService {
 			const testDTO = mapTest({
 				...result.createdTest,
 				settings: result.settings,
-				questions: []
+				questions: [],
 			})
 			logger.info(`[${LOG_NAMESPACE}] Тест успешно создан`, { testId: result.createdTest.id })
 			return testDTO
 		} catch (error) {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при создании теста`, {
 				authorId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			if (error instanceof ApiError) {
 				throw error
@@ -84,7 +84,7 @@ class TestService {
 			logger.debug(`[${LOG_NAMESPACE}] Все тесты успешно получены`, { count: testsWithAttempts.length })
 			return {
 				tests: testsWithAttempts.map((test) => mapTest(test)),
-				total
+				total,
 			}
 		} catch (error) {
 			if (error instanceof ApiError) {
@@ -93,7 +93,7 @@ class TestService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении всех тестов`, {
 				page,
 				limit,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении всех тестов")
 		}
@@ -116,11 +116,11 @@ class TestService {
 			)
 
 			logger.debug(`[${LOG_NAMESPACE}] Все немодерированные тесты успешно получены`, {
-				count: testsWithAttempts.length
+				count: testsWithAttempts.length,
 			})
 			return {
 				tests: testsWithAttempts.map((test) => mapTest(test)),
-				total
+				total,
 			}
 		} catch (error) {
 			if (error instanceof ApiError) {
@@ -129,7 +129,7 @@ class TestService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении всех немодерированных тестов`, {
 				page,
 				limit,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении всех немодерированных тестов")
 		}
@@ -167,7 +167,7 @@ class TestService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении теста по ID`, {
 				testId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении теста по ID")
 		}
@@ -220,7 +220,7 @@ class TestService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении базовой информации о тесте`, {
 				testId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении базовой информации о тесте")
 		}
@@ -276,7 +276,7 @@ class TestService {
 			if (test.settings?.shuffleAnswers && testDTO.questions) {
 				testDTO.questions = testDTO.questions.map((question, index) => ({
 					...question,
-					answers: question.answers ? shuffleArray(question.answers, seed + index) : question.answers
+					answers: question.answers ? shuffleArray(question.answers, seed + index) : question.answers,
 				}))
 			}
 
@@ -291,7 +291,7 @@ class TestService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении полной информации о тесте`, {
 				testId,
 				attemptId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении полной информации о тесте")
 		}
@@ -315,7 +315,7 @@ class TestService {
 			logger.debug(`[${LOG_NAMESPACE}] Тесты пользователя успешно получены`, { userId, count: tests.length })
 			return {
 				tests: testsWithAttempts.map((test) => mapTest(test)),
-				total
+				total,
 			}
 		} catch (error) {
 			if (error instanceof ApiError) {
@@ -325,7 +325,7 @@ class TestService {
 				userId,
 				page,
 				limit,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении тестов пользователя")
 		}
@@ -350,7 +350,7 @@ class TestService {
 
 			const result = {
 				snapshot: mapToTestSnapshotDTO(snapshot),
-				originalTest: mapTest(snapshot.originalTest)
+				originalTest: mapTest(snapshot.originalTest),
 			}
 
 			await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
@@ -362,7 +362,7 @@ class TestService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении снимка теста`, {
 				snapshotId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении снимка теста")
 		}
@@ -381,7 +381,7 @@ class TestService {
 			if (cachedSnapshot) {
 				logger.debug(`[${LOG_NAMESPACE}] Снимок теста для пользователя получен из кэша`, {
 					snapshotId,
-					attemptId
+					attemptId,
 				})
 				const parsedSnapshot = JSON.parse(cachedSnapshot)
 
@@ -423,7 +423,7 @@ class TestService {
 				if (snapshot.settings?.shuffleAnswers && testDTO.questions) {
 					testDTO.questions = testDTO.questions.map((question, index) => ({
 						...question,
-						answers: question.answers ? shuffleArray(question.answers, seed + index) : question.answers
+						answers: question.answers ? shuffleArray(question.answers, seed + index) : question.answers,
 					}))
 				}
 			}
@@ -439,7 +439,7 @@ class TestService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении снимка теста для пользователя`, {
 				snapshotId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при получении снимка теста для пользователя")
 		}
@@ -465,7 +465,7 @@ class TestService {
 
 				const settingsWithSortedFields = {
 					...testSettings,
-					inputFields: sortedInputFields
+					inputFields: sortedInputFields,
 				}
 
 				await testRepository.upsertSettings(testId, settingsWithSortedFields, tx)
@@ -520,7 +520,7 @@ class TestService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при изменении статуса видимости теста`, {
 				testId,
 				status,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при изменении статуса видимости теста")
 		}
@@ -584,7 +584,7 @@ class TestService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при изменении статуса модерации теста`, {
 				testId,
 				status,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при изменении статуса модерации теста")
 		}
@@ -616,7 +616,7 @@ class TestService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при обновлении краткой информации о тесте`, {
 				testId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при обновлении краткой информации о тесте")
 		}
@@ -640,11 +640,11 @@ class TestService {
 			)
 			logger.debug(`[${LOG_NAMESPACE}] Результаты поиска тестов получены`, {
 				query,
-				count: testsWithAttempts.length
+				count: testsWithAttempts.length,
 			})
 			return {
 				tests: testsWithAttempts.map((test) => mapTest(test)),
-				total
+				total,
 			}
 		} catch (error) {
 			if (error instanceof ApiError) {
@@ -654,7 +654,7 @@ class TestService {
 				query,
 				page,
 				limit,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при поиске тестов")
 		}
@@ -667,7 +667,7 @@ class TestService {
 			const skip = (page - 1) * limit
 			const whereCondition = {
 				authorId: userId,
-				OR: testRepository.getSearchConditions(query).OR
+				OR: testRepository.getSearchConditions(query).OR,
 			}
 
 			const tests = await testRepository.searchUserTests(query, userId, skip, limit)
@@ -684,11 +684,11 @@ class TestService {
 			logger.debug(`[${LOG_NAMESPACE}] Результаты поиска тестов пользователя получены`, {
 				query,
 				userId,
-				count: testsWithAttempts.length
+				count: testsWithAttempts.length,
 			})
 			return {
 				tests: testsWithAttempts.map((test) => mapTest(test)),
-				total
+				total,
 			}
 		} catch (error) {
 			if (error instanceof ApiError) {
@@ -699,7 +699,7 @@ class TestService {
 				userId,
 				page,
 				limit,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.BadRequest("Ошибка при поиске тестов пользователя")
 		}
@@ -719,7 +719,7 @@ class TestService {
 			}
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при удалении теста`, {
 				testId,
-				error: error instanceof Error ? error.message : String(error)
+				error: error instanceof Error ? error.message : String(error),
 			})
 			throw ApiError.InternalError("Ошибка при удалении теста")
 		}

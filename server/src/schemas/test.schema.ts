@@ -5,21 +5,21 @@ import { z } from "zod"
 export const testIdSchema = z.object({
 	params: z.object({
 		testId: z.string().min(1, "ID теста обязательно").refine(isValidUUID, {
-			message: "Некорректный ID теста"
-		})
-	})
+			message: "Некорректный ID теста",
+		}),
+	}),
 })
 
 export const shortInfoSchema = z.object({
 	body: z.object({
 		title: z.string().min(1, "Название теста обязательно").max(100, "Максимальная длина названия 100 символов"),
-		description: z.string().max(500, "Максимальная длина описания 500 символов").optional()
-	})
+		description: z.string().max(500, "Максимальная длина описания 500 символов").optional(),
+	}),
 })
 
 export const answerSchema = z.object({
 	text: z.string().min(1, "Текст ответа обязателен").max(255, "Максимальная длина ответа 255 символов"),
-	isCorrect: z.boolean()
+	isCorrect: z.boolean(),
 })
 
 export const questionSchema = z.object({
@@ -30,7 +30,7 @@ export const questionSchema = z.object({
 		.array(answerSchema)
 		.min(1, "Должен быть хотя бы один ответ")
 		.max(10, "В одном вопросе может быть максимум 10 вариантов ответов")
-		.refine((answers) => answers.some((a) => a.isCorrect), { message: "Хотя бы один ответ должен быть правильным" })
+		.refine((answers) => answers.some((a) => a.isCorrect), { message: "Хотя бы один ответ должен быть правильным" }),
 })
 const questionsSchema = z.array(questionSchema).max(60, "Максимум 60 вопросов")
 // .min(1, "Должен быть хотя бы один вопрос")
@@ -38,19 +38,19 @@ const questionsSchema = z.array(questionSchema).max(60, "Максимум 60 в�
 // Полная схема для upsert операции
 export const upsertQuestionsSchema = z.object({
 	params: z.object({
-		testId: z.string().uuid("Некорректный ID теста")
+		testId: z.string().uuid("Некорректный ID теста"),
 	}),
 	body: z.object({
-		questions: questionsSchema
-	})
+		questions: questionsSchema,
+	}),
 })
 
 // Начало попытки
 export const startTestAttemptSchema = z.object({
 	params: z.object({
 		testId: z.string().min(1, "ID теста обязательно").refine(isValidUUID, {
-			message: "ID теста должен быть корректным UUID"
-		})
+			message: "ID теста должен быть корректным UUID",
+		}),
 	}),
 	body: z
 		.object({
@@ -61,19 +61,19 @@ export const startTestAttemptSchema = z.object({
 					[PreTestUserData.Patronymic]: z.string().min(1, "Отчество не может быть пустым").optional(),
 					[PreTestUserData.Gender]: z
 						.enum(["male", "female"], {
-							errorMap: () => ({ message: "Пол должен быть указан как 'male' или 'female'" })
+							errorMap: () => ({ message: "Пол должен быть указан как 'male' или 'female'" }),
 						})
 						.optional(),
 					[PreTestUserData.BirthDate]: z
 						.string()
 						.regex(/^\d{4}-\d{2}-\d{2}$/, {
-							message: "Дата рождения должна быть в формате YYYY-MM-DD"
+							message: "Дата рождения должна быть в формате YYYY-MM-DD",
 						})
 						.optional(),
 					[PreTestUserData.Age]: z
 						.number({
 							required_error: "Возраст должен быть числом",
-							invalid_type_error: "Возраст должен быть числом"
+							invalid_type_error: "Возраст должен быть числом",
 						})
 						.min(0, "Возраст не может быть отрицательным")
 						.max(150, "Возраст не может быть больше 150")
@@ -84,35 +84,35 @@ export const startTestAttemptSchema = z.object({
 					[PreTestUserData.Email]: z.string().email("Неверный формат email").optional(),
 					[PreTestUserData.School]: z.string().min(1, "Название школы не может быть пустым").optional(),
 					[PreTestUserData.Grade]: z.string().min(1, "Класс не может быть пустым").optional(),
-					[PreTestUserData.Group]: z.string().min(1, "Группа не может быть пустой").optional()
+					[PreTestUserData.Group]: z.string().min(1, "Группа не может быть пустой").optional(),
 				})
 				.strict("Обнаружены недопустимые поля в userData")
-				.optional()
+				.optional(),
 		})
-		.optional()
+		.optional(),
 })
 
 // Сохранение ответа
 export const saveAnswersSchema = z.object({
 	params: z.object({
 		attemptId: z.string().min(1, "ID попытки обязательно").refine(isValidUUID, {
-			message: "ID попытки должен быть корректным UUID"
-		})
+			message: "ID попытки должен быть корректным UUID",
+		}),
 	}),
 	body: z.object({
 		answers: z.array(
 			z.object({
 				questionId: z.string().min(1, "ID вопроса обязательно").refine(isValidUUID, {
-					message: "ID вопроса должен быть корректным UUID"
+					message: "ID вопроса должен быть корректным UUID",
 				}),
 				answersIds: z
 					.array(
 						z.string().min(1, "ID ответа не может быть пустым").refine(isValidUUID, {
-							message: "ID ответа должен быть корректным UUID"
+							message: "ID ответа должен быть корректным UUID",
 						})
 					)
 					.refine((val) => new Set(val).size === val.length, {
-						message: "Массив answersIds содержит дублирующиеся идентификаторы"
+						message: "Массив answersIds содержит дублирующиеся идентификаторы",
 					})
 					.optional(),
 				textAnswer: z.string().optional().nullable(),
@@ -121,19 +121,19 @@ export const saveAnswersSchema = z.object({
 					.string()
 					.or(z.date())
 					.optional()
-					.transform((val) => (val ? new Date(val) : undefined))
+					.transform((val) => (val ? new Date(val) : undefined)),
 			})
-		)
+		),
 		// .nonempty("Должен быть указан хотя бы один ответ"),
-	})
+	}),
 })
 // Завершение попытки
 export const completeTestAttemptSchema = z.object({
 	params: z.object({
 		attemptId: z.string().min(1, "ID попытки обязательно").refine(isValidUUID, {
-			message: "ID попытки должен быть корректным UUID"
-		})
-	})
+			message: "ID попытки должен быть корректным UUID",
+		}),
+	}),
 })
 
 export const testSettingsSchema = z.object({
@@ -156,27 +156,27 @@ export const testSettingsSchema = z.object({
 			showDetailedResults: z.boolean().optional(),
 			allowRetake: z.boolean().optional(),
 			retakeLimit: z.number().min(1).max(20).nullable().optional(),
-			timeLimit: z.number().nullable().optional()
+			timeLimit: z.number().nullable().optional(),
 		})
 		.strict("Обнаружены недопустимые поля в настройках теста")
 		.refine((data) => Object.keys(data).length > 0, {
-			message: "Должно быть передано хотя бы одно поле настроек"
-		})
+			message: "Должно быть передано хотя бы одно поле настроек",
+		}),
 })
 
 export const getTestSnapshotSchema = z.object({
 	params: z.object({
 		snapshotId: z.string().min(1, "ID снимка обязательно").refine(isValidUUID, {
-			message: "ID снимка должен быть корректным UUID"
-		})
-	})
+			message: "ID снимка должен быть корректным UUID",
+		}),
+	}),
 })
 export const getAttemptSchema = z.object({
 	params: z.object({
 		attemptId: z.string().min(1, "ID попытки обязательно").refine(isValidUUID, {
-			message: "ID попытки должен быть корректным UUID"
-		})
-	})
+			message: "ID попытки должен быть корректным UUID",
+		}),
+	}),
 })
 
 // Схема для ответа

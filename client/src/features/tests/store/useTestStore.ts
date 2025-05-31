@@ -14,7 +14,7 @@ const initialState = {
 	cache: {},
 	MAX_CACHE_ENTRIES: 50,
 	CACHE_EXPIRATION_TIME: 5 * 60 * 1000, //  5min
-	lastCacheUpdateDate: null
+	lastCacheUpdateDate: null,
 }
 export const useTestStore = create<TestState>((set) => {
 	const withFetching = createApiHandler(set, "isFetching")
@@ -33,10 +33,10 @@ export const useTestStore = create<TestState>((set) => {
 					...state.cache,
 					[key]: {
 						data,
-						timestamp: new Date()
-					}
+						timestamp: new Date(),
+					},
 				},
-				lastCacheUpdateDate: new Date()
+				lastCacheUpdateDate: new Date(),
 			}))
 		},
 		clearCache: () => {
@@ -180,6 +180,6 @@ export const useTestStore = create<TestState>((set) => {
 				await testService.deleteTest(id)
 			}
 			return withLoading(operation)
-		}
+		},
 	}
 })

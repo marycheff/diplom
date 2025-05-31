@@ -7,7 +7,7 @@ import {
 	resetPasswordSchema,
 	updateActivationLinkSchema,
 	updatePasswordSchema,
-	verifyResetCodeSchema
+	verifyResetCodeSchema,
 } from "@/schemas/auth.schema"
 import express from "express"
 

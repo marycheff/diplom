@@ -49,10 +49,10 @@ const UserAttemptsTable: FC<UserAttemptsTableProps> = ({ attempts, total }) => {
 													to={
 														isAdmin
 															? generatePath(ROUTES.ADMIN_ATTEMPT_INFO, {
-																	attemptId: attempt.id
+																	attemptId: attempt.id,
 															  })
 															: generatePath(ROUTES.ATTEMPT_RESULTS, {
-																	attemptId: attempt.id
+																	attemptId: attempt.id,
 															  })
 													}
 													className="actionLink"

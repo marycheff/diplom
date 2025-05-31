@@ -31,7 +31,7 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 	onNextQuestion,
 	onSubmitAnswers,
 	isLastQuestion = false,
-	isLoading = false
+	isLoading = false,
 }) => {
 	const [localTextAnswer, setLocalTextAnswer] = useState<string>(textAnswer)
 	const [localSelectedAnswers, setLocalSelectedAnswers] = useState<string[]>(selectedAnswers)
