@@ -44,17 +44,17 @@ export const calculateTestScore = (questionsWithAnswers: QuestionWithAnswers[], 
 
 			if (allCorrect) correctQuestionsCount++
 			//   } else if (question.type === "SEQUENCE") {
-			//       // Для вопросов типа SEQUENCE проверяем правильность порядка ответов
-			//       // Сортируем ответы пользователя по позиции
+			//       // Для вопросов типа SEQUENCE проверка правильности порядка ответов
+			//       // Сортировка ответов пользователя по позиции
 			//       const sortedUserAnswers = [...userAnswersForQuestion].sort((a, b) => {
 			//           return (a.position || 0) - (b.position || 0)
 			//       })
 
-			//       // Получаем ID ответов в правильном порядке (предполагается, что ответы в question.answers уже в правильном порядке)
+			//       // Получение ID ответов в правильном порядке (предполагается, что ответы в question.answers уже в правильном порядке)
 			//       const correctAnswerIds = question.answers.map(a => a.id)
 			//       const userAnswerIds = sortedUserAnswers.map(a => a.answerId)
 
-			//       // Проверяем, что все ответы присутствуют и в правильном порядке
+			//       // Проверка, что все ответы присутствуют и в правильном порядке
 			//       const correctSequence =
 			//           correctAnswerIds.length === userAnswerIds.length &&
 			//           correctAnswerIds.every((id, index) => id === userAnswerIds[index])

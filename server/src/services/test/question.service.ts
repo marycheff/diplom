@@ -7,15 +7,8 @@ import { logger } from "@/utils/logger"
 import { executeTransaction } from "@/utils/prisma-client"
 import { deleteTestCache } from "@/utils/redis/redis.utils"
 import { isValidUUID } from "@/utils/validator"
-import fs from "fs"
 
 const LOG_NAMESPACE = "QuestionService"
-const UPLOAD_DIR = "uploads/questions"
-
-// Создаем директорию для загрузок, если она не существует
-if (!fs.existsSync(UPLOAD_DIR)) {
-	fs.mkdirSync(UPLOAD_DIR, { recursive: true })
-}
 
 class QuestionService {
 	async upsertQuestions(testId: string, questions: QuestionDTO[], testGenerating = false): Promise<QuestionDTO[]> {
@@ -252,7 +245,7 @@ class QuestionService {
 	private validateFillInTheBlankQuestions(questions: QuestionDTO[]): void {
 		for (const question of questions) {
 			if (question.type === "FILL_IN_THE_BLANK") {
-				// Проверяем наличие маркера {blank} в тексте вопроса
+				// Проверка наличия маркера {blank} в вопросе
 				const blankCount = (question.text.match(/{blank}/g) || []).length
 				if (blankCount === 0) {
 					logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK отсутствует маркер {blank}`, {
@@ -267,7 +260,7 @@ class QuestionService {
 					throw ApiError.BadRequest("В вопросе с пропуском должно быть только одно поле {blank}")
 				}
 
-				// Проверяем количество правильных ответов (должен быть только один)
+				// Проверка количества правильных ответов (должен быть только один)
 				const correctAnswers = question.answers.filter((answer) => answer.isCorrect)
 				if (correctAnswers.length !== 1) {
 					logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK должен быть ровно один правильный ответ`, {

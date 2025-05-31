@@ -42,6 +42,5 @@
 }
 
 :global(.modalOverlay) .confirmationForm {
-	// Увеличиваем z-index для вложенного модального окна
 	z-index: 1100;
 }

@@ -54,11 +54,11 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 			const base64String = reader.result as string
 			const img = new Image()
 			img.onload = () => {
-				// Если изображение больше 500x500, уменьшаем его с сохранением пропорций
+				// Если изображение больше 500x500, уменьшение его с сохранением пропорций
 				if (img.width > 500 || img.height > 500) {
 					resizeImage(img, base64String, file.type)
 						.then((resizedBase64) => {
-							// Проверяем размер сжатого изображения
+							// Проверка размера сжатого изображения
 							const base64Data = resizedBase64.split(",")[1]
 							const sizeInBytes = Math.ceil((base64Data.length * 3) / 4)
 
@@ -118,24 +118,24 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 	const resizeImage = (img: HTMLImageElement, base64: string, mimeType: string): Promise<string> => {
 		return new Promise((resolve, reject) => {
 			try {
-				// Вычисляем новые размеры с сохранением пропорций
+				// Вычисление новых размеров с сохранением пропорций
 				let newWidth = img.width
 				let newHeight = img.height
 				const maxSize = 500
 
 				if (newWidth > maxSize || newHeight > maxSize) {
 					if (newWidth > newHeight) {
-						// Ширина больше высоты - ограничиваем по ширине
+						// Ограничение по ширине, если ширина больше высоты
 						newHeight = Math.round((newHeight * maxSize) / newWidth)
 						newWidth = maxSize
 					} else {
-						// Высота больше или равна ширине - ограничиваем по высоте
+						// Ограничение по высоте, если высота больше или равна ширине
 						newWidth = Math.round((newWidth * maxSize) / newHeight)
 						newHeight = maxSize
 					}
 				}
 
-				// Создаем canvas для изменения размера
+				// Создание canvas для изменения размера
 				const canvas = document.createElement("canvas")
 				canvas.width = newWidth
 				canvas.height = newHeight
@@ -146,10 +146,10 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 					return
 				}
 
-				// Рисуем изображение с новыми размерами
+				// Рисование изображения с новыми размерами
 				ctx.drawImage(img, 0, 0, newWidth, newHeight)
 
-				// Получаем новое base64 изображение
+				// Получение нового base64 изображения
 				const resizedBase64 = canvas.toDataURL(mimeType)
 				resolve(resizedBase64)
 			} catch (error) {
@@ -163,18 +163,18 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 		if (file) validateAndLoadImage(file)
 	}
 
-	// Обновляем предпросмотр URL при изменении поля ввода
+	// Обновление предпросмотра URL при изменении поля ввода
 	const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const url = e.target.value
 		setImageUrl(url)
 
-		// Проверяем, является ли URL изображением и показываем предпросмотр
+		// Проверка, является ли URL изображением и показ предпросмотра
 		if (url.trim()) {
 			const validExtensions = [".jpg", ".jpeg", ".png"]
 			const hasValidExtension = validExtensions.some((ext) => url.toLowerCase().endsWith(ext))
 
 			if (hasValidExtension) {
-				// Автоматически загружаем изображение, если URL валидный
+				// Автоматическая загрузка изображения, если URL валидный
 				validateAndLoadImageUrl(url.trim())
 			}
 		}
@@ -242,7 +242,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 		setUploadMode(mode)
 	}
 
-	// Определяем, есть ли у нас активное изображение (превью или предпросмотр URL)
+	// Определение, есть ли у нас активное изображение (превью или предпросмотр URL)
 	const hasActiveImage = !!preview
 
 	return (

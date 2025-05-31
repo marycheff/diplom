@@ -73,7 +73,7 @@ export interface AttemptQuestionDTO {
 		answers: Array<{
 			userAnswerId: string
 			answer: AnswerDTO
-			// position?: number // Добавляем позицию для вопросов типа SEQUENCE
+			// position?: number // Добавление позиции для вопросов типа SEQUENCE
 		}>
 		textAnswer: string | null
 		isCorrect: boolean | null

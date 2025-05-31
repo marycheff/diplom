@@ -42,11 +42,11 @@ const FillInTheBlankQuestionForm: FC<FillInTheBlankQuestionFormProps> = ({
 	)
 	const [hasBlank, setHasBlank] = useState(false)
 	const [displayValue, setDisplayValue] = useState("")
-	// Используем useRef вместо объекта с current
+	// Использование useRef вместо объекта с current
 	const inputRef = useRef<HTMLInputElement | null>(null)
 	const hasBlankMarker = (value: string): boolean => value.includes("{blank}")
 
-	// Проверяем наличие пропуска при изменении вопроса и обновляем отображаемое значение
+	// Проверка наличия пропуска при изменении вопроса и обновление отображаемого значения
 	useEffect(() => {
 		const subscription = register("question", questionValidationFillInTextRules).onChange((event) => {
 			const value = event.target.value || ""
@@ -56,7 +56,7 @@ const FillInTheBlankQuestionForm: FC<FillInTheBlankQuestionFormProps> = ({
 		return () => subscription.unsubscribe
 	}, [register])
 
-	// Обновляем состояние наличия пропуска при изменении значения поля
+	// Обновление состояния наличия пропуска при изменении значения поля
 	useEffect(() => {
 		const updateBlankState = () => {
 			if (inputRef.current) {
@@ -78,7 +78,7 @@ const FillInTheBlankQuestionForm: FC<FillInTheBlankQuestionFormProps> = ({
 		}
 	}, [])
 
-	// Проверяем наличие маркера при инициализации формы (для режима редактирования)
+	// Проверка наличия маркера при инициализации формы (для режима редактирования)
 	useEffect(() => {
 		// При монтировании компонента или изменении режима редактирования
 		const checkInitialValue = () => {
@@ -89,7 +89,7 @@ const FillInTheBlankQuestionForm: FC<FillInTheBlankQuestionFormProps> = ({
 			}
 		}
 
-		// Выполняем проверку с небольшой задержкой, чтобы значение успело установиться
+		// Выполнение проверки с небольшой задержкой, чтобы значение успело установиться
 		setTimeout(checkInitialValue, 0)
 	}, [isEditing])
 
@@ -125,22 +125,22 @@ const FillInTheBlankQuestionForm: FC<FillInTheBlankQuestionFormProps> = ({
 			const cursorPosition = input.selectionStart || 0
 			const currentValue = input.value
 
-			// Проверяем, нужно ли добавить пробелы до и после маркера
+			// Проверка, нужно ли добавить пробелы до и после маркера
 			const needSpaceBefore = cursorPosition > 0 && currentValue[cursorPosition - 1] !== " "
 			const needSpaceAfter = cursorPosition < currentValue.length && currentValue[cursorPosition] !== " "
 
-			// Формируем маркер с пробелами при необходимости
+			// Формирование маркера с пробелами при необходимости
 			const markerWithSpaces = (needSpaceBefore ? " " : "") + "{blank}" + (needSpaceAfter ? " " : "")
 
-			// Вставляем маркер в позицию курсора
+			// Вставка маркера в позицию курсора
 			const newValue =
 				currentValue.substring(0, cursorPosition) + markerWithSpaces + currentValue.substring(cursorPosition)
 
-			// Обновляем значение в форме
+			// Обновление значения в форме
 			setValue("question", newValue, { shouldValidate: true })
 			setHasBlank(true)
 
-			// Устанавливаем фокус и позицию курсора после вставленного маркера
+			// Установка фокуса и позиции курсора после вставленного маркера
 			const newCursorPosition = cursorPosition + markerWithSpaces.length
 			setTimeout(() => {
 				input.focus()
@@ -158,22 +158,22 @@ const FillInTheBlankQuestionForm: FC<FillInTheBlankQuestionFormProps> = ({
 			// Находим позицию маркера
 			const blankPosition = currentValue.indexOf("{blank}")
 			if (blankPosition !== -1) {
-				// Проверяем наличие пробелов до и после маркера для удаления
+				// Проверка наличия пробелов до и после маркера для удаления
 				const hasPrevSpace = blankPosition > 0 && currentValue[blankPosition - 1] === " "
 				const hasNextSpace = blankPosition + 7 < currentValue.length && currentValue[blankPosition + 7] === " "
 
-				// Определяем начало и конец для удаления (включая пробелы, если они были добавлены автоматически)
+				// Определение начала и конца для удаления (включая пробелы, если они были добавлены автоматически)
 				const startPos = hasPrevSpace ? blankPosition - 1 : blankPosition
 				const endPos = hasNextSpace ? blankPosition + 8 : blankPosition + 7
 
-				// Удаляем маркер и пробелы
+				// Удаление маркера и пробелов
 				const newValue = currentValue.substring(0, startPos) + currentValue.substring(endPos)
 
-				// Обновляем значение в форме
+				// Обновление значения в форме
 				setValue("question", newValue, { shouldValidate: true })
 				setHasBlank(false)
 
-				// Устанавливаем фокус и позицию курсора
+				// Установка фокуса и позиции курсора
 				setTimeout(() => {
 					input.focus()
 					input.setSelectionRange(startPos, startPos)

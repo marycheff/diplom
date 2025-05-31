@@ -61,7 +61,7 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 			const viewportHeight = window.innerHeight
 			const viewportWidth = window.innerWidth
 
-			// Определяем позицию
+			// Определение позиции
 			let actualPosition = position
 
 			if (position === "auto") {
@@ -109,7 +109,7 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 			tooltipRef.current.style.top = `${top}px`
 			tooltipRef.current.style.left = `${left}px`
 
-			// Добавляем класс с позицией для стилизации
+			// Добавление класса с позицией для стилизации
 			tooltipRef.current.dataset.position = actualPosition
 		}
 	}, [visible, position, targetRef])

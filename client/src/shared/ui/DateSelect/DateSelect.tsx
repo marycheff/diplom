@@ -24,12 +24,12 @@ const DateSelect: FC<DateSelectProps> = ({
 	required = false,
 	label,
 }) => {
-	// Получаем текущий год и вычисляем диапазон годов (от текущего года - 100 до текущего года)
+	// Получение текущего года и вычисление диапазона годов
 	const currentYear = new Date().getFullYear()
 	const startYear = currentYear - 100
 	const endYear = currentYear
 
-	// Парсим начальное значение, если оно есть (формат дд.мм.гггг)
+	// Парсинг начального значения, если оно есть (формат дд.мм.гггг)
 	const [initialDay, initialMonth, initialYear] = value ? value.split(".") : ["", "", ""]
 
 	// Состояния для выбранных значений
@@ -37,7 +37,7 @@ const DateSelect: FC<DateSelectProps> = ({
 	const [selectedMonth, setSelectedMonth] = useState(initialMonth || "")
 	const [selectedYear, setSelectedYear] = useState(initialYear || "")
 
-	// Генерируем массивы опций для селектов
+	// Генерация массивов опций для селектов
 	const generateDays = () => {
 		const days = []
 		for (let i = 1; i <= 31; i++) {
@@ -78,20 +78,20 @@ const DateSelect: FC<DateSelectProps> = ({
 		setSelectedYear(value)
 	}
 
-	// Обновляем значение поля при изменении любого из селектов
+	// Обновление значения поля при изменении любого из селектов
 	useEffect(() => {
 		if (selectedDay && selectedMonth && selectedYear) {
-			// Преобразуем в ISO формат для внутреннего использования
+			// Преобразование в ISO формат для внутреннего использования
 			const isoDate = `${selectedYear}-${selectedMonth}-${selectedDay}`
 
-			// Сохраняем ISO формат в скрытом поле
+			// Сохранение ISO формата в скрытом поле
 			// setValue(`${name}_iso`, isoDate)
 			setValue(name, isoDate)
 
-			// Запускаем валидацию
+			// Запуск валидации
 			trigger(name)
 		} else if (required) {
-			// Если поле обязательное, но не все части даты выбраны, устанавливаем пустое значение
+			// Если поле обязательное, но не все части даты выбраны, установка пустого значения
 			setValue(name, "")
 			trigger(name)
 		}

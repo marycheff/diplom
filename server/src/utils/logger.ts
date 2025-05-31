@@ -3,7 +3,7 @@ import path from "path"
 import winston from "winston"
 import { envConfig } from "../config/env-config"
 
-// Создаем директорию для логов, если ее нет
+// Создание директории для логов, если ее нет
 const logDir = path.join(process.cwd(), "logs")
 if (!fs.existsSync(logDir)) {
 	fs.mkdirSync(logDir, { recursive: true })
@@ -27,10 +27,10 @@ const colors = {
 	debug: "white",
 }
 
-// Добавляем цвета к уровням
+// Добавление цветов к уровням
 winston.addColors(colors)
 
-// Создаем форматы для логов
+// Создание форматов для логов
 const consoleFormat = winston.format.combine(
 	winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
 	winston.format.colorize({ all: true }),
@@ -47,18 +47,18 @@ const fileFormat = winston.format.combine(
 	winston.format.json()
 )
 
-// Определяем уровень логирования в зависимости от окружения
+// Определение уровня логирования в зависимости от окружения
 const level = envConfig.NODE_ENV === "production" ? "info" : "debug"
 
-// Создаем массив транспортов
+// Создание массива транспортов
 const transports = [
-	// Всегда пишем в консоль
+	// Отображение всех логов в консоль
 	new winston.transports.Console({
 		level,
 		format: consoleFormat,
 	}),
 
-	// Логи уровня error и выше записываем в отдельный файл
+	// Запись логов уровня error и выше в отдельный файл
 	new winston.transports.File({
 		filename: path.join(logDir, "error.log"),
 		level: "error",
@@ -67,7 +67,7 @@ const transports = [
 		maxFiles: 5,
 	}),
 
-	// Все логи записываем в общий файл
+	// Запись всех логов в общий файл
 	new winston.transports.File({
 		filename: path.join(logDir, "combined.log"),
 		level,
@@ -77,7 +77,7 @@ const transports = [
 	}),
 ]
 
-// Создаем и экспортируем логгер
+// Создание и экспорт логгера
 export const logger = winston.createLogger({
 	levels,
 	level,

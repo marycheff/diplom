@@ -37,8 +37,8 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 		// reValidateMode: "onChange",
 		// shouldFocusError: false,
 	})
-	// Заполняем поля формы данными пользователя, если они есть
-
+	
+	// Заполнение полей формы данными пользователя, если они есть 
 	useEffect(() => {
 		if (!user) return
 

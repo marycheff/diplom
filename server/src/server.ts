@@ -84,7 +84,7 @@ const gracefulShutdown = async (): Promise<void> => {
 	logger.info("Начало процесса graceful shutdown...")
 
 	try {
-		// Останавливаем все фоновые задачи
+		// Остановка всех фоновых задач
 		shutdownJobs()
 		closeSocketIO()
 
@@ -98,7 +98,7 @@ const gracefulShutdown = async (): Promise<void> => {
 		process.exit(0)
 	} catch (error) {
 		logger.error("Ошибка при остановке сервера:", error)
-		process.exit(1) // Завершаем процесс с кодом ошибки
+		process.exit(1) // Завершение процесса с кодом ошибки
 	}
 }
 

@@ -33,7 +33,7 @@ export const Input: FC<InputProps> = ({
 					type={type}
 					name={name}
 					value={value}
-					// Используем placeholder только если не используется floating label
+					// Использование placeholder только если не используется floating label
 					placeholder={floatingLabel ? "" : placeholder}
 					disabled={disabled}
 					className={`${styles.input} ${className}`}
@@ -44,7 +44,7 @@ export const Input: FC<InputProps> = ({
 					id={inputId}
 					{...props}
 				/>
-				{/* Отображаем label только если используется floating label */}
+				{/* Отображение label только если используется floating label */}
 				{floatingLabel && (
 					<label
 						htmlFor={inputId}

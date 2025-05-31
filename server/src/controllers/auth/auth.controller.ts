@@ -43,7 +43,7 @@ class AuthController {
 			const activationLink = req.params.link
 			const { accessToken, refreshToken, user } = await authService.activate(activationLink)
 
-			// Устанавливаем куки
+			// Установка куки
 			res.cookie("refreshToken", refreshToken, {
 				maxAge: 30 * 24 * 60 * 60 * 1000,
 				httpOnly: true,

@@ -70,7 +70,7 @@ class AttemptRepository {
 						createdAt: true,
 					},
 				},
-				//  sequenceAnswers: true, // Включаем данные о последовательности ответов
+				//  sequenceAnswers: true,
 				test: {
 					include: {
 						questions: {
@@ -162,7 +162,7 @@ class AttemptRepository {
 				answers: {
 					include: { answer: true },
 				},
-				//  sequenceAnswers: true, // Включаем данные о последовательности ответов
+				//  sequenceAnswers: true,
 				test: {
 					include: {
 						questions: {
@@ -192,7 +192,7 @@ class AttemptRepository {
 						createdAt: true,
 					},
 				},
-				//  sequenceAnswers: true, // Включаем данные о последовательности ответов
+				//  sequenceAnswers: true,
 			},
 		})
 	}
@@ -220,7 +220,7 @@ class AttemptRepository {
 		return completedAttempt !== null
 	}
 	async findExpired(batchSize: number): Promise<TestAttempt[]> {
-		// Получаем все попытки в статусе IN_PROGRESS с их снимками и настройками
+		// Получение всех попыток в статусе IN_PROGRESS с их снимками и настройками
 		const attempts = await prisma.testAttempt.findMany({
 			where: {
 				status: TestAttemptStatus.IN_PROGRESS,
@@ -241,7 +241,7 @@ class AttemptRepository {
 		})
 
 		const now = new Date()
-		// Фильтруем попытки, у которых истек timeLimit
+		// Фильтрация попыток, у которых истек timeLimit
 		return attempts.filter((attempt) => {
 			const timeLimit = attempt.test?.settings?.timeLimit
 			if (!timeLimit || timeLimit === 0) {
@@ -317,20 +317,20 @@ class AttemptRepository {
 			for (const answer of answers) {
 				const { questionId, answersIds, textAnswer, answeredAt } = answer
 
-				// Получаем тип вопроса
+				// Получение типа вопроса
 				const question = await tx.question.findUnique({
 					where: { id: questionId },
 					select: { type: true },
 				})
 
-				// Удаляем предыдущие ответы на этот вопрос
+				// Удаление предыдущих ответов на этот вопрос
 				await tx.userAnswer.deleteMany({
 					where: { attemptId, questionId },
 				})
 
 				// Для вопросов с текстовым вводом и вопросов с пропусками
 				if ((question?.type === "TEXT_INPUT" || question?.type === "FILL_IN_THE_BLANK") && textAnswer !== undefined) {
-					// Получаем правильный ответ из теста
+					// Получение правильного ответа из теста
 					const correctAnswer = await tx.answer.findFirst({
 						where: {
 							questionId,
@@ -338,17 +338,17 @@ class AttemptRepository {
 						},
 					})
 
-					// Определяем, правильный ли ответ
+					// Определение, правильный ли ответ
 					const isCorrect = correctAnswer?.text.toLowerCase() === textAnswer?.toLowerCase()
 
-					// Создаем запись ответа пользователя с текстовым ответом и флагом правильности
+					// Создание записи ответа пользователя с текстовым ответом и флагом правильности
 					await tx.userAnswer.create({
 						data: {
 							attemptId,
 							questionId,
-							answerId: correctAnswer?.id || "", // Связываем с правильным ответом
-							textAnswer, // Сохраняем текстовый ответ пользователя
-							isCorrect, // Добавить это поле в модель UserAnswer
+							answerId: correctAnswer?.id || "", // Связь с правильным ответом
+							textAnswer, // Сохранение текстового ответа пользователя
+							isCorrect,
 							answeredAt: answeredAt || new Date(),
 						},
 					})

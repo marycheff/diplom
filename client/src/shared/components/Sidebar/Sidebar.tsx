@@ -104,13 +104,13 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 			</div>
 		)
 
-	// Создаем оберточный компонент для MenuItem с обработкой клика
+	// Оберточный компонент для MenuItem с обработкой клика
 	const MenuItemWithCollapse = (props: any) => (
 		<MenuItem
 			{...props}
 			onClick={(e: any) => {
 				handleMenuItemClick()
-				// Если у MenuItem есть свой обработчик клика, вызываем его
+				// Вызов обработчика клика у MenuItem, если он есть
 				if (props.onClick) {
 					props.onClick(e)
 				}

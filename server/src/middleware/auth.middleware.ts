@@ -54,7 +54,6 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 			method: req.method,
 		})
 
-		// Добавляем userData в req
 		req.user = userData
 		next()
 	} catch (error) {

@@ -385,7 +385,7 @@ class TestService {
 				})
 				const parsedSnapshot = JSON.parse(cachedSnapshot)
 
-				// Проверяем статус снимка
+				// Проверка статуса снимка
 				if (parsedSnapshot.visibilityStatus === TestVisibilityStatus.HIDDEN) {
 					logger.warn(`[${LOG_NAMESPACE}] Снимок теста не найден или недоступен`, { snapshotId })
 					throw ApiError.NotFound("Снимок теста не найден")
@@ -399,7 +399,7 @@ class TestService {
 				throw ApiError.NotFound("Снимок теста не найден")
 			}
 
-			// Проверяем статус модерации снимка
+			// Проверка статуса модерации снимка
 			if (
 				snapshot.moderationStatus === ModerationStatus.PENDING ||
 				snapshot.moderationStatus === ModerationStatus.REJECTED

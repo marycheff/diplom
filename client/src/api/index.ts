@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestCo
 
 export const API_URL = import.meta.env.VITE_API_URL
 
-// Расширяем тип InternalAxiosRequestConfig, чтобы добавить свойство _isRetry
+// Расширение типа InternalAxiosRequestConfig, чтобы добавить свойство _isRetry
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 	_isRetry?: boolean
 }
@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use(
 	async (error: AxiosError) => {
 		const originalRequest = error.config as CustomAxiosRequestConfig
 
-		// Проверяем, что ошибка связана с истекшим токеном
+		// Проверка, что ошибка связана с истекшим токеном
 		if (error.response?.status === 401 && !originalRequest._isRetry) {
 			originalRequest._isRetry = true
 			try {
@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
 				const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
 				localStorage.setItem("token", response.data.accessToken)
 
-				// Повторяем оригинальный запрос с новым токеном
+				// Повтор оригинального запроса с новым токеном  
 				return axiosInstance(originalRequest)
 			} catch (e) {
 				localStorage.removeItem("token")
@@ -45,7 +45,7 @@ axiosInstance.interceptors.response.use(
 				window.location.href = "/"
 			}
 		}
-		// Пробрасываем ошибку дальше, если она не связана с истекшим токеном
+		// Проброс ошибки дальше, если она не связана с истекшим токеном
 		throw error
 	}
 )

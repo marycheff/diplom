@@ -55,7 +55,7 @@ class AttemptService {
 			if (settings?.inputFields && Array.isArray(settings.inputFields) && settings.inputFields.length > 0) {
 				const requiredFields = settings.inputFields
 
-				// Проверяем, что все обязательные поля присутствуют
+				// Проверка, что все обязательные поля присутствуют
 				if (!preTestUserData || requiredFields.some((field) => !preTestUserData[field as keyof PreTestUserDataType])) {
 					const missingLabels = requiredFields.filter((field) => !preTestUserData?.[field as keyof PreTestUserDataType])
 					const missingLabelsRu = missingLabels.map((f) => PreTestUserDataLabels[f as PreTestUserData])
@@ -174,7 +174,7 @@ class AttemptService {
 						})
 						throw ApiError.BadRequest(`Для вопроса ${questionId} с текстовым вводом должен быть указан текстовый ответ`)
 					}
-					continue // Пропускаем дальнейшие проверки для TEXT_INPUT
+					continue // Пропуск дальнейших проверок для TEXT_INPUT
 				}
 
 				if (question.type === "SINGLE_CHOICE" && answersIds.length > 1) {
@@ -231,7 +231,7 @@ class AttemptService {
 				throw ApiError.BadRequest("Попытка уже завершена")
 			}
 
-			// Рассчитываем и обновляем timeSpent
+			// Раасчет и обновление timeSpent
 			const now = new Date()
 			const startedAt = new Date(attempt.startedAt)
 			const timeSpent = Math.floor((now.getTime() - startedAt.getTime()) / 1000) // В секундах
@@ -255,13 +255,13 @@ class AttemptService {
 			// Проверка последнего снимка
 			const latestSnapshot = await testRepository.findLatestSnapshot(attempt.testId)
 			if (latestSnapshot && latestSnapshot.id !== attempt.testSnapshotId) {
-				// Проверяем, существует ли snapshot в базе данных
+				// Проверка, существует ли snapshot в базе данных
 				const snapshotExists = await testRepository.snapshotExists(latestSnapshot.id)
 				if (snapshotExists) {
 					await attemptRepository.updateSnapshotId(attemptId, latestSnapshot.id)
 				} else {
 					logger.warn(`[${LOG_NAMESPACE}] Снимок не существует`, { snapshotId: latestSnapshot.id })
-					// Устанавливаем testSnapshotId в null, если снимок недоступен
+					// Установка testSnapshotId в null, если снимок недоступен
 					await attemptRepository.updateSnapshotId(attemptId, null)
 				}
 			}

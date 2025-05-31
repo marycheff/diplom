@@ -95,7 +95,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen, i
 	// Прерывание рендера до завершения анимации открытия
 	if (!isMounted) return null
 
-	// Используем портал для рендеринга модального окна в конце body
+	// Использование портала для рендеринга модального окна в конце body
 	return createPortal(
 		<div
 			className={`${styles.modalOverlay} ${!isOpen ? styles.closing : ""}`}

@@ -28,7 +28,7 @@ const ConfirmationModal = <T extends Record<string, any> = {}>({
 }: ConfirmationModalProps<T>) => {
 	const { handleSubmit, reset } = useForm<T>()
 
-	// Сбрасываем форму при открытии/закрытии модального окна
+	// Сброс формы при открытии/закрытии модального окна
 	useEffect(() => {
 		if (!isOpen) {
 			reset()

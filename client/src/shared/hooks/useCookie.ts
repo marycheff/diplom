@@ -13,7 +13,7 @@ export function useCookie<T>(
 	initialValue?: T,
 	options: CookieOptions = { expires: 1, path: "/" }
 ): [T, (value: T | ((val: T) => T)) => void, () => void] {
-	// Если initialValue не передан, используем пустой объект
+	// Если initialValue не передан, используется пустой объект
 	const defaultValue = initialValue !== undefined ? initialValue : ({} as T)
 
 	// Функция для чтения куки

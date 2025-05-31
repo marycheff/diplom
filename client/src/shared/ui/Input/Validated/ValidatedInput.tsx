@@ -34,7 +34,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
 	const { ref, onChange, onBlur, ...registeredInput } = register(name, validationRules)
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-		onChange(e) // Вызываем оригинальный обработчик onChange из register
+		onChange(e) // Вызов оригинального обработчика onChange из register
 		setInputValue(e.target.value)
 		setWasTouched(true)
 		if (errors) {
@@ -44,7 +44,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
 	}
 
 	const handleBlur = (e: any) => {
-		onBlur(e) // Вызываем оригинальный обработчик onBlur из register для запуска валидации
+		onBlur(e) // Вызов оригинального обработчика onBlur из register для запуска валидации
 		setIsFocused(false)
 	}
 
@@ -75,7 +75,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
 								setInputValue(element.value)
 							}
 							ref(element)
-							// Передаем ссылку на элемент через inputRef, если он предоставлен
+							// Передача ссылки на элемент через inputRef, если он предоставлен
 							if (inputRef) {
 								inputRef(element)
 							}
@@ -113,7 +113,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
 								id={inputId}
 								disabled={disabled}
 								className={styles.input}
-								allowEmptyFormatting={isFocused} // Показываем маску при фокусе, даже если поле пустое
+								allowEmptyFormatting={isFocused} // Показ маски при фокусе, даже если поле пустое
 							/>
 						)}
 					/>
@@ -125,7 +125,7 @@ const ValidatedInput: FC<ValidatedInputProps<any>> = ({
 								setInputValue(element.value)
 							}
 							ref(element)
-							// Передаем ссылку на элемент через inputRef, если он предоставлен
+							// Передача ссылки на элемент через inputRef, если он предоставлен
 							if (inputRef) {
 								inputRef(element)
 							}

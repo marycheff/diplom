@@ -72,7 +72,7 @@ class AuthService {
 				...userDto,
 			})
 
-			// Сохраняем токен в базе данных
+			// Сохранение токена в базе данных
 			await tokenRepository.upsert(newUser.id, tokens.refreshToken)
 			logger.info(`[${LOG_NAMESPACE}] Пользователь успешно зарегистрирован`, { userId: newUser.id })
 
@@ -198,10 +198,10 @@ class AuthService {
 
 			const userDto = mapUserToDto(user)
 
-			// Генерируем новые токены
+			// Генерация новых токенов
 			const tokens = tokenService.generateTokens({ ...userDto })
 
-			// Сохраняем новый refreshToken
+			// Сохранение нового refreshToken
 			await tokenRepository.upsert(user.id, tokens.refreshToken)
 			logger.debug(`[${LOG_NAMESPACE}] Токены доступа успешно обновлены`, { userId: user.id })
 

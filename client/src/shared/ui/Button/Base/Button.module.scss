@@ -22,7 +22,6 @@
 		cursor: not-allowed;
 	}
 
-	// Отключаем hover для disabled
 	&:disabled:hover {
 		background-color: #ccc;
 	}
@@ -43,7 +42,6 @@
 		color: $secondary-400;
 	}
 
-	// Отключаем hover для disabled
 	&:disabled:hover {
 		background-color: $secondary-100;
 		color: $secondary-400;

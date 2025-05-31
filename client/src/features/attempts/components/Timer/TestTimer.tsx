@@ -30,24 +30,24 @@ const TestTimer = React.forwardRef<{ syncTime: () => Promise<void> }, TestTimerP
 		useEffect(() => {
 			if (hasExpiredRef.current || !timerActive) return
 
-			// Пересчитываем оставшееся время
+			// Пересчет оставшегося времени
 			const initialRemaining = calculateTimeRemaining()
 			setTimeRemaining(initialRemaining)
 
 			if (initialRemaining <= 0) {
 				setTimerActive(false)
-				hasExpiredRef.current = true // Помечаем, что время истекло
+				hasExpiredRef.current = true // Пометка, что время истекло
 				onTimeExpired()
 				return
 			}
 
-			// Запускаем таймер
+			// Запуск таймера
 			timerRef.current = setInterval(() => {
 				const remaining = calculateTimeRemaining()
 				setTimeRemaining(remaining)
 				if (remaining <= 0) {
 					setTimerActive(false)
-					hasExpiredRef.current = true // Помечаем, что время истекло
+					hasExpiredRef.current = true //  Пометка, что время истекло
 					if (timerRef.current) clearInterval(timerRef.current)
 					onTimeExpired()
 				}

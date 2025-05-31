@@ -56,7 +56,7 @@ const Select: FC<SelectProps> = ({
 			if (width > max) max = width
 		})
 
-		// Добавляем проверку на необходимость скролла
+		//  Проверка на необходимость скролла
 		const viewportHeight = window.innerHeight
 		const dropdownHeight = options.length * 32 // Примерная высота элемента
 		const needsScroll = dropdownHeight > viewportHeight * 0.2

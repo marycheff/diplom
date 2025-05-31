@@ -1,3 +1,4 @@
+import { ApiError } from "@/exceptions"
 import { mapUserToDto } from "@/mappers"
 import {
 	AnswerDTO,
@@ -118,7 +119,7 @@ export const mapToAttemptQuestionDTO = (
 		}
 	}
 
-	// Берем метаданные из первого ответа (предполагаем что они одинаковые для всех ответов на вопрос)
+	// Метаданные из первого ответа (они одинаковые для всех ответов на вопрос)
 	const firstAnswer = userAnswersForQuestion[0]
 
 	// Для вопросов типа SEQUENCE используем данные из sequenceAnswers
@@ -167,7 +168,7 @@ export const mapToAttemptQuestionDTO = (
 			answers: userAnswersForQuestion.map((userAnswer) => {
 				const answer = allAnswers.find((a) => a.id === userAnswer.answerId)
 				if (!answer) {
-					throw new Error(`Answer with id ${userAnswer.answerId} not found`)
+					throw ApiError.NotFound(`Ответ с id ${userAnswer.answerId} не найден`)
 				}
 
 				return {

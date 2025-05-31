@@ -39,7 +39,7 @@ export class ImageService {
 				throw ApiError.BadRequest("URL должен указывать на изображение формата JPG, JPEG или PNG")
 			}
 
-			// Возвращаем URL как есть, без сохранения на сервере
+			// Возвращение URL как есть, без сохранения на сервере
 			return image
 		}
 
@@ -88,7 +88,7 @@ export class ImageService {
 	}
 
 	async deleteImage(imagePath: string): Promise<void> {
-		// Не удаляем внешние ссылки
+		// Не удаление внешних ссылок
 		if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
 			return
 		}

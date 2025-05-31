@@ -17,14 +17,14 @@
 	grid-template-columns: 1fr 1fr;
 	gap: 20px;
 	margin-bottom: 24px;
-	align-items: stretch; // Растягиваем блоки по высоте
+	align-items: stretch;
 
 	// Блок "Информация о попытке" слева, занимает всю высоту
 	& > .infoBlock:first-child {
-		grid-row: span 2; // Растягиваем на 2 ряда
+		grid-row: span 2; 
 		display: flex;
 		flex-direction: column;
-		height: 100%; // Делаем высоту равной соседним блокам
+		height: 100%;
 	}
 
 	// Блок "Информация о пользователе" справа сверху

@@ -59,7 +59,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 	const [questionType, setQuestionType] = useState<QuestionType>(QuestionType.MULTIPLE_CHOICE)
 	const { generateAnswers, isGenerating } = useTestStore()
 
-	// Используем useRef для стабильного initialState
+	// Использование useRef для стабильного initialState
 	const initialStateRef = useRef({
 		form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
 		answers: createDefaultAnswers(),
@@ -120,7 +120,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 		})
 	)
 
-	// Мемоизируем массив идентификаторов вопросов
+	// Мемоизация массива идентификаторов вопросов
 	const questionIds = useMemo(() => questions.map((q) => q.id), [questions])
 
 	useEffect(() => {
@@ -256,7 +256,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 			const newAnswers = createDefaultAnswers()
 			setCurrentAnswers(newAnswers)
 
-			// Обновляем ref
+			// Обновление ref
 			initialStateRef.current = {
 				form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
 				answers: newAnswers,
@@ -274,7 +274,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 		setQuestionType(QuestionType.SINGLE_CHOICE)
 		setValue("image", "")
 
-		// Обновляем ref
+		// Обновление ref
 		initialStateRef.current = {
 			form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
 			answers: newAnswers,

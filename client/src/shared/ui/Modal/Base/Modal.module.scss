@@ -58,7 +58,7 @@
 
 .modalContent {
 	background: white;
-	padding: 20px 20px 20px 20px; /* Оставляем padding сверху, снизу и слева */
+	padding: 20px 20px 20px 20px;
 	border-radius: 12px;
 	width: 50vw;
 	height: 40vh;
@@ -109,9 +109,9 @@
 		flex: 1;
 		overflow-y: auto;
 		// overflow-x: hidden;
-		margin-right: -20px; /* Компенсируем правый padding родителя */
-		padding-right: 20px; /* Восстанавливаем padding для контента */
-		box-sizing: content-box; /* Убедимся, что padding не влияет на ширину */
+		margin-right: -20px;
+		padding-right: 20px;
+		box-sizing: content-box;
 	}
 }
 

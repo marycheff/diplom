@@ -28,7 +28,7 @@ export function useCache<T>(
 
 	const [cacheVersion, setCacheVersion] = useState(0)
 
-	// Используем предоставленную функцию getCacheKey или стандартную
+	// Использование функции getCacheKey или стандартной
 	const getCacheKey = useCallback(
 		customGetCacheKey ||
 			((page: number, query: string = "") => (query ? `search-${query}-${page}` : `${prefixKey}-${page}`)),
