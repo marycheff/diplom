@@ -44,10 +44,12 @@ export interface CreateUserDTO {
 	surname?: string | null
 	patronymic?: string | null
 }
-export enum Role {
-	USER = "USER",
-	ADMIN = "ADMIN",
-}
+export const Role = {
+	USER: "USER",
+	ADMIN: "ADMIN",
+} as const
+export type Role = (typeof Role)[keyof typeof Role]
+
 export const RoleLabels: Record<Role, string> = {
 	[Role.USER]: "Пользователь",
 	[Role.ADMIN]: "Администратор",

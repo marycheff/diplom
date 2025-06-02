@@ -1,11 +1,12 @@
-export enum QuestionType {
-	SINGLE_CHOICE = "SINGLE_CHOICE",
-	MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
-	TEXT_INPUT = "TEXT_INPUT",
-	MATCHING = "MATCHING",
-	FILL_IN_THE_BLANK = "FILL_IN_THE_BLANK",
-	SEQUENCE = "SEQUENCE",
-}
+export const QuestionType = {
+	SINGLE_CHOICE: "SINGLE_CHOICE",
+	MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
+	TEXT_INPUT: "TEXT_INPUT",
+	MATCHING: "MATCHING",
+	FILL_IN_THE_BLANK: "FILL_IN_THE_BLANK",
+	SEQUENCE: "SEQUENCE",
+} as const
+export type QuestionType = (typeof QuestionType)[keyof typeof QuestionType]
 
 export const QuestionTypeLabels: Record<QuestionType, string> = {
 	[QuestionType.SINGLE_CHOICE]: "Одиночный выбор",

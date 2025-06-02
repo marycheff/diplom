@@ -117,20 +117,24 @@ export interface TestSnapshotDTO {
 	questions: QuestionSnapshotDTO[]
 	settings?: TestSettingsSnapshotDTO
 }
-export enum TestVisibilityStatus {
-	HIDDEN = "HIDDEN",
-	PUBLISHED = "PUBLISHED",
-}
+export const TestVisibilityStatus = {
+	HIDDEN: "HIDDEN",
+	PUBLISHED: "PUBLISHED",
+} as const
+export type TestVisibilityStatus = (typeof TestVisibilityStatus)[keyof typeof TestVisibilityStatus]
+
 export const VisibilityStatusLabels: Record<TestVisibilityStatus, string> = {
 	[TestVisibilityStatus.HIDDEN]: "Скрыт",
 	[TestVisibilityStatus.PUBLISHED]: "Публикуется",
 }
 
-export enum ModerationStatus {
-	PENDING = "PENDING",
-	APPROVED = "APPROVED",
-	REJECTED = "REJECTED",
-}
+export const ModerationStatus = {
+	PENDING: "PENDING",
+	APPROVED: "APPROVED",
+	REJECTED: "REJECTED",
+} as const
+export type ModerationStatus = (typeof ModerationStatus)[keyof typeof ModerationStatus]
+
 export const ModerationStatusLabels: Record<ModerationStatus, string> = {
 	[ModerationStatus.PENDING]: "В обработке",
 	[ModerationStatus.APPROVED]: "Одобрен",

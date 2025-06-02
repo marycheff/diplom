@@ -1,18 +1,19 @@
-export enum PreTestUserData {
-	LastName = "lastName",
-	FirstName = "firstName",
-	Patronymic = "patronymic",
-	Gender = "gender",
-	BirthDate = "birthDate",
-	Age = "age",
-	City = "city",
-	Country = "country",
-	Phone = "phone",
-	Email = "email",
-	School = "school",
-	Grade = "grade",
-	Group = "group",
-}
+export const PreTestUserData = {
+	LastName: "lastName",
+	FirstName: "firstName",
+	Patronymic: "patronymic",
+	Gender: "gender",
+	BirthDate: "birthDate",
+	Age: "age",
+	City: "city",
+	Country: "country",
+	Phone: "phone",
+	Email: "email",
+	School: "school",
+	Grade: "grade",
+	Group: "group",
+} as const
+export type PreTestUserData = (typeof PreTestUserData)[keyof typeof PreTestUserData]
 
 export const PreTestUserDataLabels: Record<PreTestUserData, string> = {
 	[PreTestUserData.LastName]: "Фамилия",

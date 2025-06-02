@@ -138,11 +138,13 @@ export interface UserAnswerDTO {
 	timeSpent: number | null
 	createdAt: Date
 }
-export enum AttemptStatus {
-	IN_PROGRESS = "IN_PROGRESS",
-	COMPLETED = "COMPLETED",
-	EXPIRED = "EXPIRED",
-}
+
+export const AttemptStatus = {
+	IN_PROGRESS: "IN_PROGRESS",
+	COMPLETED: "COMPLETED",
+	EXPIRED: "EXPIRED",
+} as const
+export type AttemptStatus = (typeof AttemptStatus)[keyof typeof AttemptStatus]
 
 export const AttemptStatusLabels: Record<AttemptStatus, string> = {
 	[AttemptStatus.IN_PROGRESS]: "В процессе",
