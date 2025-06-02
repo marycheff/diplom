@@ -32,7 +32,6 @@ export class ImageService {
 	}
 
 	async processImage(image: string, type: "test" | "question"): Promise<string> {
-		console.log(`Processing image: ${image}`)
 
 		if (image.startsWith(`/api/${type}s/images/`)) {
 			return image
@@ -75,7 +74,6 @@ export class ImageService {
 		let metadata
 		try {
 			metadata = await sharp(buffer).metadata()
-			console.log(metadata)
 
 			if (!metadata.width || !metadata.height) {
 				throw ApiError.BadRequest("Не удалось определить размеры изображения")

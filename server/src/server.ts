@@ -34,6 +34,7 @@ app.use(
 )
 
 app.use("/api/questions/images", express.static("uploads/questions"))
+app.use("/api/tests/images", express.static("uploads/tests"))
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/chat", chatRoutes)

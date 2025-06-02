@@ -23,66 +23,6 @@ import { ModerationStatus, Test, TestVisibilityStatus } from "@prisma/client"
 const LOG_NAMESPACE = "TestService"
 
 class TestService {
-	// Загрузка или обновление изображения теста
-	async upsertImage(testId: string, image: string): Promise<string> {
-		logger.info(`[${LOG_NAMESPACE}] Загрузка/обновление изображения теста`, { testId })
-		try {
-			const test = await testRepository.findById(testId)
-			if (!test) {
-				throw ApiError.NotFound("Тест не найден")
-			}
-
-			// Если у теста уже есть изображение, удаляем его
-			if (test.image) {
-				await imageService.deleteImage(test.image, "test")
-			}
-
-			// Обрабатываем и сохраняем новое изображение
-			const imageUrl = await imageService.processImage(image, "test")
-			await testRepository.updateImage(testId, imageUrl)
-			await deleteTestCache(testId)
-
-			return imageUrl
-		} catch (error) {
-			logger.error(`[${LOG_NAMESPACE}] Ошибка при загрузке/обновлении изображения теста`, {
-				testId,
-				error: error instanceof Error ? error.message : String(error),
-			})
-			if (error instanceof ApiError) {
-				throw error
-			}
-			throw ApiError.InternalError("Ошибка при загрузке/обновлении изображения теста")
-		}
-	}
-
-	// Удаление изображения теста
-	async deleteImage(testId: string): Promise<void> {
-		logger.info(`[${LOG_NAMESPACE}] Удаление изображения теста`, { testId })
-		try {
-			const test = await testRepository.findById(testId)
-			if (!test) {
-				throw ApiError.NotFound("Тест не найден")
-			}
-
-			if (!test.image) {
-				throw ApiError.BadRequest("У теста нет изображения")
-			}
-
-			await imageService.deleteImage(test.image, "test")
-			await testRepository.updateImage(testId, null)
-			await deleteTestCache(testId)
-		} catch (error) {
-			logger.error(`[${LOG_NAMESPACE}] Ошибка при удалении изображения теста`, {
-				testId,
-				error: error instanceof Error ? error.message : String(error),
-			})
-			if (error instanceof ApiError) {
-				throw error
-			}
-			throw ApiError.InternalError("Ошибка при удалении изображения теста")
-		}
-	}
-
 	// Создание пустого теста
 	async createTest(authorId: string, testData: CreateTest): Promise<TestDTO> {
 		logger.info(`[${LOG_NAMESPACE}] Создание теста`, { authorId })
@@ -661,6 +601,13 @@ class TestService {
 			}
 
 			await executeTransaction(async (tx) => {
+				if (updatedShortInfo.image) {
+					const imageUrl = await imageService.processImage(updatedShortInfo.image, "test")
+					updatedShortInfo.image = imageUrl
+				} else if (test.image && !updatedShortInfo.image) {
+					await imageService.deleteImage(test.image, "test")
+					updatedShortInfo.image = null
+				}
 				const updatedTest = await testRepository.updateShortInfo(testId, updatedShortInfo, tx)
 				await testRepository.incrementVersion(testId, test.version, tx)
 				await testRepository.cleanupUnusedSnapshots(testId, tx)

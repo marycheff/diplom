@@ -6,34 +6,6 @@ import { ModerationStatus, TestVisibilityStatus } from "@prisma/client"
 import { NextFunction, Request, Response } from "express"
 
 class TestController {
-	// Загрузка или обновление изображения теста
-	async upsertImage(req: Request, res: Response, next: NextFunction) {
-		try {
-			const { testId } = req.params
-			const { image } = req.body
-
-			if (!image) {
-				throw ApiError.BadRequest("Изображение не было передано")
-			}
-
-			const imageUrl = await testService.upsertImage(testId, image)
-			res.status(200).json({ imageUrl })
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	// Удаление изображения теста
-	async deleteImage(req: Request, res: Response, next: NextFunction) {
-		try {
-			const { testId } = req.params
-			await testService.deleteImage(testId)
-			res.status(200).json({ message: "Изображение теста успешно удалено" })
-		} catch (error) {
-			next(error)
-		}
-	}
-
 	// Создание пустого теста
 	async createTest(req: Request, res: Response, next: NextFunction) {
 		try {

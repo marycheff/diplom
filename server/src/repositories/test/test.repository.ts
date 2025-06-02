@@ -279,18 +279,16 @@ class TestRepository {
 
 	async updateShortInfo(testId: string, updatedShortInfo: ShortTestInfo, tx?: Prisma.TransactionClient) {
 		const client = tx || prisma
+
 		return client.test.update({
 			where: { id: testId },
 			data: {
 				title: updatedShortInfo.title,
 				description: updatedShortInfo.description,
+				image: updatedShortInfo.image, 
 			},
 			include: {
-				questions: {
-					include: {
-						answers: true,
-					},
-				},
+				questions: { include: { answers: true } },
 				settings: true,
 				author: true,
 			},

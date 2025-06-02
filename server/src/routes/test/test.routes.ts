@@ -66,22 +66,6 @@ router.put(
 	testController.updateShortInfo
 )
 
-// Управление изображением теста
-router.put(
-	"/:testId/image",
-	authMiddleware,
-	accountActivationMiddleware,
-	testOwnershipMiddleware,
-	testController.upsertImage
-)
-router.delete(
-	"/:testId/image",
-	authMiddleware,
-	accountActivationMiddleware,
-	testOwnershipMiddleware,
-	testController.deleteImage
-)
-
 // Изменение статуса Модерации теста
 router.put(
 	"/:testId/visibility",

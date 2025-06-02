@@ -36,6 +36,7 @@ export interface TestDTO {
 export interface ShortTestInfo {
 	title: string
 	description?: string
+	image: string | null
 }
 
 export interface UserTestDTO {
