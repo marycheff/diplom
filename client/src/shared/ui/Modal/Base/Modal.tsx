@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from "react"
+import { FC, MouseEvent, ReactNode, useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 import styles from "./Modal.module.scss"
 
@@ -78,14 +78,14 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children, title, fullScreen, i
 	const handleClose = () => onClose()
 
 	// Обработка нажатия мыши по оверлею (инициализация закрытия)
-	const onOverlayMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+	const onOverlayMouseDown = (e: MouseEvent<HTMLDivElement>) => {
 		if (e.target === e.currentTarget) {
 			setMouseDownStartedOutside(true)
 		}
 	}
 
 	// Обработка отпускания мыши по оверлею (подтверждение закрытия)
-	const onOverlayMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+	const onOverlayMouseUp = (e: MouseEvent<HTMLDivElement>) => {
 		if (mouseDownStartedOutside && e.target === e.currentTarget) {
 			handleClose()
 		}

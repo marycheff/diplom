@@ -4,7 +4,7 @@ import Tooltip from "@/shared/ui/Tooltip/Tooltip"
 import { getImageUrl } from "@/shared/utils"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { FC, useRef } from "react"
+import { CSSProperties, FC, useRef } from "react"
 import { FaAngleDown, FaAngleUp, FaTrash } from "react-icons/fa"
 import styles from "./QuestionItem.module.scss"
 
@@ -26,7 +26,7 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
 
 	const questionTextRef = useRef<HTMLParagraphElement>(null) // Ссылка на элемент <p>
 
-	const style: React.CSSProperties = {
+	const style: CSSProperties = {
 		transform: CSS.Translate.toString(transform),
 		transition: transition + ", box-shadow 0.2s, background-color 0.2s",
 		zIndex: isDragging ? 999 : "auto",

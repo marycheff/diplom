@@ -1,11 +1,11 @@
-import React from "react"
+import { FC } from "react"
 import styles from "./BlankMarkerDisplay.module.scss"
 
 interface BlankMarkerDisplayProps {
 	className?: string
 }
 
-const BlankMarkerDisplay: React.FC<BlankMarkerDisplayProps> = ({ className }) => {
+const BlankMarkerDisplay: FC<BlankMarkerDisplayProps> = ({ className }) => {
 	return <span className={`${styles.blankMarker} ${className || ""}`}></span>
 }
 

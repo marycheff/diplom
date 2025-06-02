@@ -2,7 +2,7 @@ import QuestionRenderer from "@/features/tests/components/QuestionRenderer/Quest
 import { TestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
-import React, { useState } from "react"
+import { FC, useState } from "react"
 import styles from "./TestPreview.module.scss"
 
 interface TestPreviewProps {
@@ -10,7 +10,7 @@ interface TestPreviewProps {
 	onClose: () => void
 }
 
-const TestPreview: React.FC<TestPreviewProps> = ({ test, onClose }) => {
+const TestPreview: FC<TestPreviewProps> = ({ test, onClose }) => {
 	const [currentPage, setCurrentPage] = useState(1)
 	const totalPages = test.questions?.length || 0
 

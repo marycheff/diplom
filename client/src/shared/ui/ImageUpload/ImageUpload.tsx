@@ -1,5 +1,5 @@
 import { getImageUrl } from "@/shared/utils"
-import React, { ChangeEvent, DragEvent, FC, useEffect, useRef, useState } from "react"
+import { ChangeEvent, DragEvent, FC, memo, MouseEvent, useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
 import { FaImage } from "react-icons/fa6"
 import styles from "./ImageUpload.module.scss"
@@ -164,7 +164,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 	}
 
 	// Обновление предпросмотра URL при изменении поля ввода
-	const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const url = e.target.value
 		setImageUrl(url)
 
@@ -227,7 +227,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 		}
 	}
 
-	const handleRemove = (e: React.MouseEvent) => {
+	const handleRemove = (e: MouseEvent) => {
 		e.stopPropagation()
 		setPreview(undefined)
 		onImageSelect("")
@@ -237,7 +237,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 		setImageUrl("")
 	}
 
-	const switchMode = (mode: UploadMode) => (e: React.MouseEvent) => {
+	const switchMode = (mode: UploadMode) => (e: MouseEvent) => {
 		e.stopPropagation()
 		setUploadMode(mode)
 	}
@@ -343,4 +343,4 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 	)
 }
 
-export default React.memo(ImageUpload)
+export default memo(ImageUpload)

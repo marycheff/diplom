@@ -1,5 +1,5 @@
 import { formatSeconds } from "@/shared/utils/formatter"
-import React, { useEffect, useRef, useState } from "react"
+import { forwardRef, useEffect, useRef, useState } from "react"
 import styles from "./TestTimer.module.scss"
 
 interface TestTimerProps {
@@ -10,7 +10,7 @@ interface TestTimerProps {
 	isActive?: boolean
 }
 
-const TestTimer = React.forwardRef<{ syncTime: () => Promise<void> }, TestTimerProps>(
+const TestTimer = forwardRef<{ syncTime: () => Promise<void> }, TestTimerProps>(
 	({ attemptId, timeLimit, startedAt, onTimeExpired, isActive = true }, ref) => {
 		const [timeRemaining, setTimeRemaining] = useState<number>(timeLimit)
 		const [timerActive, setTimerActive] = useState<boolean>(isActive)

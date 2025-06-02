@@ -1,13 +1,13 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
 import Breadcrumbs from "@/shared/ui/Breadcrumbs/Breadcrumbs"
-import { useState } from "react"
+import { ReactNode, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { Sidebar } from "../Sidebar/Sidebar"
 import styles from "./Layout.module.scss"
 
 interface LayoutProps {
-	children: React.ReactNode
+	children: ReactNode
 }
 
 export const Layout = ({ children }: LayoutProps) => {

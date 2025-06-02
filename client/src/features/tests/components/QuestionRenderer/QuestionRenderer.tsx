@@ -3,7 +3,7 @@ import { Button } from "@/shared/ui/Button"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import { getImageUrl } from "@/shared/utils"
 import { formatSpaces } from "@/shared/utils/formatter"
-import React, { useEffect, useState } from "react"
+import { ChangeEvent, FC, Fragment, useEffect, useState } from "react"
 import styles from "./QuestionRenderer.module.scss"
 
 export interface QuestionRendererProps {
@@ -20,7 +20,7 @@ export interface QuestionRendererProps {
 	isLoading?: boolean
 }
 
-const QuestionRenderer: React.FC<QuestionRendererProps> = ({
+const QuestionRenderer: FC<QuestionRendererProps> = ({
 	question,
 	selectedAnswers,
 	textAnswer,
@@ -57,7 +57,7 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 		onAnswerChange(question.id, newAnswers)
 	}
 
-	const handleCheckboxChange = (answerId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleCheckboxChange = (answerId: string) => (e: ChangeEvent<HTMLInputElement>) => {
 		if (isCompleted || isPreviewMode) return
 
 		const newAnswers = e.target.checked
@@ -68,7 +68,7 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 		onAnswerChange(question.id, newAnswers)
 	}
 
-	const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+	const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
 		if (isCompleted || isPreviewMode) return
 
 		setLocalTextAnswer(e.target.value)
@@ -110,7 +110,7 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 						<div className={styles.fillInTheBlankContainer}>
 							<div className={styles.questionWithBlank}>
 								{question.text.split("{blank}").map((part, index, array) => (
-									<React.Fragment key={index}>
+									<Fragment key={index}>
 										{part}
 										{index < array.length - 1 && (
 											<input
@@ -122,7 +122,7 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 												disabled={isCompleted || isPreviewMode}
 											/>
 										)}
-									</React.Fragment>
+									</Fragment>
 								))}
 							</div>
 						</div>

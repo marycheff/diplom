@@ -21,7 +21,7 @@ import {
 } from "@dnd-kit/core"
 import { restrictToParentElement } from "@dnd-kit/modifiers"
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import styles from "./QuestionsEditor.module.scss"
@@ -491,4 +491,4 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 	)
 }
 
-export default React.memo(QuestionsEditor)
+export default memo(QuestionsEditor)

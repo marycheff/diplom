@@ -1,11 +1,11 @@
-import { FC, useEffect, useRef, useState } from "react"
+import { FC, RefObject, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import styles from "./Tooltip.module.scss"
 
 interface TooltipProps {
 	content: string
 	position?: "top" | "bottom" | "right" | "auto"
-	targetRef: React.RefObject<HTMLElement | null>
+	targetRef: RefObject<HTMLElement | null>
 	delay?: number
 }
 
