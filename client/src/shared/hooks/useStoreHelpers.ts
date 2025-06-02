@@ -25,15 +25,17 @@ export const handleError = (error: unknown): never => {
 	throw error
 }
 
-export const createApiHandler = (set: any, loadingState: string) => {
+type ZustandSetter<T> = (partial: Partial<T> | ((state: T) => Partial<T>)) => void
+
+export const createApiHandler = <TState>(set: ZustandSetter<TState>, loadingState: keyof TState) => {
 	return async <T>(apiCall: () => Promise<T>): Promise<T> => {
-		set({ [loadingState]: true })
+		set({ [loadingState]: true } as Partial<TState>)
 		try {
 			return await apiCall()
 		} catch (error) {
-			return handleError(error)
+			throw handleError(error)
 		} finally {
-			set({ [loadingState]: false })
+			set({ [loadingState]: false } as Partial<TState>)
 		}
 	}
 }

@@ -1,7 +1,7 @@
 import { AuthResponse } from "@/shared/types"
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios"
 
-export const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL
 
 // Расширение типа InternalAxiosRequestConfig, чтобы добавить свойство _isRetry
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
 				const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
 				localStorage.setItem("token", response.data.accessToken)
 
-				// Повтор оригинального запроса с новым токеном  
+				// Повтор оригинального запроса с новым токеном
 				return axiosInstance(originalRequest)
 			} catch (e) {
 				localStorage.removeItem("token")

@@ -1,4 +1,5 @@
-import { API_URL } from "@/api"
+import { authService } from "@/api/services/authService"
+import { createApiHandler } from "@/shared/hooks/useStoreHelpers"
 import { ResetPasswordState } from "@/shared/types"
 import { RESET_PASSWORD_TIMEOUT_MINUTES } from "@/shared/utils/constants"
 import axios, { AxiosError } from "axios"
@@ -7,80 +8,55 @@ import { create } from "zustand"
 
 const initialState = {
 	resetCodeTimestamp: null,
-	isLoading: false
+	isLoading: false,
 }
 
-export const useResetPasswordStore = create<ResetPasswordState>((set, get) => ({
-	...initialState,
+export const useResetPasswordStore = create<ResetPasswordState>((set, get) => {
+	const withLoading = createApiHandler(set, "isLoading")
 
-	requestResetCode: async (email) => {
-		set({ isLoading: true })
-		try {
-			const response = await axios.post(`${API_URL}/auth/reset-password-request`, { email })
-			set({ resetCodeTimestamp: Date.now() })
-			return response.data
-		} catch (error) {
-			if (error instanceof AxiosError) {
-				toast.error(error.response?.data?.message || "Неизвестная ошибка")
-			} else {
-				toast.error("Неизвестная ошибка, перезагрузите страницу")
+	return {
+		...initialState,
+
+		requestResetCode: async (email) => {
+			const operation = async () => {
+				const response = await authService.requestResetCode(email)
+				set({ resetCodeTimestamp: Date.now() })
+				return response.data
 			}
-			throw error
-		} finally {
-			set({ isLoading: false })
-		}
-	},
+			return withLoading(operation)
+		},
 
-	verifyResetCode: async (email, code) => {
-		set({ isLoading: true })
-		if (!get().isResetCodeValid()) {
-			set({ isLoading: false })
-			throw new Error("Срок действия кода сброса истек. Пожалуйста, запросите новый код.")
-		}
-		try {
-			const response = await axios.post(`${API_URL}/auth/verify-reset-code`, { email, code })
-			return response.data
-		} catch (error) {
-			if (error instanceof AxiosError) {
-				toast.error(error.response?.data?.message || "Неизвестная ошибка")
-			} else {
-				toast.error("Неизвестная ошибка, перезагрузите страницу")
+		verifyResetCode: async (email, code) => {
+			const operation = async () => {
+				if (!get().isResetCodeValid()) {
+					throw new Error("Срок действия кода сброса истек. Пожалуйста, запросите новый код.")
+				}
+				const response = await authService.verifyResetCode(email, code)
+				return response.data
 			}
-			throw error
-		} finally {
-			set({ isLoading: false })
-		}
-	},
+			return withLoading(operation)
+		},
 
-	resetPassword: async (email, code, newPassword) => {
-		set({ isLoading: true })
-		if (!get().isResetCodeValid()) {
-			set({ isLoading: false })
-			toast.error("Срок действия кода сброса истек. Пожалуйста, запросите новый код.")
-			throw new Error()
-		}
-		try {
-			const response = await axios.post(`${API_URL}/auth/reset-password`, { email, code, newPassword })
-			set({ resetCodeTimestamp: null })
-			return response.data
-		} catch (error) {
-			if (error instanceof AxiosError) {
-				toast.error(error.response?.data?.message || "Неизвестная ошибка")
-			} else {
-				toast.error("Неизвестная ошибка, перезагрузите страницу")
+		resetPassword: async (email, code, newPassword) => {
+			const operation = async () => {
+				if (!get().isResetCodeValid()) {
+					toast.error("Срок действия кода сброса истек. Пожалуйста, запросите новый код.")
+					throw new Error()
+				}
+				const response = await authService.resetPassword(email, code, newPassword)
+				set({ resetCodeTimestamp: null })
+				return response.data
 			}
-			throw error
-		} finally {
-			set({ isLoading: false })
-		}
-	},
+			return withLoading(operation)
+		},
 
-	isResetCodeValid: () => {
-		const { resetCodeTimestamp } = get()
-		if (!resetCodeTimestamp) {
-			return false
-		}
-		const currentTime = Date.now()
-		return currentTime - resetCodeTimestamp < RESET_PASSWORD_TIMEOUT_MINUTES * 60 * 1000
+		isResetCodeValid: () => {
+			const { resetCodeTimestamp } = get()
+			if (!resetCodeTimestamp) {
+				return false
+			}
+			const currentTime = Date.now()
+			return currentTime - resetCodeTimestamp < RESET_PASSWORD_TIMEOUT_MINUTES * 60 * 1000
+		},
 	}
-}))
+})
