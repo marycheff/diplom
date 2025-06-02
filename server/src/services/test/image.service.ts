@@ -7,20 +7,34 @@ import { fileURLToPath } from "url"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const UPLOAD_DIR = path.resolve(__dirname, "..", "..", "..", "uploads", "questions")
+const QUESTIONS_UPLOAD_DIR = path.resolve(__dirname, "..", "..", "..", "uploads", "questions")
+const TESTS_UPLOAD_DIR = path.resolve(__dirname, "..", "..", "..", "uploads", "tests")
 
 export class ImageService {
-	async renameImage(oldId: string, newId: string, extension: string): Promise<string> {
-		const oldPath = path.join(UPLOAD_DIR, `${oldId}.${extension}`)
-		const newPath = path.join(UPLOAD_DIR, `${newId}.${extension}`)
+	private getUploadDir(type: "test" | "question" = "question"): string {
+		const dir = type === "test" ? TESTS_UPLOAD_DIR : QUESTIONS_UPLOAD_DIR
+		if (!fs.existsSync(dir)) {
+			fs.mkdirSync(dir, { recursive: true })
+		}
+		return dir
+	}
+	async renameImage(
+		oldId: string,
+		newId: string,
+		extension: string,
+		type: "test" | "question"
+	): Promise<string> {
+		const uploadDir = this.getUploadDir(type)
+		const oldPath = path.join(uploadDir, `${oldId}.${extension}`)
+		const newPath = path.join(uploadDir, `${newId}.${extension}`)
 		await fs.promises.rename(oldPath, newPath)
-		return `/api/questions/images/${newId}.${extension}`
+		return `/api/${type}s/images/${newId}.${extension}`
 	}
 
-	async processImage(image: string): Promise<string> {
+	async processImage(image: string, type: "test" | "question"): Promise<string> {
 		console.log(`Processing image: ${image}`)
 
-		if (image.startsWith("/api/questions/images/")) {
+		if (image.startsWith(`/api/${type}s/images/`)) {
 			return image
 		}
 
@@ -74,27 +88,25 @@ export class ImageService {
 			throw ApiError.BadRequest("Изображение должно быть не больше 500×500 пикселей")
 		}
 
-		if (!fs.existsSync(UPLOAD_DIR)) {
-			fs.mkdirSync(UPLOAD_DIR, { recursive: true })
-		}
+		const uploadDir = this.getUploadDir(type)
 
 		// Генерация UUID для имени файла
 		const fileId = crypto.randomUUID()
 		const filename = `${fileId}.${extension}`
-		const filePath = path.join(UPLOAD_DIR, filename)
+		const filePath = path.join(uploadDir, filename)
 		await fs.promises.writeFile(filePath, buffer)
 
-		return `/api/questions/images/${filename}`
+		return `/api/${type}s/images/${filename}`
 	}
 
-	async deleteImage(imagePath: string): Promise<void> {
+	async deleteImage(imagePath: string, type: "test" | "question"): Promise<void> {
 		// Не удаление внешних ссылок
 		if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
 			return
 		}
 
 		const filename = path.basename(imagePath)
-		const fullPath = path.join(UPLOAD_DIR, filename)
+		const fullPath = path.join(this.getUploadDir(type), filename)
 		try {
 			await fs.promises.unlink(fullPath)
 		} catch (err) {

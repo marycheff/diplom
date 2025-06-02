@@ -79,6 +79,7 @@ model Test {
    moderationStatus ModerationStatus     @default(APPROVED)
    visibilityStatus TestVisibilityStatus @default(PUBLISHED)
    version          Int                  @default(1)
+   image            String?              @db.VarChar(255)
    moderatedBy      String?
    moderatedAt      DateTime?
    // TIMESTAMPS
@@ -125,7 +126,6 @@ model Answer {
    questionId       String
    text             String              @db.VarChar(255)
    isCorrect        Boolean             @default(false)
-   isGenerated      Boolean             @default(false)
    // Новое поле для хранения правильного порядка в последовательности
    sequencePosition Int?
    // TIMESTAMPS
@@ -213,6 +213,7 @@ model TestSnapshot {
    moderationStatus ModerationStatus
    visibilityStatus TestVisibilityStatus  @default(PUBLISHED)
    version          Int                   @default(1)
+   image            String?               @db.VarChar(255)
    // TIMESTAMPS
    createdAt        DateTime              @default(now())
    updatedAt        DateTime              @updatedAt

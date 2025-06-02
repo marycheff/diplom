@@ -18,7 +18,7 @@ class QuestionRepository {
 					create: questionData.answers.map((answer) => ({
 						text: answer.text,
 						isCorrect: answer.isCorrect,
-						isGenerated: false,
+						// isGenerated: false,
 						// sequencePosition: answer.sequencePosition,
 					})),
 				},
@@ -158,7 +158,7 @@ class QuestionRepository {
 						text: answer.text,
 						isCorrect: answer.isCorrect,
 						questionId: questionId,
-						isGenerated: false,
+						// isGenerated: false,
 						// sequencePosition: answer.sequencePosition,
 					},
 				})

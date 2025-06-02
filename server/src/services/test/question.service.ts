@@ -74,8 +74,11 @@ class QuestionService {
 							}
 						}
 
-						if (question.image) {
-							question.image = await imageService.processImage(question.image)
+						const existingQuestion = existingQuestionsMap.get(questionId)
+						if (existingQuestion?.image && !question.image) {
+							await imageService.deleteImage(existingQuestion.image, "question")
+						} else if (question.image) {
+							question.image = await imageService.processImage(question.image, "question")
 						}
 
 						await questionRepository.update(questionId, question, tx)
@@ -85,7 +88,7 @@ class QuestionService {
 					// Обработка нового вопроса
 					else {
 						if (question.image) {
-							question.image = await imageService.processImage(question.image)
+							question.image = await imageService.processImage(question.image, "question")
 						}
 						logger.debug(`[${LOG_NAMESPACE}] Создание нового вопроса`, { question })
 
@@ -124,7 +127,7 @@ class QuestionService {
 				})
 				await questionRepository.delete(questionToDelete.id, tx)
 				if (questionToDelete.image) {
-					await imageService.deleteImage(questionToDelete.image)
+					await imageService.deleteImage(questionToDelete.image, "question")
 				}
 			}
 			await testRepository.incrementVersion(testId, test.version, tx)

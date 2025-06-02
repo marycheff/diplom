@@ -26,17 +26,11 @@ export interface TestDTO {
 	settings?: TestSettingsDTO
 	visibilityStatus: TestVisibilityStatus
 	moderationStatus: ModerationStatus
+	image: string | null
 	moderatedBy: string | null
 	moderatedAt: Date | null
 	totalAttempts: number
 	version?: number
-}
-
-export interface UpdateTestDTO {
-	title?: string
-	description?: string
-	questions: QuestionDTO[]
-	settings?: TestSettingsDTO
 }
 
 export interface ShortTestInfo {
@@ -51,4 +45,5 @@ export interface UserTestDTO {
 	questions?: UserQuestionDTO[]
 	settings?: TestSettingsDTO
 	visibilityStatus: TestVisibilityStatus
+	image: string | null
 }

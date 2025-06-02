@@ -77,6 +77,7 @@ export const mapTest = (
 		totalAttempts: test.totalAttempts || 0,
 		visibilityStatus: test.visibilityStatus,
 		moderationStatus: test.moderationStatus,
+		image: test.image,
 		moderatedAt: test.moderatedAt,
 		moderatedBy: test.moderatedBy,
 		settings: test.settings
@@ -403,6 +404,7 @@ export const mapUserTest = (
 		title: test.title,
 		description: test.description || "",
 		visibilityStatus: test.visibilityStatus,
+		image: test.image,
 		settings: test.settings
 			? {
 					requireRegistration: test.settings.requireRegistration,
@@ -457,6 +459,7 @@ export const mapToTestSnapshotForAttemptDTO = (
 		title: snapshot.title,
 		description: snapshot.description || "",
 		visibilityStatus: "PUBLISHED",
+		image: snapshot.image,
 		settings: snapshot.settings
 			? {
 					requireRegistration: snapshot.settings.requireRegistration,

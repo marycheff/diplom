@@ -360,6 +360,15 @@ class TestRepository {
 		})
 	}
 
+	// Обновление изображения теста
+	async updateImage(testId: string, imageUrl: string | null, tx?: Prisma.TransactionClient) {
+		const client = tx || prisma
+		return client.test.update({
+			where: { id: testId },
+			data: { image: imageUrl },
+		})
+	}
+
 	// UPSERT
 	async upsertSettings(testId: string, testSettings: TestSettingsDTO, tx?: Prisma.TransactionClient) {
 		const client = tx || prisma
