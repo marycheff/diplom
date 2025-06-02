@@ -6,14 +6,22 @@ import styles from "./ImageUpload.module.scss"
 
 interface ImageUploadProps {
 	onImageSelect: (base64Image: string) => void
-	currentImage?: string
+	currentImage: string | null
 	className?: string
+	hideToggleButton?: boolean
+	type?: "test" | "question"
 }
 
 type UploadMode = "file" | "url"
 
-const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, className }) => {
-	const [preview, setPreview] = useState<string | undefined>(currentImage)
+const ImageUpload: FC<ImageUploadProps> = ({
+	onImageSelect,
+	currentImage,
+	className,
+	hideToggleButton = false,
+	type = "question",
+}) => {
+	const [preview, setPreview] = useState<string | null>(currentImage)
 	const [isDragging, setIsDragging] = useState(false)
 	const [uploadMode, setUploadMode] = useState<UploadMode>("file")
 	const [imageUrl, setImageUrl] = useState<string>("")
@@ -22,140 +30,106 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 	const urlInputRef = useRef<HTMLInputElement>(null)
 	const [isExpanded, setIsExpanded] = useState(!!currentImage)
 
+	const maxDimensions = type === "test" ? { width: 1280, height: 720 } : { width: 500, height: 500 }
+	const validExtensions = [".jpg", ".jpeg", ".png"]
+	const validMimeTypes = ["image/jpeg", "image/jpg", "image/png"]
+
 	useEffect(() => {
-		setPreview(getImageUrl(currentImage))
-		if (!currentImage && fileInputRef.current) {
-			fileInputRef.current.value = ""
-		}
+		setPreview(getImageUrl(currentImage) ?? null)
 		if (!currentImage) {
+			if (fileInputRef.current) fileInputRef.current.value = ""
 			setImageUrl("")
 		}
 	}, [currentImage])
 
 	useEffect(() => {
-		if (currentImage) {
-			setIsExpanded(true)
-		}
-	}, [currentImage])
+		if (currentImage || hideToggleButton) setIsExpanded(true)
+	}, [currentImage, hideToggleButton])
 
-	const validateAndLoadImage = (file: File) => {
-		if (file.size > 3 * 1024 * 1024) {
-			toast.error("Файл слишком большой. Максимальный размер: 3MB")
-			return
-		}
+	const resizeImage = (img: HTMLImageElement, mimeType: string): Promise<string> => {
+		return new Promise((resolve, reject) => {
+			const { width: maxWidth, height: maxHeight } = maxDimensions
+			let { width: newWidth, height: newHeight } = img
 
-		if (!["image/jpeg", "image/jpg", "image/png"].includes(file.type)) {
-			toast.error("Разрешены только изображения JPG, JPEG и PNG")
-			return
-		}
+			if (newWidth > maxWidth || newHeight > maxHeight) {
+				const ratio = Math.min(maxWidth / newWidth, maxHeight / newHeight)
+				newWidth = Math.round(newWidth * ratio)
+				newHeight = Math.round(newHeight * ratio)
+			}
 
-		const reader = new FileReader()
-		reader.onloadend = () => {
-			const base64String = reader.result as string
-			const img = new Image()
-			img.onload = () => {
-				// Если изображение больше 500x500, уменьшение его с сохранением пропорций
-				if (img.width > 500 || img.height > 500) {
-					resizeImage(img, base64String, file.type)
-						.then((resizedBase64) => {
-							// Проверка размера сжатого изображения
-							const base64Data = resizedBase64.split(",")[1]
-							const sizeInBytes = Math.ceil((base64Data.length * 3) / 4)
+			const canvas = document.createElement("canvas")
+			canvas.width = newWidth
+			canvas.height = newHeight
+			const ctx = canvas.getContext("2d")
 
-							if (sizeInBytes > 1 * 1024 * 1024) {
-								toast.error("После сжатия файл всё ещё слишком большой. Максимальный размер: 1MB")
-								return
-							}
+			if (!ctx) return reject(new Error("Не удалось получить контекст canvas"))
 
-							setPreview(resizedBase64)
-							onImageSelect(resizedBase64)
-						})
-						.catch((error) => {
-							console.error("Ошибка при изменении размера изображения:", error)
-							toast.error("Не удалось обработать изображение")
-						})
+			ctx.drawImage(img, 0, 0, newWidth, newHeight)
+			resolve(canvas.toDataURL(mimeType))
+		})
+	}
+
+	const processImage = (base64String: string, fileType: string) => {
+		const img = new Image()
+		img.onload = async () => {
+			try {
+				// Проверка минимального размера
+				if (img.width < 100 || img.height < 100) {
+					return toast.error("Изображение слишком маленькое. Минимальный размер: 100×100px")
+				}
+
+				const { width: maxWidth, height: maxHeight } = maxDimensions
+
+				if (img.width > maxWidth || img.height > maxHeight) {
+					const resizedBase64 = await resizeImage(img, fileType)
+					const sizeInBytes = Math.ceil((resizedBase64.split(",")[1].length * 3) / 4)
+
+					if (sizeInBytes > 1024 * 1024) {
+						return toast.error("После сжатия файл всё ещё слишком большой. Максимальный размер: 1MB")
+					}
+
+					setPreview(resizedBase64)
+					onImageSelect(resizedBase64)
 				} else {
 					setPreview(base64String)
 					onImageSelect(base64String)
 				}
+			} catch (error) {
+				console.error("Ошибка при изменении размера изображения:", error)
+				toast.error("Не удалось обработать изображение")
 			}
-			img.src = base64String
 		}
+		img.src = base64String
+	}
+
+	const validateAndLoadImage = (file: File) => {
+		if (file.size > 3 * 1024 * 1024) return toast.error("Файл слишком большой. Максимальный размер: 3MB")
+		if (!validMimeTypes.includes(file.type)) return toast.error("Разрешены только изображения JPG, JPEG и PNG")
+
+		const reader = new FileReader()
+		reader.onloadend = () => processImage(reader.result as string, file.type)
 		reader.readAsDataURL(file)
 	}
 
-	// Функция для валидации URL изображения
 	const validateAndLoadImageUrl = (url: string) => {
-		// Проверка длины URL
-		if (url.length > 255) {
-			toast.error("URL слишком длинный. Максимальная длина: 255 символов")
-			return
+		if (url.length > 255) return toast.error("URL слишком длинный. Максимальная длина: 255 символов")
+		if (!validExtensions.some((ext) => url.toLowerCase().endsWith(ext))) {
+			return toast.error("URL должен указывать на изображение формата JPG, JPEG или PNG")
 		}
 
-		// Проверка расширения файла
-		const validExtensions = [".jpg", ".jpeg", ".png"]
-		const hasValidExtension = validExtensions.some((ext) => url.toLowerCase().endsWith(ext))
-
-		if (!hasValidExtension) {
-			toast.error("URL должен указывать на изображение формата JPG, JPEG или PNG")
-			return
-		}
-
-		// Проверка доступности изображения
 		const img = new Image()
 		img.onload = () => {
-			// Если изображение загрузилось успешно
+			if (img.width < 100 || img.height < 100) {
+				return toast.error("Изображение слишком маленькое. Минимальный размер: 100×100px")
+			}
+			if (img.width > 1920 || img.height > 1080) {
+				return toast.error("Изображение слишком большое. Максимальный размер: 1920x1080px")
+			}
 			setPreview(url)
 			onImageSelect(url)
 		}
-		img.onerror = () => {
-			toast.error("Не удалось загрузить изображение по указанному URL")
-		}
+		img.onerror = () => toast.error("Не удалось загрузить изображение по указанному URL")
 		img.src = url
-	}
-
-	// Функция для изменения размера изображения с сохранением пропорций
-	const resizeImage = (img: HTMLImageElement, base64: string, mimeType: string): Promise<string> => {
-		return new Promise((resolve, reject) => {
-			try {
-				// Вычисление новых размеров с сохранением пропорций
-				let newWidth = img.width
-				let newHeight = img.height
-				const maxSize = 500
-
-				if (newWidth > maxSize || newHeight > maxSize) {
-					if (newWidth > newHeight) {
-						// Ограничение по ширине, если ширина больше высоты
-						newHeight = Math.round((newHeight * maxSize) / newWidth)
-						newWidth = maxSize
-					} else {
-						// Ограничение по высоте, если высота больше или равна ширине
-						newWidth = Math.round((newWidth * maxSize) / newHeight)
-						newHeight = maxSize
-					}
-				}
-
-				// Создание canvas для изменения размера
-				const canvas = document.createElement("canvas")
-				canvas.width = newWidth
-				canvas.height = newHeight
-				const ctx = canvas.getContext("2d")
-
-				if (!ctx) {
-					reject(new Error("Не удалось получить контекст canvas"))
-					return
-				}
-
-				// Рисование изображения с новыми размерами
-				ctx.drawImage(img, 0, 0, newWidth, newHeight)
-
-				// Получение нового base64 изображения
-				const resizedBase64 = canvas.toDataURL(mimeType)
-				resolve(resizedBase64)
-			} catch (error) {
-				reject(error)
-			}
-		})
 	}
 
 	const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -163,20 +137,12 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 		if (file) validateAndLoadImage(file)
 	}
 
-	// Обновление предпросмотра URL при изменении поля ввода
 	const handleUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const url = e.target.value
 		setImageUrl(url)
 
-		// Проверка, является ли URL изображением и показ предпросмотра
-		if (url.trim()) {
-			const validExtensions = [".jpg", ".jpeg", ".png"]
-			const hasValidExtension = validExtensions.some((ext) => url.toLowerCase().endsWith(ext))
-
-			if (hasValidExtension) {
-				// Автоматическая загрузка изображения, если URL валидный
-				validateAndLoadImageUrl(url.trim())
-			}
+		if (url.trim() && validExtensions.some((ext) => url.toLowerCase().endsWith(ext))) {
+			validateAndLoadImageUrl(url.trim())
 		}
 	}
 
@@ -188,52 +154,43 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 		setIsDragging(false)
 
 		const files = event.dataTransfer.files
-		if (files.length > 1) {
-			toast.error("Можно загрузить только один файл")
-			return
-		}
+		if (files.length > 1) return toast.error("Можно загрузить только один файл")
 
 		const file = files?.[0]
 		if (file) validateAndLoadImage(file)
 	}
 
 	const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
-		if (uploadMode === "file") {
-			event.preventDefault()
-		}
+		if (uploadMode === "file") event.preventDefault()
 	}
 
 	const handleDragEnter = (event: DragEvent<HTMLDivElement>) => {
 		if (uploadMode === "file") {
 			event.preventDefault()
-			dragCounter.current++
-			if (dragCounter.current === 1) setIsDragging(true)
+			if (++dragCounter.current === 1) setIsDragging(true)
 		}
 	}
 
 	const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
 		if (uploadMode === "file") {
 			event.preventDefault()
-			dragCounter.current--
-			if (dragCounter.current === 0) setIsDragging(false)
+			if (--dragCounter.current === 0) setIsDragging(false)
 		}
 	}
 
 	const handleClick = () => {
 		if (uploadMode === "file") {
 			fileInputRef.current?.click()
-		} else if (uploadMode === "url" && urlInputRef.current) {
-			urlInputRef.current.focus()
+		} else {
+			urlInputRef.current?.focus()
 		}
 	}
 
 	const handleRemove = (e: MouseEvent) => {
 		e.stopPropagation()
-		setPreview(undefined)
+		setPreview(null)
 		onImageSelect("")
-		if (fileInputRef.current) {
-			fileInputRef.current.value = ""
-		}
+		if (fileInputRef.current) fileInputRef.current.value = ""
 		setImageUrl("")
 	}
 
@@ -242,40 +199,36 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 		setUploadMode(mode)
 	}
 
-	// Определение, есть ли у нас активное изображение (превью или предпросмотр URL)
 	const hasActiveImage = !!preview
 
 	return (
 		<>
-			<button
-				type="button"
-				className={styles.toggleButton}
-				onClick={() => setIsExpanded((prev) => !prev)}
-			>
-				<FaImage />
-				{isExpanded ? "Скрыть изображение" : "Добавить изображение"}
-			</button>
+			{!hideToggleButton && (
+				<button
+					type="button"
+					className={styles.toggleButton}
+					onClick={() => setIsExpanded(!isExpanded)}
+				>
+					<FaImage />
+					{isExpanded ? "Скрыть изображение" : "Добавить изображение"}
+				</button>
+			)}
 
 			<div className={`${styles.uploadSection} ${isExpanded ? styles.uploadSectionVisible : ""}`}>
 				<div className={styles.uploadContainer}>
 					{!currentImage && (
 						<div className={styles.modeSwitcher}>
-							<button
-								type="button"
-								className={`${styles.modeButton} ${uploadMode === "file" ? styles.modeActive : ""}`}
-								onClick={switchMode("file")}
-								disabled={hasActiveImage}
-							>
-								Загрузить файл
-							</button>
-							<button
-								type="button"
-								className={`${styles.modeButton} ${uploadMode === "url" ? styles.modeActive : ""}`}
-								onClick={switchMode("url")}
-								disabled={hasActiveImage}
-							>
-								Указать URL
-							</button>
+							{(["file", "url"] as const).map((mode) => (
+								<button
+									key={mode}
+									type="button"
+									className={`${styles.modeButton} ${uploadMode === mode ? styles.modeActive : ""}`}
+									onClick={switchMode(mode)}
+									disabled={hasActiveImage}
+								>
+									{mode === "file" ? "Загрузить файл" : "Указать URL"}
+								</button>
+							))}
 						</div>
 					)}
 
@@ -331,8 +284,13 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageSelect, currentImage, classN
 						) : (
 							uploadMode === "file" && (
 								<div className={styles.placeholder}>
-									<span>Нажмите или перетащите изображение сюда</span>
-									<span className={styles.placeholderNote}>JPG или PNG до 3MB, не больше 500×500px</span>
+									<div className={styles.placeholderMain}>
+										<FaImage className={styles.placeholderIcon} />
+										<span>Нажмите или перетащите изображение сюда</span>
+									</div>
+									<span className={styles.placeholderNote}>
+										JPG или PNG до 3MB, рекомендуемый размер: {maxDimensions.width}×{maxDimensions.height}px
+									</span>
 								</div>
 							)
 						)}

@@ -2,9 +2,18 @@
 .section {
 	padding-top: 30px;
 	background: #fff;
+	gap: 30px;
 }
 .titleInput {
 	margin-bottom: 20px;
+	width: 100%;
+}
+
+.imageUploadTitle {
+	font-size: 16px;
+	font-weight: 500;
+	color: var(--text-primary);
+	margin-bottom: 8px;
 }
 .form {
 	display: flex;
@@ -22,6 +31,15 @@
 .formContent {
 	flex: 1;
 	padding-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+
+	.section {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
 }
 
 .formActions {

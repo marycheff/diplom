@@ -7,104 +7,96 @@ import { fileURLToPath } from "url"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const QUESTIONS_UPLOAD_DIR = path.resolve(__dirname, "..", "..", "..", "uploads", "questions")
-const TESTS_UPLOAD_DIR = path.resolve(__dirname, "..", "..", "..", "uploads", "tests")
+const UPLOAD_DIRS = {
+	question: path.resolve(__dirname, "..", "..", "..", "uploads", "questions"),
+	test: path.resolve(__dirname, "..", "..", "..", "uploads", "tests"),
+}
+
+const VALID_EXTENSIONS = [".jpg", ".jpeg", ".png"]
+const MAX_DIMENSIONS = {
+	test: { width: 1280, height: 720 },
+	question: { width: 500, height: 500 },
+}
 
 export class ImageService {
-	private getUploadDir(type: "test" | "question" = "question"): string {
-		const dir = type === "test" ? TESTS_UPLOAD_DIR : QUESTIONS_UPLOAD_DIR
-		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir, { recursive: true })
-		}
+	private getUploadDir(type: "test" | "question"): string {
+		const dir = UPLOAD_DIRS[type]
+		if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
 		return dir
 	}
-	async renameImage(
-		oldId: string,
-		newId: string,
-		extension: string,
-		type: "test" | "question"
-	): Promise<string> {
+
+	async renameImage(oldId: string, newId: string, extension: string, type: "test" | "question"): Promise<string> {
 		const uploadDir = this.getUploadDir(type)
-		const oldPath = path.join(uploadDir, `${oldId}.${extension}`)
-		const newPath = path.join(uploadDir, `${newId}.${extension}`)
-		await fs.promises.rename(oldPath, newPath)
+		await fs.promises.rename(
+			path.join(uploadDir, `${oldId}.${extension}`),
+			path.join(uploadDir, `${newId}.${extension}`)
+		)
 		return `/api/${type}s/images/${newId}.${extension}`
 	}
 
 	async processImage(image: string, type: "test" | "question"): Promise<string> {
+		// Если изображение уже обработано
+		if (image.startsWith(`/api/${type}s/images/`)) return image
 
-		if (image.startsWith(`/api/${type}s/images/`)) {
-			return image
-		}
-
-		// Проверка на внешнюю ссылку
+		// Обработка внешних ссылок
 		if (image.startsWith("http://") || image.startsWith("https://")) {
-			// Проверка длины URL
 			if (image.length > 255) {
 				throw ApiError.BadRequest("URL слишком длинный. Максимальная длина: 255 символов")
 			}
-
-			// Проверка расширения файла
-			const validExtensions = [".jpg", ".jpeg", ".png"]
-			const hasValidExtension = validExtensions.some((ext) => image.toLowerCase().endsWith(ext))
-
-			if (!hasValidExtension) {
+			if (!VALID_EXTENSIONS.some((ext) => image.toLowerCase().endsWith(ext))) {
 				throw ApiError.BadRequest("URL должен указывать на изображение формата JPG, JPEG или PNG")
 			}
-
-			// Возвращение URL как есть, без сохранения на сервере
 			return image
 		}
 
 		// Обработка base64 изображения
 		const matches = image.trim().match(/^(data:)?image\/(png|jpeg|jpg);base64,(.+)$/i)
+		if (!matches) throw ApiError.BadRequest("Некорректный формат изображения")
 
-		if (!matches) {
-			throw ApiError.BadRequest("Некорректный формат изображения!!")
-		}
-
-		const extension = matches[2]
-		const base64Data = matches[3]
+		const [, , extension, base64Data] = matches
 		const buffer = Buffer.from(base64Data, "base64")
 
-		if (buffer.length > 5 * 1024 * 1024) {
-			throw ApiError.BadRequest("Размер изображения превышает 5MB")
+		if (buffer.length > 3 * 1024 * 1024) {
+			throw ApiError.BadRequest("Размер изображения превышает 3MB")
 		}
 
+		// Получение метаданных изображения
 		let metadata
 		try {
 			metadata = await sharp(buffer).metadata()
-
 			if (!metadata.width || !metadata.height) {
 				throw ApiError.BadRequest("Не удалось определить размеры изображения")
 			}
-		} catch (error) {
+		} catch {
 			throw ApiError.BadRequest("Неверный формат изображения")
 		}
 
-		if (metadata.width > 500 || metadata.height > 500) {
-			throw ApiError.BadRequest("Изображение должно быть не больше 500×500 пикселей")
+		// Валидация размеров
+		const { width, height } = metadata
+		if (width < 100 || height < 100) {
+			throw ApiError.BadRequest("Изображение должно быть не меньше 100×100 px")
 		}
 
-		const uploadDir = this.getUploadDir(type)
+		const { width: maxWidth, height: maxHeight } = MAX_DIMENSIONS[type]
+		if (width > maxWidth || height > maxHeight) {
+			throw ApiError.BadRequest(
+				`Изображение ${type === "test" ? "теста " : ""}должно быть не больше ${maxWidth}×${maxHeight} px`
+			)
+		}
 
-		// Генерация UUID для имени файла
-		const fileId = crypto.randomUUID()
-		const filename = `${fileId}.${extension}`
-		const filePath = path.join(uploadDir, filename)
+		// Сохранение файла
+		const filename = `${crypto.randomUUID()}.${extension}`
+		const filePath = path.join(this.getUploadDir(type), filename)
 		await fs.promises.writeFile(filePath, buffer)
 
 		return `/api/${type}s/images/${filename}`
 	}
 
 	async deleteImage(imagePath: string, type: "test" | "question"): Promise<void> {
-		// Не удаление внешних ссылок
-		if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-			return
-		}
+		// Не удаляем внешние ссылки
+		if (imagePath.startsWith("http")) return
 
-		const filename = path.basename(imagePath)
-		const fullPath = path.join(this.getUploadDir(type), filename)
+		const fullPath = path.join(this.getUploadDir(type), path.basename(imagePath))
 		try {
 			await fs.promises.unlink(fullPath)
 		} catch (err) {

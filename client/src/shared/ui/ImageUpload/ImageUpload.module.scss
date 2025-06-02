@@ -102,14 +102,26 @@
 .placeholder {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 	color: #666;
+	gap: 8px;
+
 }
 
-.placeholderNote {
-	font-size: 0.8em;
+.placeholderMain {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 16px;
+}
+
+.placeholderIcon {
+	font-size: 20px;
 	color: #999;
 }
+
 
 .previewBox {
 	position: relative;
@@ -177,5 +189,64 @@
 
 	&:hover {
 		background-color: #2277dd;
+	}
+}
+
+@media (max-width: 768px) {
+	.toggleButton {
+		padding: 6px 12px;
+		font-size: 14px;
+
+		svg {
+			font-size: 14px;
+		}
+	}
+
+	.uploadContainer {
+		gap: 8px;
+	}
+
+	.modeSwitcher {
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.modeButton {
+		font-size: 13px;
+		padding: 6px 12px;
+	}
+
+	.dropZone {
+		padding: 16px;
+		font-size: 14px;
+	}
+
+	.placeholderMain {
+		flex-direction: column;
+		align-items: center;
+		gap: 6px;
+		text-align: center;
+	}
+
+	.placeholderIcon {
+		font-size: 32px;
+	}
+
+	.placeholderText span {
+		font-size: 14px;
+	}
+
+	.placeholderNote {
+		font-size: 12px;
+	}
+
+	.previewImage {
+		max-height: 200px;
+	}
+
+	.removePreview {
+		width: 20px;
+		height: 20px;
+		font-size: 10px;
 	}
 }

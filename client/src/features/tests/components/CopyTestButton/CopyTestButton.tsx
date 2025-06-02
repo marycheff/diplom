@@ -30,6 +30,7 @@ const CopyTestButton = ({ test, className }: CopyTestButtonProps) => {
 				await updateShortInfo(copiedTest.id, {
 					title: `Копия: ${test.title}`,
 					description: test.description || "",
+					image: null,
 				})
 				if (test.questions && test.questions.length > 0) {
 					const questionsWithoutIds = test.questions.map((question) => ({

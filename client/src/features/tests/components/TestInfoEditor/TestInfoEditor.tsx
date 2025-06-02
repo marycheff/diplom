@@ -1,11 +1,13 @@
 import { ShortTestInfo } from "@/shared/types"
 import { testDescriptionValidationRules, testTitleValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
+import ImageUpload from "@/shared/ui/ImageUpload/ImageUpload"
 import { ValidatedInput } from "@/shared/ui/Input"
 import { formatSpaces } from "@/shared/utils/formatter"
-import { FC } from "react"
+import { FC, useCallback } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import styles from "./TestInfoEditor.module.scss"
+
 interface TestInfoEditorProps {
 	data: ShortTestInfo
 	onChangingComplete: (data: ShortTestInfo) => void
@@ -13,13 +15,6 @@ interface TestInfoEditorProps {
 }
 
 const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onChangingComplete }) => {
-	const onSubmit: SubmitHandler<ShortTestInfo> = (data) => {
-		onChangingComplete({
-			title: data.title,
-			description: data.description,
-		})
-	}
-
 	const {
 		register,
 		handleSubmit,
@@ -35,15 +30,32 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
 		defaultValues: {
 			title: data.title,
 			description: data.description,
+			image: data.image,
 		},
 	})
 	const currentValues = watch()
+	const imageValue = watch("image")
 
+	const handleImageSelect = useCallback(
+		(base64Image: string) => {
+			setValue("image", base64Image)
+		},
+		[setValue]
+	)
 	const hasErrors = Object.keys(formState.errors).length > 0
 	const hasChanged =
-		formatSpaces(currentValues.title) !== data.title || formatSpaces(currentValues.description) !== data.description
+		formatSpaces(currentValues.title) !== data.title ||
+		formatSpaces(currentValues.description) !== data.description ||
+		currentValues.image !== data.image
 	const isFormValid = !hasErrors || !hasChanged
 
+	const onSubmit: SubmitHandler<ShortTestInfo> = (data) => {
+		onChangingComplete({
+			title: data.title,
+			description: data.description,
+			image: data.image,
+		})
+	}
 	return (
 		<form
 			onSubmit={handleSubmit(onSubmit)}
@@ -51,7 +63,6 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
 		>
 			<div className={styles.formContentWrapper}>
 				<div className={styles.formContent}>
-					{/* Секция с основными полями */}
 					<div className={styles.section}>
 						<ValidatedInput
 							trigger={trigger}
@@ -63,7 +74,6 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
 							validationRules={testTitleValidationRules}
 							className={styles.titleInput}
 						/>
-
 						<ValidatedInput
 							trigger={trigger}
 							multiline
@@ -75,6 +85,15 @@ const TestInfoEditor: FC<TestInfoEditorProps> = ({ data, onChangingComplete: onC
 							validationRules={testDescriptionValidationRules}
 							rows={4}
 						/>
+						<div className={styles.section}>
+							<span className={styles.imageUploadTitle}>Изображение теста</span>
+							<ImageUpload
+								onImageSelect={handleImageSelect}
+								currentImage={imageValue}
+								hideToggleButton
+								type="test"
+							/>
+						</div>
 					</div>
 				</div>
 

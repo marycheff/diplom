@@ -52,7 +52,6 @@ const GenerateTestForm = () => {
 	})
 
 	const onSubmit: SubmitHandler<GenerateTest> = async (data) => {
-		console.log(Number(data.numOfQuestions))
 		const response = await generateTest(formatSpaces(data.topic), Number(data.numOfQuestions))
 		toast.success(`Тест создан`)
 		isAdmin

@@ -221,8 +221,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 	)
 
 	const handleAddQuestion = useCallback(
-		(data: GenerateAnswerFormData & TextInputFormData & { image?: string }) => {
-			console.log(data.image)
+		(data: GenerateAnswerFormData & TextInputFormData & { image: string | null }) => {
 			if (questionType === QuestionType.TEXT_INPUT || questionType === QuestionType.FILL_IN_THE_BLANK) {
 				const newQuestion: QuestionDTO = {
 					id: editingQuestion?.id || `temp-${Date.now()}`,

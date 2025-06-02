@@ -1,4 +1,4 @@
-export const getImageUrl = (image?: string): string | undefined => {
+export const getImageUrl = (image: string | null): string | undefined => {
 	if (!image) return undefined
 
 	// Проверка на base64 или URL

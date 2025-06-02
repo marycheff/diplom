@@ -169,8 +169,13 @@ const TestInfoPage = () => {
 			...test,
 			title: formatSpaces(updatedShortInfo.title),
 			description: formatSpaces(updatedShortInfo.description),
+			image: updatedShortInfo.image,
 		}
-		await updateShortInfo(testId, { title: updatedShortInfo.title, description: updatedShortInfo.description })
+		await updateShortInfo(testId, {
+			title: updatedShortInfo.title,
+			description: updatedShortInfo.description,
+			image: updatedShortInfo.image,
+		})
 		setTest(updatedTest)
 		clearCache()
 
@@ -242,6 +247,15 @@ const TestInfoPage = () => {
 
 	return (
 		<div className={styles.container}>
+			{test.image && (
+				<div className={styles.testImage}>
+					<img
+						src={getImageUrl(test.image)}
+						alt="Изображение к тесту"
+					/>
+				</div>
+			)}
+
 			<div className={styles.topGrid}>
 				<div className={styles.infoBlock}>
 					<div className={styles.blockHeader}>
@@ -564,12 +578,13 @@ const TestInfoPage = () => {
 				/>
 			</Modal>
 			<Modal
+				fullScreen
 				isOpen={isShortInfoModalOpen}
 				onClose={() => setIsShortInfModalOpen(false)}
 				title="Редактирование информации о тесте"
 			>
 				<TestInfoEditor
-					data={{ title: formatSpaces(test.title), description: formatSpaces(test.description) }}
+					data={{ title: formatSpaces(test.title), description: formatSpaces(test.description), image: test.image }}
 					onChangingComplete={(data) => {
 						handleShortInfoUpdate(data)
 						setIsShortInfModalOpen(false)

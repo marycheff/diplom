@@ -62,6 +62,7 @@ export interface TestDTO {
 	description?: string
 	questions?: QuestionDTO[]
 	settings?: TestSettingsDTO
+	image: string | null
 	visibilityStatus: TestVisibilityStatus
 	moderationStatus: ModerationStatus
 	moderatedBy: string | null
@@ -76,13 +77,7 @@ export interface UserTestDTO {
 	description?: string
 	questions?: UserQuestionDTO[]
 	settings?: TestSettingsDTO
-}
-
-export interface UpdateTestDTO {
-	title?: string
-	description?: string
-	questions: QuestionDTO[]
-	settings?: TestSettingsDTO
+	image: string | null
 }
 
 export type JsonValue = string | number | boolean | null | JsonObject | JsonArray
@@ -95,11 +90,12 @@ export interface GenerateAnswerFormData {
 	question: string
 	answer: string
 	numOfAnswers: number
-	image?: string
+	image: string | null
 }
 export interface ShortTestInfo {
 	title: string
 	description?: string
+	image: string | null
 }
 
 export interface SnapshotWithOriginalTestDTO {
@@ -116,6 +112,7 @@ export interface TestSnapshotDTO {
 	createdAt: Date
 	questions: QuestionSnapshotDTO[]
 	settings?: TestSettingsSnapshotDTO
+	image: string | null
 }
 export const TestVisibilityStatus = {
 	HIDDEN: "HIDDEN",
