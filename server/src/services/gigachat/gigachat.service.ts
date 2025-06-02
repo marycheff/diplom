@@ -69,7 +69,7 @@ class GigaChatService {
 	async generateTest(token: string, topic: string, numOfQuestions = 10): Promise<QuestionDTO[]> {
 		logger.debug(`[${LOG_NAMESPACE}] Генерация теста. Тема: "${topic}", кол-во вопросов: ${numOfQuestions}`)
 
-		const content = `Сгенерируй тест из ${numOfQuestions} вопросов по теме ${topic}. В каждом вопросе должно быть 4 варианта ответа. один вариант ответа правильный, а 3 варианта ответа неправильные. Правильный ответ пиши всегда в начале. Формат ответа: 1. Вопрос: (текст вопроса). Ответы: 1.1. Ответ. 1.2. Ответ. 1.3. Ответ. 1.4. Ответ. 2. Вопрос: (текст вопроса). Ответы: 2.1. Ответ. 2.2. Ответ. 2.3. Ответ.`
+		const content = `Сгенерируй тест из ${numOfQuestions} вопросов по теме ${topic}. Если тема тебе кажется некорректной, то сразу в ответе напиши всего одно слово: "НЕКОРРЕКТНО". В каждом вопросе должно быть 4 варианта ответа. один вариант ответа правильный, а 3 варианта ответа неправильные. Правильный ответ пиши всегда в начале. Формат ответа: 1. Вопрос: (текст вопроса). Ответы: 1.1. Ответ. 1.2. Ответ. 1.3. Ответ. 1.4. Ответ. 2. Вопрос: (текст вопроса). Ответы: 2.1. Ответ. 2.2. Ответ. 2.3. Ответ.`
 
 		const postData = this.createPostData(content, envConfig.GIGACHAT_TEST_MODEL)
 		const requestOptions = this.createRequestOptions(postData, token)
@@ -87,7 +87,7 @@ class GigaChatService {
 			const questions = await this.parseTestContent(content)
 
 			if (questions.length === 0) {
-				throw ApiError.BadRequest("Не удалось распарсить вопросы из ответа нейросети. Попробуйте еще раз.")
+				throw ApiError.BadRequest("Не удалось получить вопросы от нейросети. Попробуйте еще раз.")
 			}
 
 			logger.debug(`[${LOG_NAMESPACE}] Тест успешно сгенерирован: ${questions.length} вопросов`)
@@ -152,23 +152,25 @@ class GigaChatService {
 	// Парсинг сгенерированного теста
 	async parseTestContent(content: string): Promise<QuestionDTO[]> {
 		logger.debug(`[${LOG_NAMESPACE}] Парсинг контента теста`)
-		if (!content) return []
+		if (!content) throw ApiError.BadRequest("Некорректная тема вопроса")
+
+		const trimmedContent = content.trim()
+		if (trimmedContent.toUpperCase() === "НЕКОРРЕКТНО" || !/\d+\. Вопрос:/.test(trimmedContent)) {
+			throw ApiError.BadRequest("Некорректная тема вопроса")
+		}
 
 		const questions: QuestionDTO[] = []
 
-		// Регулярное выражение для извлечения вопросов
 		const questionRegex = /(\d+)\. Вопрос: ([^\n]+)([\s\S]*?)(?=(?:\d+\. Вопрос:|$))/g
 
 		let questionMatch
 		let questionCounter = 0
 
-		while ((questionMatch = questionRegex.exec(content)) !== null) {
+		while ((questionMatch = questionRegex.exec(trimmedContent)) !== null) {
 			questionCounter++
-			const questionNumber = questionMatch[1]
 			const questionText = questionMatch[2].trim()
 			const answersSection = questionMatch[3]
 
-			// Регулярное выражение для извлечения ответов
 			const answerRegex = /\d+\.\d+\. ([^\n]+)/g
 
 			let answerMatch
@@ -177,17 +179,18 @@ class GigaChatService {
 
 			while ((answerMatch = answerRegex.exec(answersSection)) !== null) {
 				answerCounter++
-
-				// Очистка текста от лишних символов (*)
-				let answerText = answerMatch[1].trim()
-				answerText = answerText.replace(/\*/g, "").trim()
+				let answerText = answerMatch[1].trim().replace(/\*/g, "").trim()
 
 				answers.push({
 					id: `answer-${questionCounter}-${answerCounter}`,
 					text: answerText,
-					isCorrect: answerCounter === 1, // Первый ответ всегда правильный
-					//   sequencePosition: null,
+					isCorrect: answerCounter === 1,
 				})
+			}
+
+			// Проверка, что у каждого вопроса ровно 4 ответа
+			if (answers.length !== 4) {
+				throw ApiError.BadRequest("Некорректная тема вопроса")
 			}
 
 			questions.push({
@@ -198,6 +201,10 @@ class GigaChatService {
 				answers,
 				image: null,
 			})
+		}
+
+		if (questions.length === 0) {
+			throw ApiError.BadRequest("Некорректная тема вопроса")
 		}
 
 		logger.debug(`[${LOG_NAMESPACE}] Успешно распарсено ${questions.length} вопросов`)
