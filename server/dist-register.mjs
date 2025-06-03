@@ -87,7 +87,6 @@ function processFile(filePath) {
 		if (modified) {
 			try {
 				fs.writeFileSync(filePath, content, "utf8")
-				console.log(`Обновлен файл: ${filePath}`)
 			} catch (writeError) {
 				console.error(`Ошибка при записи файла ${filePath}: ${writeError.message}`)
 			}

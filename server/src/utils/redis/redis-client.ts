@@ -1,3 +1,4 @@
+import { envConfig } from "@/config/env-config"
 import { createClient } from "redis"
 
 // Состояние подключения
@@ -6,7 +7,7 @@ let connectionAttempts = 0
 const MAX_CONNECTION_ATTEMPTS = 3
 
 const redisClient = createClient({
-	url: process.env.REDIS_URL || "redis://localhost:6379",
+	url: envConfig.REDIS_URL,
 })
 
 // Флаг для отслеживания показа ошибки

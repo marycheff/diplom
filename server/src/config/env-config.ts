@@ -3,7 +3,6 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const requiredEnvVars = [
-	"DATABASE_URL",
 	"JWT_ACCESS_SECRET",
 	"JWT_REFRESH_SECRET",
 	"SMTP_HOST",
@@ -21,14 +20,24 @@ const requiredEnvVars = [
 	"NODE_ENV",
 ]
 
+// Проверка обязательных переменных, кроме DATABASE_URL и REDIS_URL
 for (const envVar of requiredEnvVars) {
 	if (!process.env[envVar]) {
 		throw new Error(`Отсутствует переменная окружения: ${envVar}`)
 	}
 }
 
+// Логика для DATABASE_URL и REDIS_URL
+const isProd = process.env.NODE_ENV === "production"
+
+const REDIS_URL = isProd ? process.env.REDIS_URL_PROD : process.env.REDIS_URL
+
+if (isProd && !REDIS_URL) {
+	throw new Error("Отсутствует переменная окружения: REDIS_URL")
+}
+
 export const envConfig = {
-	DATABASE_URL: process.env.DATABASE_URL!,
+	REDIS_URL,
 	JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET!,
 	JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET!,
 	SMTP_HOST: process.env.SMTP_HOST!,

@@ -7,7 +7,6 @@ RUN bun install --frozen-lockfile
 
 FROM base AS build
 COPY --from=install /usr/src/app/node_modules ./node_modules
-COPY .env .
 COPY . .
 RUN bun run build
 

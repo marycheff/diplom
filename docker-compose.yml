@@ -34,10 +34,6 @@ services:
             - redis
         networks:
             - diplom-app
-        environment:
-            - DATABASE_URL=postgresql://postgres:root@postgres:5432/diplom # вынести в .env
-            - REDIS_URL=redis://redis:6379
-        restart: unless-stopped
 
     client:
         build:

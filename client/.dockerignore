@@ -52,9 +52,9 @@ build
 logs
 *.log
 
-# # Окружение и секреты
-# .env
-# .env.*
-# !.env.example
-# *.pem
-# *.key
+# Окружение и секреты
+.env
+.env.*
+!.env.example
+*.pem
+*.key

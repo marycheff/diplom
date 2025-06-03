@@ -5,7 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths"
 export default defineConfig({
 	plugins: [react(), tsconfigPaths()],
 	server: {
-		// host: "0.0.0.0",
+		host: "0.0.0.0",
 	},
 	build: {
 		outDir: "dist",
@@ -13,7 +13,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			"@": path.resolve(__dirname, "./src"), // Корень src
+			"@": path.resolve(__dirname, "./src"),
 			"@components": path.resolve(__dirname, "./src/components"),
 			"@styles": path.resolve(__dirname, "./src/styles")
 		}
