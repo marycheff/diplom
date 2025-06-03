@@ -22,7 +22,7 @@ export const errorMiddleware = (err: any, req: Request, res: Response, next: Nex
 
 	// Обработка слишком большого запроса (body-parser)
 	if (err.type === "entity.too.large") {
-		const apiErr = ApiError.BadRequest("Размер тела запроса превышает допустимый лимит (1MB)")
+		const apiErr = ApiError.BadRequest("Размер тела запроса превышает допустимый лимит (3MB)")
 		logger.warn(`[${LOG_NAMESPACE}] PayloadTooLargeError`, {
 			message: apiErr.message,
 			status: apiErr.status,

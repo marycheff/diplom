@@ -2,13 +2,13 @@ import { envConfig } from "@/config/env-config"
 import { ApiError } from "@/exceptions"
 import { logger } from "@/utils/logger"
 import axios from "axios"
-import https from "follow-redirects/https"
+import { Agent as HttpsAgent } from "node:https"
 import qs from "querystring"
 
 const LOG_NAMESPACE = "GigaChatTokenService"
 
 class GigaChatTokenService {
-	httpsAgent = new https.Agent({ rejectUnauthorized: false })
+	httpsAgent = new HttpsAgent({ rejectUnauthorized: false })
 
 	getAccessToken = async (authData: string): Promise<string> => {
 		logger.debug(`[${LOG_NAMESPACE}] Запрос токена GigaChat`)

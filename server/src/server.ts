@@ -11,7 +11,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import express, { NextFunction, Request, Response } from "express"
 import { createServer } from "http"
-import "module-alias/register"
+
 dotenv.config()
 
 const PORT = envConfig.PORT
@@ -19,7 +19,7 @@ const app = express()
 const prisma = new PrismaClient()
 const httpServer = createServer(app)
 
-app.use(express.json({ limit: "1mb" }))
+app.use(express.json({ limit: "3mb" }))
 app.use((req: Request, res: Response, next: NextFunction) => {
 	req.cookies = req.headers.cookie ? parse(req.headers.cookie) : {}
 	next()
