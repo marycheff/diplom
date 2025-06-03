@@ -4,10 +4,12 @@ import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
 import Header from "@/shared/components/Header/Header"
+import ImageWithFallback from "@/shared/components/ImageWithFallback/ImageWithFallback"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import { PreTestUserDataType, UserTestDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
+import { getImageUrl } from "@/shared/utils"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
@@ -69,6 +71,10 @@ const StartAttemptPage = () => {
 			</div>
 		)
 	}
+	if (!test) {
+		return <TestNotFound />
+	}
+
 	const handleStartAttempt = async (userData?: PreTestUserDataType) => {
 		if (!testId) return
 
@@ -86,26 +92,34 @@ const StartAttemptPage = () => {
 		<>
 			<Header />
 			<div className={styles.container}>
+				{test.image && (
+					<div className={styles.testImage}>
+						<ImageWithFallback
+							src={getImageUrl(test.image)}
+							alt="изображение не загрузилось"
+						/>
+					</div>
+				)}
 				<div className={styles.blockContent}>
 					<div className={styles.infoRow}>
 						<span className={styles.label}>Название:</span>
-						<span className={styles.value}>{test!.title || <span className={styles.emptyField}>не указано</span>}</span>
+						<span className={styles.value}>{test.title || <span className={styles.emptyField}>не указано</span>}</span>
 					</div>
 					<div className={styles.infoRow}>
 						<span className={styles.label}>Описание:</span>
 						<span className={styles.value}>
-							{test!.description || <span className={styles.emptyField}>не указано</span>}
+							{test.description || <span className={styles.emptyField}>не указано</span>}
 						</span>
 					</div>
 				</div>
 				{hasRequiredFields ? (
 					<PreTestForm
-						inputFields={test!.settings?.inputFields!}
+						inputFields={test.settings?.inputFields!}
 						onSubmit={handleStartAttempt}
 						isLoading={isLoading}
 					/>
 				) : (
-					<div className={styles.blockContent}>
+					<div>
 						<Button onClick={() => handleStartAttempt()}>Начать попытку</Button>
 					</div>
 				)}

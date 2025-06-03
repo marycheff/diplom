@@ -89,3 +89,19 @@
 		}
 	}
 }
+.testImage {
+	margin-bottom: 20px;
+	border-radius: 12px;
+	padding: 10px;
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: $background-800;
+	min-height: 400px;
+
+	img {
+		max-height: 500px;
+		object-fit: contain;
+	}
+}

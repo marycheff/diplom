@@ -126,14 +126,11 @@
 	justify-content: center;
 	align-items: center;
 	background-color: $background-800;
-	min-height: 100px;
+	min-height: 400px;
 
 	img {
-		max-width: 100%;
 		max-height: 500px;
-		display: block;
 		object-fit: contain;
-		border-radius: 4px;
 	}
 }
 .infoRow {
@@ -222,12 +219,8 @@
 		min-height: 100px;
 
 		img {
-			max-width: 100%;
 			max-height: 300px;
-			height: auto;
-			display: block;
 			object-fit: contain;
-			border-radius: 4px;
 		}
 	}
 }

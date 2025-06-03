@@ -7,12 +7,14 @@ import Header from "@/shared/components/Header/Header"
 import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
+import { useImagePreloader } from "@/shared/hooks/useImagePreloader"
 import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
 import { useTestSocket } from "@/shared/hooks/useTestSocket"
 import { AttemptAnswer, AttemptStatus, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
+import { getImageUrl } from "@/shared/utils"
 import { getDecryptedTime, saveEncryptedTime } from "@/shared/utils/crypto"
 import { isValidUUID } from "@/shared/utils/validator"
 import { useEffect, useRef, useState } from "react"
@@ -160,6 +162,13 @@ const TestTaking = () => {
 			}
 		}
 	}, [currentPage, test, allAnswers, allTextAnswers])
+
+	const { isImagePreloaded } = useImagePreloader({
+		questions: test?.questions || [],
+		currentPage,
+		preloadRadius: 3, // Предзагружаем 3 вопроса вперед и назад
+		priority: true,
+	})
 
 	// Предотвращение случайного закрытия страницы
 	usePreventLeave({
@@ -377,6 +386,7 @@ const TestTaking = () => {
 					onSubmitAnswers={handleSubmitAnswers}
 					isLastQuestion={currentPage === totalPages}
 					isLoading={isLoading}
+					isImagePreloaded={currentQuestion.image ? isImagePreloaded(getImageUrl(currentQuestion.image)) : false}
 				/>
 
 				<ConfirmationModal

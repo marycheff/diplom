@@ -1,10 +1,10 @@
 import Button from "@/shared/ui/Button/Base/Button"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
-
 import { MdContentCopy } from "react-icons/md"
 import styles from "./CopyButton.module.scss"
 import { FaCheck } from "react-icons/fa6"
+
 interface CopyButtonProps {
 	textToCopy: string
 	className?: string

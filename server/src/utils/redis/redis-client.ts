@@ -15,7 +15,7 @@ let errorLogged = false
 
 redisClient.on("error", (err) => {
 	if (!errorLogged) {
-		console.error("Redis connection error:", err.message)
+		console.error("Ошибка подключения к Redis:", err.message)
 		errorLogged = true
 
 		// Сброс флага через 5 секунд для новых попыток
@@ -27,11 +27,11 @@ redisClient.on("error", (err) => {
 
 redisClient.on("connect", () => {
 	isConnected = true
-	console.log("Redis connected successfully")
+	console.log("Подключение к Redis выполнено успешно.")
 })
 
 redisClient.on("reconnecting", () => {
-	console.log("Redis reconnecting...")
+	console.log("Повторное подключение к Redis...")
 })
 
 const connectRedis = async () => {
@@ -44,8 +44,8 @@ const connectRedis = async () => {
 
 		if (connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
 			console.error(
-				`Failed to connect to Redis after ${MAX_CONNECTION_ATTEMPTS} attempts. ` +
-					"Application will continue without Redis caching."
+				`Не удалось подключиться к Redis после ${MAX_CONNECTION_ATTEMPTS} попыток. ` +
+					"Приложение продолжит работу без кэширования Redis."
 			)
 		} else {
 			// Повторная попытка через 2 секунды
@@ -59,9 +59,9 @@ const disconnectRedis = async () => {
 		try {
 			await redisClient.quit()
 			isConnected = false
-			console.log("Redis disconnected successfully")
+			console.log("Отключение от Redis выполнено успешно.")
 		} catch (error) {
-			console.error("Error disconnecting from Redis:", error)
+			console.error("Ошибка при отключении от Redis:", error)
 		}
 	}
 }

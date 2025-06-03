@@ -8,7 +8,7 @@
 	opacity: 1;
 	transform: translateY(0);
 	position: relative;
-	top: -2px;
+	// top: -5px;
 
 	&[data-visible="false"] {
 		opacity: 0;
@@ -25,6 +25,9 @@
 	&:hover {
 		transform: scale(1.1);
 	}
+	svg{
+		font-size: 1.2rem;
+	}
 }
 
 // .textButton {
@@ -39,11 +42,4 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-}
-
-.icon {
-	width: 16px;
-	height: 16px;
-	fill: currentColor;
-	vertical-align: middle;
 }
