@@ -78,7 +78,7 @@ export const useImagePreloader = ({
 					})
 				}
 
-				// Устанавливаем приоритет загрузки с типизацией
+				// Установка приоритета загрузки с типизацией
 				if (priority && "fetchPriority" in img) {
 					;(img as ImageElementWithPriority).fetchPriority = "high"
 				}
@@ -114,14 +114,14 @@ export const useImagePreloader = ({
 		const questionsInRange = questions.slice(startIndex, endIndex + 1)
 		const imagesToPreload = getValidImageUrls(questionsInRange)
 
-		// Фильтруем уже загруженные изображения
+		// Фильтрация уже загруженных изображений
 		const unloadedImages = imagesToPreload.filter(
 			(src) => !preloadedImages.current.has(src) && !failedImages.current.has(src)
 		)
 
 		if (!unloadedImages.length) return
 
-		// Сортируем по приоритету (ближайшие к текущему вопросу первыми)
+		// Сортировка по приоритету (ближайшие к текущему вопросу первыми)
 		const sortedImages = unloadedImages
 			.map((src) => {
 				const questionIndex = questions.findIndex((q) => {
@@ -133,11 +133,11 @@ export const useImagePreloader = ({
 			})
 			.sort((a, b) => a.distance - b.distance)
 
-		// Загружаем с разными приоритетами
+		// Загрузка с разными приоритетами
 		const highPriorityImages = sortedImages.filter((img) => img.isHighPriority)
 		const lowPriorityImages = sortedImages.filter((img) => !img.isHighPriority)
 
-		// Сначала загружаем высокоприоритетные
+		// Сначала загрузка высокоприоритетных
 		const highPriorityPromises = highPriorityImages.map(({ src }) => preloadImage(src).catch((result) => result))
 
 		try {
@@ -167,7 +167,7 @@ export const useImagePreloader = ({
 		const currentIndex = currentPage - 1
 		const keepRadius = preloadRadius + 1
 
-		// Очищаем успешно загруженные изображения
+		// Очистка успешно загруженных изображений
 		preloadedImages.current.forEach((src) => {
 			const questionIndex = questions.findIndex((q) => {
 				const url = q.image ? getImageUrl(q.image) : null
@@ -179,7 +179,6 @@ export const useImagePreloader = ({
 			}
 		})
 
-		// Очищаем проваленные изображения (даем им второй шанс)
 		failedImages.current.forEach((src) => {
 			const questionIndex = questions.findIndex((q) => {
 				const url = q.image ? getImageUrl(q.image) : null

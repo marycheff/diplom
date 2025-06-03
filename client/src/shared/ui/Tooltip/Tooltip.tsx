@@ -77,7 +77,6 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 				} else if (spaceBelow >= tooltipRect.height + 8) {
 					actualPosition = "bottom"
 				} else {
-					// Если нигде не хватает места, выбираем справа
 					actualPosition = "right"
 				}
 			}

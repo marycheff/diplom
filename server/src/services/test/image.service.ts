@@ -93,7 +93,6 @@ export class ImageService {
 	}
 
 	async deleteImage(imagePath: string, type: "test" | "question"): Promise<void> {
-		// Не удаляем внешние ссылки
 		if (imagePath.startsWith("http")) return
 
 		const fullPath = path.join(this.getUploadDir(type), path.basename(imagePath))

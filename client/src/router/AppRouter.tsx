@@ -101,7 +101,6 @@ const AppRouter = () => {
 								key={route.path}
 								path={route.path}
 								element={
-									// Для ROUTES.WELCOME используем особую логику
 									route.path === ROUTES.WELCOME ? (
 										isAuth ? (
 											isAdmin ? (

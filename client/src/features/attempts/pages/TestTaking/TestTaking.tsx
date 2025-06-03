@@ -166,7 +166,7 @@ const TestTaking = () => {
 	const { isImagePreloaded } = useImagePreloader({
 		questions: test?.questions || [],
 		currentPage,
-		preloadRadius: 3, // Предзагружаем 3 вопроса вперед и назад
+		preloadRadius: 3, // Предзагрузка 3 вопросов вперед и назад
 		priority: true,
 	})
 
@@ -246,7 +246,7 @@ const TestTaking = () => {
 
 	const submitAnswers = async () => {
 		if (isSubmittingRef.current || isAttemptCompleted) {
-			return // Предотвращаем повторную отправку
+			return 
 		}
 		isSubmittingRef.current = true
 

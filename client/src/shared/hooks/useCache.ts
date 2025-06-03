@@ -98,7 +98,6 @@ export const useMyTestsCache = () => {
 export const useAttemptsCache = () => {
 	const location = useLocation()
 
-	// Извлекаем testId из URL
 	const getTestIdFromUrl = useCallback(() => {
 		const pathParts = location.pathname.split("/")
 		return pathParts[pathParts.length - 2] || null

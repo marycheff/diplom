@@ -1,4 +1,3 @@
-// Импортируем module-alias как CommonJS модуль в ESM
 import fs from "fs"
 import { createRequire } from "module"
 import { dirname, join, relative } from "path"
@@ -39,11 +38,8 @@ function processFile(filePath) {
 
 		// Обработка импортов
 		content = content.replace(importRegex, (match, importPath) => {
-			// Пропускаем импорты из node_modules
 			if (importPath.startsWith("@/") || importPath.startsWith("./") || importPath.startsWith("../")) {
-				// Пропускаем импорты, которые уже имеют расширение или содержат параметры
 				if (!importPath.endsWith(".js") && !importPath.includes("?") && !importPath.includes("#")) {
-					// Определяем абсолютный путь к импортируемому файлу
 					let absolutePath
 					if (importPath.startsWith("@/")) {
 						// Для алиасов @/
@@ -53,28 +49,22 @@ function processFile(filePath) {
 						absolutePath = join(dirname(filePath), importPath)
 					}
 
-					// Проверяем существование файла и директории
 					const fileWithJs = `${absolutePath}.js`
 					const directoryWithIndex = join(absolutePath, "index.js")
 
 					try {
-						// Проверяем, существует ли файл с расширением .js
 						if (fs.existsSync(fileWithJs)) {
 							modified = true
 							return match.replace(`"${importPath}"`, `"${importPath}.js"`)
 						}
 
-						// Проверяем, существует ли директория с index.js
 						if (fs.existsSync(directoryWithIndex)) {
 							modified = true
 							return match.replace(`"${importPath}"`, `"${importPath}/index.js"`)
 						}
-
-						// Если ни файл, ни директория не существуют, просто добавляем .js
 						modified = true
 						return match.replace(`"${importPath}"`, `"${importPath}.js"`)
 					} catch (error) {
-						// В случае ошибки просто добавляем .js
 						modified = true
 						return match.replace(`"${importPath}"`, `"${importPath}.js"`)
 					}
@@ -83,7 +73,6 @@ function processFile(filePath) {
 			return match
 		})
 
-		// Сохраняем изменения, если файл был модифицирован
 		if (modified) {
 			try {
 				fs.writeFileSync(filePath, content, "utf8")
@@ -96,10 +85,8 @@ function processFile(filePath) {
 	}
 }
 
-// Обрабатываем директорию dist
 processDirectory(join(process.cwd(), "dist"))
 
 console.log("Все импорты обновлены, запускаем сервер...")
 
-// Запускаем сервер
 import("./dist/server.js")

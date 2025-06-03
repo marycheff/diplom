@@ -23,10 +23,9 @@ RUN bun run build
 
 # Финальный образ
 FROM base AS release
-# Создаем все необходимые директории
+
 RUN mkdir -p ./dist uploads/questions uploads/tests
 
-# Копируем файлы
 COPY --from=install /temp/prod/node_modules node_modules
 COPY --from=prerelease /usr/src/app/dist ./dist
 COPY --from=prerelease /usr/src/app/dist-register.mjs ./dist-register.mjs
@@ -39,7 +38,6 @@ COPY --from=prerelease /usr/src/app/bad_words.txt ./bad_words.txt
 # Переустановка sharp для корректной платформы
 RUN bun install sharp
 
-# Устанавливаем права на все файлы и директории
 RUN chown -R bun:bun /usr/src/app && chmod -R 755 /usr/src/app
 
 # Настройка запуска

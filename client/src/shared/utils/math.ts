@@ -47,7 +47,7 @@ export const countCorrectAnswers = (questions: AttemptQuestionDTO[]): number => 
 				correctCount++
 			}
 		} else {
-			// Для SINGLE_CHOICE и MULTIPLE_CHOICE сравниваем ID
+			// Для SINGLE_CHOICE и MULTIPLE_CHOICE сравнение ID
 			const correctAnswerIds = question.answers.filter((answer) => answer.isCorrect).map((answer) => answer.id)
 			const userAnswerIds = userAnswers.map((a) => a.answer.id)
 
