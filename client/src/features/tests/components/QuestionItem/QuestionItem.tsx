@@ -1,3 +1,4 @@
+import ImageWithFallback from "@/shared/components/ImageWithFallback/ImageWithFallback"
 import { QuestionDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Tooltip from "@/shared/ui/Tooltip/Tooltip"
@@ -86,9 +87,9 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
 				<div className={`${styles.questionContent} ${expanded ? styles.expanded : ""}`}>
 					{question.image && (
 						<div className={styles.questionImage}>
-							<img
+							<ImageWithFallback
 								src={getImageUrl(question.image)}
-								alt="Изображение к вопросу"
+								alt="изображение не загрузилось"
 							/>
 						</div>
 					)}

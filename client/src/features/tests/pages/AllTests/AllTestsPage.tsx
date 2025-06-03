@@ -59,11 +59,11 @@ const AllTestsPage = () => {
 	useEffect(() => {
 		const query = params.get("query") || ""
 		let pageParam = parseInt(params.get("page") || "1", 10)
-		if (!params.has("page")) {
-			params.set("page", "1")
-			navigate({ search: params.toString() })
-			pageParam = 1
-		}
+		// if (!params.has("page")) {
+		// 	params.set("page", "1")
+		// 	navigate({ search: params.toString() })
+		// 	pageParam = 1
+		// }
 		setSearchQuery(query)
 		setPage(pageParam)
 		fetchData(pageParam, query || undefined)

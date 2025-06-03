@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import ImageWithFallback from "@/shared/components/ImageWithFallback/ImageWithFallback"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import { ModerationStatusLabels, PreTestUserDataLabels, QuestionTypeLabels, TestSnapshotDTO } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -154,10 +155,7 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
 									</div>
 									{question.image && (
 										<div className={styles.questionImage}>
-											<img
-												src={getImageUrl(question.image)}
-												alt="Картинка не загрузилась"
-											/>
+											<ImageWithFallback src={getImageUrl(question.image)} />
 										</div>
 									)}
 									<div className={styles.answersList}>

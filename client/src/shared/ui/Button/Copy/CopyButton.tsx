@@ -1,8 +1,10 @@
 import Button from "@/shared/ui/Button/Base/Button"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
-import styles from "./CopyButton.module.scss"
 
+import { MdContentCopy } from "react-icons/md"
+import styles from "./CopyButton.module.scss"
+import { FaCheck } from "react-icons/fa6"
 interface CopyButtonProps {
 	textToCopy: string
 	className?: string
@@ -51,24 +53,9 @@ const CopyButton = ({ textToCopy, className = "", showOnHover = false, variant =
 		}
 	}
 
-	const getIcon = () =>
-		isCopied ? (
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 24 24"
-				className={styles.icon}
-			>
-				<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-			</svg>
-		) : (
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 24 24"
-				className={styles.icon}
-			>
-				<path d="M19 21H8V7h11m0-2H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m-3-4H4c-1.1 0-2 .9-2 2v14h2V3h12V1z" />
-			</svg>
-		)
+	const getIcon = () => {
+		return isCopied ? <FaCheck /> : <MdContentCopy />
+	}
 
 	if (variant === "text") {
 		return (

@@ -2,7 +2,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	min-height: 95vh;
+	min-height: 100vh;
 	position: relative;
 }
 
@@ -20,7 +20,7 @@
 	width: 80px;
 	height: 80px;
 	margin: 0 auto 1.5rem;
-	background: $accent-red-10;
+	background: $green-100;
 	border-radius: 50%;
 	display: flex;
 	align-items: center;
@@ -29,7 +29,7 @@
 	svg {
 		width: 40px;
 		height: 40px;
-		color: $accent-red;
+		color: $green-400;
 	}
 }
 
@@ -44,18 +44,4 @@
 	color: $text-secondary;
 	line-height: 1.5;
 	margin-bottom: 1.5rem;
-}
-
-.link {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.5rem;
-	color: $secondary-600;
-	font-weight: 500;
-	transition: color 0.2s;
-
-	&:hover {
-		color: $secondary-600;
-		text-decoration: underline;
-	}
 }

@@ -8,6 +8,7 @@ import TestSettingsEditor from "@/features/tests/components/TestSettingsEditor/T
 import InfoRowSkeleton from "@/features/tests/components/TestSettingsSkeleton/TestSettingsSkeleton"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { ROUTES } from "@/router/paths"
+import ImageWithFallback from "@/shared/components/ImageWithFallback/ImageWithFallback"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import { useCache } from "@/shared/hooks/useCache"
@@ -249,9 +250,9 @@ const TestInfoPage = () => {
 		<div className={styles.container}>
 			{test.image && (
 				<div className={styles.testImage}>
-					<img
+					<ImageWithFallback
 						src={getImageUrl(test.image)}
-						alt="Изображение к тесту"
+						alt="изображение не загрузилось"
 					/>
 				</div>
 			)}
@@ -535,12 +536,13 @@ const TestInfoPage = () => {
 										</div>
 										{question.image && (
 											<div className={styles.questionImage}>
-												<img
+												<ImageWithFallback
 													src={getImageUrl(question.image)}
-													alt="картинка не загрузилась"
+													alt="изображение не загрузилось"
 												/>
 											</div>
 										)}
+
 										<div className={styles.answersList}>
 											{question.answers.map((answer) => (
 												<div

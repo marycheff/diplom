@@ -1,3 +1,4 @@
+import ImageWithFallback from "@/shared/components/ImageWithFallback/ImageWithFallback"
 import { getImageUrl } from "@/shared/utils"
 import { ChangeEvent, DragEvent, FC, memo, MouseEvent, useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
@@ -268,9 +269,9 @@ const ImageUpload: FC<ImageUploadProps> = ({
 
 						{preview ? (
 							<div className={styles.previewBox}>
-								<img
+								<ImageWithFallback
 									src={preview}
-									alt="Preview"
+									alt="изображение не загрузилось"
 									className={styles.previewImage}
 								/>
 								<button

@@ -8,6 +8,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { Link, useNavigate } from "react-router-dom"
 import styles from "./RegisterPage.module.scss"
+import Header from "@/shared/components/Header/Header"
 type Register = {
 	email: string
 	password: string
@@ -40,46 +41,49 @@ const RegisterPage = () => {
 		navigate(returnUrl || ROUTES.HOME)
 	}
 	return (
-		<div className={styles.registerContainer}>
-			<div className={styles.formWrapper}>
-				<h2 className={styles.title}>Регистрация</h2>
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<ValidatedInput
-						name="email"
-						register={register}
-						setValue={setValue}
-						trigger={trigger}
-						errors={errors.email}
-						placeholder="Email"
-						validationRules={emailValidationRules}
-					/>
-					<PasswordInput
-						name="password"
-						register={register}
-						setValue={setValue}
-						trigger={trigger}
-						errors={errors.password}
-						placeholder="Пароль"
-					/>
-					<PasswordInput
-						name="confirmPassword"
-						register={register}
-						setValue={setValue}
-						trigger={trigger}
-						errors={errors.confirmPassword}
-						placeholder="Подтверждение пароля"
-					/>
-					<Button
-						type="submit"
-						disabled={isLoading}
-					>
-						Регистрация
-					</Button>
-				</form>
-				<div className={styles.loginLink}>
-					<p>
-						Уже зарегистрированы? <Link to={ROUTES.LOGIN}>Войти</Link>
-					</p>
+		<div className={styles.pageWrapper}>
+			<Header />
+			<div className={styles.registerContainer}>
+				<div className={styles.formWrapper}>
+					<h2 className={styles.title}>Регистрация</h2>
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<ValidatedInput
+							name="email"
+							register={register}
+							setValue={setValue}
+							trigger={trigger}
+							errors={errors.email}
+							placeholder="Email"
+							validationRules={emailValidationRules}
+						/>
+						<PasswordInput
+							name="password"
+							register={register}
+							setValue={setValue}
+							trigger={trigger}
+							errors={errors.password}
+							placeholder="Пароль"
+						/>
+						<PasswordInput
+							name="confirmPassword"
+							register={register}
+							setValue={setValue}
+							trigger={trigger}
+							errors={errors.confirmPassword}
+							placeholder="Подтверждение пароля"
+						/>
+						<Button
+							type="submit"
+							disabled={isLoading}
+						>
+							Регистрация
+						</Button>
+					</form>
+					<div className={styles.loginLink}>
+						<p>
+							Уже зарегистрированы? <Link to={ROUTES.LOGIN}>Войти</Link>
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>

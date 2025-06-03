@@ -54,11 +54,11 @@ const TestAttemptsPage = () => {
 	useEffect(() => {
 		const params = new URLSearchParams(location.search)
 		let pageParam = parseInt(params.get("page") || "1", 10)
-		if (!params.has("page")) {
-			params.set("page", "1")
-			navigate({ search: params.toString() })
-			pageParam = 1
-		}
+		// if (!params.has("page")) {
+		// 	params.set("page", "1")
+		// 	navigate({ search: params.toString() })
+		// 	pageParam = 1
+		// }
 
 		setPage(pageParam)
 		fetchData(pageParam)

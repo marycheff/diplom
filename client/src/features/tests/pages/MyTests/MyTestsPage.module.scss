@@ -1,17 +1,27 @@
 @use "@/features/tests/pages/AllTests/AllTestsPage.module" as common;
+
+.emptyStateContainer {
+	min-height: 95vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 2rem;
+}
+
 .emptyState {
+	margin-top: -20vh;
+
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
 	padding: 4rem 2rem;
 	max-width: 600px;
-	margin: 6rem auto;
-	background: $bg-primary;
+	width: 100%;
+	background: $bg-surface;
 	border-radius: 16px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	box-shadow: $shadow-medium;
 }
-
 .emoji {
 	width: 120px;
 	height: 120px;

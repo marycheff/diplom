@@ -1,6 +1,7 @@
 import ResetPasswordForm from "@/features/auth/components/ResetPasswordForm"
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
+import Header from "@/shared/components/Header/Header"
 import { emailValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
 import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
@@ -43,59 +44,62 @@ const LoginPage = () => {
 	}
 
 	return (
-		<div className={styles.loginContainer}>
-			<div className={styles.formWrapper}>
-				<h2 className={styles.title}>Авторизация</h2>
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<ValidatedInput
-						clearable
-						name="email"
-						placeholder="Email"
-						register={register}
-						setValue={setValue}
-						errors={errors.email}
-						trigger={trigger}
-						validationRules={emailValidationRules}
-					/>
-					<PasswordInput
-						name="password"
-						register={register}
-						setValue={setValue}
-						errors={errors.password}
-						placeholder="Пароль"
-						trigger={trigger}
-						noValidation
-					/>
-					<Button
-						type="submit"
-						disabled={isLoading}
-					>
-						Вход
-					</Button>
-				</form>
-
-				<div className={styles.registerLink}>
-					<p>
-						Нет аккаунта? <Link to={ROUTES.REGISTER}>Зарегистрироваться</Link>
-					</p>
-				</div>
-
-				{!isResetPasswordVisible && (
-					<div className={styles.resetPassword}>
-						<button
-							onClick={handleResetPasswordClick}
-							className={styles.resetPasswordBtn}
+		<div className={styles.pageWrapper}>
+			<Header />
+			<div className={styles.loginContainer}>
+				<div className={styles.formWrapper}>
+					<h2 className={styles.title}>Авторизация</h2>
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<ValidatedInput
+							clearable
+							name="email"
+							placeholder="Email"
+							register={register}
+							setValue={setValue}
+							errors={errors.email}
+							trigger={trigger}
+							validationRules={emailValidationRules}
+						/>
+						<PasswordInput
+							name="password"
+							register={register}
+							setValue={setValue}
+							errors={errors.password}
+							placeholder="Пароль"
+							trigger={trigger}
+							noValidation
+						/>
+						<Button
+							type="submit"
+							disabled={isLoading}
 						>
-							Забыли пароль?
-						</button>
-					</div>
-				)}
+							Вход
+						</Button>
+					</form>
 
-				{isResetPasswordVisible && (
-					<div className={styles.resetPasswordForm}>
-						<ResetPasswordForm />
+					<div className={styles.registerLink}>
+						<p>
+							Нет аккаунта? <Link to={ROUTES.REGISTER}>Зарегистрироваться</Link>
+						</p>
 					</div>
-				)}
+
+					{!isResetPasswordVisible && (
+						<div className={styles.resetPassword}>
+							<button
+								onClick={handleResetPasswordClick}
+								className={styles.resetPasswordBtn}
+							>
+								Забыли пароль?
+							</button>
+						</div>
+					)}
+
+					{isResetPasswordVisible && (
+						<div className={styles.resetPasswordForm}>
+							<ResetPasswordForm />
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	)
