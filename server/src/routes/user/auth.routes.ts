@@ -23,7 +23,7 @@ router.get("/activate/:link", authController.activate)
 router.post("/login", validateRequest(loginSchema), authController.login)
 
 // Выход из системы
-router.post("/logout", authMiddleware, authController.logout)
+router.post("/logout", authController.logout)
 
 // Обновление токена доступа
 router.get("/refresh", authController.refresh)

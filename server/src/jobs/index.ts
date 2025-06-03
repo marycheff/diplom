@@ -6,14 +6,14 @@ import { logger } from "@/utils/logger"
 export function initializeJobs(): void {
 	logger.info("Инициализация фоновых задач...")
 
-	// Запуск задачи проверки просроченных попыток
-	expiredAttemptsJob.start()
+	// // Запуск задачи проверки просроченных попыток
+	// expiredAttemptsJob.start()
 
-	// Запуск задачи проверки просроченных ссылок активации
-	expiredActivationLinksJob.start()
+	// // Запуск задачи проверки просроченных ссылок активации
+	// expiredActivationLinksJob.start()
 
-	// Запуск задачи проверки просроченных кодов сброса пароля
-	expiredResetCodesJob.start()
+	// // Запуск задачи проверки просроченных кодов сброса пароля
+	// expiredResetCodesJob.start()
 
 	logger.info("Все фоновые задачи успешно запущены")
 }
