@@ -9,8 +9,8 @@
 .container {
 	max-width: 560px;
 	margin-top: -20vh;
-	padding: 2.5rem;
-	background: $bg-surface;
+	padding: $section-padding;
+	//   background: $bg-surface;
 	border-radius: 1.25rem;
 	box-shadow: $shadow-medium;
 	text-align: center;
@@ -19,7 +19,7 @@
 .icon {
 	width: 80px;
 	height: 80px;
-	margin: 0 auto 1.5rem;
+	margin: 0 auto calc($spacing-unit * 1.5);
 	background: $accent-red-10;
 	border-radius: 50%;
 	display: flex;
@@ -35,30 +35,98 @@
 
 .heading {
 	font-size: 1.5rem;
-	font-weight: 600;
-	margin-bottom: 1rem;
+	font-weight: bold;
+	margin-bottom: $spacing-unit;
 	color: $text-primary;
 }
 
 .text {
 	color: $text-secondary;
 	line-height: 1.5;
-	margin-bottom: 1.5rem;
+	margin-bottom: calc($spacing-unit * 1.5);
 }
 
-.link {
+.actionLink {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
-	color: $secondary-600;
+	color: $accent-primary;
 	font-weight: 500;
 	transition: color 0.2s;
 
 	&:hover {
-		color: $secondary-600;
+		color: $accent-primary-hover;
 		text-decoration: underline;
 	}
 }
+
 .content {
 	width: 560px;
+	margin-top: -20vh;
+	padding: $section-padding;
+	border-radius: 1.25rem;
+	box-shadow: $shadow-medium;
+}
+
+.tabHeaders {
+	display: flex;
+	border-bottom: 1px solid $border-secondary;
+	margin-bottom: calc($spacing-unit * 1.5);
+}
+
+.tabButton {
+	flex: 1; /* Каждая вкладка занимает половину ширины (50%) */
+	display: flex;
+	justify-content: center; /* Центрируем содержимое */
+	align-items: center;
+	gap: 0.5rem;
+	padding: calc($spacing-unit * 0.75) calc($spacing-unit * 1.5);
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-weight: 500;
+	font-size: 1.125rem; /* Увеличенный размер шрифта */
+	color: $text-secondary;
+	position: relative;
+	transition: color 0.2s;
+
+	svg {
+		width: 16px;
+		height: 16px;
+	}
+
+	&:hover {
+		color: $text-primary;
+	}
+}
+
+.tabButton::after {
+	content: "";
+	position: absolute;
+	bottom: -1px;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	background: transparent;
+	transition: background 0.2s;
+}
+
+.activeTab {
+	color: $text-primary;
+}
+
+.activeTab::after {
+	background: $accent-primary;
+}
+
+.tabContent {
+	padding: $spacing-unit;
+}
+
+.title {
+	font-size: 2.5rem;
+	font-weight: bold;
+	margin-bottom: 1rem;
+	text-align: center;
+	color: $text-primary;
 }

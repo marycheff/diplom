@@ -39,7 +39,6 @@ const CreateTestForm = () => {
 
 	return (
 		<>
-			<h1 className={styles.title}>Создание теста</h1>
 			<div className={styles.container}>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<ValidatedInput

@@ -63,7 +63,6 @@ const GenerateTestForm = () => {
 
 	return (
 		<>
-			<h1 className={styles.title}>Генерация теста</h1>
 			<div className={styles.container}>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<ValidatedInput
