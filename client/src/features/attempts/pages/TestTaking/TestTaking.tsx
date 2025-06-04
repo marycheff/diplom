@@ -318,7 +318,6 @@ const TestTaking = () => {
 			setAllTextAnswers({})
 		} catch (error) {
 			console.error("Ошибка при отправке ответов:", error)
-			toast.error("Ошибка при отправке ответов")
 		} finally {
 			isSubmittingRef.current = false
 		}

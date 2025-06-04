@@ -51,7 +51,7 @@ class AttemptService {
 		})
 	}
 	completeAttempt(attemptId: string): Promise<AxiosResponse<CompleteAttemptResponse>> {
-		return axiosInstance.post<CompleteAttemptResponse>(`/tests/attempts/$s{attemptId}/complete`)
+		return axiosInstance.post<CompleteAttemptResponse>(`/tests/attempts/${attemptId}/complete`)
 	}
 	getMyAttempts(page = 1, limit = 10): Promise<AxiosResponse<AttemptsWithSnapshotListDTO>> {
 		return axiosInstance.get<AttemptsWithSnapshotListDTO>("/tests/attempts/my-attempts", {
@@ -69,7 +69,6 @@ class AttemptService {
 			},
 		})
 	}
-
 }
 
 export const attemptService = new AttemptService()
