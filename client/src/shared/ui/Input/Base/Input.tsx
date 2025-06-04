@@ -1,6 +1,19 @@
-import { InputProps } from "@/shared/ui/Input/Base/Input.props"
-import { ChangeEvent, FC, useState } from "react"
+import { ChangeEvent, FC, InputHTMLAttributes, KeyboardEvent, useState } from "react"
 import styles from "./Input.module.scss"
+
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+	name: string
+	value?: string
+	placeholder?: string
+	disabled?: boolean
+	type?: "text" | "email" | "password" | "number" | "tel" | "date"
+	className?: string
+	onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+	clearable?: boolean
+	showToggle?: boolean
+	onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
+	floatingLabel?: boolean
+}
 
 export const Input: FC<InputProps> = ({
 	name,

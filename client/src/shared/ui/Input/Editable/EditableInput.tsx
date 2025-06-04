@@ -1,10 +1,20 @@
 import { Button } from "@/shared/ui/Button"
 import Input from "@/shared/ui/Input/Base/Input"
-import { EditableInputProps } from "@/shared/ui/Input/Editable/EditableInput.props"
 import { ChangeEvent, JSX, useState } from "react"
 import { FaCheck } from "react-icons/fa6"
 import { MdEdit } from "react-icons/md"
 import styles from "./EditableInput.module.scss"
+import { Path } from "react-hook-form"
+
+export interface EditableInputProps<T extends Record<string, any>> {
+	name: Path<T>
+	label: string
+	value: string | null
+	onChange: (value: string) => void
+	placeholder?: string
+	onEditingChange?: (isEditing: boolean) => void
+}
+
 const EditableInput = <T extends Record<string, any>>({
 	name,
 	label,

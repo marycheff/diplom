@@ -1,9 +1,22 @@
 import { passwordValidationRules } from "@/shared/types/utils/validationRules"
-import { PasswordInputProps } from "@/shared/ui/Input/Password/PasswordInput.props"
 import { ChangeEvent, FC, useEffect, useState } from "react" // Добавим useEffect
-import { RegisterOptions } from "react-hook-form"
+import { FieldError, Path, RegisterOptions, UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form"
 import { FiEye, FiEyeOff } from "react-icons/fi"
 import styles from "./PasswordInput.module.scss"
+
+export interface PasswordInputProps<T extends Record<string, any>> {
+	name: Path<T>
+	placeholder?: string
+	disabled?: boolean
+	className?: string
+	register: UseFormRegister<T>
+	setValue: UseFormSetValue<T>
+	errors?: FieldError | undefined
+	clearable?: boolean
+	noValidation?: boolean
+	label?: string
+	trigger: UseFormTrigger<T>
+}
 
 const PasswordInput: FC<PasswordInputProps<any>> = ({
 	name,

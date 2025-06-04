@@ -1,8 +1,33 @@
-import { ValidatedInputProps } from "@/shared/ui/Input/Validated/ValidatedInput.props"
+import { InputProps } from "@/shared/ui/Input/Base/Input"
 import { ChangeEvent, FC, useEffect, useState } from "react"
-import { Controller } from "react-hook-form"
+import {
+	Control,
+	Controller,
+	FieldError,
+	Path,
+	RegisterOptions,
+	UseFormRegister,
+	UseFormSetValue,
+	UseFormTrigger,
+} from "react-hook-form"
 import { PatternFormat } from "react-number-format"
 import styles from "./ValidatedInput.module.scss"
+
+export interface ValidatedInputProps<T extends Record<string, any>> extends Omit<InputProps, "value" | "onChange"> {
+	register: UseFormRegister<T>
+	setValue: UseFormSetValue<T>
+	validationRules?: RegisterOptions<T, Path<T>>
+	errors?: FieldError | undefined
+	floatingLabel?: boolean
+	defaultValue?: string
+	multiline?: boolean
+	rows?: number
+	mask?: string
+	maskChar?: string
+	control?: Control<T>
+	trigger: UseFormTrigger<T>
+	inputRef?: (element: HTMLInputElement | HTMLTextAreaElement | null) => void
+}
 
 const ValidatedInput: FC<ValidatedInputProps<any>> = ({
 	name,

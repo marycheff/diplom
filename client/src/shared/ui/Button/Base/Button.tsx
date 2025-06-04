@@ -1,7 +1,18 @@
 import Tooltip from "@/shared/ui/Tooltip/Tooltip"
-import { forwardRef, useImperativeHandle, useRef } from "react"
+import { ButtonHTMLAttributes, forwardRef, ReactNode, useImperativeHandle, useRef } from "react"
 import styles from "./Button.module.scss"
-import { ButtonProps } from "./Button.props"
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+	children?: ReactNode
+	isLoading?: boolean
+	disabled?: boolean
+	onClick?: () => void
+	loadingText?: string
+	type?: "button" | "reset" | "submit"
+	tooltip?: string
+	className?: string
+	variant?: "primary" | "secondary"
+}
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	(

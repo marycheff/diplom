@@ -1,6 +1,15 @@
-import { SwitchProps } from "@/shared/ui/Switch/Switch.props"
 import { ForwardedRef, forwardRef } from "react"
 import styles from "./Switch.module.scss"
+import { InputHTMLAttributes } from "react"
+
+export interface SwitchProps extends InputHTMLAttributes<HTMLInputElement> {
+	checked: boolean
+	onChange?: () => void
+	className?: string
+	disabled?: boolean
+	leftLabel?: string
+	rightLabel?: string
+}
 
 export const Switch = forwardRef(
 	(

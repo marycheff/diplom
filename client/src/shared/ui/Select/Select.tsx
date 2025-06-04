@@ -1,8 +1,25 @@
 import useOutsideClick from "@/shared/hooks/useOutSideClick"
-import { SelectProps } from "@/shared/ui/Select/Select.props"
 import { FC, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
+import { UseFormRegister } from "react-hook-form"
 import styles from "./Select.module.scss"
+
+export interface SelectProps {
+	name: string
+	options: Option[]
+	register: UseFormRegister<any>
+	value?: string
+	error?: boolean
+	label?: string
+	required?: boolean
+	disabled?: boolean
+	onChange?: (value: string) => void
+}
+
+type Option = {
+	value: string
+	label?: string
+}
 
 const Select: FC<SelectProps> = ({
 	name,
