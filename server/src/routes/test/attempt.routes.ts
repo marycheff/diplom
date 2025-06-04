@@ -49,9 +49,6 @@ router.post(
 	attemptController.saveAnswers
 )
 
-// Синхронизация таймера теста
-router.post("/attempts/:attemptId/time-spent", conditionalAuthMiddleware, attemptController.updateTimeSpent)
-
 // Завершение попытки
 router.post(
 	"/attempts/:attemptId/complete",

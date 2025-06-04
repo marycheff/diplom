@@ -251,11 +251,6 @@ const TestTaking = () => {
 		isSubmittingRef.current = true
 
 		try {
-			// Синхронизация времени перед отправкой ответов (закомментировано, так как синхронизация отключена)
-			// if (timerRef.current) {
-			//     await timerRef.current.syncTime()
-			// }
-
 			if (!test || !test.questions) return
 
 			// Фильтрация ответов

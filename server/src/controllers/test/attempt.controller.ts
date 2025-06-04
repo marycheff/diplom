@@ -142,18 +142,5 @@ class AttemptController {
 			next(error)
 		}
 	}
-
-	// Обновление времени прохождения
-	async updateTimeSpent(req: Request, res: Response, next: NextFunction) {
-		try {
-			const { attemptId } = req.params
-			const { timeSpent } = req.body
-
-			await attemptService.updateTimeSpent(attemptId, timeSpent)
-			res.status(204).send()
-		} catch (error) {
-			next(error)
-		}
-	}
 }
 export const attemptController = new AttemptController()

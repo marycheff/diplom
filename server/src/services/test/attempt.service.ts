@@ -532,22 +532,6 @@ class AttemptService {
 		}
 	}
 
-	// Обновление времени прохождения
-	async updateTimeSpent(attemptId: string, timeSpent: number): Promise<void> {
-		logger.debug(`[${LOG_NAMESPACE}] Обновление общего времени попытки`, { attemptId })
-		try {
-			await attemptRepository.updateTimeSpent(attemptId, timeSpent)
-
-			await deleteAttemptCache(attemptId)
-			logger.debug(`[${LOG_NAMESPACE}] Общее время попытки обновлено`, { attemptId })
-		} catch (error) {
-			logger.error(`[${LOG_NAMESPACE}] Ошибка обновления общего времени`, {
-				attemptId,
-				error: error instanceof Error ? error.message : String(error),
-			})
-			throw ApiError.InternalError("Ошибка обновления общего времени")
-		}
-	}
 }
 
 export const attemptService = new AttemptService()

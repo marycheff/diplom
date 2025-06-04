@@ -103,11 +103,6 @@ export const useAttemptStore = create<AttemptState>((set) => {
 			}
 			return withFetching(operation)
 		},
-		updateTimeSpent: async (attemptId, timeSpent) => {
-			const operation = async () => {
-				await attemptService.updateTimeSpent(attemptId, timeSpent)
-			}
-			return withTimeUpdating(operation)
-		},
+		
 	}
 })

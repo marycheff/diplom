@@ -22,7 +22,6 @@ export interface AttemptState {
 	startAttempt: (testId: string, preTestUserData?: PreTestUserDataType) => Promise<StartAttemptDTO | undefined>
 	saveAnswers: (attemptId: string, answers: AttemptAnswer[]) => Promise<void>
 	completeAttempt: (attemptId: string) => Promise<CompleteAttemptResponse>
-	updateTimeSpent: (attemptId: string, timeSpent: number) => Promise<void>
 	// CACHE
 	CACHE_EXPIRATION_TIME: number
 	cache: Record<string, { data: AttemptsListDTO; timestamp: Date }>
