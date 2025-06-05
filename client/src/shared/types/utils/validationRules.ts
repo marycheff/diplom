@@ -58,9 +58,9 @@ export const questionValidationFillInTextRules = {
 		hasText: (value: string) => hasText(value) || "Вопрос должен содержать текст",
 		withinCharLimit: (value: string) => isWithinCharLimit(value, 500) || "Вопрос не должен превышать 500 символов",
 		withinWordCount: (value: string) => isWithinWordCount(value, 2, 100) || "Вопрос должен содержать от 2 слов",
-		hasBlankMarker: (value: string) => hasBlankMarker(value) || "Вопрос должен содержать маркер {blank}",
+		hasBlankMarker: (value: string) => hasBlankMarker(value) || "Вопрос должен содержать маркер ____",
 		singleBlankMarker: (value: string) =>
-			countBlankMarkers(value) <= 1 || "Вопрос должен содержать только один маркер {blank}",
+			countBlankMarkers(value) <= 1 || "Вопрос должен содержать только один маркер ____",
 	},
 }
 
@@ -71,7 +71,7 @@ const isWithinWordCount = (value: string, min: number, max: number): boolean => 
 }
 const isWithinCharLimit = (value: string, max: number): boolean => value.length <= max
 const countBlankMarkers = (value: string): number => {
-	const matches = value.match(/{blank}/g)
+	const matches = value.match(/____/g)
 	return matches ? matches.length : 0
 }
 const hasBlankMarker = (value: string): boolean => countBlankMarkers(value) > 0

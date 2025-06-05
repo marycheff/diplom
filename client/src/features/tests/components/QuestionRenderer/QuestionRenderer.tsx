@@ -114,7 +114,7 @@ const QuestionRenderer: FC<QuestionRendererProps> = memo(
 		// Мемоизация разделенного текста для fill-in-the-blank
 		const questionParts = useMemo(() => {
 			if (question.type !== QuestionType.FILL_IN_THE_BLANK) return null
-			return question.text.split("{blank}")
+			return question.text.split("____")
 		}, [question.type, question.text])
 
 		// Мемоизация параметров изображения

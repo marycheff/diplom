@@ -1,5 +1,5 @@
 import AnswersList from "@/features/attempts/components/AnswersList/AnswersList"
-import FillInTheBlankQuestionForm from "@/features/tests/components/FillInTheBlankQuestionForm"
+import FillInTheBlankQuestionForm from "@/features/tests/components/FillInTheBlankQuestionForm/FillInTheBlankQuestionForm"
 import QuestionForm from "@/features/tests/components/QuestionForm/QuestionForm"
 import QuestionItem from "@/features/tests/components/QuestionItem/QuestionItem"
 import TextInputQuestionForm from "@/features/tests/components/TextInputQuestionForm/TextInputQuestionForm"

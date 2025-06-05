@@ -248,19 +248,19 @@ class QuestionService {
 	private validateFillInTheBlankQuestions(questions: QuestionDTO[]): void {
 		for (const question of questions) {
 			if (question.type === "FILL_IN_THE_BLANK") {
-				// Проверка наличия маркера {blank} в вопросе
-				const blankCount = (question.text.match(/{blank}/g) || []).length
+				// Проверка наличия маркера ____ в вопросе
+				const blankCount = (question.text.match(/____/g) || []).length
 				if (blankCount === 0) {
-					logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK отсутствует маркер {blank}`, {
+					logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK отсутствует маркер ____`, {
 						questionId: question.id,
 					})
-					throw ApiError.BadRequest("В вопросе с пропуском должен быть указан маркер {blank}")
+					throw ApiError.BadRequest("В вопросе с пропуском должен быть указан маркер ____")
 				}
 				if (blankCount > 1) {
-					logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK должно быть только одно поле {blank}`, {
+					logger.warn(`[${LOG_NAMESPACE}] В вопросе типа FILL_IN_THE_BLANK должно быть только одно поле ____`, {
 						questionId: question.id,
 					})
-					throw ApiError.BadRequest("В вопросе с пропуском должно быть только одно поле {blank}")
+					throw ApiError.BadRequest("В вопросе с пропуском должно быть только одно поле ____")
 				}
 
 				// Проверка количества правильных ответов (должен быть только один)
