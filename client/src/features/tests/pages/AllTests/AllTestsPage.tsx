@@ -30,6 +30,7 @@ const AllTestsPage = () => {
 	const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
 	const params = new URLSearchParams(location.search)
 
+	
 	const fetchData = useCallback(
 		async (currentPage: number, query?: string) => {
 			if (isFetching) return
@@ -103,7 +104,8 @@ const AllTestsPage = () => {
 	const totalPages = total !== null ? Math.ceil(total / limit) : 0
 	const shouldShowContent = totalPages > 0 && page <= totalPages
 
-	return (
+	
+return (
 		<div className={styles.wrapper}>
 			<SearchBar
 				name="search"

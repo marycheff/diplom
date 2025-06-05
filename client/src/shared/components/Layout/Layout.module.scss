@@ -3,6 +3,7 @@
 		overflow-x: hidden;
 	}
 }
+
 .mainContent {
 	flex: 1;
 	padding: 0 20px;
@@ -21,7 +22,7 @@
 	height: 100%;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (width <= 768px) {
 	.mainContent {
 		flex: 1;
 		padding: 0 20px;
@@ -34,6 +35,7 @@
 		margin-left: 70px;
 		width: calc(100% - 70px);
 	}
+
 	:not(:global(.ps-collapsed)) ~ .mainContent {
 		pointer-events: none;
 		user-select: none;

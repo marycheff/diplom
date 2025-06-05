@@ -73,7 +73,7 @@
 .modeActive {
 	background-color: $secondary-600;
 	border-color: #999;
-	color: #ffffff;
+	color: #fff;
 	font-weight: 500;
 }
 
@@ -141,7 +141,7 @@
 	width: 24px;
 	height: 24px;
 	border-radius: 50%;
-	background: rgba(0, 0, 0, 0.5);
+	background: rgb(0 0 0 / 50%);
 	color: white;
 	border: none;
 	cursor: pointer;
@@ -152,7 +152,7 @@
 	transition: background-color 0.3s ease;
 
 	&:hover {
-		background: rgba(0, 0, 0, 0.7);
+		background: rgb(0 0 0 / 70%);
 	}
 }
 
@@ -187,11 +187,11 @@
 	transition: background-color 0.3s ease;
 
 	&:hover {
-		background-color: #2277dd;
+		background-color: #27d;
 	}
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
 	.toggleButton {
 		padding: 6px 12px;
 		font-size: 14px;

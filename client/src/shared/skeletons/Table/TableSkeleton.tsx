@@ -1,6 +1,6 @@
 import stylesPagination from "@/shared/ui/Pagination/Pagination.module.scss"
-import { FC } from "react"
 import styles from "./TableSkeleton.module.scss"
+import { FC } from "react"
 
 interface TableSkeletonProps {
 	rows?: number
@@ -12,31 +12,61 @@ const TableSkeleton: FC<TableSkeletonProps> = ({ rows = 10 }) => {
 
 	return (
 		<div className={styles.tableSkeleton}>
-			<div className={styles.tableSkeletonData}>
-				<div className={styles.tableSkeletonResponsive}>
-					<table>
+			<div className={styles.tableData}>
+				<div className={styles.tableResponsive}>
+					<table className={styles.table}>
 						<thead>
 							<tr>
-								{[...Array(8)].map((_, i) => (
-									<th
-										key={i}
-										scope="col"
-									>
-										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-									</th>
-								))}
+								<th scope="col">
+									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+								</th>
+								<th scope="col">
+									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+								</th>
+								<th scope="col">
+									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+								</th>
+								<th scope="col">
+									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+								</th>
+								<th scope="col">
+									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+								</th>
+								<th scope="col">
+									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+								</th>
+								<th scope="col">
+									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+								</th>
+								<th scope="col">
+									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+								</th>
 							</tr>
 						</thead>
 						<tbody>
 							{skeletonData.map((_, index) => (
 								<tr key={index}>
-									{[...Array(7)].map((_, i) => (
-										<td key={i}>
-											<span
-												className={`${styles.skeleton} ${styles.skeletonBox} ${i === 3 ? styles.skeletonBoxWide : ""}`}
-											></span>
-										</td>
-									))}
+									<td>
+										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+									</td>
+									<td>
+										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+									</td>
+									<td>
+										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+									</td>
+									<td>
+										<span className={`${styles.skeleton} ${styles.skeletonBox} ${styles.skeletonBoxWide}`}></span>
+									</td>
+									<td>
+										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+									</td>
+									<td>
+										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+									</td>
+									<td>
+										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+									</td>
 									<td>
 										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
 									</td>
@@ -46,7 +76,6 @@ const TableSkeleton: FC<TableSkeletonProps> = ({ rows = 10 }) => {
 					</table>
 				</div>
 			</div>
-
 			<div className={stylesPagination.pageWrapper}>
 				{pagesArray.map((p) => (
 					<span

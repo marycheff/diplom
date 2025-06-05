@@ -1,10 +1,11 @@
 .checkboxWrapper {
 	--size: 15px;
+
 	position: relative;
 
 	*,
-	*:before,
-	*:after {
+	*::before,
+	*::after {
 		box-sizing: border-box;
 	}
 
@@ -19,6 +20,17 @@
 		width: 1px;
 	}
 
+	svg {
+		stroke: $secondary-400;
+		stroke-width: 5px;
+		height: 0;
+		width: calc(var(--size) * 0.6);
+		position: absolute;
+		left: calc(var(--size) * 0.21);
+		top: calc(var(--size) * 0.2);
+		stroke-dasharray: 33;
+	}
+
 	input:checked ~ svg {
 		height: calc(var(--size) * 0.6);
 		animation: draw-checkbox-28 ease-in-out 0.2s forwards;
@@ -30,11 +42,7 @@
 		cursor: pointer;
 		position: relative;
 
-		&:active::after {
-			background-color: #e6e6e6;
-		}
-
-		&:after {
+		&::after {
 			content: "";
 			height: var(--size);
 			width: var(--size);
@@ -44,18 +52,12 @@
 			border-radius: 3px;
 			transition: 0.15s all ease-out;
 		}
+
+		&:active::after {
+			background-color: #e6e6e6;
+		}
 	}
 
-	svg {
-		stroke: $secondary-400;
-		stroke-width: 5px;
-		height: 0;
-		width: calc(var(--size) * 0.6);
-		position: absolute;
-		left: calc(var(--size) * 0.21);
-		top: calc(var(--size) * 0.2);
-		stroke-dasharray: 33;
-	}
 	input:disabled ~ label {
 		cursor: default;
 		opacity: 0.5;
@@ -66,6 +68,7 @@
 	0% {
 		stroke-dashoffset: 33;
 	}
+
 	100% {
 		stroke-dashoffset: 0;
 	}

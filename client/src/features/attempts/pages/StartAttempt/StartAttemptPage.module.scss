@@ -7,7 +7,7 @@
 .blockContent {
 	background-color: #fff;
 	border-radius: 8px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
 	padding: 20px;
 	margin-bottom: 24px;
 }
@@ -39,7 +39,7 @@
 .authBlock {
 	background-color: $background-100;
 	border-radius: 20px;
-	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 6px 16px rgb(0 0 0 / 12%);
 	padding: 32px;
 	text-align: center;
 	position: fixed;
@@ -50,6 +50,7 @@
 	width: 100%;
 	font-size: 20px;
 	line-height: 1.6;
+
 	h2 {
 		font-size: 25px;
 		font-weight: bold;
@@ -79,7 +80,7 @@
 		}
 	}
 
-	@media screen and (max-width: 480px) {
+	@media screen and (width <= 480px) {
 		margin: 20px;
 		padding: 28px;
 
@@ -89,6 +90,7 @@
 		}
 	}
 }
+
 .testImage {
 	margin-bottom: 20px;
 	border-radius: 12px;

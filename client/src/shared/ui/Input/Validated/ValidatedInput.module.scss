@@ -1,4 +1,3 @@
-// @import url("../Base/Input.module");
 @use "../Base/Input.module";
 
 .inputContainer {
@@ -22,18 +21,16 @@
 	font-family: inherit;
 }
 
-.inputContainer.active:has(.textarea) .placeholder {
-	top: 0;
-	transform: translateY(-50%);
-}
-
-/* Стиль для placeholder в textarea в неактивном состоянии */
 .inputContainer:has(.textarea) .placeholder {
 	top: 8px;
 	transform: translateY(0);
 }
 
-/* Стили для тултипа с ошибкой */
+.inputContainer.active:has(.textarea) .placeholder {
+	top: 0;
+	transform: translateY(-50%);
+}
+
 .errorTooltip {
 	cursor: pointer;
 	position: absolute;
@@ -47,9 +44,6 @@
 	font-size: 12px;
 	z-index: 10;
 	white-space: nowrap;
-	// max-width: 100%;
-	// overflow: hidden;
-	// text-overflow: ellipsis;
 	opacity: 0;
 	visibility: hidden;
 	transition: opacity 0.2s ease, visibility 0.2s ease, top 0.2s ease;
@@ -67,6 +61,7 @@
 		border-top: 5px solid #ff3b30;
 		display: block;
 	}
+
 	&:hover {
 		background-color: #ec473e;
 	}
@@ -77,7 +72,6 @@
 	visibility: visible;
 }
 
-/* Позиционирование тултипа для textarea */
 .inputContainer:has(.textarea) .errorTooltip {
 	top: -40px;
 }

@@ -1,5 +1,6 @@
 .testsData {
 	margin-top: 5px;
+
 	.testsCount {
 		display: flex;
 		justify-content: space-between;
@@ -36,7 +37,6 @@
 
 			th {
 				background-color: $secondary-600;
-
 				color: white;
 				font-weight: bold;
 			}

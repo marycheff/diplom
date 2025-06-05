@@ -1,7 +1,7 @@
 .tooltip {
 	position: fixed;
 	padding: 2px 5px;
-	background-color: rgba(0, 0, 0, 0.8);
+	background-color: rgb(0 0 0 / 80%);
 	color: #fff;
 	font-size: 12px;
 	max-width: 30vw;
@@ -37,6 +37,7 @@
 		transform: translateY(10px);
 		opacity: 0;
 	}
+
 	to {
 		transform: translateY(0);
 		opacity: 1;
@@ -48,6 +49,7 @@
 		transform: translateX(-10px);
 		opacity: 0;
 	}
+
 	to {
 		transform: translateX(0);
 		opacity: 1;
@@ -59,6 +61,7 @@
 		transform: translateY(0);
 		opacity: 1;
 	}
+
 	to {
 		transform: translateY(10px);
 		opacity: 0;
@@ -70,6 +73,7 @@
 		transform: translateX(0);
 		opacity: 1;
 	}
+
 	to {
 		transform: translateX(-10px);
 		opacity: 0;

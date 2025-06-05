@@ -1,5 +1,5 @@
 .questionItem {
-	margin: auto auto;
+	margin: auto;
 	margin-bottom: 15px;
 	max-width: 90%;
 	position: relative;
@@ -151,6 +151,7 @@
 		opacity: 0;
 		transform: translateX(-20px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateX(0);
@@ -158,7 +159,6 @@
 }
 
 // Стили не работают
-//
 // .toggleButton {
 //     // background-color: #00000000;
 //     // background-color: #4e6554;

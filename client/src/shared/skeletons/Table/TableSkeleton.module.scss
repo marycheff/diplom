@@ -1,68 +1,82 @@
-.tableSkeleton {
-	margin-top: 80px;
-}
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
 
-.tableResponsive {
-	width: 100%;
-	overflow-x: auto;
-
-	table {
-		width: 100%;
-		border-collapse: collapse;
-
-		th,
-		td {
-			padding: 10px;
-			text-align: left;
-			max-width: 200px;
-			max-height: 60px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-
-		th {
-			background-color: #f5f5f5;
-			font-weight: bold;
-		}
-
-		td {
-			border-bottom: 1px solid #e0e0e0;
-		}
-
-		tr:last-child td {
-			border-bottom: none;
-		}
-	}
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .skeleton {
-	background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-	background-size: 200% 100%;
-	animation: loading 1.5s infinite;
-	color: transparent;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  color: transparent;
 }
 
 .skeletonText {
-	display: inline;
+  display: inline;
 }
 
 .skeletonBox {
-	display: inline-block;
-	width: 25px;
-	height: 10px;
-	border-radius: 4px;
+  display: inline-block;
+  width: 25px;
+  height: 10px;
+  border-radius: 4px;
+  
+  &Wide {
+    width: 150px;
+  }
 }
 
-.skeletonBoxWide {
-	width: 150px;
-}
-
-@keyframes loading {
-	0% {
-		background-position: 200% 0;
-	}
-	100% {
-		background-position: -200% 0;
-	}
+.tableSkeleton {
+  margin-top: 80px;
+  
+  .testsCount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 15px 10px;
+    
+    h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+  }
+  
+  
+  .tableResponsive {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+      max-width: 200px;
+      max-height: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    th {
+      background-color: #f5f5f5;
+      font-weight: 600;
+    }
+    
+    td {
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+  }
 }

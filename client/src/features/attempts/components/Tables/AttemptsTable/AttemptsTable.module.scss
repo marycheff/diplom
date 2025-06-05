@@ -7,6 +7,7 @@
 		align-items: center;
 		margin: 0 15px;
 		margin-bottom: 10px;
+
 		h3 {
 			margin: 0;
 			font-size: 1rem;
@@ -36,7 +37,6 @@
 
 			th {
 				background-color: $secondary-600;
-
 				color: white;
 				font-weight: bold;
 			}
@@ -53,6 +53,7 @@
 		}
 	}
 }
+
 .emptyField {
 	color: $secondary-400;
 	font-style: italic;
