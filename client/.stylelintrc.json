@@ -6,14 +6,12 @@
 		"scss/at-rule-no-unknown": true,
 		"scss/at-mixin-pattern": null,
 		"keyframes-name-pattern": null,
-		"selector-class-pattern": null
-	},
-	"overrides": [
-		{
-			"files": ["**/*.module.scss"],
-			"rules": {
-				"selector-class-pattern": null
+		"selector-class-pattern": null,
+		"selector-pseudo-class-no-unknown": [
+			true,
+			{
+				"ignorePseudoClasses": ["global", "local"]
 			}
-		}
-	]
+		]
+	}
 }

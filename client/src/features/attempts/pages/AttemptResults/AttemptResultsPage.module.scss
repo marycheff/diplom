@@ -1,3 +1,5 @@
+@use "@/styles/common/attemptStyles" as attempt;
+
 .content {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -5,221 +7,105 @@
 }
 
 .infoBlock {
-	background-color: $background-100;
-	border-radius: 16px;
-	box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
-	overflow: hidden;
-	transition: transform 0.2s ease-in-out;
-	margin-bottom: 24px;
+	@include attempt.infoBlock;
 }
 
 .blockTitle {
-	background-color: $primary-400;
-	color: $background-100;
-	padding: 15px 20px;
-	margin: 0;
-	font-size: 18px;
-	font-weight: bold;
+	@include attempt.blockTitle;
 }
 
 .blockContent {
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
+	@include attempt.blockContent;
 }
 
 .infoRow {
-	display: flex;
-	margin-bottom: 10px;
-	padding: 8px 0;
-	border-bottom: 1px solid $background-600;
-
-	&:last-child {
-		border-bottom: none;
-	}
-
-	@media screen and (width <= 480px) {
-		flex-direction: column;
-
-		.label {
-			width: 100%;
-			margin-bottom: 4px;
-		}
-	}
+	@include attempt.infoRow;
 }
 
 .label {
-	font-weight: bold;
-	color: $secondary-600;
-	width: 35%;
-	min-width: 120px;
-
-	@media screen and (width <= 768px) {
-		min-width: 100px;
-	}
+	@include attempt.label;
 }
 
 .value {
-	color: $primary-600;
-	flex: 1;
-	width: 65%;
-	overflow-wrap: break-word;
+	@include attempt.value;
 }
 
 .emptyField {
-	color: $secondary-400;
-	font-style: italic;
+	@include attempt.emptyField;
 }
 
 .emptyBlock {
-	text-align: center;
-	color: $secondary-400;
-	font-style: italic;
-	padding: 20px 0;
-	flex-grow: 1;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	@include attempt.emptyBlock;
 }
 
 .questionsList {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
+	@include attempt.questionsList;
 }
 
 .questionBlock {
-	background-color: $background-400;
-	border-radius: 12px;
-	padding: 15px;
-	border-left: 4px solid $primary-400;
+	@include attempt.questionBlock;
 }
 
 .questionHeader {
-	display: flex;
-	align-items: center;
-	margin-bottom: 15px;
-	gap: 10px;
-
-	@media screen and (width <= 576px) {
-		flex-wrap: wrap;
-
-		.questionType {
-			margin-top: 5px;
-		}
-	}
+	@include attempt.questionHeader;
 }
 
 .questionNumber {
-	background-color: $primary-400;
-	color: $background-100;
-	width: 30px;
-	height: 30px;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-weight: bold;
-	flex-shrink: 0;
+	@include attempt.questionNumber;
 }
 
 .questionText {
-	font-weight: bold;
-	font-size: 16px;
-	flex: 1;
-	color: $primary-600;
+	@include attempt.questionText;
 }
 
 .questionType {
-	background-color: $background-600;
-	color: $secondary-800;
-	padding: 4px 8px;
-	border-radius: 4px;
-	font-size: 12px;
-	white-space: nowrap;
+	@include attempt.questionType;
 }
 
 .questionVerdict {
-	margin-left: 40px;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	padding: 8px 12px;
-	border-radius: 8px;
-	display: flex;
-	align-items: center;
-	gap: 10px;
+	@include attempt.questionVerdict;
+	margin: 10px 0;
+	padding: 12px 12px;
 }
 
 .correctVerdict {
-	background-color: rgba($primary-400, 0.1);
-	border-left: 4px solid $primary-400;
+	@include attempt.correctVerdict;
+	background-color: rgba($primary-400, 0.06);
 }
 
 .incorrectVerdict {
-	background-color: rgba($red-400, 0.1);
-	border-left: 4px solid $red-400;
+	@include attempt.incorrectVerdict;
+	background-color: rgba($red-400, 0.06);
 }
 
 .verdictLabel {
-	font-weight: bold;
-	color: $secondary-600;
+	@include attempt.verdictLabel;
 }
 
-.verdictValue {
-	font-weight: bold;
-}
+// .verdictValue {
+// 	@include attempt.verdictValue;
+// 	// text-align: right;
+// 	font-size: 14px;
+// }
 
 .answersList {
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
+	@include attempt.answersList;
 }
 
 .answerSection {
-	margin-left: 40px;
-
-	@media screen and (width <= 576px) {
-		margin-left: 10px;
-	}
+	@include attempt.answerSection;
 }
 
 .answerTitle {
-	color: $secondary-600;
-	margin-bottom: 10px;
-	font-size: 14px;
+	@include attempt.answerTitle;
 }
 
 .answerItem {
-	background-color: $background-200;
-	border-radius: 8px;
-	padding: 10px 15px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	border: 1px solid $background-600;
-
-	&:hover {
-		background-color: $background-400;
-	}
-
-	@media screen and (width <= 480px) {
-		flex-direction: column;
-		align-items: flex-start;
-
-		.answerStatus,
-		.correctBadge {
-			margin-top: 5px;
-			align-self: flex-end;
-		}
-	}
-}
-
-.answerItemWrapper {
-	margin-bottom: 8px;
+	@include attempt.answerItem;
 }
 
 .correctAnswer {
-	border-left: 4px solid $primary-400;
+	@include attempt.correctAnswer;
 }
 
 .incorrectAnswer {
@@ -227,18 +113,12 @@
 }
 
 .answerText {
-	flex: 1;
-	color: $primary-600;
+	@include attempt.answerText;
 }
 
 .correctBadge,
 .answerStatus {
-	background-color: $primary-400;
-	color: $background-100;
-	padding: 3px 8px;
-	border-radius: 4px;
-	font-size: 12px;
-	font-weight: bold;
+	@include attempt.correctBadge;
 }
 
 .statusBadge {
@@ -250,29 +130,19 @@
 }
 
 .answerMeta {
-	margin-top: 12px;
-	padding: 10px;
-	background-color: $background-200;
-	border-radius: 8px;
+	@include attempt.answerMeta;
 }
 
 .metaItem {
-	display: flex;
-	margin-bottom: 6px;
-
-	&:last-child {
-		margin-bottom: 0;
-	}
+	@include attempt.metaItem;
 }
 
 .metaLabel {
-	font-weight: bold;
-	color: $secondary-600;
-	min-width: 150px;
+	@include attempt.metaLabel;
 }
 
 .metaValue {
-	color: $primary-600;
+	@include attempt.metaValue;
 }
 
 .missedAnswersSection {
@@ -306,4 +176,8 @@
 	border-radius: 4px;
 	font-size: 12px;
 	font-weight: bold;
+}
+
+.answerItemWrapper {
+	margin-bottom: 8px;
 }

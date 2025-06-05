@@ -358,10 +358,11 @@ const AttemptResultsPage = () => {
 														isCorrect ? styles.correctVerdict : styles.incorrectVerdict
 													}`}
 												>
-													<span className={styles.verdictLabel}>Вопрос {index + 1}:</span>
-													<span className={styles.verdictValue}>{isCorrect ? "Ответ верный" : "Ответ неверный"}</span>
+													<div className={styles.verdictLabel}>{question.question.text}</div>
+													{/* <div className={styles.verdictValue}>{isCorrect ? "Ответ верный" : "Ответ неверный"}</div> */}
 												</div>
 											)
+
 										})}
 									</div>
 								</div>

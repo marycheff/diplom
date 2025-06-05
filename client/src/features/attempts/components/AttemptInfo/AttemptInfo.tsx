@@ -344,7 +344,13 @@ const AttemptInfo = () => {
 																}`}
 															>
 																<span className={styles.answerText}>{question.userAnswers.textAnswer}</span>
-																<span className={styles.answerStatus}>
+																<span
+																	className={
+																		question.userAnswers.isCorrect
+																			? styles.answerStatusCorrect
+																			: styles.answerStatusIncorrect
+																	}
+																>
 																	{question.userAnswers.isCorrect ? "✓ Верно" : "✗ Неверно"}
 																</span>
 															</div>
@@ -361,7 +367,14 @@ const AttemptInfo = () => {
 																	}`}
 																>
 																	<span className={styles.answerText}>{userAnswer.answer.text}</span>
-																	<span className={styles.answerStatus}>
+
+																	<span
+																		className={
+																			userAnswer.answer.isCorrect
+																				? styles.answerStatusCorrect
+																				: styles.answerStatusIncorrect
+																		}
+																	>
 																		{userAnswer.answer.isCorrect ? "✓ Верно" : "✗ Неверно"}
 																	</span>
 																</div>

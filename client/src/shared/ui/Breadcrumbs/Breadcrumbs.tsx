@@ -2,9 +2,9 @@ import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
 import { shortenText } from "@/shared/utils/formatter"
 import { isValidUUID } from "@/shared/utils/validator"
+import { IoHomeOutline } from "react-icons/io5"
 import { Link, matchPath, useLocation } from "react-router-dom"
 import styles from "./Breadcrumbs.module.scss"
-import { IoHomeOutline } from "react-icons/io5"
 
 const Breadcrumbs = () => {
 	const location = useLocation()
@@ -52,6 +52,13 @@ const Breadcrumbs = () => {
 		"edit-settings": "Редактирование вопросов",
 		"my-attempts": "Мои попытки",
 	}
+	const idLabelsMap: { [key: string]: string } = {
+		tests: "Тест",
+		"my-tests": "Мой тест",
+		attempts: "Попытка",
+		"my-attempts": "Моя попытка",
+		users: "Пользователь",
+	}
 
 	return (
 		<nav className={styles.breadcrumbs}>
@@ -69,14 +76,15 @@ const Breadcrumbs = () => {
 				const to = `/${pathnames.slice(0, index + 1).join("/")}`
 				const isLast = index === pathnames.length - 1
 				const isId = isValidUUID(value)
-				const label = isId ? shortenText(value) : labels[value] || value
+				const prevSegment = pathnames[index - 1]
+				const label = isId ? idLabelsMap[prevSegment] || shortenText(value) : labels[value] || value
 
 				return (
 					<span
 						key={to}
 						className={styles.item}
 					>
-						<span className={styles.separator}> {"/"} </span>
+						<span className={styles.separator}> / </span>
 						{isLast ? (
 							<span>{label}</span>
 						) : (
