@@ -1,4 +1,3 @@
-/* Стили для секции */
 .section {
 	padding-top: 30px;
 	background: #fff;
@@ -12,7 +11,7 @@
 .imageUploadTitle {
 	font-size: 16px;
 	font-weight: 500;
-	color: var(--text-primary);
+	color: $text-primary;
 	margin-bottom: 8px;
 }
 .form {
@@ -49,11 +48,10 @@
 	padding-top: 10px;
 	border-top: 1px solid #e0e0e0;
 	margin-top: auto;
-}
 
-/* Стили для кнопок (если нужно повторить стили из модалки) */
-.formActions button {
-	padding: 8px 16px;
-	border-radius: 6px;
-	font-weight: 500;
+	button {
+		padding: 8px 16px;
+		border-radius: 6px;
+		font-weight: 500;
+	}
 }

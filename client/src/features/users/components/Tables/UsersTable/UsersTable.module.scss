@@ -47,7 +47,7 @@
 				background-color: $secondary-600;
 
 				color: white;
-				font-weight: 600;
+				font-weight: bold;
 			}
 
 			td {
@@ -62,13 +62,4 @@
 		}
 	}
 
-	.actionLink {
-		text-decoration: none;
-		color: #007bff;
-		font-weight: bold;
-
-		&:hover {
-			text-decoration: underline;
-		}
-	}
 }

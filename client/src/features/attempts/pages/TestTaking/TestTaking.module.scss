@@ -6,7 +6,6 @@
 	margin: 0 auto;
 	padding: 50px;
 	padding-top: 0;
-	// border: 3px solid $border-primary;
 	border-radius: 16px;
 	margin-top: 10vh;
 }
@@ -20,7 +19,7 @@
 .completedBanner {
 	margin-top: 20px;
 	background-color: #afa1a3;
-	color: #721c24;
+	color: $red-600;
 	padding: 12px 20px;
 	border-radius: 4px;
 	margin-bottom: 20px;

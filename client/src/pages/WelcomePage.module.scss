@@ -43,7 +43,7 @@
 	background-color: $background-100;
 	padding: 2rem;
 	border-radius: 20px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+	box-shadow: 0 4px 12px rgb(0 0 0 / 7%);
 	max-width: 300px;
 	flex: 1 1 260px;
 	transition: transform 0.2s ease;
@@ -90,7 +90,7 @@
 	}
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
 	.header {
 		flex-direction: column;
 		gap: 1rem;
@@ -101,12 +101,14 @@
 		padding: 2rem 1rem;
 	}
 
-	.hero h1 {
-		font-size: 2.2rem;
-	}
+	.hero {
+		h1 {
+			font-size: 2.2rem;
+		}
 
-	.hero p {
-		font-size: 1rem;
+		p {
+			font-size: 1rem;
+		}
 	}
 
 	.features {
@@ -130,12 +132,14 @@
 }
 
 @media (max-width: 480px) {
-	.hero h1 {
-		font-size: 1.8rem;
-	}
+	.hero {
+		h1 {
+			font-size: 1.8rem;
+		}
 
-	.hero p {
-		font-size: 0.95rem;
+		p {
+			font-size: 0.95rem;
+		}
 	}
 
 	.authButtons {

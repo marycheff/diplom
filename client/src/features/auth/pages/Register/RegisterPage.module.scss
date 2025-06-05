@@ -1,4 +1,4 @@
-@use "@/styles/common/authStyles.module" as auth;
+@use "@/styles/common/authStyles" as auth;
 
 .pageWrapper {
 	@include auth.pageWrapper;

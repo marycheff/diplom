@@ -18,7 +18,7 @@
 	padding: 15px 20px;
 	margin: 0;
 	font-size: 18px;
-	font-weight: 600;
+	font-weight: bold;
 }
 
 .blockContent {
@@ -48,7 +48,7 @@
 }
 
 .label {
-	font-weight: 600;
+	font-weight: bold;
 	color: $secondary-600;
 	width: 35%;
 	min-width: 120px;
@@ -123,7 +123,7 @@
 }
 
 .questionText {
-	font-weight: 600;
+	font-weight: bold;
 	font-size: 16px;
 	flex: 1;
 	color: $primary-600;
@@ -160,12 +160,12 @@
 }
 
 .verdictLabel {
-	font-weight: 600;
+	font-weight: bold;
 	color: $secondary-600;
 }
 
 .verdictValue {
-	font-weight: 600;
+	font-weight: bold;
 }
 
 .answersList {
@@ -237,7 +237,7 @@
 	padding: 3px 8px;
 	border-radius: 4px;
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: bold;
 }
 
 .statusBadge {
@@ -258,13 +258,14 @@
 .metaItem {
 	display: flex;
 	margin-bottom: 6px;
+
 	&:last-child {
 		margin-bottom: 0;
 	}
 }
 
 .metaLabel {
-	font-weight: 600;
+	font-weight: bold;
 	color: $secondary-600;
 	min-width: 150px;
 }
@@ -285,7 +286,7 @@
 	color: $red-600;
 	margin-bottom: 10px;
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: bold;
 }
 
 .missedAnswer {
@@ -302,5 +303,5 @@
 	padding: 3px 8px;
 	border-radius: 4px;
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: bold;
 }

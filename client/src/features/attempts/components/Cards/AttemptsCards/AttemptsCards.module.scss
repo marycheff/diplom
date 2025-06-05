@@ -15,7 +15,7 @@
 	}
 }
 
-.cardsContainer {
+.cardsContainer { 
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-unit;
@@ -33,8 +33,6 @@
 	transition: transform 0.2s, box-shadow 0.2s;
 
 	&:hover {
-		// transform: translateY(-2px);
-		// box-shadow: 0 6px 16px $shadow-color;
 		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 	}
 }
@@ -49,6 +47,7 @@
 		margin: 0;
 		color: $text-primary;
 		font-size: 1rem;
+		font-weight: bold;
 	}
 }
 
@@ -148,6 +147,6 @@
 }
 
 .score {
-	font-weight: 600;
+	font-weight: bold;
 	color: $primary-400;
 }

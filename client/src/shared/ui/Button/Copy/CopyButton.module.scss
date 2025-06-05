@@ -8,7 +8,6 @@
 	opacity: 1;
 	transform: translateY(0);
 	position: relative;
-	// top: -5px;
 
 	&[data-visible="false"] {
 		opacity: 0;
@@ -25,18 +24,11 @@
 	&:hover {
 		transform: scale(1.1);
 	}
-	svg{
+	
+	svg {
 		font-size: 1.2rem;
 	}
 }
-
-// .textButton {
-//     transition: all 0.2s ease;
-
-//     &:hover {
-//         transform: translateY(-1px);
-//     }
-// }
 
 .content {
 	display: inline-flex;

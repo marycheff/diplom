@@ -10,7 +10,6 @@
 	max-width: 560px;
 	margin-top: -20vh;
 	padding: $section-padding;
-	//   background: $bg-surface;
 	border-radius: 1.25rem;
 	box-shadow: $shadow-medium;
 	text-align: center;
@@ -46,20 +45,6 @@
 	margin-bottom: calc($spacing-unit * 1.5);
 }
 
-.actionLink {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.5rem;
-	color: $accent-primary;
-	font-weight: 500;
-	transition: color 0.2s;
-
-	&:hover {
-		color: $accent-primary-hover;
-		text-decoration: underline;
-	}
-}
-
 .content {
 	width: 560px;
 	margin-top: -20vh;
@@ -75,9 +60,9 @@
 }
 
 .tabButton {
-	flex: 1; /* Каждая вкладка занимает половину ширины (50%) */
+	flex: 1;
 	display: flex;
-	justify-content: center; /* Центрируем содержимое */
+	justify-content: center;
 	align-items: center;
 	gap: 0.5rem;
 	padding: calc($spacing-unit * 0.75) calc($spacing-unit * 1.5);
@@ -85,7 +70,7 @@
 	border: none;
 	cursor: pointer;
 	font-weight: 500;
-	font-size: 1.125rem; /* Увеличенный размер шрифта */
+	font-size: 1.125rem;
 	color: $text-secondary;
 	position: relative;
 	transition: color 0.2s;

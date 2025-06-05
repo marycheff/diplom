@@ -1,18 +1,17 @@
-.ai-button {
+.button {
 	position: relative;
-	padding: 8px 16px; /* Уменьшенный padding для обычного состояния */
+	padding: 8px 16px;
 	background-color: #2563eb;
 	color: white;
 	border: none;
 	border-radius: 6px;
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: bold;
 	cursor: pointer;
 	transition: all 0.3s ease;
 	overflow: hidden;
 	display: flex;
 	align-items: center;
-	// max-width: max-content;
 	max-width: fit-content;
 
 	&:hover:not(:disabled) {
@@ -25,9 +24,8 @@
 		transform: translateY(0);
 	}
 
-	/* Стили для disabled состояния */
-	&--disabled {
-		background-color: #9ca3af; /* Серый цвет для отключенной кнопки */
+	&.disabled {
+		background-color: #9ca3af;
 		cursor: not-allowed;
 		opacity: 0.7;
 
@@ -36,16 +34,15 @@
 			box-shadow: none;
 		}
 
-		.ai-button__star-inner {
-			opacity: 0.5; 
+		.starInner {
+			opacity: 0.5;
 		}
 	}
 
-	/* Стили для generating состояния */
-	&--generating {
-		background-color: #4f46e5; /* Более яркий цвет для состояния генерации */
+	&.generating {
+		background-color: #4f46e5;
 		cursor: wait;
-		padding: 8px 16px 8px 36px; /* Уменьшенный левый padding для места под звезду */
+		padding: 8px 16px 8px 36px;
 
 		&:before {
 			content: "";
@@ -59,7 +56,7 @@
 			border-radius: 8px;
 		}
 
-		.ai-button__star-inner {
+		.starInner {
 			animation: starGlow 2s infinite alternate;
 
 			&:before {
@@ -77,58 +74,57 @@
 			}
 		}
 	}
+}
 
-	&__text {
-		position: relative;
-		z-index: 2;
-	}
+.text {
+	position: relative;
+	z-index: 2;
+}
 
-	/* Отступ от звезды только в режиме генерации */
-	&--generating &__text {
-		margin-left: 6px;
-	}
+.generating .text {
+	margin-left: 6px;
+}
 
-	&__animation {
+.animation {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	pointer-events: none;
+}
+
+.star {
+	position: absolute;
+	top: 50%;
+	left: 12px;
+	transform: translateY(-50%);
+	width: 14px;
+	height: 14px;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+
+	.starInner {
 		position: absolute;
-		top: 0;
-		left: 0;
 		width: 100%;
 		height: 100%;
-		z-index: 1;
-		pointer-events: none;
-	}
-
-	&__star {
-		position: absolute;
-		top: 50%;
-		left: 12px; /* Уменьшенный отступ от левого края */
-		transform: translateY(-50%);
-		width: 14px;
-		height: 14px;
-		z-index: 2;
+		background: radial-gradient(
+			circle,
+			rgba(255, 255, 255, 1) 0%,
+			rgba(238, 238, 255, 0.8) 50%,
+			rgba(30, 144, 255, 0) 70%
+		);
+		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		pointer-events: none;
-
-		&-inner {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			background: radial-gradient(
-				circle,
-				rgba(255, 255, 255, 1) 0%,
-				rgba(238, 238, 255, 0.8) 50%,
-				rgba(30, 144, 255, 0) 70%
-			);
-			border-radius: 50%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 8px;
-			font-weight: bold;
-			color: #3b82f6;
-		}
+		font-size: 8px;
+		font-weight: bold;
+		color: #3b82f6;
 	}
 }
 

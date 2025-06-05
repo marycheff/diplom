@@ -11,12 +11,10 @@
 	margin: 0 1px;
 	user-select: none;
 
-	// Обычный hover
 	&:hover {
 		background-color: $secondary-400;
 	}
 
-	// Disabled
 	&:disabled {
 		background-color: #ccc;
 		cursor: not-allowed;
@@ -25,25 +23,26 @@
 	&:disabled:hover {
 		background-color: #ccc;
 	}
-}
 
-.button--secondary {
-	background: $secondary-200;
-	border: 1px solid $secondary-400;
-	color: #333;
+	&.secondary {
+		background: $secondary-200;
+		border: 1px solid $secondary-400;
+		color: #333;
 
-	&:hover {
-		background-color: $secondary-400;
-		color: $secondary-100;
-	}
-	&:disabled {
-		background-color: $secondary-100;
-		cursor: not-allowed;
-		color: $secondary-400;
-	}
+		&:hover {
+			background-color: $secondary-400;
+			color: $secondary-100;
+		}
 
-	&:disabled:hover {
-		background-color: $secondary-100;
-		color: $secondary-400;
+		&:disabled {
+			background-color: $secondary-100;
+			cursor: not-allowed;
+			color: $secondary-400;
+		}
+
+		&:disabled:hover {
+			background-color: $secondary-100;
+			color: $secondary-400;
+		}
 	}
 }

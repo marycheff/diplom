@@ -6,7 +6,8 @@
 	"scripts": {
 		"dev": "vite --port 3000",
 		"build": "vite build",
-		"preview": "vite preview --port 3000 --host 0.0.0.0"
+		"preview": "vite preview --port 3000 --host 0.0.0.0",
+		"lint:scss": "stylelint \"**/*.scss\""
 	},
 	"dependencies": {
 		"@dnd-kit/modifiers": "^9.0.0",
@@ -25,6 +26,9 @@
 		"react-scan": "^0.3.4",
 		"sass": "^1.87.0",
 		"socket.io-client": "^4.8.1",
+		"stylelint": "^16.20.0",
+		"stylelint-config-standard-scss": "^15.0.1",
+		"stylelint-scss": "^6.12.0",
 		"zustand": "^5.0.3"
 	},
 	"devDependencies": {

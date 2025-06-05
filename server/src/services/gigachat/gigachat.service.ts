@@ -152,11 +152,11 @@ class GigaChatService {
 	// Парсинг сгенерированного теста
 	async parseTestContent(content: string): Promise<QuestionDTO[]> {
 		logger.debug(`[${LOG_NAMESPACE}] Парсинг контента теста`)
-		if (!content) throw ApiError.BadRequest("Некорректная тема вопроса")
+		if (!content) throw ApiError.BadRequest("Некорректная тема теста")
 
 		const trimmedContent = content.trim()
 		if (trimmedContent.toUpperCase() === "НЕКОРРЕКТНО" || !/\d+\. Вопрос:/.test(trimmedContent)) {
-			throw ApiError.BadRequest("Некорректная тема вопроса")
+			throw ApiError.BadRequest("Некорректная тема теста")
 		}
 
 		const questions: QuestionDTO[] = []
@@ -190,7 +190,7 @@ class GigaChatService {
 
 			// Проверка, что у каждого вопроса ровно 4 ответа
 			if (answers.length !== 4) {
-				throw ApiError.BadRequest("Некорректная тема вопроса")
+				throw ApiError.BadRequest("Некорректная тема теста")
 			}
 
 			questions.push({
@@ -204,7 +204,7 @@ class GigaChatService {
 		}
 
 		if (questions.length === 0) {
-			throw ApiError.BadRequest("Некорректная тема вопроса")
+			throw ApiError.BadRequest("Некорректная тема теста")
 		}
 
 		logger.debug(`[${LOG_NAMESPACE}] Успешно распарсено ${questions.length} вопросов`)

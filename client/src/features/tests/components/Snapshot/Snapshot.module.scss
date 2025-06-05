@@ -1,4 +1,4 @@
-@use "@styles/common/testInfoStyles.module" as common;
+@use "@styles/common/testInfoStyles" as common;
 
 .topGrid {
 	@include common.testInfoTopGrid;
@@ -30,10 +30,6 @@
 
 .value {
 	@include common.value;
-
-	@media screen and (max-width: 768px) {
-		text-align: right;
-	}
 }
 
 .emptyField {

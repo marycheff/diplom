@@ -1,0 +1,17 @@
+{
+	"extends": "stylelint-config-standard-scss",
+	"plugins": ["stylelint-scss"],
+	"rules": {
+		"at-rule-no-unknown": null,
+		"scss/at-rule-no-unknown": true,
+		"selector-class-pattern": "^[a-z][a-z0-9-]*$" 
+	},
+	"overrides": [
+		{
+			"files": ["**/*.module.scss"],
+			"rules": {
+				"selector-class-pattern": null
+			}
+		}
+	]
+}

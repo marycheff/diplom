@@ -18,6 +18,19 @@
 	max-width: 400px;
 	text-align: center;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+	h2 {
+		font-size: 1.75rem;
+		color: $text-primary;
+		margin-bottom: 1rem;
+		font-weight: bold;
+	}
+
+	p {
+		margin: 0;
+		color: $secondary-800;
+		font-size: 16px;
+	}
 }
 
 .connectionIcon {
@@ -25,22 +38,10 @@
 	width: 50%;
 	height: 100px;
 	margin-left: 25%;
+
 	svg {
 		height: 100%;
 		width: 100%;
 		color: $red-400;
 	}
-}
-
-.connectionMessage h2 {
-	font-size: 1.75rem;
-	color: $text-primary;
-	margin-bottom: 1rem;
-	font-weight: 600;
-}
-
-.connectionMessage p {
-	margin: 0;
-	color: $secondary-800;
-	font-size: 16px;
 }

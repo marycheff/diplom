@@ -1,3 +1,37 @@
+.tooltip {
+	position: fixed;
+	padding: 2px 5px;
+	background-color: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	font-size: 12px;
+	max-width: 30vw;
+	white-space: normal;
+	word-wrap: break-word;
+	border-radius: 4px;
+	z-index: 999999;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	transition-delay: 0.5s;
+}
+
+.visible {
+	opacity: 1;
+	animation: slideInTop 0.2s ease forwards;
+
+	&[data-position="right"] {
+		animation: slideInRight 0.2s ease forwards;
+	}
+}
+
+.hidden {
+	animation: slideOutTop 0.2s ease forwards;
+
+	&[data-position="right"] {
+		animation: slideOutRight 0.2s ease forwards;
+	}
+}
+
 @keyframes slideInTop {
 	from {
 		transform: translateY(10px);
@@ -39,39 +73,5 @@
 	to {
 		transform: translateX(-10px);
 		opacity: 0;
-	}
-}
-
-.tooltip {
-	position: fixed;
-	padding: 2px 5px;
-	background-color: rgba(0, 0, 0, 0.8);
-	color: #fff;
-	font-size: 12px;
-	max-width: 30vw;
-	white-space: normal;
-	word-wrap: break-word;
-	border-radius: 4px;
-	z-index: 999999;
-	pointer-events: none;
-	opacity: 0;
-	transition: opacity 0.2s ease, transform 0.2s ease;
-	transition-delay: 0.5s;
-}
-
-.visible {
-	opacity: 1;
-	animation: slideInTop 0.2s ease forwards;
-
-	&[data-position="right"] {
-		animation: slideInRight 0.2s ease forwards;
-	}
-}
-
-.hidden {
-	animation: slideOutTop 0.2s ease forwards;
-
-	&[data-position="right"] {
-		animation: slideOutRight 0.2s ease forwards;
 	}
 }

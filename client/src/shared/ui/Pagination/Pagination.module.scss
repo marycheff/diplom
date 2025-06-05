@@ -1,27 +1,27 @@
 .pageWrapper {
 	margin-top: 30px;
 	display: flex;
-	gap: 8px; // Расстояние между кнопками
+	gap: 8px;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
 	margin-bottom: 30px;
 }
+
 .dots {
 	margin: 0 8px;
 	cursor: default;
 }
+
 .buttonText {
 	font-size: 14px;
-	white-space: nowrap; // Запрещает перенос текста
+	white-space: nowrap;
 }
 .navigationButtons {
 	display: flex;
 	gap: 8px;
 }
-// .navigationButtons {
-//     // margin: 0 5px;
-// }
+
 .navigationButton {
 	display: flex;
 	align-items: center;
@@ -32,23 +32,25 @@
 	border: 1px solid #ccc;
 	transition: all 0.3s ease;
 }
+
 .page {
 	padding: 5px 12px;
 	border-radius: 50px;
 	cursor: pointer;
 	transition: all 0.3s ease;
 	background-color: $secondary-200;
-}
-.buttonSymbol {
-	// font-size: 13px;
-	font-weight: bold;
-}
-.pageCurrent {
-	background-color: $secondary-600;
-	color: white;
+
+	&:hover {
+		background-color: $secondary-400;
+		color: white;
+	}
 }
 
-.page:hover {
-	background-color: $secondary-400;
+.buttonSymbol {
+	font-weight: bold;
+}
+
+.pageCurrent {
+	background-color: $secondary-600;
 	color: white;
 }

@@ -9,15 +9,6 @@
 	margin-top: 30px;
 	width: 100%;
 }
-.actionLink {
-	text-decoration: none;
-	color: #007bff;
-	font-weight: bold;
-
-	&:hover {
-		text-decoration: underline;
-	}
-}
 
 .navigation {
 	display: flex;
@@ -72,7 +63,7 @@
 	padding: 15px 20px;
 	margin: 0;
 	font-size: 18px;
-	font-weight: 600;
+	font-weight: bold;
 }
 
 .blockContent {
@@ -103,7 +94,7 @@
 }
 
 .label {
-	font-weight: 600;
+	font-weight: bold;
 	color: $secondary-600;
 	width: 35%;
 	min-width: 120px;
@@ -178,7 +169,7 @@
 }
 
 .questionText {
-	font-weight: 600;
+	font-weight: bold;
 	font-size: 16px;
 	flex: 1;
 	color: $primary-600;
@@ -243,7 +234,7 @@
 	padding: 3px 8px;
 	border-radius: 4px;
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: bold;
 }
 
 .blockHeader {
@@ -257,7 +248,7 @@
 	padding: 15px 20px;
 	margin: 0;
 	font-size: 18px;
-	font-weight: 600;
+	font-weight: bold;
 	width: 100%;
 }
 

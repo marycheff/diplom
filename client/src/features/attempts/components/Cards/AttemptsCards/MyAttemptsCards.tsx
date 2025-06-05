@@ -62,7 +62,7 @@ const MyAttemptsCards: FC<MyAttemptsCardsProps> = ({ attempts, total }) => {
 											</span>
 										</div>
 										<div className={styles.infoRow}>
-											<span className={styles.label}>Баллы:</span>
+											<span className={styles.label}>Результат:</span>
 											<span className={styles.value}>
 												{typeof attempt.score === "number" ? (
 													<span className={styles.score}>{attempt.score}%</span>

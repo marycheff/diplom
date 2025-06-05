@@ -1,16 +1,7 @@
-@use "@styles/common/testInfoStyles.module" as common;
+@use "@styles/common/testInfoStyles" as common;
+
 .container {
 	@include common.container;
-}
-
-.actionLink {
-	text-decoration: none;
-	color: #007bff;
-	font-weight: bold;
-
-	&:hover {
-		text-decoration: underline;
-	}
 }
 
 .navigation {
@@ -33,7 +24,7 @@
 
 .blockContent {
 	@include common.blockContent;
-	height: calc(100% - 50px); /* Account for header height */
+	height: calc(100% - 50px);
 }
 
 .testImage {
@@ -60,20 +51,10 @@
 
 .label {
 	@include common.label;
-	width: 60%;
-
-	@media screen and (max-width: 1024px) {
-		width: 50%;
-	}
 }
 
 .value {
 	@include common.value;
-	margin-left: 15px;
-
-	@media screen and (max-width: 1024px) {
-		width: 50%;
-	}
 }
 
 .emptyField {

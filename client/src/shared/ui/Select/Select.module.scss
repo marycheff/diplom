@@ -114,8 +114,8 @@
 	visibility: hidden;
 	pointer-events: none;
 	transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-
 	scrollbar-width: thin;
+	
 	&::-webkit-scrollbar {
 		width: 4px;
 	}
