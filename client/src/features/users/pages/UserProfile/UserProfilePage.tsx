@@ -25,7 +25,7 @@ const UserProfilePage = () => {
 	const [initialUserFields, setInitialUserFields] = useState<UserFields>({})
 	const [isEditingFields, setIsEditingFields] = useState<{ [key: string]: boolean }>({})
 	const [isFormChanged, setIsFormChanged] = useState(false)
-
+	const a = true
 	const [isLoadingFields, setIsLoadingFields] = useState(false)
 
 	// Получение данных пользователя
@@ -90,10 +90,7 @@ const UserProfilePage = () => {
 		<div className={styles.profilePage}>
 			{(isFetching || isLoadingFields) && (
 				<div className={styles.loader}>
-					<Loader
-						delay={300}
-						fullScreen
-					/>
+					<Loader delay={300} />
 				</div>
 			)}
 

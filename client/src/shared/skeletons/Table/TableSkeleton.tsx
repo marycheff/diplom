@@ -1,13 +1,15 @@
 import stylesPagination from "@/shared/ui/Pagination/Pagination.module.scss"
-import styles from "./TableSkeleton.module.scss"
 import { FC } from "react"
+import styles from "./TableSkeleton.module.scss"
 
 interface TableSkeletonProps {
 	rows?: number
+	cols?: number
 }
 
-const TableSkeleton: FC<TableSkeletonProps> = ({ rows = 10 }) => {
+const TableSkeleton: FC<TableSkeletonProps> = ({ rows = 10, cols = 8 }) => {
 	const skeletonData = Array(rows).fill({})
+	const columnsArray = Array(cols).fill({})
 	const pagesArray = [1, 2, 3]
 
 	return (
@@ -17,59 +19,28 @@ const TableSkeleton: FC<TableSkeletonProps> = ({ rows = 10 }) => {
 					<table className={styles.table}>
 						<thead>
 							<tr>
-								<th scope="col">
-									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-								</th>
-								<th scope="col">
-									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-								</th>
-								<th scope="col">
-									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-								</th>
-								<th scope="col">
-									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-								</th>
-								<th scope="col">
-									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-								</th>
-								<th scope="col">
-									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-								</th>
-								<th scope="col">
-									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-								</th>
-								<th scope="col">
-									<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-								</th>
+								{columnsArray.map((_, index) => (
+									<th
+										key={index}
+										scope="col"
+									>
+										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
+									</th>
+								))}
 							</tr>
 						</thead>
 						<tbody>
-							{skeletonData.map((_, index) => (
-								<tr key={index}>
-									<td>
-										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-									</td>
-									<td>
-										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-									</td>
-									<td>
-										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-									</td>
-									<td>
-										<span className={`${styles.skeleton} ${styles.skeletonBox} ${styles.skeletonBoxWide}`}></span>
-									</td>
-									<td>
-										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-									</td>
-									<td>
-										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-									</td>
-									<td>
-										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-									</td>
-									<td>
-										<span className={`${styles.skeleton} ${styles.skeletonBox}`}></span>
-									</td>
+							{skeletonData.map((_, rowIndex) => (
+								<tr key={rowIndex}>
+									{columnsArray.map((_, colIndex) => (
+										<td key={colIndex}>
+											<span
+												className={`${styles.skeleton} ${styles.skeletonBox} ${
+													colIndex === 3 ? styles.skeletonBoxWide : ""
+												}`}
+											></span>
+										</td>
+									))}
 								</tr>
 							))}
 						</tbody>
