@@ -62,7 +62,7 @@ class AuthService {
 			const newUser = await userRepository.create(user, hashedPassword, activationLink)
 			logger.debug(`[${LOG_NAMESPACE}] Пользователь создан в базе данных`, { userId: newUser.id })
 
-			await mailService.sendActivationMail(user.email, `${envConfig.API_URL}/api/auth/activate/${activationLink}`)
+			await mailService.sendActivationMail(user.email, `${envConfig.SERVER_URL}/api/auth/activate/${activationLink}`)
 			logger.debug(`[${LOG_NAMESPACE}] Отправлено письмо активации`, { email: user.email })
 
 			const userDto = mapUserToDto(newUser)
@@ -107,7 +107,7 @@ class AuthService {
 			}
 
 			await userRepository.updateActivationLink(email, activationLink)
-			await mailService.sendActivationMail(email, `${envConfig.API_URL}/api/auth/activate/${activationLink}`)
+			await mailService.sendActivationMail(email, `${envConfig.SERVER_URL}/api/auth/activate/${activationLink}`)
 			logger.info(`[${LOG_NAMESPACE}] Ссылка активации успешно обновлена и отправлена`, { userId: user.id })
 		} catch (error) {
 			if (error instanceof ApiError) {

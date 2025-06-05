@@ -53,8 +53,8 @@ logs
 *.log
 
 # Окружение и секреты
-.env
-.env.*
-!.env.example
-*.pem
-*.key
+# .env
+# .env.*
+# !.env.example
+# *.pem
+# *.key

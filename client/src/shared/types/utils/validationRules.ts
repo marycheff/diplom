@@ -26,8 +26,8 @@ export const emailValidationRules: RegisterOptions = {
 export const passwordValidationRules: RegisterOptions = {
 	required: "Пароль обязателен",
 	minLength: {
-		value: 8,
-		message: "Пароль должен содержать не менее 8 символов",
+		value: 6,
+		message: "Пароль должен содержать не менее 6 символов",
 	},
 	maxLength: {
 		value: 64,

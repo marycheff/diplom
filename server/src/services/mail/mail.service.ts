@@ -28,7 +28,7 @@ class MailService {
 			await this.transporter.sendMail({
 				from: envConfig.SMTP_USER,
 				to,
-				subject: "Активация аккаунта на " + envConfig.API_URL,
+				subject: "Активация аккаунта на " + envConfig.SERVER_URL,
 				text: "",
 				html: `
                 <div>
@@ -56,7 +56,7 @@ class MailService {
 			await this.transporter.sendMail({
 				from: envConfig.SMTP_USER,
 				to,
-				subject: "Сброс пароля на " + envConfig.API_URL,
+				subject: "Сброс пароля на " + envConfig.SERVER_URL,
 				text: "",
 				html: `
                 <div>
