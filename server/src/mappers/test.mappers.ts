@@ -73,7 +73,7 @@ export const mapTest = (
 			patronymic: test.author.patronymic,
 		},
 		title: test.title,
-		description: test.description || null,
+		description: test.description,
 		totalAttempts: test.totalAttempts || 0,
 		visibilityStatus: test.visibilityStatus,
 		moderationStatus: test.moderationStatus,
@@ -254,6 +254,7 @@ export const mapToAttemptWithSnapshotDTO = (
 					testId: attempt.snapshot.testId,
 					title: attempt.snapshot.title,
 					description: attempt.snapshot.description,
+					image: attempt.snapshot.image,
 					status: attempt.snapshot.moderationStatus,
 					createdAt: attempt.snapshot.createdAt,
 			  }
@@ -347,7 +348,8 @@ export const mapToTestSnapshotDTO = (
 		id: snapshot.id,
 		testId: snapshot.testId,
 		title: snapshot.title,
-		description: snapshot.description || null,
+		description: snapshot.description,
+		image: snapshot.image,
 		status: snapshot.moderationStatus,
 		createdAt: snapshot.createdAt,
 		settings: snapshot.settings
@@ -402,7 +404,7 @@ export const mapUserTest = (
 	return {
 		id: test.id,
 		title: test.title,
-		description: test.description || "",
+		description: test.description,
 		visibilityStatus: test.visibilityStatus,
 		image: test.image,
 		settings: test.settings
@@ -457,7 +459,7 @@ export const mapToTestSnapshotForAttemptDTO = (
 	return {
 		id: snapshot.testId, //  testId из snapshot как id теста
 		title: snapshot.title,
-		description: snapshot.description || "",
+		description: snapshot.description,
 		visibilityStatus: "PUBLISHED",
 		image: snapshot.image,
 		settings: snapshot.settings

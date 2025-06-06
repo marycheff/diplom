@@ -12,6 +12,7 @@ export interface TestSnapshotDTO {
 	testId: string
 	title: string
 	description: string | null
+	image: string | null
 	status: string
 	createdAt: Date
 	questions?: QuestionSnapshotDTO[]

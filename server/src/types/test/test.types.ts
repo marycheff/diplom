@@ -35,14 +35,14 @@ export interface TestDTO {
 
 export interface ShortTestInfo {
 	title: string
-	description?: string
+	description:string | null
 	image: string | null
 }
 
 export interface UserTestDTO {
 	id: string
 	title: string
-	description?: string
+	description: string | null 
 	questions?: UserQuestionDTO[]
 	settings?: TestSettingsDTO
 	visibilityStatus: TestVisibilityStatus

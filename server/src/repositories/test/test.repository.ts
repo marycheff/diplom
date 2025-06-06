@@ -60,6 +60,7 @@ class TestRepository {
 				title: test.title,
 				description: test.description,
 				moderationStatus: test.moderationStatus,
+				image: test.image,
 			},
 		})
 
@@ -284,8 +285,8 @@ class TestRepository {
 			where: { id: testId },
 			data: {
 				title: updatedShortInfo.title,
-				description: updatedShortInfo.description,
-				image: updatedShortInfo.image, 
+				description: updatedShortInfo.description || null,
+				image: updatedShortInfo.image,
 			},
 			include: {
 				questions: { include: { answers: true } },

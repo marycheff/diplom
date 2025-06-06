@@ -81,7 +81,23 @@
 .questionType {
 	@include common.questionType;
 }
+.testImage {
+	margin-bottom: 20px;
+	border-radius: 12px;
+	padding: 10px;
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: $background-800;
+	min-height: 400px;
 
+	img {
+		max-height: 500px;
+		max-width: 100%;
+		object-fit: contain;
+	}
+}
 .answersList {
 	display: flex;
 	flex-direction: column;

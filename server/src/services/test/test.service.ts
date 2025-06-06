@@ -601,13 +601,17 @@ class TestService {
 			}
 
 			await executeTransaction(async (tx) => {
-				if (updatedShortInfo.image) {
-					const imageUrl = await imageService.processImage(updatedShortInfo.image, "test")
-					updatedShortInfo.image = imageUrl
-				} else if (test.image && !updatedShortInfo.image) {
-					await imageService.deleteImage(test.image, "test")
-					updatedShortInfo.image = null
+				if (updatedShortInfo.image !== test.image) {
+					if (test.image) {
+						await imageService.deleteImage(test.image, "test")
+					}
+					if (updatedShortInfo.image) {
+						updatedShortInfo.image = await imageService.processImage(updatedShortInfo.image, "test")
+					} else {
+						updatedShortInfo.image = null
+					}
 				}
+
 				const updatedTest = await testRepository.updateShortInfo(testId, updatedShortInfo, tx)
 				await testRepository.incrementVersion(testId, test.version, tx)
 				await testRepository.cleanupUnusedSnapshots(testId, tx)

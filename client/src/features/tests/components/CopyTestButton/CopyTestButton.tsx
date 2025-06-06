@@ -22,14 +22,14 @@ const CopyTestButton = ({ test, className }: CopyTestButtonProps) => {
 
 	const handleCopyTest = async () => {
 		try {
-			const copiedTest = await createTest(`Копия: ${test.title}`, test.description || "")
+			const copiedTest = await createTest(`Копия: ${test.title}`, test.description)
 			if (copiedTest?.id) {
 				if (test.settings) {
 					await updateTestSettings(copiedTest.id, test.settings)
 				}
 				await updateShortInfo(copiedTest.id, {
 					title: `Копия: ${test.title}`,
-					description: test.description || "",
+					description: test.description,
 					image: null,
 				})
 				if (test.questions && test.questions.length > 0) {

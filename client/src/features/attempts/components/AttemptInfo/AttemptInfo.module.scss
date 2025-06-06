@@ -35,6 +35,7 @@
 
 .label {
   @include attempt.label;
+  width: 60%;
 }
 
 .value {

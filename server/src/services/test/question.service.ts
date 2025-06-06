@@ -75,10 +75,16 @@ class QuestionService {
 						}
 
 						const existingQuestion = existingQuestionsMap.get(questionId)
-						if (question.image) {
-							question.image = await imageService.processImage(question.image, "question")
-						} else if (existingQuestion?.image && !question.image) {
-							await imageService.deleteImage(existingQuestion.image, "question")
+
+						if (question.image !== existingQuestion?.image) {
+							if (existingQuestion?.image) {
+								await imageService.deleteImage(existingQuestion.image, "question")
+							}
+							if (question.image) {
+								question.image = await imageService.processImage(question.image, "question")
+							} else {
+								question.image = null
+							}
 						}
 
 						await questionRepository.update(questionId, question, tx)

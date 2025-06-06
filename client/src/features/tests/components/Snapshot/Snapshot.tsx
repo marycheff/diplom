@@ -45,6 +45,14 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
 
 	return (
 		<div className={styles.container}>
+			{snapshot.image && (
+				<div className={styles.testImage}>
+					<ImageWithFallback
+						src={getImageUrl(snapshot.image)}
+						alt="изображение не загрузилось"
+					/>
+				</div>
+			)}
 			<div className={styles.topGrid}>
 				<div className={styles.infoBlock}>
 					<h1 className={styles.blockTitle}>Информация о тесте</h1>
@@ -153,12 +161,15 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
 										<span className={styles.questionText}>{question.text}</span>
 										<span className={styles.questionType}>{QuestionTypeLabels[question.type]}</span>
 									</div>
-									{question.image && (
-										<div className={styles.questionImage}>
-											<ImageWithFallback src={getImageUrl(question.image)} />
-										</div>
-									)}
 									<div className={styles.answersList}>
+										{question.image && (
+											<div className={styles.questionImage}>
+												<ImageWithFallback
+													src={getImageUrl(question.image)}
+													alt="Изображение не загрузилось. Возможно, оно было удалено"
+												/>
+											</div>
+										)}
 										{question.answers.map((answer) => (
 											<div
 												key={answer.id}

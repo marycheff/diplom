@@ -344,6 +344,12 @@ const TestInfoPage = () => {
 									{test.description || <span className={styles.emptyField}>не указано</span>}
 								</span>
 							</div>
+							<div className={styles.infoRow}>
+								<span className={styles.label}>Изображение</span>
+								<span className={styles.value}>
+									{test.image ? <span>Есть</span> : <span className={styles.emptyField}>Нет</span>}
+								</span>
+							</div>
 
 							<div className={styles.infoRow}>
 								<span className={styles.label}>Всего попыток</span>
