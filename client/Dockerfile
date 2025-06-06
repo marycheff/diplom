@@ -1,21 +1,17 @@
-FROM oven/bun:alpine AS base
+FROM node:20-alpine AS base
 WORKDIR /usr/src/app
 
 FROM base AS install
-COPY package.json bun.lock* ./
-RUN bun install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci --frozen-lockfile
 
 FROM base AS build
 COPY --from=install /usr/src/app/node_modules ./node_modules
 COPY . .
-RUN bun run build
+RUN npm run build
 
 FROM base AS runtime
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/package.json .
-
-CMD ["bun", "run", "preview"]
-
-# docker build -t client .
-# docker run -p 3000:3000 --env-file .env client
+CMD ["npm", "run", "preview"]
