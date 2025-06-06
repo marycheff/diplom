@@ -1,11 +1,11 @@
 FROM node:20-alpine AS base
 WORKDIR /usr/src/app
+
 FROM base AS install
 RUN mkdir -p /temp/dev
 COPY package.json package-lock.json /temp/dev/
 COPY prisma /temp/dev/prisma/
 RUN cd /temp/dev && npm ci --platform=linux --arch=x64
-
 
 RUN mkdir -p /temp/prod
 COPY package.json package-lock.json /temp/prod/
@@ -20,9 +20,11 @@ RUN npm run build
 
 FROM base AS release
 
-RUN mkdir -p ./dist uploads/questions uploads/tests
+RUN mkdir -p ./dist uploads/questions uploads/tests && \
+    chown -R node:node /usr/src/app && \
+    chmod -R 755 /usr/src/app
 
-# Копируем файлы
+
 COPY --from=install /temp/prod/node_modules node_modules
 COPY --from=prerelease /usr/src/app/dist ./dist
 COPY --from=prerelease /usr/src/app/dist-register.mjs ./dist-register.mjs
@@ -34,13 +36,10 @@ COPY --from=prerelease /usr/src/app/bad_words.txt ./bad_words.txt
 
 RUN npm install --platform=linux --arch=x64 sharp
 
-
 RUN chown -R node:node /usr/src/app && chmod -R 755 /usr/src/app
+RUN chown -R node:node /usr/src/app/uploads && \
+    chmod -R 775 /usr/src/app/uploads
 
-
-EXPOSE 5000
 USER node
-
+EXPOSE 5000
 CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
-
-

@@ -26,13 +26,14 @@ services:
      context: ./server
      network: host
    container_name: server-container
+   user: "1000:1000"
    dns:
      - 8.8.8.8
      - 8.8.4.4
    env_file:
      - ./server/.env
    volumes:
-     - ./server/uploads:/usr/src/app/uploads
+     - ./server/uploads:/usr/src/app/uploads:rw
    depends_on:
      - postgres
      - redis
