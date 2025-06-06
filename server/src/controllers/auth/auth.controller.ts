@@ -14,8 +14,8 @@ class AuthController {
 			res.cookie("refreshToken", userData.refreshToken, {
 				maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
 				httpOnly: true,
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: false,
 			})
 			res.status(201).json({
 				message: "Пользователь успешно зарегистрирован",
@@ -47,8 +47,8 @@ class AuthController {
 			res.cookie("refreshToken", refreshToken, {
 				maxAge: 30 * 24 * 60 * 60 * 1000,
 				httpOnly: true,
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: false,
 			})
 
 			// Редирект с токеном в URL
@@ -77,8 +77,8 @@ class AuthController {
 			res.cookie("refreshToken", userData.refreshToken, {
 				maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
 				httpOnly: true,
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: false,
 			})
 			res.status(201).json({
 				message: "Успешный вход",
@@ -115,8 +115,8 @@ class AuthController {
 			res.cookie("refreshToken", userData.refreshToken, {
 				maxAge: 30 * 24 * 60 * 60 * 1000, // 30 д
 				httpOnly: true,
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: false,
 			})
 			res.status(200).json(userData)
 		} catch (e) {
