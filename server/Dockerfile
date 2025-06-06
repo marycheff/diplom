@@ -47,6 +47,8 @@
 # WORKDIR /usr/src/app
 
 # Установка зависимостей
+FROM node:20-alpine AS base
+WORKDIR /usr/src/app
 FROM base AS install
 RUN mkdir -p /temp/dev
 COPY package.json package-lock.json /temp/dev/
