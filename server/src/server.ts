@@ -28,7 +28,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(
 	cors({
 		credentials: true,
-		origin: envConfig.CLIENT_URL,
+		origin: envConfig.ALLOWED_ORIGINS,
 	})
 )
 
