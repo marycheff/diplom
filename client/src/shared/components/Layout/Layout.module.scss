@@ -1,11 +1,11 @@
 .layout {
-   display: flex;
-   height: 100vh;
+	display: flex;
+	height: 100vh;
 }
 
 .mainContent {
 	display: flex;
-   flex-direction: column;
+	flex-direction: column;
 	padding: 0 20px;
 	margin-left: 240px;
 	transition: all 0.3s ease-in-out;
@@ -34,5 +34,13 @@
 	:global(.ps-collapsed) ~ .mainContent {
 		margin-left: 0;
 		width: 100%;
+	}
+}
+@media screen and (width <= 768px) {
+	.content {
+		padding-bottom: 170px;
+	}
+	.layout {
+		height: calc(100vh - 70px);
 	}
 }

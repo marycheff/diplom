@@ -46,7 +46,8 @@
 		}
 	}
 }
-@media screen and (max-width: 1024px) {
+
+@media screen and (width <= 1024px) {
 	.button {
 		&:hover {
 			background-color: $secondary-600 !important;

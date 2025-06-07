@@ -63,6 +63,7 @@
 .questionType {
 	@include common.questionType;
 }
+
 .testImage {
 	margin-bottom: 20px;
 	border-radius: 12px;
@@ -80,6 +81,7 @@
 		object-fit: contain;
 	}
 }
+
 .answersList {
 	display: flex;
 	flex-direction: column;

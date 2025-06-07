@@ -65,17 +65,20 @@
 
 .questionVerdict {
 	@include attempt.questionVerdict;
+
 	margin: 10px 0;
-	padding: 12px 12px;
+	padding: 12px;
 }
 
 .correctVerdict {
 	@include attempt.correctVerdict;
+
 	background-color: rgba($primary-400, 0.06);
 }
 
 .incorrectVerdict {
 	@include attempt.incorrectVerdict;
+
 	background-color: rgba($red-400, 0.06);
 }
 

@@ -471,7 +471,7 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 								to={ROUTES.MY_ATTEMPTS}
 								className={`${styles.mobileNavItem} ${currentPath.startsWith(ROUTES.MY_ATTEMPTS) ? styles.active : ""}`}
 							>
-								<FiArchive />
+								<FiFileText />
 								<span>Мои результаты</span>
 							</Link>
 

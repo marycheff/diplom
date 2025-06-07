@@ -35,10 +35,12 @@
 
 .label {
 	@include common.label;
+
 	& {
 		width: 60%;
 	}
 }
+
 .value {
 	@include common.value;
 }
