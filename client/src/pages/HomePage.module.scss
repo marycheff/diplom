@@ -23,6 +23,11 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
 	gap: 2.5rem;
+
+
+	@media screen and (width <= 768px) {
+		grid-template-columns: 1fr;
+	}
 }
 
 .card {
@@ -50,6 +55,18 @@
 		font-size: 1.75rem;
 		font-weight: bold;
 		text-align: center;
+	}
+	@media screen and (width <= 768px) {
+		min-height: 0;
+		padding: 2rem;
+
+		span {
+			margin-top: 0;
+			font-size: 1.3rem;
+		}
+		.icon {
+			font-size: 2rem;
+		}
 	}
 }
 

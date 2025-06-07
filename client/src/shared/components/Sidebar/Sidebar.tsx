@@ -8,6 +8,7 @@ import { FiArchive, FiEdit, FiFileText, FiHome, FiList, FiLogOut, FiMenu, FiUser
 import { IoAnalyticsSharp } from "react-icons/io5"
 import { Menu, MenuItem, Sidebar as ProSidebar, sidebarClasses } from "react-pro-sidebar"
 import { Link, useLocation } from "react-router-dom"
+import styles from "./Sidebar.module.scss"
 interface SidebarProps {
 	onAnimationStart?: () => void
 	onAnimationEnd?: () => void
@@ -300,6 +301,9 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 			<ProSidebar
 				collapsed={collapsed}
 				rootStyles={{
+					"@media (max-width: 768px)": {
+						display: "none",
+					},
 					height: "100vh",
 					position: "fixed",
 					top: 0,
@@ -374,6 +378,114 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 			>
 				<p>Вы уверены, что хотите выйти из системы?</p>
 			</ConfirmationModal>
+
+			{/* Мобильная навигация */}
+			<nav className={styles.mobileNav}>
+				<div className={styles.mobileNavContent}>
+					{isAdmin ? (
+						<>
+							<Link
+								to={ROUTES.ADMIN}
+								className={`${styles.mobileNavItem} ${currentPath === ROUTES.ADMIN ? styles.active : ""}`}
+							>
+								<FiHome />
+								{/* <span>Главная</span> */}
+							</Link>
+							<Link
+								to={ROUTES.ADMIN_TESTS}
+								className={`${styles.mobileNavItem} ${currentPath.startsWith(ROUTES.ADMIN_TESTS) ? styles.active : ""}`}
+							>
+								<FiFileText />
+								{/* <span>Тесты</span> */}
+							</Link>
+							<Link
+								to={ROUTES.ADMIN_ALL_ATTEMPTS}
+								className={`${styles.mobileNavItem} ${
+									currentPath.startsWith(ROUTES.ADMIN_ALL_ATTEMPTS) ? styles.active : ""
+								}`}
+							>
+								<FiList />
+								{/* <span>Попытки</span> */}
+							</Link>
+							<Link
+								to={ROUTES.ADMIN_CREATE_TEST}
+								className={`${styles.mobileNavItem} ${
+									currentPath.startsWith(ROUTES.ADMIN_CREATE_TEST) ? styles.active : ""
+								}`}
+							>
+								<FiEdit />
+								{/* <span>Создать</span> */}
+							</Link>
+							<Link
+								to={ROUTES.ADMIN_MY_TESTS}
+								className={`${styles.mobileNavItem} ${
+									currentPath.startsWith(ROUTES.ADMIN_MY_TESTS) ? styles.active : ""
+								}`}
+							>
+								<FiArchive />
+								{/* <span>Мои тесты</span> */}
+							</Link>
+							<Link
+								to={ROUTES.ADMIN_MY_ATTEMPTS}
+								className={`${styles.mobileNavItem} ${
+									currentPath.startsWith(ROUTES.ADMIN_MY_ATTEMPTS) ? styles.active : ""
+								}`}
+							>
+								<FiFileText />
+								{/* <span>Мои результаты</span> */}
+							</Link>
+							<Link
+								to={ROUTES.ADMIN_PROFILE}
+								className={`${styles.mobileNavItem} ${
+									currentPath.startsWith(ROUTES.ADMIN_PROFILE) ? styles.active : ""
+								}`}
+							>
+								<FiUser />
+								{/* <span>Профиль</span> */}
+							</Link>
+						</>
+					) : (
+						<>
+							<Link
+								to={ROUTES.HOME}
+								className={`${styles.mobileNavItem} ${currentPath === ROUTES.HOME ? styles.active : ""}`}
+							>
+								<FiHome />
+								<span>Главная</span>
+							</Link>
+							<Link
+								to={ROUTES.CREATE_TEST}
+								className={`${styles.mobileNavItem} ${currentPath.startsWith(ROUTES.CREATE_TEST) ? styles.active : ""}`}
+							>
+								<FiEdit />
+								<span>Создать</span>
+							</Link>
+							<Link
+								to={ROUTES.MY_TESTS}
+								className={`${styles.mobileNavItem} ${currentPath.startsWith(ROUTES.MY_TESTS) ? styles.active : ""}`}
+							>
+								<FiArchive />
+								<span>Мои тесты</span>
+							</Link>
+							<Link
+								to={ROUTES.MY_ATTEMPTS}
+								className={`${styles.mobileNavItem} ${currentPath.startsWith(ROUTES.MY_ATTEMPTS) ? styles.active : ""}`}
+							>
+								<FiArchive />
+								<span>Мои результаты</span>
+							</Link>
+
+							<Link
+								to={ROUTES.PROFILE}
+								className={`${styles.mobileNavItem} ${currentPath.startsWith(ROUTES.PROFILE) ? styles.active : ""}`}
+							>
+								<FiUser />
+								<span>Профиль</span>
+							</Link>
+						</>
+					)}
+				</div>
+			</nav>
 		</>
 	)
 }

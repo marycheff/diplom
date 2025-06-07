@@ -40,6 +40,11 @@
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+	border-radius: 8px;
+	padding: 0 20px 20px 20px;
+}
+.hasImage {
+	border: 2px solid #e0e0e0;
 }
 
 .modeSwitcher {
@@ -107,7 +112,6 @@
 	text-align: center;
 	color: #666;
 	gap: 8px;
-
 }
 
 .placeholderMain {
@@ -245,4 +249,59 @@
 		height: 20px;
 		font-size: 10px;
 	}
+}
+
+.tabHeaders {
+	display: flex;
+	border-bottom: 1px solid $border-secondary;
+	margin-bottom: calc($spacing-unit * 1.5);
+}
+
+.tabButton {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+	padding: calc($spacing-unit * 0.75) calc($spacing-unit * 1.5);
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-weight: 500;
+	font-size: 1.125rem;
+	color: $text-secondary;
+	position: relative;
+	transition: color 0.2s;
+
+	svg {
+		width: 16px;
+		height: 16px;
+	}
+
+	&:hover {
+		color: $text-primary;
+	}
+}
+
+.tabButton::after {
+	content: "";
+	position: absolute;
+	bottom: -1px;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	background: transparent;
+	transition: background 0.2s;
+}
+
+.activeTab {
+	color: $text-primary;
+}
+
+.activeTab::after {
+	background: $accent-primary;
+}
+
+.tabContent {
+	padding: $spacing-unit;
 }

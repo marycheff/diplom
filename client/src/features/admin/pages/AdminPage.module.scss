@@ -61,6 +61,21 @@
 		font-weight: bold;
 		text-align: center;
 	}
+
+	@media screen and (width <= 768px) {
+		min-height: 100px;
+		padding: 2rem;
+
+		span {
+			margin-top: 0;
+			font-size: 1.3rem;
+			font-weight: bold;
+			text-align: center;
+		}
+		.icon {
+			font-size: 2rem;
+		}
+	}
 }
 
 .icon {

@@ -25,19 +25,13 @@
 @media screen and (width <= 768px) {
 	.mainContent {
 		flex: 1;
-		padding: 0 20px;
-		margin-left: 70px;
+		padding: 0 15px;
+		margin-left: 0;
 		width: 100%;
-		width: calc(100% - 70px);
 	}
 
 	:global(.ps-collapsed) ~ .mainContent {
-		margin-left: 70px;
-		width: calc(100% - 70px);
-	}
-
-	:not(:global(.ps-collapsed)) ~ .mainContent {
-		pointer-events: none;
-		user-select: none;
+		margin-left: 0;
+		width: 100%;
 	}
 }

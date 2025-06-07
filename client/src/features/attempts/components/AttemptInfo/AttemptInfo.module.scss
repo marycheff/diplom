@@ -2,182 +2,183 @@
 @use "@/styles/common/attemptStyles" as attempt;
 
 .container {
-  @include common.container;
+	@include common.container;
 }
 
 .preTestDataHeader {
-  margin: 16px 0 8px;
-  font-weight: bold;
-  font-size: 14px;
-  border-top: 1px solid black;
-  padding-top: 12px;
+	margin: 16px 0 8px;
+	font-weight: bold;
+	font-size: 14px;
+	border-top: 1px solid black;
+	padding-top: 12px;
 }
 
 .topGrid {
-  @include common.attemptInfoTopGrid;
+	@include common.attemptInfoTopGrid;
 }
 
 .infoBlock {
-  @include attempt.infoBlock;
+	@include attempt.infoBlock;
 }
 
 .blockTitle {
-  @include attempt.blockTitle;
+	@include attempt.blockTitle;
 }
 
 .blockContent {
-  @include attempt.blockContent;
+	@include attempt.blockContent;
 }
 
 .infoRow {
-  @include attempt.infoRow;
+	@include attempt.infoRow;
 }
 
 .label {
-  @include attempt.label;
-  width: 60%;
+	@include attempt.label;
+	& {
+		width: 60%;
+	}
 }
-
 .value {
-  @include attempt.value;
+	@include attempt.value;
 }
 
 .emptyField {
-  @include attempt.emptyField;
+	@include attempt.emptyField;
 }
 
 .emptyBlock {
-  @include attempt.emptyBlock;
+	@include attempt.emptyBlock;
 }
 
 .questionsList {
-  @include attempt.questionsList;
+	@include attempt.questionsList;
 }
 
 .questionBlock {
-  @include attempt.questionBlock;
+	@include attempt.questionBlock;
 }
 
 .questionHeader {
-  @include attempt.questionHeader;
+	@include attempt.questionHeader;
 }
 
 .questionNumber {
-  @include attempt.questionNumber;
+	@include attempt.questionNumber;
 }
 
 .questionText {
-  @include attempt.questionText;
+	@include attempt.questionText;
 }
 
 .questionType {
-  @include attempt.questionType;
+	@include attempt.questionType;
 }
 
 .answersList {
-  @include attempt.answersList;
+	@include attempt.answersList;
 }
 
 .answerSection {
-  @include attempt.answerSection;
+	@include attempt.answerSection;
 }
 
 .answerTitle {
-  @include attempt.answerTitle;
+	@include attempt.answerTitle;
 }
 
 .answerItem {
-  @include attempt.answerItem;
+	@include attempt.answerItem;
 }
 
 .correctAnswer {
-  @include attempt.correctAnswer;
+	@include attempt.correctAnswer;
 }
 
 .incorrectAnswer {
-  border-left: 4px solid $red-400;
+	border-left: 4px solid $red-400;
 }
 
 .answerText {
-  @include attempt.answerText;
+	@include attempt.answerText;
 }
 
 .correctBadge,
 .answerStatus {
-  @include attempt.correctBadge;
+	@include attempt.correctBadge;
 }
 
 .statusBadge {
-  background-color: $primary-400;
-  color: $background-100;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 14px;
+	background-color: $primary-400;
+	color: $background-100;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 14px;
 }
 
 .answerMeta {
-  @include attempt.answerMeta;
+	@include attempt.answerMeta;
 }
 
 .metaItem {
-  @include attempt.metaItem;
+	@include attempt.metaItem;
 }
 
 .metaLabel {
-  @include attempt.metaLabel;
+	@include attempt.metaLabel;
 }
 
 .metaValue {
-  @include attempt.metaValue;
+	@include attempt.metaValue;
 }
 
 .subTitle {
-  font-size: 15px;
-  font-weight: bold;
-  color: $secondary-600;
-  margin: 30px 0 12px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid $background-600;
-  position: relative;
+	font-size: 15px;
+	font-weight: bold;
+	color: $secondary-600;
+	margin: 30px 0 12px;
+	padding-bottom: 8px;
+	border-bottom: 2px solid $background-600;
+	position: relative;
 
-  @media screen and (width <= 768px) {
-    font-size: 14px;
-    margin: 16px 0 10px;
-  }
+	@media screen and (width <= 768px) {
+		font-size: 14px;
+		margin: 16px 0 10px;
+	}
 }
 
 .questionVerdict {
-  @include attempt.questionVerdict;
+	@include attempt.questionVerdict;
 }
 
 .correctVerdict {
-  @include attempt.correctVerdict;
+	@include attempt.correctVerdict;
 }
 
 .incorrectVerdict {
-  @include attempt.incorrectVerdict;
+	@include attempt.incorrectVerdict;
 }
 
 .verdictLabel {
-  @include attempt.verdictLabel;
+	@include attempt.verdictLabel;
 }
 
 .verdictValue {
-  @include attempt.verdictValue;
+	@include attempt.verdictValue;
 }
 
 .answerStatusCorrect {
-  background-color: rgba($primary-400, 0.1);
-  color: $primary-400;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 14px;
+	background-color: rgba($primary-400, 0.1);
+	color: $primary-400;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 14px;
 }
 
 .answerStatusIncorrect {
-  background-color: rgba($red-400, 0.1);
-  color: $red-400;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 14px;
+	background-color: rgba($red-400, 0.1);
+	color: $red-400;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 14px;
 }

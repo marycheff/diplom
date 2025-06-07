@@ -460,7 +460,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 					<div className={styles.formActions}>
 						<Button
 							onClick={handleSubmit(handleAddQuestion)}
-							disabled={!isFormValid}
+							disabled={!isFormValid || (editingQuestion ? !hasFormChanges : false)}
 						>
 							{editingQuestion ? "Сохранить изменения" : "Сохранить вопрос"}
 						</Button>

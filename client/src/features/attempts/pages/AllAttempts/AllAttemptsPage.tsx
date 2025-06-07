@@ -12,6 +12,8 @@ import { TABLE_LIMIT } from "@/shared/utils/constants"
 import { formatDate } from "@/shared/utils/formatter"
 import { useCallback, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
+
+
 const AllAttemptsPage = () => {
 	const { getAllAttempts, isFetching } = useAttemptStore()
 	const [attempts, setAttempts] = useState<TestAttemptDTO[]>([])

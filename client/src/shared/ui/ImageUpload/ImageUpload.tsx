@@ -2,7 +2,7 @@ import ImageWithFallback from "@/shared/components/ImageWithFallback/ImageWithFa
 import { getImageUrl } from "@/shared/utils"
 import { ChangeEvent, DragEvent, FC, memo, MouseEvent, useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
-import { FaImage } from "react-icons/fa6"
+import { FaImage, FaLink, FaUpload } from "react-icons/fa6"
 import styles from "./ImageUpload.module.scss"
 
 interface ImageUploadProps {
@@ -214,25 +214,35 @@ const ImageUpload: FC<ImageUploadProps> = ({
 					{isExpanded ? "Скрыть изображение" : "Добавить изображение"}
 				</button>
 			)}
-
 			<div className={`${styles.uploadSection} ${isExpanded ? styles.uploadSectionVisible : ""}`}>
-				<div className={styles.uploadContainer}>
+				<div 
+				className={`${styles.uploadContainer} ${!currentImage ? styles.hasImage : ""}`}>
 					{!currentImage && (
-						<div className={styles.modeSwitcher}>
-							{(["file", "url"] as const).map((mode) => (
-								<button
-									key={mode}
-									type="button"
-									className={`${styles.modeButton} ${uploadMode === mode ? styles.modeActive : ""}`}
-									onClick={switchMode(mode)}
-									disabled={hasActiveImage}
-								>
-									{mode === "file" ? "Загрузить файл" : "Указать URL"}
-								</button>
-							))}
+						<div className={styles.tabHeaders}>
+							<button
+								type="button"
+								className={`${styles.tabButton} ${uploadMode === "file" ? styles.activeTab : ""}`}
+								onClick={switchMode("file")}
+								disabled={hasActiveImage}
+								aria-selected={uploadMode === "file"}
+								role="tab"
+							>
+								<FaUpload />
+								Загрузить файл
+							</button>
+							<button
+								type="button"
+								className={`${styles.tabButton} ${uploadMode === "url" ? styles.activeTab : ""}`}
+								onClick={switchMode("url")}
+								disabled={hasActiveImage}
+								aria-selected={uploadMode === "url"}
+								role="tab"
+							>
+								<FaLink />
+								Указать URL
+							</button>
 						</div>
 					)}
-
 					<div
 						className={`${styles.dropZone} ${className || ""} ${
 							isDragging && uploadMode === "file" ? styles.dragging : ""
@@ -242,6 +252,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 						onDragOver={handleDragOver}
 						onDragEnter={handleDragEnter}
 						onDragLeave={handleDragLeave}
+						role="tabpanel"
 					>
 						<input
 							type="file"
@@ -250,7 +261,6 @@ const ImageUpload: FC<ImageUploadProps> = ({
 							accept="image/jpeg,image/png"
 							className={styles.fileInput}
 						/>
-
 						{uploadMode === "url" && !preview && (
 							<div
 								onClick={(e) => e.stopPropagation()}
@@ -266,7 +276,6 @@ const ImageUpload: FC<ImageUploadProps> = ({
 								/>
 							</div>
 						)}
-
 						{preview ? (
 							<div className={styles.previewBox}>
 								<ImageWithFallback
