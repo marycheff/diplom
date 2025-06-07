@@ -1,3 +1,4 @@
+@use "@styles/common/testInfoStyles" as common;
 @use "@/styles/common/attemptStyles" as attempt;
 
 .content {
@@ -7,59 +8,59 @@
 }
 
 .infoBlock {
-	@include attempt.infoBlock;
+	@include common.infoBlock;
 }
 
 .blockTitle {
-	@include attempt.blockTitle;
+	@include common.blockTitle;
 }
 
 .blockContent {
-	@include attempt.blockContent;
+	@include common.blockContent;
 }
 
 .infoRow {
-	@include attempt.infoRow;
+	@include common.infoRow;
 }
 
 .label {
-	@include attempt.label;
+	@include common.label;
 }
 
 .value {
-	@include attempt.value;
+	@include common.value;
 }
 
 .emptyField {
-	@include attempt.emptyField;
+	@include common.emptyField;
 }
 
 .emptyBlock {
-	@include attempt.emptyBlock;
+	@include common.emptyBlock;
 }
 
 .questionsList {
-	@include attempt.questionsList;
+	@include common.questionsList;
 }
 
 .questionBlock {
-	@include attempt.questionBlock;
+	@include common.questionBlock;
 }
 
 .questionHeader {
-	@include attempt.questionHeader;
+	@include common.questionHeader;
 }
 
 .questionNumber {
-	@include attempt.questionNumber;
+	@include common.questionNumber;
 }
 
 .questionText {
-	@include attempt.questionText;
+	@include common.questionText;
 }
 
 .questionType {
-	@include attempt.questionType;
+	@include common.questionType;
 }
 
 .questionVerdict {
@@ -101,11 +102,11 @@
 }
 
 .answerItem {
-	@include attempt.answerItem;
+	@include common.answerItem;
 }
 
 .correctAnswer {
-	@include attempt.correctAnswer;
+	@include common.correctAnswer;
 }
 
 .incorrectAnswer {
@@ -113,12 +114,12 @@
 }
 
 .answerText {
-	@include attempt.answerText;
+	@include common.answerText;
 }
 
 .correctBadge,
 .answerStatus {
-	@include attempt.correctBadge;
+	@include common.correctBadge;
 }
 
 .statusBadge {

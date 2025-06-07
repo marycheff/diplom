@@ -16,40 +16,68 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 
 	// Управление событиями мыши и задержкой
 	useEffect(() => {
+		const isMobile = window.innerWidth <= 1024
+		const target = targetRef.current
+
 		const handleMouseEnter = () => {
-			if (timeoutRef.current) {
-				clearTimeout(timeoutRef.current)
-			}
-			timeoutRef.current = setTimeout(() => {
-				setVisible(true)
-			}, delay)
+			if (isMobile) return
+			if (timeoutRef.current) clearTimeout(timeoutRef.current)
+			timeoutRef.current = setTimeout(() => setVisible(true), delay)
 		}
 
 		const handleMouseLeave = () => {
-			if (timeoutRef.current) {
-				clearTimeout(timeoutRef.current)
-				timeoutRef.current = null
-			}
+			if (isMobile) return
+			if (timeoutRef.current) clearTimeout(timeoutRef.current)
 			setVisible(false)
 		}
 
-		const target = targetRef.current
+		const handleTouchStart = () => {
+			if (!isMobile) return
+			setVisible(true)
+		}
+
+		const handleTouchEnd = () => {
+			if (!isMobile) return
+			setTimeout(() => setVisible(false), 300)
+		}
+
 		if (target) {
 			target.addEventListener("mouseenter", handleMouseEnter)
 			target.addEventListener("mouseleave", handleMouseLeave)
+			target.addEventListener("touchstart", handleTouchStart)
+			target.addEventListener("touchend", handleTouchEnd)
 		}
 
 		return () => {
 			if (target) {
 				target.removeEventListener("mouseenter", handleMouseEnter)
 				target.removeEventListener("mouseleave", handleMouseLeave)
+				target.removeEventListener("touchstart", handleTouchStart)
+				target.removeEventListener("touchend", handleTouchEnd)
 			}
-			if (timeoutRef.current) {
-				clearTimeout(timeoutRef.current)
-				timeoutRef.current = null
-			}
+			if (timeoutRef.current) clearTimeout(timeoutRef.current)
 		}
 	}, [targetRef, delay])
+	useEffect(() => {
+		const handleScroll = () => setVisible(false)
+		const handleClickOutside = (e: MouseEvent) => {
+			if (!tooltipRef.current?.contains(e.target as Node)) {
+				setVisible(false)
+			}
+		}
+
+		if (visible) {
+			window.addEventListener("scroll", handleScroll)
+			document.addEventListener("click", handleClickOutside)
+		}
+
+		return () => {
+			window.removeEventListener("scroll", handleScroll)
+			document.removeEventListener("click", handleClickOutside)
+		}
+	}, [visible])
+
+
 
 	// Позиционирование тултипа с автоматическим определением позиции
 	useEffect(() => {

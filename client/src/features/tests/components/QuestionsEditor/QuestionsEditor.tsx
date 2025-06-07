@@ -343,7 +343,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 	usePreventLeave({ shouldPrevent: hasFormChanges && Boolean(currentQuestion || currentAnswer) })
 
 	if (isLoading) {
-		return <Loader fullScreen />
+		return <Loader centeredInParent />
 	}
 
 	return (

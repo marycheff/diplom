@@ -46,24 +46,6 @@
 
 .questionBlock {
 	@include common.questionBlock;
-
-	.questionImage {
-		margin-bottom: 20px;
-		border-radius: 12px;
-		padding: 15px;
-		overflow: hidden;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background-color: $background-800;
-		min-height: 100px;
-
-		img {
-			max-height: 400px;
-			max-width: 100%;
-			object-fit: contain;
-		}
-	}
 }
 
 .questionHeader {

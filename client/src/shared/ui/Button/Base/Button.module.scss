@@ -46,3 +46,15 @@
 		}
 	}
 }
+@media screen and (max-width: 1024px) {
+	.button {
+		&:hover {
+			background-color: $secondary-600 !important;
+		}
+
+		&.secondary:hover {
+			background-color: $secondary-200 !important;
+			color: #333 !important;
+		}
+	}
+}

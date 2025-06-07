@@ -56,8 +56,9 @@ const AttemptInfo = () => {
 	}, [attemptId])
 
 	if (isFetching || !isDataLoaded) {
-		return <Loader fullScreen />
+		return <Loader centeredInParent />
 	}
+	
 
 	if (!attempt) {
 		return <AttemptNotFound />

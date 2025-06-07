@@ -4,7 +4,6 @@
 	max-width: 1200px;
 	margin: 0 auto;
 	// padding: 20px;
-
 }
 
 @mixin infoBlock {
@@ -26,12 +25,20 @@
 	margin: 0;
 	font-size: 18px;
 	font-weight: bold;
+
+	@media screen and (width <= 480px) {
+		font-size: 16px;
+	}
 }
 
 @mixin blockContent {
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
+
+	@media screen and (width <= 768px) {
+		padding: 0 10px;
+	}
 }
 
 @mixin infoRow {
@@ -44,14 +51,14 @@
 		border-bottom: none;
 	}
 
-	@media screen and (width <= 480px) {
-		flex-direction: column;
+	// @media screen and (width <= 480px) {
+	// 	flex-direction: column;
 
-		.label {
-			width: 100%;
-			margin-bottom: 4px;
-		}
-	}
+	// 	.label {
+	// 		width: 100%;
+	// 		margin-bottom: 4px;
+	// 	}
+	// }
 }
 
 @mixin label {
@@ -103,6 +110,24 @@
 	border-radius: 12px;
 	padding: 15px;
 	border-left: 4px solid $primary-400;
+
+	.questionImage {
+		padding: 10px;
+		border-radius: 12px;
+		background-color: $background-800;
+		margin: 0 auto 20px auto;
+		max-width: 100%;
+		width: fit-content;
+
+		img {
+			max-width: 100%;
+			max-height: 300px;
+			width: auto;
+			height: auto;
+			object-fit: contain;
+			display: block;
+		}
+	}
 }
 
 @mixin questionHeader {
@@ -110,12 +135,28 @@
 	align-items: center;
 	margin-bottom: 15px;
 	gap: 10px;
+	flex-wrap: wrap;
 
-	@media screen and (width <= 576px) {
-		flex-wrap: wrap;
+	.questionNumber,
+	.questionText {
+		flex-shrink: 0;
+	}
+
+	.questionText {
+		flex: 1;
+	}
+
+	@media screen and (width <= 768px) {
+		.questionNumber,
+		.questionText {
+			display: inline-flex;
+			align-items: center;
+		}
 
 		.questionType {
-			margin-top: 5px;
+			flex-basis: 100%;
+			text-align: center;
+			margin-left: 40px;
 		}
 	}
 }
@@ -148,7 +189,16 @@
 	font-size: 12px;
 	white-space: nowrap;
 }
+@mixin answersList {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-left: 40px;
 
+	@media screen and (width <= 768px) {
+		margin-left: 10px;
+	}
+}
 @mixin answerItem {
 	background-color: $background-200;
 	border-radius: 8px;

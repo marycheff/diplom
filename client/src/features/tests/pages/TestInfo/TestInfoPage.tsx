@@ -109,7 +109,7 @@ const TestInfoPage = () => {
 
 	// Loader на время загрузки
 	if (!isDataLoaded) {
-		return <Loader fullScreen />
+		return <Loader centeredInParent />
 	}
 	if (!test) {
 		return <TestNotFound />

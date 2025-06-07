@@ -16,7 +16,7 @@ export type UserDataFormValues = {
 }
 
 interface PreTestFormProps {
-	inputFields: string[]
+	inputFields: PreTestUserData[]
 	onSubmit: (data: Record<string, string | number>) => Promise<void>
 	onCancel?: () => void
 	isLoading?: boolean

@@ -95,7 +95,7 @@ const AttemptResultsPage = () => {
 	}, [attemptForUser])
 
 	// Состояния загрузки
-	if (!isTestLoaded || !isAttemptForUserLoaded || !isAttemptLoaded) return <Loader fullScreen />
+	if (!isTestLoaded || !isAttemptForUserLoaded || !isAttemptLoaded) return <Loader centeredInParent />
 	if (!attemptForUser) return <AttemptNotFound />
 	if (attemptForUser.status === AttemptStatus.IN_PROGRESS) {
 		return (

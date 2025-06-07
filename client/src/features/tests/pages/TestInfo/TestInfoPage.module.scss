@@ -29,20 +29,20 @@
 }
 
 .testImage {
-	margin-bottom: 20px;
-	border-radius: 12px;
 	padding: 10px;
-	overflow: hidden;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	border-radius: 12px;
 	background-color: $background-800;
-	min-height: 400px;
+	margin: 0 auto 20px auto;
+	max-width: 100%;
+	width: fit-content;
 
 	img {
 		max-height: 500px;
 		max-width: 100%;
+		width: auto;
+		height: auto;
 		object-fit: contain;
+		display: block;
 	}
 }
 
@@ -72,25 +72,6 @@
 
 .questionBlock {
 	@include common.questionBlock;
-
-	.questionImage {
-		margin-left: 40px;
-		margin-bottom: 20px;
-		border-radius: 12px;
-		padding: 15px;
-		overflow: hidden;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background-color: $background-800;
-		min-height: 100px;
-
-		img {
-			max-height: 300px;
-			max-width: 100%;
-			object-fit: contain;
-		}
-	}
 }
 
 .questionHeader {
@@ -110,14 +91,7 @@
 }
 
 .answersList {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	margin-left: 40px;
-
-	@media screen and (width <= 576px) {
-		margin-left: 10px;
-	}
+	@include common.answersList;
 }
 
 .answerItem {
@@ -152,6 +126,10 @@
 	background-color: #0000;
 	font-size: 17px;
 	line-height: 15px;
+	@media screen and (width <= 480px) {
+		font-size: 14px;
+		line-height: 10px;
+	}
 }
 
 .editModerationStatusBtn {

@@ -36,7 +36,7 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
 	}, [snapshotId, getSnapshotById])
 
 	if (isFetching) {
-		return <Loader fullScreen />
+		return <Loader centeredInParent />
 	}
 
 	if (!snapshot) {

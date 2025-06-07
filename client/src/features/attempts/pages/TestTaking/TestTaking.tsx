@@ -246,7 +246,7 @@ const TestTaking = () => {
 
 	const submitAnswers = async () => {
 		if (isSubmittingRef.current || isAttemptCompleted) {
-			return 
+			return
 		}
 		isSubmittingRef.current = true
 
@@ -324,7 +324,16 @@ const TestTaking = () => {
 	}
 
 	// Состояния загрузки
-	if (!isAttemptLoaded || !isTestLoaded) return <Loader fullScreen />
+	if (!isAttemptLoaded || !isTestLoaded) {
+		return (
+			<>
+				<Header />
+				<Loader centeredInParent />
+			</>
+		)
+	}
+
+	// После загрузки проверяем наличие данных
 	if (!attempt) return <AttemptNotFound />
 	if (!test) return <TestNotFound />
 	if (!test.questions?.length) {

@@ -77,8 +77,9 @@ const UserInfo = () => {
 	useEffect(() => {
 		fetchUser()
 	}, [userId, getUserById])
+
 	if (isFetching || !isDataLoaded) {
-		return <Loader fullScreen />
+		return <Loader centeredInParent />
 	}
 	if (Object.keys(user).length === 0) {
 		return <NothingFound title="Пользователь не найден" />
@@ -86,82 +87,73 @@ const UserInfo = () => {
 
 	return (
 		<>
-			{isFetching ? (
-				<Loader />
-			) : (
-				user && (
-					<div className={styles.container}>
-						<div className={styles.infoBlock}>
-							<h1 className={styles.blockTitle}>Информация о пользователе</h1>
-							<div className={styles.blockContent}>
-								<div className={styles.infoRow}>
-									<span className={styles.label}>ID</span>
+			<div className={styles.container}>
+				<div className={styles.infoBlock}>
+					<h1 className={styles.blockTitle}>Информация о пользователе</h1>
+					<div className={styles.blockContent}>
+						<div className={styles.infoRow}>
+							<span className={styles.label}>ID</span>
 
-									<span className={styles.value}>
-										{shortenText(user.id)}
-										<CopyButton textToCopy={user.id} />
-									</span>
-								</div>
-								<div className={styles.infoRow}>
-									<span className={styles.label}>Email</span>
-									<span className={styles.value}>
-										{user.email || <span className={styles.emptyField}>не указан</span>}
-									</span>
-								</div>
-								<div className={styles.infoRow}>
-									<span className={styles.label}>Имя</span>
-									<span className={styles.value}>
-										{user.name || <span className={styles.emptyField}>не указано</span>}
-									</span>
-								</div>
-								<div className={styles.infoRow}>
-									<span className={styles.label}>Фамилия</span>
-									<span className={styles.value}>
-										{user.surname || <span className={styles.emptyField}>не указана</span>}
-									</span>
-								</div>
-								<div className={styles.infoRow}>
-									<span className={styles.label}>Отчество</span>
-									<span className={styles.value}>
-										{user.patronymic || <span className={styles.emptyField}>не указано</span>}
-									</span>
-								</div>
-								<div>
-									{user.isBlocked ? (
-										<Button
-											onClick={() => handleUnblockUser()}
-											disabled={isLoading}
-										>
-											Разблокировать
-										</Button>
-									) : (
-										<Button
-											onClick={() => handleBlockUser()}
-											disabled={isLoading}
-										>
-											Заблокировать
-										</Button>
-									)}
-									<Button
-										onClick={() => handleDeleteUser()}
-										disabled={isLoading}
-									>
-										Удалить
-									</Button>
-								</div>
-							</div>
+							<span className={styles.value}>
+								{shortenText(user.id)}
+								<CopyButton textToCopy={user.id} />
+							</span>
 						</div>
-						<div className={styles.infoBlock}>
-							<h1 className={styles.blockTitle}>Попытки пользователя</h1>
-							<UserAttempts />
+						<div className={styles.infoRow}>
+							<span className={styles.label}>Email</span>
+							<span className={styles.value}>{user.email || <span className={styles.emptyField}>не указан</span>}</span>
 						</div>
-						<div className={styles.infoBlock}>
-							<h1 className={styles.blockTitle}>Тесты пользователя</h1>
-							<UserTests />
+						<div className={styles.infoRow}>
+							<span className={styles.label}>Имя</span>
+							<span className={styles.value}>{user.name || <span className={styles.emptyField}>не указано</span>}</span>
+						</div>
+						<div className={styles.infoRow}>
+							<span className={styles.label}>Фамилия</span>
+							<span className={styles.value}>
+								{user.surname || <span className={styles.emptyField}>не указана</span>}
+							</span>
+						</div>
+						<div className={styles.infoRow}>
+							<span className={styles.label}>Отчество</span>
+							<span className={styles.value}>
+								{user.patronymic || <span className={styles.emptyField}>не указано</span>}
+							</span>
+						</div>
+						<div>
+							{user.isBlocked ? (
+								<Button
+									onClick={() => handleUnblockUser()}
+									disabled={isLoading}
+								>
+									Разблокировать
+								</Button>
+							) : (
+								<Button
+									onClick={() => handleBlockUser()}
+									disabled={isLoading}
+								>
+									Заблокировать
+								</Button>
+							)}
+							<Button
+								onClick={() => handleDeleteUser()}
+								disabled={isLoading}
+							>
+								Удалить
+							</Button>
 						</div>
 					</div>
-				)
-			)}
+				</div>
+				<div className={styles.infoBlock}>
+					<h1 className={styles.blockTitle}>Попытки пользователя</h1>
+					<UserAttempts />
+				</div>
+				<div className={styles.infoBlock}>
+					<h1 className={styles.blockTitle}>Тесты пользователя</h1>
+					<UserTests />
+				</div>
+			</div>
+
 			<ConfirmationModal
 				isOpen={deleteModalOpen}
 				onClose={() => setDeleteModalOpen(false)}

@@ -44,86 +44,81 @@ const StartAttemptPage = () => {
 					setTest(fetchedTest)
 				}
 				setIsDataLoaded(true)
-			} catch (error) {
+			} catch {
 				setIsDataLoaded(true)
-				return <TestNotFound />
 			}
 		}
 		fetchTest()
 	}, [testId, getBasicTestInfo, navigate])
 
-	if (isFetching || isLoading || !isDataLoaded) {
-		return <Loader fullScreen />
-	}
-	if (!test && !isFetching) {
-		return <TestNotFound />
-	}
-	if (test?.settings?.requireRegistration && !user) {
-		const currentUrl = window.location.pathname
-		return (
-			<div className={styles.authBlock}>
-				<h2>Тест требует авторизации.</h2>
-				Пожалуйста, войдите или зарегистрируйтесь, чтобы пройти тест.
-				<br />
-				<br />
-				<Link to={`${ROUTES.LOGIN}?returnUrl=${encodeURIComponent(currentUrl)}`}>Вход</Link>
-				<Link to={`${ROUTES.REGISTER}?returnUrl=${encodeURIComponent(currentUrl)}`}>Регистрация</Link>
-			</div>
-		)
-	}
-	if (!test) {
-		return <TestNotFound />
-	}
-
 	const handleStartAttempt = async (userData?: PreTestUserDataType) => {
 		if (!testId) return
 
 		const data = userData ? await startAttempt(testId, userData) : await startAttempt(testId)
-		if (data && data.attemptId) {
+
+		if (data?.attemptId) {
 			navigate(generatePath(ROUTES.PASS_ATTEMPT, { attemptId: data.attemptId }))
 		} else {
 			toast.error("Не удалось начать попытку. Попробуйте снова")
 		}
 	}
 
-	const hasRequiredFields = test?.settings?.inputFields && test.settings.inputFields.length > 0
+	const hasRequiredFields = Array.isArray(test?.settings?.inputFields) && test.settings.inputFields.length > 0
 
 	return (
 		<>
 			<Header />
-			<div className={styles.container}>
-				{test.image && (
-					<div className={styles.testImage}>
-						<ImageWithFallback
-							src={getImageUrl(test.image)}
-							alt="изображение не загрузилось"
-						/>
-					</div>
-				)}
-				<div className={styles.blockContent}>
-					<div className={styles.infoRow}>
-						<span className={styles.label}>Название:</span>
-						<span className={styles.value}>{test.title || <span className={styles.emptyField}>не указано</span>}</span>
-					</div>
-					<div className={styles.infoRow}>
-						<span className={styles.label}>Описание:</span>
-						<span className={styles.value}>
-							{test.description || <span className={styles.emptyField}>не указано</span>}
-						</span>
-					</div>
+			{isFetching || isLoading || !isDataLoaded ? (
+				<div className={styles.loaderWrapper}>
+					<Loader centeredInParent />
 				</div>
-				{hasRequiredFields ? (
-					<PreTestForm
-						inputFields={test.settings?.inputFields!}
-						onSubmit={handleStartAttempt}
-						isLoading={isLoading}
-					/>
-				) : (
-					<div>
-						<Button onClick={() => handleStartAttempt()}>Начать попытку</Button>
+			) : !test ? (
+				<TestNotFound />
+			) : test.settings?.requireRegistration && !user ? (
+				<div className={styles.authBlock}>
+					<h2>Тест требует авторизации.</h2>
+					<p>Пожалуйста, войдите или зарегистрируйтесь, чтобы пройти тест.</p>
+					<br />
+					<Link to={`${ROUTES.LOGIN}?returnUrl=${encodeURIComponent(window.location.pathname)}`}>Вход</Link>
+					<Link to={`${ROUTES.REGISTER}?returnUrl=${encodeURIComponent(window.location.pathname)}`}>Регистрация</Link>
+				</div>
+			) : (
+				<div className={styles.container}>
+					{test.image && (
+						<div className={styles.testImage}>
+							<ImageWithFallback
+								src={getImageUrl(test.image)}
+								alt="изображение не загрузилось"
+							/>
+						</div>
+					)}
+					<div className={styles.blockContent}>
+						<div className={styles.infoRow}>
+							<span className={styles.label}>Название:</span>
+							<span className={styles.value}>
+								{test.title || <span className={styles.emptyField}>не указано</span>}
+							</span>
+						</div>
+						<div className={styles.infoRow}>
+							<span className={styles.label}>Описание:</span>
+							<span className={styles.value}>
+								{test.description || <span className={styles.emptyField}>не указано</span>}
+							</span>
+						</div>
 					</div>
-				)}
-			</div>
+					{hasRequiredFields ? (
+						<PreTestForm
+							inputFields={test.settings?.inputFields ?? []}
+							onSubmit={handleStartAttempt}
+							isLoading={isLoading}
+						/>
+					) : (
+						<div>
+							<Button onClick={() => handleStartAttempt()}>Начать попытку</Button>
+						</div>
+					)}
+				</div>
+			)}
 		</>
 	)
 }
