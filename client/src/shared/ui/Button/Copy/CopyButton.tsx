@@ -1,9 +1,9 @@
 import Button from "@/shared/ui/Button/Base/Button"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
+import { FaCheck } from "react-icons/fa6"
 import { MdContentCopy } from "react-icons/md"
 import styles from "./CopyButton.module.scss"
-import { FaCheck } from "react-icons/fa6"
 
 interface CopyButtonProps {
 	textToCopy: string
@@ -39,10 +39,30 @@ const CopyButton = ({ textToCopy, className = "", showOnHover = false, variant =
 
 		try {
 			setIsTimeout(true)
-			await navigator.clipboard.writeText(textToCopy)
+
+			if (navigator.clipboard && window.isSecureContext) {
+				await navigator.clipboard.writeText(textToCopy)
+			} else {
+				// Fallback для HTTP
+				const textArea = document.createElement("textarea")
+				textArea.value = textToCopy
+				textArea.style.position = "fixed"
+				textArea.style.left = "-999999px"
+				textArea.style.top = "-999999px"
+				document.body.appendChild(textArea)
+				textArea.focus()
+				textArea.select()
+
+				const successful = document.execCommand("copy")
+				document.body.removeChild(textArea)
+
+				if (!successful) {
+					toast.error("Копирование не удалось")
+				}
+			}
+
 			setIsCopied(true)
 			toast.success("Скопировано!")
-
 			setTimeout(() => {
 				setIsCopied(false)
 				setIsTimeout(false)
