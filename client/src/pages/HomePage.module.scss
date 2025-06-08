@@ -2,13 +2,19 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: $section-padding;
 	min-height: 90vh;
+	@media screen and (width <= 768px) {
+		min-height: 86vh;
+	}
 }
 
 .content {
 	width: 100%;
 	max-width: 1200px;
+
+	@media screen and (width <= 768px) {
+		margin-bottom: 5px;
+	}
 }
 
 .title {
@@ -23,7 +29,6 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
 	gap: 2.5rem;
-
 
 	@media screen and (width <= 768px) {
 		grid-template-columns: 1fr;

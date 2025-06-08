@@ -37,10 +37,7 @@
 	}
 }
 @media screen and (width <= 768px) {
-	.content {
-		padding-bottom: 170px;
-	}
 	.layout {
-		height: calc(100vh - 70px);
+		height: calc(100vh - 60px);
 	}
 }

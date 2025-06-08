@@ -99,7 +99,7 @@ const CreateUserPage = () => {
 
 						<Select
 							name="role"
-							label="Роль пользователя"
+							label="Роль"
 							options={roleOptions}
 							register={register}
 							error={!!errors.role}

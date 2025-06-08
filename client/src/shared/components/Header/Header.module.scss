@@ -8,11 +8,19 @@
 	box-shadow: 0 4px 10px rgb(0 0 0 / 10%);
 	border-bottom-left-radius: 16px;
 	border-bottom-right-radius: 16px;
+
+	@media screen and (max-width: 768px) {
+		padding: 1rem 1.25rem;
+	}
 }
 
 .logo {
 	font-size: 1.8rem;
 	font-weight: bold;
+
+	@media screen and (max-width: 768px) {
+		font-size: 1.3rem;
+	}
 }
 
 .authButtons {
@@ -26,5 +34,10 @@
 		border: none;
 		border-radius: 8px;
 		font-size: 1rem;
+
+		@media screen and (max-width: 768px) {
+			padding: 0.5rem 1rem;
+			font-size: 0.875rem;
+		}
 	}
 }

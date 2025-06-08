@@ -1,13 +1,17 @@
+@import "@styles/global.scss"; 
+
 .pageWrapper {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: $section-padding;
 }
 
 .content {
 	width: 100%;
 	max-width: 1200px;
+	@media screen and (width <= 768px) {
+		margin-bottom: 5px;
+	}
 }
 
 .title {
@@ -20,6 +24,10 @@
 
 .section {
 	margin-bottom: 3rem;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .sectionTitle {
@@ -50,7 +58,7 @@
 	transition: background-color 0.2s ease, transform 0.2s ease;
 	cursor: pointer;
 
-	&:hover {
+	@include hover-style {
 		background-color: $bg-secondary;
 		transform: translateY(-4px);
 	}
@@ -112,7 +120,15 @@
 	cursor: pointer;
 	transition: background-color 0.2s ease;
 
-	&:hover {
+	@include hover-style {
 		background-color: $accent-red-hover;
+	}
+}
+
+@media (hover: none) and (pointer: coarse) {
+	*:hover,
+	*::before:hover,
+	*::after:hover {
+		all: unset;
 	}
 }

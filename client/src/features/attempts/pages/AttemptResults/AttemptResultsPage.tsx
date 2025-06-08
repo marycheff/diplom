@@ -170,7 +170,11 @@ const AttemptResultsPage = () => {
 								</div>
 								<div className={styles.infoRow}>
 									<span className={styles.label}>Времени потрачено:</span>
-									<span className={styles.value}>{formatSeconds(attempt.timeSpent)}</span>
+									{!attempt.timeSpent || attempt.timeSpent === 0 ? (
+										<span className={styles.emptyField}>—</span>
+									) : (
+										<span className={styles.value}>{formatSeconds(attempt.timeSpent)}</span>
+									)}
 								</div>
 							</div>
 						</div>
@@ -353,7 +357,11 @@ const AttemptResultsPage = () => {
 							</div>
 							<div className={styles.infoRow}>
 								<span className={styles.label}>Времени потрачено:</span>
-								<span className={styles.value}>{formatSeconds(attempt.timeSpent)}</span>
+								{!attempt.timeSpent || attempt.timeSpent === 0 ? (
+									<span className={styles.emptyField}>—</span>
+								) : (
+									<span className={styles.value}>{formatSeconds(attempt.timeSpent)}</span>
+								)}
 							</div>
 							{/* Краткий вердикт по каждому вопросу */}
 							{attempt.questions?.length > 0 && (

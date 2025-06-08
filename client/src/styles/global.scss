@@ -15,9 +15,12 @@
 // :active {
 //     outline: none;
 // }
+
 a,
 a:visited {
 	text-decoration: none;
+	-webkit-tap-highlight-color: transparent;
+	touch-action: manipulation;
 }
 
 a:hover {
@@ -57,6 +60,8 @@ input::-ms-clear {
 
 button {
 	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	touch-action: manipulation;
 }
 
 button::-moz-focus-inner {
@@ -80,11 +85,35 @@ h5,
 h6 {
 	font-size: inherit;
 	font-weight: inherit;
-} /* -------------------- */
+}
+
+/* -------------------- */
 
 $font-family: "Roboto", sans-serif;
 $font-size: 14px;
 $line-height: 1.5;
+
+@mixin hover-style {
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            @content;
+        }
+    }
+}
+
+* {
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+// Оптимизация скролла
+.scroll-container {
+	-webkit-overflow-scrolling: touch;
+}
 
 // Стили для body
 body {
@@ -93,16 +122,13 @@ body {
 	line-height: $line-height;
 }
 
+// Ссылки-действия
 .actionLink {
 	text-decoration: none;
 	color: #007bff;
 	font-weight: bold;
 
-	&:hover {
+	@include hover-style {
 		text-decoration: underline;
 	}
 }
-
-// .linkButton{
-
-// }

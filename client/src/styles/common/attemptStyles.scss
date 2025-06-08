@@ -1,77 +1,78 @@
 @use "@styles/variables" as *;
 
 @mixin answersList {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
 }
 
 @mixin answerSection {
-  margin-left: 40px;
+	margin-left: 40px;
 
-  @media screen and (width <= 576px) {
-    margin-left: 10px;
-  }
+	@media screen and (width <= 576px) {
+		margin-left: 10px;
+	}
 }
 
 @mixin answerTitle {
-  color: $secondary-600;
-  margin-bottom: 10px;
-  font-size: 14px;
+	color: $secondary-600;
+	margin-bottom: 10px;
+	font-size: 14px;
 }
 
 @mixin answerMeta {
-  margin-top: 12px;
-  padding: 10px;
-  background-color: $background-200;
-  border-radius: 8px;
+	margin-top: 12px;
+	padding: 10px;
+	background-color: $background-200;
+	border-radius: 8px;
 }
 
 @mixin metaItem {
-  display: flex;
-  margin-bottom: 6px;
+	display: flex;
+	margin-bottom: 6px;
 
-  &:last-child {
-    margin-bottom: 0;
-  }
+	&:last-child {
+		margin-bottom: 0;
+	}
 }
 
 @mixin metaLabel {
-  font-weight: bold;
-  color: $secondary-600;
-  min-width: 150px;
+	font-weight: bold;
+	color: $secondary-600;
+	min-width: 150px;
 }
 
 @mixin metaValue {
-  color: $primary-600;
+	color: $primary-600;
 }
 
 @mixin questionVerdict {
-  margin-left: 40px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+	margin-left: 40px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 8px 12px;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 @mixin correctVerdict {
-  background-color: rgba($primary-400, 0.1);
-  border-left: 4px solid $primary-400;
+	background-color: rgba($primary-400, 0.1);
+	border-left: 4px solid $primary-400;
 }
 
 @mixin incorrectVerdict {
-  background-color: rgba($red-400, 0.1);
-  border-left: 4px solid $red-400;
+	background-color: rgba($red-400, 0.1);
+	border-left: 4px solid $red-400;
 }
 
 @mixin verdictLabel {
-  font-weight: bold;
-  color: $secondary-600;
+	font-weight: bold;
+	color: $secondary-600;
+	text-align: left;
 }
 
 @mixin verdictValue {
-  font-weight: bold;
+	font-weight: bold;
 }
