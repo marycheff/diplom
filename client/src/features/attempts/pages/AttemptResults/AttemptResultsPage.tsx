@@ -22,7 +22,6 @@ import { useParams } from "react-router-dom"
 import styles from "./AttemptResultsPage.module.scss"
 
 const AttemptResultsPage = () => {
-	// Параметры маршрута
 	const { attemptId } = useParams<{ attemptId: string }>()
 	const [attemptForUser, setAttemptForUser] = useState<TestAttemptUserDTO | null>(null)
 	const [attempt, setAttempt] = useState<TestAttemptResultDTO | null>(null)
@@ -32,8 +31,10 @@ const AttemptResultsPage = () => {
 	const [isAttemptForUserLoaded, setIsAttemptForUserLoaded] = useState(false)
 	const [isAttemptLoaded, setIsAttemptLoaded] = useState(false)
 	const [isTestLoaded, setIsTestLoaded] = useState(false)
+	const [error, setError] = useState<{ type: "attempt" | "test" } | null>(null)
 
 	const { getAttemptResults, getAttemptForUserById } = useAttemptStore()
+
 	// Проверка валидности attemptId
 	if (!attemptId) {
 		return <NothingFound title="ID попытки не указан" />
@@ -46,25 +47,30 @@ const AttemptResultsPage = () => {
 	const fetchAttemptForUser = async () => {
 		try {
 			const fetchedAttempt = await getAttemptForUserById(attemptId)
-			if (fetchedAttempt) {
-				setAttemptForUser(fetchedAttempt)
-			}
+			setAttemptForUser(fetchedAttempt || null)
 			setIsAttemptForUserLoaded(true)
+
+			if (!fetchedAttempt) {
+				setError({ type: "attempt" })
+			}
 		} catch {
 			setIsAttemptForUserLoaded(true)
-			return <AttemptNotFound />
+			setError({ type: "attempt" })
 		}
 	}
+
 	const fetchAttempt = async () => {
 		try {
 			const fetchedAttempt = await getAttemptResults(attemptId)
-			if (fetchedAttempt) {
-				setAttempt(fetchedAttempt)
-			}
+			setAttempt(fetchedAttempt || null)
 			setIsAttemptLoaded(true)
+
+			if (!fetchedAttempt) {
+				setError({ type: "attempt" })
+			}
 		} catch {
 			setIsAttemptLoaded(true)
-			return <AttemptNotFound />
+			setError({ type: "attempt" })
 		}
 	}
 
@@ -72,16 +78,20 @@ const AttemptResultsPage = () => {
 	const fetchTest = async () => {
 		try {
 			if (!attemptForUser) return
+
 			const fetchedTest = await getTestSnapshotForAttempt(attemptForUser.testSnapshotId!)
-			if (fetchedTest) {
-				setTest(fetchedTest)
-			}
+			setTest(fetchedTest || null)
 			setIsTestLoaded(true)
+
+			if (!fetchedTest) {
+				setError({ type: "test" })
+			}
 		} catch {
 			setIsTestLoaded(true)
-			return <TestNotFound />
+			setError({ type: "test" })
 		}
 	}
+
 	// Инициализация данных при монтировании
 	useEffect(() => {
 		fetchAttemptForUser()
@@ -95,24 +105,38 @@ const AttemptResultsPage = () => {
 	}, [attemptForUser])
 
 	// Состояния загрузки
-	if (!isTestLoaded || !isAttemptForUserLoaded || !isAttemptLoaded) return <Loader centeredInParent />
+	if (!isAttemptForUserLoaded || (attemptForUser && !isAttemptLoaded) || (attemptForUser && !isTestLoaded)) {
+		return (
+			<>
+				<Header />
+				<Loader centeredInParent />
+			</>
+		)
+	}
+
+	// Обработка ошибок
+	if (error?.type === "attempt") return <AttemptNotFound />
+	if (error?.type === "test") return <TestNotFound />
 	if (!attemptForUser) return <AttemptNotFound />
+
 	if (attemptForUser.status === AttemptStatus.IN_PROGRESS) {
 		return (
 			<NothingFound
-				title="Попытка не завершения"
+				title="Попытка не завершена"
 				description="Завершите попытку и вернитесь позже"
 			/>
 		)
 	}
+
 	if (attemptForUser.status === AttemptStatus.EXPIRED) {
 		return (
 			<NothingFound
-				title="Попытка истекала"
+				title="Попытка истекла"
 				description="Попытка истекла. Посмотреть результаты невозможно"
 			/>
 		)
 	}
+
 	if (!test) return <TestNotFound />
 	if (!attempt) return <AttemptNotFound />
 
@@ -362,7 +386,6 @@ const AttemptResultsPage = () => {
 													{/* <div className={styles.verdictValue}>{isCorrect ? "Ответ верный" : "Ответ неверный"}</div> */}
 												</div>
 											)
-
 										})}
 									</div>
 								</div>

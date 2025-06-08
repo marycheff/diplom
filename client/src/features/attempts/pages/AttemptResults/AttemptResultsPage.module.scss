@@ -25,6 +25,9 @@
 
 .label {
 	@include common.label;
+	& {
+		width: 20%;
+	}
 }
 
 .value {

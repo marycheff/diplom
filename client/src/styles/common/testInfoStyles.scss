@@ -215,16 +215,16 @@
 		background-color: $background-400;
 	}
 
-	@media screen and (width <= 480px) {
-		flex-direction: column;
-		align-items: flex-start;
+	// @media screen and (width <= 480px) {
+	// 	flex-direction: column;
+	// 	align-items: flex-start;
 
-		.correctBadge,
-		.answerStatus {
-			margin-top: 5px;
-			align-self: flex-end;
-		}
-	}
+	// 	.correctBadge,
+	// 	.answerStatus {
+	// 		margin-top: 5px;
+	// 		align-self: flex-end;
+	// 	}
+	// }
 }
 
 @mixin correctAnswer {
