@@ -9,7 +9,8 @@ class UserRepository {
 		userData: CreateUserDTO,
 		hashedPassword: string,
 		activationLink: string | null,
-		role?: Role
+		role?: Role,
+		isActivated = true,
 	): Promise<User> {
 		return prisma.user.create({
 			data: {
@@ -18,6 +19,7 @@ class UserRepository {
 				activationLink,
 				activationLinkExp: getActivationLinkExpDate(),
 				role,
+				isActivated
 			},
 		})
 	}

@@ -217,7 +217,7 @@ class UserService {
 			}
 
 			const hashedPassword = await bcrypt.hash(userData.password, 10)
-			const newUser = await userRepository.create(userData, hashedPassword, null, userData.role || "USER")
+			const newUser = await userRepository.create(userData, hashedPassword, null, userData.role || "USER", true)
 
 			const userDto = mapUserToDto(newUser)
 			logger.info(`[${LOG_NAMESPACE}] Пользователь успешно создан администратором`, { userId: newUser.id })
