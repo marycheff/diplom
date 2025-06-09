@@ -1,3 +1,4 @@
+import { envConfig } from "@/config/env-config"
 import { ApiError } from "@/exceptions"
 import { mapUserToDto } from "@/mappers"
 import { userRepository } from "@/repositories"
@@ -216,11 +217,27 @@ class UserService {
 				throw ApiError.BadRequest(`Пользователь с email ${userData.email} уже существует`)
 			}
 
-			const hashedPassword = await bcrypt.hash(userData.password, 10)
-			const newUser = await userRepository.create(userData, hashedPassword, null, userData.role || "USER", true)
+			userData.role = userData.role || "USER"
+			userData.password = await bcrypt.hash(userData.password, 10)
 
+			let activationLink: string | undefined
+			if (!userData.isActivated) {
+				activationLink = crypto.randomUUID()
+				userData.activationLink = activationLink
+			}
+
+			const newUser = await userRepository.create(userData)
 			const userDto = mapUserToDto(newUser)
+
 			logger.info(`[${LOG_NAMESPACE}] Пользователь успешно создан администратором`, { userId: newUser.id })
+
+			if (activationLink) {
+				await mailService.sendActivationMail(
+					userData.email,
+					`${envConfig.SERVER_URL}/api/auth/activate/${activationLink}`
+				)
+				logger.debug(`[${LOG_NAMESPACE}] Отправлено письмо активации`, { email: userData.email })
+			}
 
 			return userDto
 		} catch (error) {

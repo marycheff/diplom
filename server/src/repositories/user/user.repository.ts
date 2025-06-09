@@ -7,19 +7,11 @@ class UserRepository {
 	// CREATE
 	async create(
 		userData: CreateUserDTO,
-		hashedPassword: string,
-		activationLink: string | null,
-		role?: Role,
-		isActivated = true,
 	): Promise<User> {
 		return prisma.user.create({
 			data: {
 				...userData,
-				password: hashedPassword,
-				activationLink,
 				activationLinkExp: getActivationLinkExpDate(),
-				role,
-				isActivated
 			},
 		})
 	}

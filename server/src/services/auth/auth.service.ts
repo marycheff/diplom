@@ -8,7 +8,6 @@ import { logger } from "@/utils/logger"
 import { redisClient } from "@/utils/redis"
 import { Token } from "@prisma/client"
 import bcrypt from "bcryptjs"
-import { v4 as uuid_v4 } from "uuid"
 
 const LOG_NAMESPACE = "AuthService"
 
@@ -57,9 +56,12 @@ class AuthService {
 				throw ApiError.BadRequest(`Пользователь с email ${user.email} уже существует`)
 			}
 
-			const hashedPassword = await bcrypt.hash(user.password, 10)
-			const activationLink = uuid_v4()
-			const newUser = await userRepository.create(user, hashedPassword, activationLink)
+			const activationLink = crypto.randomUUID()
+			user.activationLink = activationLink
+			user.password = await bcrypt.hash(user.password, 10)
+			user.role = "USER"
+
+			const newUser = await userRepository.create(user)
 			logger.debug(`[${LOG_NAMESPACE}] Пользователь создан в базе данных`, { userId: newUser.id })
 
 			await mailService.sendActivationMail(user.email, `${envConfig.SERVER_URL}/api/auth/activate/${activationLink}`)
@@ -92,7 +94,7 @@ class AuthService {
 	async updateActivationLink(email: string): Promise<void> {
 		logger.info(`[${LOG_NAMESPACE}] Обновление ссылки активации`, { email })
 		try {
-			const activationLink = uuid_v4()
+			const activationLink = crypto.randomUUID()
 			const user = await userRepository.findByEmail(email)
 
 			if (!user) {
