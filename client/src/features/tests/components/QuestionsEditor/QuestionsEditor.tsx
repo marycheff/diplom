@@ -61,10 +61,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 
 	// Использование useRef для стабильного initialState
 	const initialStateRef = useRef({
-		form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
+		form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS, image: "" },
 		answers: createDefaultAnswers(),
 	})
-
 	const [currentAnswers, setCurrentAnswers] = useState<AnswerDTO[]>(initialStateRef.current.answers)
 
 	const { register, handleSubmit, formState, setValue, watch, reset, trigger } = useForm<
@@ -78,6 +77,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 
 	const currentQuestion = watch("question")
 	const currentAnswer = watch("answer")
+	const currentImage = watch("image")
 
 	// Синхронизация поля "answer" с первым вариантом ответа
 	useEffect(() => {
@@ -104,9 +104,10 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 		return (
 			currentQuestion !== initialStateRef.current.form.question ||
 			currentAnswer !== initialStateRef.current.form.answer ||
+			currentImage !== initialStateRef.current.form.image ||
 			JSON.stringify(currentAnswers) !== JSON.stringify(initialStateRef.current.answers)
 		)
-	}, [currentQuestion, currentAnswer, currentAnswers])
+	}, [currentQuestion, currentAnswer, currentImage, currentAnswers])
 
 	const questionsChanged = useMemo(() => {
 		return JSON.stringify(data) !== JSON.stringify(questions)
@@ -126,17 +127,24 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 	useEffect(() => {
 		if (editingQuestion) {
 			const correctAnswer = editingQuestion.answers.find((a) => a.isCorrect)?.text || ""
+			const questionImage = editingQuestion.image || ""
+
 			setValue("question", editingQuestion.text)
 			setValue("answer", correctAnswer)
 			setValue("numOfAnswers", DEFAULT_NUM_OF_ANSWERS)
-			setValue("image", editingQuestion.image || "")
+			setValue("image", questionImage)
 
 			setQuestionType(editingQuestion.type)
 			setCurrentAnswers(editingQuestion.answers)
 
-			// Обновление ref
+			// Обновление ref с учетом изображения
 			initialStateRef.current = {
-				form: { question: editingQuestion.text, answer: correctAnswer, numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
+				form: {
+					question: editingQuestion.text,
+					answer: correctAnswer,
+					numOfAnswers: DEFAULT_NUM_OF_ANSWERS,
+					image: questionImage,
+				},
 				answers: editingQuestion.answers,
 			}
 		} else {
@@ -144,9 +152,9 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 			const newAnswers = createDefaultAnswers()
 			setCurrentAnswers(newAnswers)
 
-			// Обновление ref
+			// Обновление ref для нового вопроса
 			initialStateRef.current = {
-				form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
+				form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS, image: "" },
 				answers: newAnswers,
 			}
 		}
@@ -257,7 +265,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 
 			// Обновление ref
 			initialStateRef.current = {
-				form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
+				form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS, image: "" },
 				answers: newAnswers,
 			}
 		},
@@ -275,7 +283,7 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 
 		// Обновление ref
 		initialStateRef.current = {
-			form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS },
+			form: { question: "", answer: "", numOfAnswers: DEFAULT_NUM_OF_ANSWERS, image: "" },
 			answers: newAnswers,
 		}
 	}, [reset, setValue])
