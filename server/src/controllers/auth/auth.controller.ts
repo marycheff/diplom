@@ -52,15 +52,10 @@ class AuthController {
 			})
 
 			// Редирект с токеном в URL
-			res.redirect(
-				`${envConfig.CLIENT_URL}/activation-success?` +
-					`accessToken=${accessToken}&` +
-					`userId=${user.id}&` +
-					`email=${user.email}`
-			)
+			res.redirect(`${envConfig.CLIENT_URL}/activation-success?` + `accessToken=${accessToken}`)
 		} catch (error) {
 			if (error instanceof ApiError) {
-				return res.redirect(`${envConfig.CLIENT_URL}/activation-error?` + `error=${encodeURIComponent(error.message)}`)
+				return res.redirect(`${envConfig.CLIENT_URL}/activation-error`)
 			}
 			next(error)
 		}

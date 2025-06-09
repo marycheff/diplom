@@ -1,10 +1,12 @@
+import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
 import { Button } from "@/shared/ui/Button"
-import { useNavigate } from "react-router-dom"
 import { FaCheckCircle } from "react-icons/fa"
+import { useNavigate } from "react-router-dom"
 import styles from "./ActivationSuccessPage.module.scss"
 
 const ActivationSuccessPage = () => {
+	const { checkAuth, isAdmin } = useAuthStore()
 	const navigate = useNavigate()
 	const params = new URLSearchParams(location.search)
 	const accessToken = params.get("accessToken") || ""
@@ -13,8 +15,9 @@ const ActivationSuccessPage = () => {
 		localStorage.setItem("token", accessToken)
 	}
 
-	const handleLoginClick = () => {
-		navigate(ROUTES.LOGIN)
+	const handleLoginClick = async () => {
+		await checkAuth()
+		navigate(ROUTES.PROFILE)
 	}
 
 	return (

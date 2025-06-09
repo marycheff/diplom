@@ -119,6 +119,16 @@ const UserInfo = () => {
 								{user.patronymic || <span className={styles.emptyField}>не указано</span>}
 							</span>
 						</div>
+						<div className={styles.infoRow}>
+							<span className={styles.label}>Статус активации</span>
+							{user.isActivated ? (
+								<span className={styles.value}>
+									активирован
+								</span>
+							) : (
+								<span className={styles.emptyField}>не активирован</span>
+							)}
+						</div>
 						<div>
 							{user.isBlocked ? (
 								<Button

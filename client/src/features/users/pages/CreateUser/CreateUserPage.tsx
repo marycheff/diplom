@@ -4,13 +4,23 @@ import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 
 import { ROUTES } from "@/router/paths"
 import { useCache } from "@/shared/hooks/useCache"
-import { CreateUserDTO, UsersListDTO } from "@/shared/types"
+import { CreateUserDTO, Role, UsersListDTO } from "@/shared/types"
 import { emailValidationRules } from "@/shared/types/utils/validationRules"
 import Select from "@/shared/ui/Select/Select"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 import styles from "./CreateUserPage.module.scss"
+
+interface CreateUserFormData {
+	email: string
+	password: string
+	name: string
+	surname: string
+	patronymic: string
+	role: Role
+	isActivated: string
+}
 
 const CreateUserPage = () => {
 	const navigate = useNavigate()
@@ -23,14 +33,18 @@ const CreateUserPage = () => {
 		formState: { errors },
 		setValue,
 		trigger,
-	} = useForm<CreateUserDTO>({
+	} = useForm<CreateUserFormData>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
 		shouldFocusError: false,
 	})
 
-	const onSubmit: SubmitHandler<CreateUserDTO> = async (data) => {
-		await createUser(data)
+	const onSubmit: SubmitHandler<CreateUserFormData> = async (data) => {
+		const userData: CreateUserDTO = {
+			...data,
+			isActivated: data.isActivated === "true",
+		}
+		await createUser(userData)
 		toast.success("Пользователь успешно создан")
 		clearCache()
 		navigate(ROUTES.ADMIN_USERS)
@@ -39,6 +53,10 @@ const CreateUserPage = () => {
 	const roleOptions = [
 		{ value: "ADMIN", label: "Администратор" },
 		{ value: "USER", label: "Пользователь" },
+	]
+	const activationOptions = [
+		{ value: "true", label: "Активирован" },
+		{ value: "false", label: "Не активирован" },
 	]
 
 	return (
@@ -105,6 +123,14 @@ const CreateUserPage = () => {
 							error={!!errors.role}
 							required
 							value="ADMIN"
+						/>
+						<Select
+							name="isActivated"
+							label="Активация аккаунта"
+							options={activationOptions}
+							register={register}
+							error={!!errors.isActivated}
+							value="true"
 						/>
 
 						<Button
