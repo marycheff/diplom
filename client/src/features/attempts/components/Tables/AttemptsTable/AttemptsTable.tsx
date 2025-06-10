@@ -1,18 +1,12 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { ROUTES } from "@/router/paths"
-import {
-	AttemptStatusLabels,
-	GenderLabels,
-	PreTestUserData,
-	PreTestUserDataLabels,
-	TestAttemptDTO,
-} from "@/shared/types"
+import { AttemptDTO, AttemptStatusLabels, GenderLabels, PreTestUserData, PreTestUserDataLabels } from "@/shared/types"
 import { formatDate } from "@/shared/utils/formatter"
 import { FC } from "react"
 import { generatePath, Link } from "react-router-dom"
 import styles from "./AttemptsTable.module.scss"
 interface AttemptsTableProps {
-	attempts: TestAttemptDTO[] | undefined
+	attempts: AttemptDTO[] | undefined
 	total: number
 }
 const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {

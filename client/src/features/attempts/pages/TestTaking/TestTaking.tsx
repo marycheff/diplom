@@ -10,7 +10,7 @@ import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import { useImagePreloader } from "@/shared/hooks/useImagePreloader"
 import { usePreventLeave } from "@/shared/hooks/usePreventLeave"
 import { useTestSocket } from "@/shared/hooks/useTestSocket"
-import { AttemptAnswer, AttemptStatus, TestAttemptUserDTO, UserTestDTO } from "@/shared/types"
+import { AttemptAnswer, AttemptStatus, AttemptUserDTO, UserTestDTO } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
 import TestPagination from "@/shared/ui/Pagination/TestPagination/TestPagination"
@@ -33,7 +33,7 @@ const TestTaking = () => {
 	const [allAnswers, setAllAnswers] = useState<Record<string, string[]>>({})
 	const [allTextAnswers, setAllTextAnswers] = useState<Record<string, string>>({})
 	const [test, setTest] = useState<UserTestDTO | null>(null)
-	const [attempt, setAttempt] = useState<TestAttemptUserDTO | null>(null)
+	const [attempt, setAttempt] = useState<AttemptUserDTO | null>(null)
 	const [currentPage, setCurrentPage] = useState(1)
 	const [timeLimit, setTimeLimit] = useState(0)
 	const [isAttemptLoaded, setIsAttemptLoaded] = useState(false)
@@ -186,7 +186,9 @@ const TestTaking = () => {
 	// Обработчик истечения времени
 	const handleTimeExpired = async () => {
 		if (isSubmittingRef.current || isAttemptCompleted) return
-		toast.error("Время закончилось. Ваши ответы будут отправлены автоматически.")
+		toast.error("Время закончилось. Ваши ответы будут отправлены автоматически.", {
+			duration: 5000, // 5 секунд
+		})
 		await submitAnswers()
 	}
 

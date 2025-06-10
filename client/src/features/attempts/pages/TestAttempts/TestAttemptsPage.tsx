@@ -3,7 +3,7 @@ import { useAttemptsCache } from "@/features/attempts/hooks/useAttemptsCache"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
-import { TestAttemptDTO } from "@/shared/types"
+import { AttemptDTO } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import { TABLE_LIMIT } from "@/shared/utils/constants"
@@ -15,7 +15,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom"
 const TestAttemptsPage = () => {
 	const { testId } = useParams<{ testId: string }>()
 	const { getTestAttempts, isFetching } = useAttemptStore()
-	const [attempts, setAttempts] = useState<TestAttemptDTO[]>([])
+	const [attempts, setAttempts] = useState<AttemptDTO[]>([])
 	const [total, setTotal] = useState<number>(0)
 	const [limit] = useState<number>(TABLE_LIMIT)
 	const [page, setPage] = useState<number>(1)

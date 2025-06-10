@@ -6,11 +6,11 @@ import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TestNotFound from "@/shared/components/NotFound/TestNotFound"
 import {
+	AttemptResultDTO,
 	AttemptStatus,
+	AttemptUserDTO,
 	QuestionType,
 	QuestionTypeLabels,
-	TestAttemptResultDTO,
-	TestAttemptUserDTO,
 	UserTestDTO,
 } from "@/shared/types"
 import Loader from "@/shared/ui/Loader/Loader"
@@ -23,8 +23,8 @@ import styles from "./AttemptResultsPage.module.scss"
 
 const AttemptResultsPage = () => {
 	const { attemptId } = useParams<{ attemptId: string }>()
-	const [attemptForUser, setAttemptForUser] = useState<TestAttemptUserDTO | null>(null)
-	const [attempt, setAttempt] = useState<TestAttemptResultDTO | null>(null)
+	const [attemptForUser, setAttemptForUser] = useState<AttemptUserDTO | null>(null)
+	const [attempt, setAttempt] = useState<AttemptResultDTO | null>(null)
 	const [test, setTest] = useState<UserTestDTO | null>(null)
 	const { getTestSnapshotForAttempt } = useTestStore()
 	const { isAdmin } = useAuthStore()
@@ -121,19 +121,25 @@ const AttemptResultsPage = () => {
 
 	if (attemptForUser.status === AttemptStatus.IN_PROGRESS) {
 		return (
-			<NothingFound
-				title="Попытка не завершена"
-				description="Завершите попытку и вернитесь позже"
-			/>
+			<>
+				<Header />
+				<NothingFound
+					title="Попытка не завершена"
+					description="Завершите попытку и вернитесь позже"
+				/>
+			</>
 		)
 	}
 
 	if (attemptForUser.status === AttemptStatus.EXPIRED) {
 		return (
-			<NothingFound
-				title="Попытка истекла"
-				description="Попытка истекла. Посмотреть результаты невозможно"
-			/>
+			<>
+				<Header />
+				<NothingFound
+					title="Попытка истекла"
+					description="Попытка истекла. Посмотреть результаты невозможно"
+				/>
+			</>
 		)
 	}
 

@@ -324,7 +324,7 @@ const TestInfoPage = () => {
 								<span className={styles.value}>
 									{test.visibilityStatus === TestVisibilityStatus.PUBLISHED ? (
 										<CopyButton
-											textToCopy={`${window.location.origin}/${test.id}/start`}
+											textToCopy={`${window.location.origin}/test/${test.id}/start`}
 											variant="text"
 										/>
 									) : (

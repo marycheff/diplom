@@ -5,13 +5,13 @@ import { ROUTES } from "@/router/paths"
 import AttemptNotFound from "@/shared/components/NotFound/AttemptNotFound"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import {
+	AttemptDTO,
 	AttemptStatusLabels,
 	GenderLabels,
 	PreTestUserData,
 	PreTestUserDataLabels,
 	QuestionType,
 	QuestionTypeLabels,
-	TestAttemptDTO,
 } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import CopyButton from "@/shared/ui/Button/Copy/CopyButton"
@@ -35,7 +35,7 @@ const AttemptInfo = () => {
 
 	const { isFetching, getAttemptById } = useAttemptStore()
 	const { isAdmin } = useAuthStore()
-	const [attempt, setAttempt] = useState<TestAttemptDTO | null>(null)
+	const [attempt, setAttempt] = useState<AttemptDTO | null>(null)
 	const [isSnapshotModalOpen, setIsSnapshotModalOpen] = useState(false)
 	const [isDataLoaded, setIsDataLoaded] = useState(false)
 
@@ -58,7 +58,6 @@ const AttemptInfo = () => {
 	if (isFetching || !isDataLoaded) {
 		return <Loader centeredInParent />
 	}
-	
 
 	if (!attempt) {
 		return <AttemptNotFound />

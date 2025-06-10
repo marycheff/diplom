@@ -1,14 +1,14 @@
 import axiosInstance from "@/api"
 import {
 	AttemptAnswer,
+	AttemptDTO,
+	AttemptResultDTO,
 	AttemptsListDTO,
 	AttemptsWithSnapshotListDTO,
+	AttemptUserDTO,
 	CompleteAttemptResponse,
 	PreTestUserDataType,
 	StartAttemptDTO,
-	TestAttemptDTO,
-	TestAttemptResultDTO,
-	TestAttemptUserDTO,
 } from "@/shared/types"
 import { AxiosResponse } from "axios"
 
@@ -21,15 +21,15 @@ class AttemptService {
 			},
 		})
 	}
-	getAttemptById(id: string): Promise<AxiosResponse<TestAttemptDTO>> {
-		return axiosInstance.get<TestAttemptDTO>(`/tests/attempts/${id}`)
+	getAttemptById(id: string): Promise<AxiosResponse<AttemptDTO>> {
+		return axiosInstance.get<AttemptDTO>(`/tests/attempts/${id}`)
 	}
-	getAttemptResultsById(id: string): Promise<AxiosResponse<TestAttemptResultDTO>> {
-		return axiosInstance.get<TestAttemptResultDTO>(`/tests/attempts/${id}/results`)
+	getAttemptResultsById(id: string): Promise<AxiosResponse<AttemptResultDTO>> {
+		return axiosInstance.get<AttemptResultDTO>(`/tests/attempts/${id}/results`)
 	}
 
-	getAttemptForUserById(id: string): Promise<AxiosResponse<TestAttemptUserDTO>> {
-		return axiosInstance.get<TestAttemptUserDTO>(`/tests/attempts/${id}/for-user`)
+	getAttemptForUserById(id: string): Promise<AxiosResponse<AttemptUserDTO>> {
+		return axiosInstance.get<AttemptUserDTO>(`/tests/attempts/${id}/for-user`)
 	}
 
 	getAllAttempts(page = 1, limit = 10): Promise<AxiosResponse<AttemptsListDTO>> {

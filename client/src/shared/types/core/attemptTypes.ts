@@ -13,9 +13,9 @@ export interface AttemptState {
 	isLoading: boolean
 	isTimeUpdating: boolean
 	getTestAttempts: (testId: string, page?: number, limit?: number) => Promise<AttemptsListDTO | undefined>
-	getAttemptById: (id: string) => Promise<TestAttemptDTO | undefined>
-	getAttemptResults: (id: string) => Promise<TestAttemptResultDTO | undefined>
-	getAttemptForUserById: (id: string) => Promise<TestAttemptUserDTO | undefined>
+	getAttemptById: (id: string) => Promise<AttemptDTO | undefined>
+	getAttemptResults: (id: string) => Promise<AttemptResultDTO | undefined>
+	getAttemptForUserById: (id: string) => Promise<AttemptUserDTO | undefined>
 	getAllAttempts: (page: number, limit: number) => Promise<AttemptsListDTO | undefined>
 	getMyAttempts: (page: number, limit: number) => Promise<AttemptsWithSnapshotListDTO | undefined>
 	getUserAttempts: (userId: string, page: number, limit: number) => Promise<AttemptsWithSnapshotListDTO | undefined>
@@ -34,7 +34,7 @@ export interface StartAttemptDTO {
 	attemptId: string
 }
 
-export interface TestAttemptDTO {
+export interface AttemptDTO {
 	id: string
 	status: AttemptStatus
 	startedAt: Date
@@ -65,7 +65,7 @@ export interface AttemptsWithSnapshotListDTO {
 	total: number
 }
 
-export interface TestAttemptResultDTO {
+export interface AttemptResultDTO {
 	id: string
 	status: AttemptStatus
 	startedAt: Date
@@ -78,7 +78,7 @@ export interface TestAttemptResultDTO {
 	questions: AttemptQuestionDTO[]
 	// snapshotId: string
 }
-export interface TestAttemptUserDTO {
+export interface AttemptUserDTO {
 	id: string
 	testId: string
 	testSnapshotId: string | null
@@ -90,7 +90,7 @@ export interface TestAttemptUserDTO {
 	completedAt: Date | null
 }
 export interface AttemptsListDTO {
-	attempts: TestAttemptDTO[]
+	attempts: AttemptDTO[]
 	total: number
 }
 
