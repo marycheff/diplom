@@ -7,12 +7,7 @@ import {
 	testOwnershipMiddleware,
 	validateRequest,
 } from "@/middleware"
-import {
-	completeTestAttemptSchema,
-	getAttemptSchema,
-	saveAnswersSchema,
-	startTestAttemptSchema,
-} from "@/schemas/test.schema"
+import { completeAttemptSchema, getAttemptSchema, saveAnswersSchema, startAttemptSchema } from "@/schemas/test.schema"
 import express from "express"
 
 const router = express.Router()
@@ -37,7 +32,7 @@ router.get("/attempts/users/:userId", attemptController.getUserAttempts)
 router.post(
 	"/:testId/start",
 	conditionalAuthMiddleware,
-	validateRequest(startTestAttemptSchema),
+	validateRequest(startAttemptSchema),
 	attemptController.startAttempt
 )
 
@@ -50,11 +45,7 @@ router.post(
 )
 
 // Завершение попытки
-router.post(
-	"/attempts/:attemptId/complete",
-	validateRequest(completeTestAttemptSchema),
-	attemptController.completeAttempt
-)
+router.post("/attempts/:attemptId/complete", validateRequest(completeAttemptSchema), attemptController.completeAttempt)
 
 // Получение попытки для тестируемого
 router.get(

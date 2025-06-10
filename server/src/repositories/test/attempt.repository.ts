@@ -1,6 +1,6 @@
 import { AttemptAnswer, PreTestUserDataType } from "@/types"
 import { prisma } from "@/utils/prisma-client"
-import { Prisma, TestAttempt, TestAttemptStatus } from "@prisma/client"
+import { Prisma, TestAttempt as Attempt, TestAttemptStatus as AttemptStatus } from "@prisma/client"
 
 class AttemptRepository {
 	// CREATE
@@ -17,7 +17,7 @@ class AttemptRepository {
 					testSnapshotId: data.testSnapshotId,
 					userId: data.userId,
 					preTestUserData: data.preTestUserData === null ? Prisma.JsonNull : data.preTestUserData,
-					status: TestAttemptStatus.IN_PROGRESS,
+					status: AttemptStatus.IN_PROGRESS,
 				},
 			})
 
@@ -168,6 +168,7 @@ class AttemptRepository {
 						questions: {
 							include: { answers: true },
 						},
+						settings: true,
 					},
 				},
 			},
@@ -201,7 +202,7 @@ class AttemptRepository {
 		const inProgressAttempt = await prisma.testAttempt.findFirst({
 			where: {
 				userId: userId,
-				status: TestAttemptStatus.IN_PROGRESS,
+				status: AttemptStatus.IN_PROGRESS,
 			},
 		})
 
@@ -213,17 +214,17 @@ class AttemptRepository {
 			where: {
 				userId: userId,
 				testId: testId,
-				status: TestAttemptStatus.COMPLETED,
+				status: AttemptStatus.COMPLETED,
 			},
 		})
 
 		return completedAttempt !== null
 	}
-	async findExpired(batchSize: number): Promise<TestAttempt[]> {
+	async findExpired(batchSize: number): Promise<Attempt[]> {
 		// Получение всех попыток в статусе IN_PROGRESS с их снимками и настройками
 		const attempts = await prisma.testAttempt.findMany({
 			where: {
-				status: TestAttemptStatus.IN_PROGRESS,
+				status: AttemptStatus.IN_PROGRESS,
 				snapshot: {
 					settings: {
 						timeLimit: { not: null, gt: 0 },
@@ -255,20 +256,27 @@ class AttemptRepository {
 	}
 
 	// UPDATE
-	async updateScore(attemptId: string, score: number) {
+	async updateScoreAndStatus(attemptId: string, score: number, status?: AttemptStatus) {
 		return prisma.testAttempt.update({
 			where: { id: attemptId },
 			data: {
 				score: Math.round(score * 100) / 100,
-				status: TestAttemptStatus.COMPLETED,
+				status: status || AttemptStatus.COMPLETED,
 				completedAt: new Date(),
 			},
 		})
 	}
 
-	async updateStatuses(attemptIds: string[], status: TestAttemptStatus) {
+	async updateStatuses(attemptIds: string[], status: AttemptStatus) {
 		return prisma.testAttempt.updateMany({
 			where: { id: { in: attemptIds } },
+			data: { status },
+		})
+	}
+
+	async updateStatus(attemptId: string, status: AttemptStatus) {
+		return prisma.testAttempt.updateMany({
+			where: { id: attemptId },
 			data: { status },
 		})
 	}
@@ -278,18 +286,6 @@ class AttemptRepository {
 			where: { id: attemptId },
 			data: { timeSpent: timeSpent },
 		})
-	}
-	async updateStatusesWithTimeSpent(attempts: { id: string; timeSpent: number }[]): Promise<void> {
-		const updates = attempts.map((attempt) =>
-			prisma.testAttempt.update({
-				where: { id: attempt.id },
-				data: {
-					status: TestAttemptStatus.EXPIRED,
-					timeSpent: attempt.timeSpent,
-				},
-			})
-		)
-		await Promise.all(updates)
 	}
 
 	// COUNT
@@ -304,7 +300,7 @@ class AttemptRepository {
 			where: {
 				userId: userId,
 				testId: testId,
-				status: TestAttemptStatus.COMPLETED,
+				status: AttemptStatus.COMPLETED,
 			},
 		})
 

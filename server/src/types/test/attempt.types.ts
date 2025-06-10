@@ -1,9 +1,9 @@
 import { AnswerDTO, PreTestUserDataType, TestDTO, TestSnapshotDTO, UserDTO } from "@/types"
-import { QuestionType, TestAttemptStatus } from "@prisma/client"
+import { QuestionType, TestAttemptStatus as AttemptStatus } from "@prisma/client"
 
-export interface TestAttemptDTO {
+export interface AttemptDTO {
 	id: string
-	status: TestAttemptStatus
+	status: AttemptStatus
 	score: number | null
 	user: UserDTO | null
 	preTestUserData: PreTestUserDataType | null
@@ -17,7 +17,7 @@ export interface TestAttemptDTO {
 
 export interface AttemptWithSnapshotDTO {
 	id: string
-	status: TestAttemptStatus
+	status: AttemptStatus
 	score: number | null
 	user: UserDTO | null
 	preTestUserData: PreTestUserDataType | null
@@ -27,9 +27,9 @@ export interface AttemptWithSnapshotDTO {
 	completedAt: Date | null
 }
 
-export interface TestAttemptResultDTO {
+export interface AttemptResultDTO {
 	id: string
-	status: TestAttemptStatus
+	status: AttemptStatus
 	startedAt: Date
 	completedAt: Date | null
 	score: number | null
@@ -40,7 +40,7 @@ export interface TestAttemptResultDTO {
 	questions: AttemptQuestionDTO[]
 	// snapshotId: string
 }
-export interface TestAttemptUserDTO {
+export interface AttemptUserDTO {
 	id: string
 	testId: string
 	testSnapshotId: string | null
@@ -53,7 +53,7 @@ export interface TestAttemptUserDTO {
 	answers: UserAnswerDTO[]
 }
 export interface AttemptsListDTO {
-	attempts: TestAttemptDTO[]
+	attempts: AttemptDTO[]
 	total: number
 }
 export interface AttemptsWithSnapshotListDTO {

@@ -1,21 +1,21 @@
 import { ApiError } from "@/exceptions"
 import {
+	mapToAttemptDTO,
+	mapToAttemptUserDTO,
 	mapToAttemptWithResultsDTO,
 	mapToAttemptWithSnapshotDTO,
-	mapToTestAttemptDTO,
-	mapToTestAttemptUserDTO,
 } from "@/mappers"
 import { attemptRepository, questionRepository, testRepository } from "@/repositories"
 import {
 	AttemptAnswer,
+	AttemptDTO,
+	AttemptResultDTO,
 	AttemptsListDTO,
 	AttemptsWithSnapshotListDTO,
+	AttemptUserDTO,
 	PreTestUserData,
 	PreTestUserDataLabels,
 	PreTestUserDataType,
-	TestAttemptDTO,
-	TestAttemptResultDTO,
-	TestAttemptUserDTO,
 	UserDTO,
 } from "@/types"
 import { logger } from "@/utils/logger"
@@ -231,14 +231,29 @@ class AttemptService {
 				throw ApiError.BadRequest("Попытка уже завершена")
 			}
 
-			// Раасчет и обновление timeSpent
+			// Расчет и обновление timeSpent
 			const now = new Date()
 			const startedAt = new Date(attempt.startedAt)
-			const timeSpent = Math.floor((now.getTime() - startedAt.getTime()) / 1000) // В секундах
+			const timeSpent = Math.floor((now.getTime() - startedAt.getTime()) / 1000)
 
 			if (timeSpent < 0) {
 				logger.warn(`[${LOG_NAMESPACE}] Некорректное время начала попытки`, { attemptId, startedAt })
 				throw ApiError.InternalError("Некорректное время начала попытки")
+			}
+
+			// Проверка на превышение лимита времени
+			if (attempt.test.settings?.timeLimit && timeSpent > attempt.test.settings?.timeLimit) {
+				logger.info(`[${LOG_NAMESPACE}] Попытка просрочена`, {
+					attemptId,
+					timeSpent,
+					timeLimit: attempt.test.settings.timeLimit,
+				})
+				await attemptRepository.updateTimeSpent(attemptId, timeSpent)
+				await attemptRepository.updateScoreAndStatus(attemptId, 0, TestAttemptStatus.EXPIRED)
+				await deleteAttemptCache(attemptId)
+
+				logger.debug(`[${LOG_NAMESPACE}] Просроченная попытка завершена`, { attemptId })
+				return { score: 0 }
 			}
 
 			await attemptRepository.updateTimeSpent(attemptId, timeSpent)
@@ -247,7 +262,7 @@ class AttemptService {
 			const questionsWithAnswers = await questionRepository.findWithCorrectAnswers(attempt.testId)
 
 			const score = calculateTestScore(questionsWithAnswers, attempt.answers)
-			await attemptRepository.updateScore(attemptId, score)
+			await attemptRepository.updateScoreAndStatus(attemptId, score, TestAttemptStatus.COMPLETED)
 
 			// Очистка неиспользуемых снимков перед обновлением snapshotId
 			await testRepository.cleanupUnusedSnapshots(attempt.testId)
@@ -292,7 +307,7 @@ class AttemptService {
 
 			logger.debug(`[${LOG_NAMESPACE}] Все попытки успешно получены`, { count: attempts.length })
 			return {
-				attempts: attempts.map((attempt) => mapToTestAttemptDTO(attempt)),
+				attempts: attempts.map((attempt) => mapToAttemptDTO(attempt)),
 				total,
 			}
 		} catch (error) {
@@ -306,7 +321,7 @@ class AttemptService {
 	}
 
 	//Получить конкретную попытку
-	async getAttempt(attemptId: string): Promise<TestAttemptDTO> {
+	async getAttempt(attemptId: string): Promise<AttemptDTO> {
 		logger.debug(`[${LOG_NAMESPACE}] Получение попытки по ID`, { attemptId })
 		try {
 			const cacheKey = `attempt:${attemptId}`
@@ -320,7 +335,7 @@ class AttemptService {
 				logger.warn(`[${LOG_NAMESPACE}] Попытка не найдена`, { attemptId })
 				throw ApiError.BadRequest("Попытка не найдена")
 			}
-			const result = mapToTestAttemptDTO(attempt)
+			const result = mapToAttemptDTO(attempt)
 			await redisClient.setEx(cacheKey, 3600, JSON.stringify(result))
 			logger.debug(`[${LOG_NAMESPACE}] Попытка успешно получена`, { attemptId })
 			return result
@@ -337,7 +352,7 @@ class AttemptService {
 	}
 
 	//Получить результаты конкретной попытки
-	async getWithResults(attemptId: string, user?: UserDTO): Promise<TestAttemptResultDTO> {
+	async getWithResults(attemptId: string, user?: UserDTO): Promise<AttemptResultDTO> {
 		logger.debug(`[${LOG_NAMESPACE}] Получение попытки с результатами`, { attemptId })
 		try {
 			const attempt = await attemptRepository.findById(attemptId)
@@ -368,7 +383,7 @@ class AttemptService {
 	}
 
 	//Получить конкретную попытку для пользователя
-	async getAttemptForUser(attemptId: string, userId?: string): Promise<TestAttemptUserDTO> {
+	async getAttemptForUser(attemptId: string, userId?: string): Promise<AttemptUserDTO> {
 		logger.debug(`[${LOG_NAMESPACE}] Получение попытки для пользователя по ID`, { attemptId })
 
 		try {
@@ -388,7 +403,7 @@ class AttemptService {
 				logger.warn(`[${LOG_NAMESPACE}] Попытка не найдена`, { attemptId })
 				throw ApiError.BadRequest("Попытка не найдена")
 			}
-			const result = mapToTestAttemptUserDTO(attempt)
+			const result = mapToAttemptUserDTO(attempt)
 
 			if (attempt.userId && attempt.userId !== userId) {
 				logger.warn(`[${LOG_NAMESPACE}] Попытка не принадлежит пользователю`, { attemptId, userId })
@@ -515,7 +530,7 @@ class AttemptService {
 			const total = await attemptRepository.count({ testId })
 			logger.debug(`[${LOG_NAMESPACE}] Попытки теста успешно получены`, { testId, count: attempts.length })
 			return {
-				attempts: attempts.map((attempt) => mapToTestAttemptDTO(attempt)),
+				attempts: attempts.map((attempt) => mapToAttemptDTO(attempt)),
 				total,
 			}
 		} catch (error) {
@@ -531,7 +546,6 @@ class AttemptService {
 			throw ApiError.InternalError("Ошибка при получении попытки")
 		}
 	}
-
 }
 
 export const attemptService = new AttemptService()

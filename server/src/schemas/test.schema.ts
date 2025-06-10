@@ -46,7 +46,7 @@ export const upsertQuestionsSchema = z.object({
 })
 
 // Начало попытки
-export const startTestAttemptSchema = z.object({
+export const startAttemptSchema = z.object({
 	params: z.object({
 		testId: z.string().min(1, "ID теста обязательно").refine(isValidUUID, {
 			message: "ID теста должен быть корректным UUID",
@@ -128,7 +128,7 @@ export const saveAnswersSchema = z.object({
 	}),
 })
 // Завершение попытки
-export const completeTestAttemptSchema = z.object({
+export const completeAttemptSchema = z.object({
 	params: z.object({
 		attemptId: z.string().min(1, "ID попытки обязательно").refine(isValidUUID, {
 			message: "ID попытки должен быть корректным UUID",

@@ -3,13 +3,13 @@ import { mapUserToDto } from "@/mappers"
 import {
 	AnswerDTO,
 	AnswerUserDTO,
+	AttemptDTO,
 	AttemptQuestionDTO,
+	AttemptResultDTO,
+	AttemptUserDTO,
 	AttemptWithSnapshotDTO,
 	PreTestUserDataType,
 	QuestionDTO,
-	TestAttemptDTO,
-	TestAttemptResultDTO,
-	TestAttemptUserDTO,
 	TestDTO,
 	TestSettingsDTO,
 	TestSnapshotDTO,
@@ -24,9 +24,10 @@ import {
 	QuestionSnapshot,
 	QuestionType,
 	Test,
-	TestAttempt,
+	TestAttempt as Attempt,
 	TestSettingsSnapshot,
 	TestSnapshot,
+	TestVisibilityStatus,
 	User,
 	UserAnswer,
 } from "@prisma/client"
@@ -185,8 +186,8 @@ export const mapToAttemptQuestionDTO = (
 	}
 }
 
-export const mapToTestAttemptDTO = (
-	attempt: TestAttempt & {
+export const mapToAttemptDTO = (
+	attempt: Attempt & {
 		test: Test & {
 			questions: (Question & { answers: Answer[] })[]
 			author: {
@@ -207,7 +208,7 @@ export const mapToTestAttemptDTO = (
 		//       answeredAt?: Date | null
 		//   }[]
 	}
-): TestAttemptDTO => {
+): AttemptDTO => {
 	const allAnswers = attempt.test.questions.flatMap((q) => q.answers)
 
 	return {
@@ -233,7 +234,7 @@ export const mapToTestAttemptDTO = (
 }
 
 export const mapToAttemptWithSnapshotDTO = (
-	attempt: TestAttempt & {
+	attempt: Attempt & {
 		user: User | null
 		snapshot: TestSnapshot | null
 	}
@@ -263,7 +264,7 @@ export const mapToAttemptWithSnapshotDTO = (
 }
 
 export const mapToAttemptWithResultsDTO = (
-	attempt: TestAttempt & {
+	attempt: Attempt & {
 		test: Test & {
 			questions: (Question & { answers: Answer[] })[]
 			author: {
@@ -285,7 +286,7 @@ export const mapToAttemptWithResultsDTO = (
 		// 	answeredAt?: Date | null
 		// }[]
 	}
-): TestAttemptResultDTO => {
+): AttemptResultDTO => {
 	const allAnswers = attempt.test.questions.flatMap((q) => q.answers)
 
 	return {
@@ -310,11 +311,11 @@ export const mapToAttemptWithResultsDTO = (
 		),
 	}
 }
-export const mapToTestAttemptUserDTO = (
-	attempt: TestAttempt & {
+export const mapToAttemptUserDTO = (
+	attempt: Attempt & {
 		answers: UserAnswer[]
 	}
-): TestAttemptUserDTO => {
+): AttemptUserDTO => {
 	return {
 		id: attempt.id,
 		testId: attempt.testId,
@@ -460,7 +461,7 @@ export const mapToTestSnapshotForAttemptDTO = (
 		id: snapshot.testId, //  testId из snapshot как id теста
 		title: snapshot.title,
 		description: snapshot.description,
-		visibilityStatus: "PUBLISHED",
+		visibilityStatus: TestVisibilityStatus.PUBLISHED,
 		image: snapshot.image,
 		settings: snapshot.settings
 			? {
