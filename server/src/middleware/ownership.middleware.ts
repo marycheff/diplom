@@ -96,3 +96,52 @@ export const attemptOwnershipMiddleware = async (req: Request, res: Response, ne
 		next(error)
 	}
 }
+
+
+export const accountOwnershipMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+	const context = `[${LOG_NAMESPACE} {Account}]`
+
+	try {
+		const userId = req.params.userId
+		const currentUser = req.user
+
+		logger.debug(`${context} Проверка доступа к аккаунту`, {
+			requestedUserId: userId,
+			currentUserId: currentUser?.id,
+			userRole: currentUser?.role,
+			path: req.path,
+		})
+
+		if (!userId || !isValidUUID(userId)) {
+			logger.warn(`${context} Некорректный или отсутствующий ID пользователя`, { userId })
+			return next(ApiError.BadRequest("Некорректный или отсутствующий ID пользователя"))
+		}
+
+		if (!currentUser) {
+			logger.warn(`${context} Пользователь не авторизован`)
+			return next(ApiError.Unauthorized())
+		}
+
+		if (userId !== currentUser.id && currentUser.role !== "ADMIN") {
+			logger.warn(`${context} Доступ запрещён`, {
+				requestedUserId: userId,
+				currentUserId: currentUser.id,
+				userRole: currentUser.role,
+			})
+			return next(ApiError.Forbidden())
+		}
+
+		logger.info(`${context} Доступ разрешён`, {
+			requestedUserId: userId,
+			currentUserId: currentUser.id,
+		})
+
+		next()
+	} catch (error) {
+		logger.error(`${context} Ошибка при проверке доступа к аккаунту`, {
+			error: error instanceof Error ? error.stack : error,
+			requestedUserId: req.params.userId,
+		})
+		next(error)
+	}
+}

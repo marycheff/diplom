@@ -32,12 +32,12 @@ class UserController {
 	// Получение пользователя по id
 	async getUserById(req: Request, res: Response, next: NextFunction) {
 		try {
-			const { id } = req.params
-			if (id !== req.user?.id && req.user?.role !== "ADMIN") {
+			const { userId } = req.params
+			if (userId !== req.user?.id && req.user?.role !== "ADMIN") {
 				return next(ApiError.Forbidden())
 			}
 
-			const user = await userService.getUserById(id)
+			const user = await userService.getUserById(userId)
 			res.status(200).json(user)
 		} catch (e) {
 			next(e)
@@ -90,13 +90,13 @@ class UserController {
 	// Обновление пользователя
 	async updateUser(req: Request, res: Response, next: NextFunction) {
 		try {
-			const { id } = req.params
-			if (!(await userService.getUserById(id))) {
+			const { userId } = req.params
+			if (!(await userService.getUserById(userId))) {
 				ApiError.BadRequest("Нет такого пользователя")
 				return
 			}
 			const updateData = req.body
-			await userService.updateUser(id, updateData)
+			await userService.updateUser(userId, updateData)
 			res.status(200).json({ message: "Данные пользователя успешно обновлены" })
 		} catch (e) {
 			next(e)
@@ -106,12 +106,12 @@ class UserController {
 	// Удаление пользователя
 	async deleteUser(req: Request, res: Response, next: NextFunction) {
 		try {
-			const { id } = req.params
-			if (!(await userService.getUserById(id))) {
+			const { userId } = req.params
+			if (!(await userService.getUserById(userId))) {
 				ApiError.BadRequest("Нет такого пользователя")
 				return
 			}
-			await userService.deleteUser(id)
+			await userService.deleteUser(userId)
 			res.status(200).json({ message: "Пользователь успешно удален" })
 		} catch (e) {
 			next(e)
@@ -121,8 +121,8 @@ class UserController {
 	// Блокировка пользователя
 	async blockUser(req: Request, res: Response, next: NextFunction) {
 		try {
-			const { id } = req.params
-			await userService.blockUser(id)
+			const { userId } = req.params
+			await userService.blockUser(userId)
 			res.status(200).json({ message: "Пользователь успешно заблокирован" })
 		} catch (e) {
 			next(e)
@@ -132,8 +132,8 @@ class UserController {
 	// Разблокировка пользователя
 	async unblockUser(req: Request, res: Response, next: NextFunction) {
 		try {
-			const { id } = req.params
-			await userService.unblockUser(id)
+			const { userId } = req.params
+			await userService.unblockUser(userId)
 			res.status(200).json({ message: "Пользователь успешно разблокирован" })
 		} catch (e) {
 			next(e)
