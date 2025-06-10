@@ -1,4 +1,5 @@
+import AccountDeletionModal from "@/shared/ui/Modal/AccountDeletion/AccountDeletionModal"
 import Modal from "./Base/Modal"
 import ConfirmationModal from "./Confirmation/ConfirmationModal"
 
-export { ConfirmationModal, Modal }
+export { AccountDeletionModal, ConfirmationModal, Modal }

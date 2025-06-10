@@ -90,9 +90,12 @@ const AttemptsTable: FC<AttemptsTableProps> = ({ attempts, total }) => {
 
 										<td>
 											<Link
-												to={generatePath(ROUTES.ADMIN_TEST_INFO, {
-													testId: attempt.test.id,
-												})}
+												to={generatePath(
+													isAdmin ? ROUTES.ADMIN_TEST_INFO : ROUTES.MY_TEST_INFO,
+													{
+														testId: attempt.test.id,
+													}
+												)}
 												className="actionLink"
 											>
 												{attempt.test.title}

@@ -4,6 +4,7 @@ import { ConfirmationModal } from "@/shared/ui/Modal"
 import { useState } from "react"
 import styles from "./BlockedUserPage.module.scss"
 import { FaExclamationTriangle } from "react-icons/fa"
+import { LogoutButtonWithModal } from "@/shared/ui/LogoutButtonWithModal/LogoutButtonWithModal"
 
 const BlockedUserPage = () => {
 	const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
@@ -21,23 +22,7 @@ const BlockedUserPage = () => {
 				Доступ к системе ограничен за неправомерное использование. Вы можете выйти из системы.
 			</p>
 
-			<Button
-				className={styles.button}
-				onClick={() => setIsLogoutModalOpen(true)}
-			>
-				Выйти из системы
-			</Button>
-
-			<ConfirmationModal
-				isOpen={isLogoutModalOpen}
-				onClose={() => setIsLogoutModalOpen(false)}
-				onConfirm={logout}
-				title="Подтверждение выхода"
-				confirmText="Выйти"
-				cancelText="Отмена"
-			>
-				<p>Вы уверены, что хотите завершить текущую сессию?</p>
-			</ConfirmationModal>
+			<LogoutButtonWithModal />
 		</div>
 	)
 }

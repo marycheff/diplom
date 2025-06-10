@@ -60,7 +60,6 @@ $transition: all 0.3s ease;
 	.activationButton {
 		margin-top: 1rem;
 	}
-
 }
 
 .personalInfo {
@@ -98,4 +97,29 @@ $transition: all 0.3s ease;
 	justify-content: center;
 	align-items: center;
 	min-height: 200px;
+}
+
+.accountActions {
+	display: flex;
+	gap: 1rem;
+	margin-top: 1rem;
+	justify-content: space-between;
+}
+
+.deleteButton {
+	background-color: #d9534f;
+	color: white;
+	font-size: 1.1rem;
+	display: flex;
+	align-items: center;
+	justify-content: start;
+
+	&:hover {
+		background-color: #c9302c;
+	}
+	.icon {
+		margin-top: 4px;
+		margin-right: 0.6rem; // Увеличен отступ справа от иконки
+		font-size: 1.2em;
+	}
 }

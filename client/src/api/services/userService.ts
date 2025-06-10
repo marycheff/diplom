@@ -16,24 +16,24 @@ class UserService {
 		return axiosInstance.post<AuthResponse>("/auth/update-password", { email, oldPassword, newPassword })
 	}
 
-	getUserById(id: string): Promise<AxiosResponse<UserDTO>> {
-		return axiosInstance.get<UserDTO>(`/users/${id}`)
+	getUserById(userId: string): Promise<AxiosResponse<UserDTO>> {
+		return axiosInstance.get<UserDTO>(`/users/${userId}`)
 	}
 
-	updateUser(id: string, updateData: UpdateUser): Promise<AxiosResponse<UserDTO>> {
-		return axiosInstance.put<UserDTO>(`/users/update-profile/${id}`, updateData)
+	updateUser(userId: string, updateData: UpdateUser): Promise<AxiosResponse<UserDTO>> {
+		return axiosInstance.put<UserDTO>(`/users/update-profile/${userId}`, updateData)
 	}
 
-	deleteUser(id: string): Promise<AxiosResponse<UserDTO>> {
-		return axiosInstance.delete<UserDTO>(`/users/${id}`)
+	deleteUser(userId: string): Promise<AxiosResponse<UserDTO>> {
+		return axiosInstance.delete<UserDTO>(`/users/${userId}`)
 	}
 
-	blockUser(id: string): Promise<AxiosResponse<UserDTO>> {
-		return axiosInstance.post<UserDTO>(`/users/block/${id}`)
+	blockUser(userId: string): Promise<AxiosResponse<UserDTO>> {
+		return axiosInstance.post<UserDTO>(`/users/block/${userId}`)
 	}
 
-	unblockUser(id: string): Promise<AxiosResponse<UserDTO>> {
-		return axiosInstance.post<UserDTO>(`/users/unblock/${id}`)
+	unblockUser(userId: string): Promise<AxiosResponse<UserDTO>> {
+		return axiosInstance.post<UserDTO>(`/users/unblock/${userId}`)
 	}
 	searchUser(query: string, page = 1, limit = 10): Promise<AxiosResponse<UsersListDTO>> {
 		return axiosInstance.get<UsersListDTO>("/users/search", {

@@ -1,13 +1,25 @@
 import stylesPagination from "@/shared/ui/Pagination/Pagination.module.scss"
-import { FC } from "react"
+import { FC, useEffect, useState } from "react"
 import styles from "./TableSkeleton.module.scss"
 
 interface TableSkeletonProps {
 	rows?: number
 	cols?: number
+	delay?: number
 }
 
-const TableSkeleton: FC<TableSkeletonProps> = ({ rows = 10, cols = 8 }) => {
+const TableSkeleton: FC<TableSkeletonProps> = ({ rows = 10, cols = 8, delay = 100 }) => {
+	const [show, setShow] = useState(delay === 0)
+
+	useEffect(() => {
+		if (delay > 0) {
+			const timer = setTimeout(() => setShow(true), delay)
+			return () => clearTimeout(timer)
+		}
+	}, [delay])
+
+	if (!show) return null
+
 	const skeletonData = Array(rows).fill({})
 	const columnsArray = Array(cols).fill({})
 	const pagesArray = [1, 2, 3]

@@ -1,0 +1,19 @@
+.button {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.75rem 1rem;
+	font-size: 1.1rem;
+	background: $secondary-600;
+	color: $text-on-accent;
+
+	&:hover {
+		background: $secondary-400;
+	}
+}
+
+.icon {
+	display: flex;
+	align-items: center;
+	margin-right: 0.6rem; // Увеличен отступ справа от иконки
+	font-size: 1.2em;
+}

@@ -4,8 +4,11 @@ import { useUserStore } from "@/features/users/store/useUserStore"
 import { Button } from "@/shared/ui/Button"
 import { EditableInput } from "@/shared/ui/Input"
 import Loader from "@/shared/ui/Loader/Loader"
+import { LogoutButtonWithModal } from "@/shared/ui/LogoutButtonWithModal/LogoutButtonWithModal"
+import { AccountDeletionModal } from "@/shared/ui/Modal"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { useEffect, useState } from "react"
+import { RiDeleteBin5Fill } from "react-icons/ri"
 import styles from "./UserProfilePage.module.scss"
 
 type UserFields = {
@@ -19,14 +22,14 @@ const fieldLabels: { [key: string]: string } = {
 }
 
 const UserProfilePage = () => {
-	const { user, updateActivationLink, isEmailSending } = useAuthStore()
-	const { getUserById, updateUser, isFetching, isLoading } = useUserStore()
+	const { user, updateActivationLink, logout, isEmailSending } = useAuthStore()
+	const { getUserById, updateUser, deleteUser, isFetching, isLoading } = useUserStore()
 	const [userFields, setUserFields] = useState<UserFields>({})
 	const [initialUserFields, setInitialUserFields] = useState<UserFields>({})
 	const [isEditingFields, setIsEditingFields] = useState<{ [key: string]: boolean }>({})
 	const [isFormChanged, setIsFormChanged] = useState(false)
-	const a = true
 	const [isLoadingFields, setIsLoadingFields] = useState(false)
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
 	// Получение данных пользователя
 	async function getUserInfo() {
@@ -76,6 +79,15 @@ const UserProfilePage = () => {
 		await updateActivationLink(user?.email!)
 		// setShowModal(true)
 	}
+	const handleDeleteAccount = async () => {
+		if (user?.id) {
+			setIsDeleteModalOpen(false)
+			logout()
+			await deleteUser(user?.id)
+		} else {
+			return
+		}
+	}
 
 	useEffect(() => {
 		getUserInfo()
@@ -90,7 +102,7 @@ const UserProfilePage = () => {
 		<div className={styles.profilePage}>
 			{(isFetching || isLoadingFields) && (
 				<div className={styles.loader}>
-					<Loader delay={300} centeredInParent/>
+					<Loader centeredInParent />
 				</div>
 			)}
 
@@ -161,6 +173,28 @@ const UserProfilePage = () => {
 						<h2>Обновление пароля</h2>
 						<UpdatePasswordForm />
 					</section>
+
+					<section className={styles.section}>
+						<h2>Действия с аккаунтом</h2>
+						<div className={styles.accountActions}>
+							<LogoutButtonWithModal />
+							<Button
+								className={styles.deleteButton}
+								onClick={() => setIsDeleteModalOpen(true)}
+							>
+								<span className={styles.icon}>
+									<RiDeleteBin5Fill />
+								</span>
+								Удалить аккаунт
+							</Button>
+						</div>
+					</section>
+
+					<AccountDeletionModal
+						isOpen={isDeleteModalOpen}
+						onClose={() => setIsDeleteModalOpen(false)}
+						onConfirm={handleDeleteAccount}
+					/>
 				</>
 			)}
 		</div>

@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from "react"
 import styles from "./Loader.module.scss"
-import { FaLeaf } from "react-icons/fa"
 
 interface LoaderProps {
 	delay?: number
@@ -9,7 +8,7 @@ interface LoaderProps {
 	centeredInParent?: boolean
 }
 
-const Loader: FC<LoaderProps> = ({ delay = 0, text = "", fullScreen = false, centeredInParent = false }) => {
+const Loader: FC<LoaderProps> = ({ delay = 100, text = "", fullScreen = false, centeredInParent = false }) => {
 	const [showLoader, setShowLoader] = useState(false)
 
 	if (delay > 0) {
@@ -24,8 +23,7 @@ const Loader: FC<LoaderProps> = ({ delay = 0, text = "", fullScreen = false, cen
 		}
 	}
 
-const className = fullScreen ? styles.loaderOverlay : centeredInParent ? styles.loaderAbsolute : styles.loaderRelative
-
+	const className = fullScreen ? styles.loaderOverlay : centeredInParent ? styles.loaderAbsolute : styles.loaderRelative
 
 	return (
 		<div className={className}>
