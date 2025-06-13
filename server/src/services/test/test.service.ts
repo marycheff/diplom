@@ -38,13 +38,8 @@ class TestService {
 					},
 					tx
 				)
-
-				await testRepository.updateVersion(createdTest.id, 1, tx)
-
 				return { createdTest, settings }
 			})
-
-			await redisClient.del(`user_tests:${authorId}`)
 
 			const testDTO = mapTest({
 				...result.createdTest,

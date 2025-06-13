@@ -61,6 +61,7 @@ router.put(
 router.put(
 	"/:testId/short-info",
 	authMiddleware,
+	accountActivationMiddleware,
 	testOwnershipMiddleware,
 	validateRequest(shortInfoSchema),
 	testController.updateShortInfo

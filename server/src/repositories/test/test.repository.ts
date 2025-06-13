@@ -296,13 +296,13 @@ class TestRepository {
 		})
 	}
 
-	async updateVersion(testId: string, version: number, tx?: Prisma.TransactionClient) {
-		const client = tx || prisma
-		return client.test.update({
-			where: { id: testId },
-			data: { version },
-		})
-	}
+	// async updateVersion(testId: string, version: number, tx?: Prisma.TransactionClient) {
+	// 	const client = tx || prisma
+	// 	return client.test.update({
+	// 		where: { id: testId },
+	// 		data: { version },
+	// 	})
+	// }
 
 	async updateVisibilityStatus(testId: string, status: TestVisibilityStatus, tx?: Prisma.TransactionClient) {
 		const client = tx || prisma
