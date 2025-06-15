@@ -22,7 +22,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 	hideToggleButton = false,
 	type = "question",
 }) => {
-	const [preview, setPreview] = useState<string | null>(currentImage)
+	const [preview, setPreview] = useState<string | null>(null)
 	const [isDragging, setIsDragging] = useState(false)
 	const [uploadMode, setUploadMode] = useState<UploadMode>("file")
 	const [imageUrl, setImageUrl] = useState<string>("")
@@ -35,13 +35,33 @@ const ImageUpload: FC<ImageUploadProps> = ({
 	const validExtensions = [".jpg", ".jpeg", ".png"]
 	const validMimeTypes = ["image/jpeg", "image/jpg", "image/png"]
 
+	// Проверка изображения при изменении currentImage
 	useEffect(() => {
-		setPreview(getImageUrl(currentImage) ?? null)
-		if (!currentImage) {
+		if (currentImage) {
+			const img = new Image()
+
+			img.onload = () => {
+				// Изображение загрузилось успешно
+				const imageUrl = getImageUrl(currentImage)
+				setPreview(imageUrl!)
+			}
+
+			img.onerror = () => {
+				// Изображение не загрузилось - очищаем и уведомляем родителя
+				setPreview(null)
+				onImageSelect("")
+				if (fileInputRef.current) fileInputRef.current.value = ""
+				setImageUrl("")
+				toast.error("Изображение не удалось загрузить и оно было удалено")
+			}
+
+			img.src = getImageUrl(currentImage) || currentImage
+		} else {
+			setPreview(null)
 			if (fileInputRef.current) fileInputRef.current.value = ""
 			setImageUrl("")
 		}
-	}, [currentImage])
+	}, [currentImage, onImageSelect])
 
 	useEffect(() => {
 		if (currentImage || hideToggleButton) setIsExpanded(true)
@@ -215,8 +235,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 				</button>
 			)}
 			<div className={`${styles.uploadSection} ${isExpanded ? styles.uploadSectionVisible : ""}`}>
-				<div 
-				className={`${styles.uploadContainer} ${!currentImage ? styles.hasImage : ""}`}>
+				<div className={`${styles.uploadContainer} ${!currentImage ? styles.hasImage : ""}`}>
 					{!currentImage && (
 						<div className={styles.tabHeaders}>
 							<button
