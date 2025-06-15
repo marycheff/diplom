@@ -39,6 +39,17 @@
 				background-color: $secondary-600;
 				color: white;
 				font-weight: bold;
+
+				//  стили для сортируемых заголовков
+				&.sortableHeader {
+					cursor: pointer;
+					user-select: none;
+					transition: background-color 0.2s ease;
+
+					// &:hover {
+					// 	background-color: $secondary-400;
+					// }
+				}
 			}
 
 			td {
@@ -52,4 +63,11 @@
 			}
 		}
 	}
+}
+.sortedHeader {
+	background-color: $secondary-400 !important;
+}
+
+.sortIcon {
+	margin-right: 4px;
 }

@@ -9,7 +9,6 @@
 .container {
 	max-width: 560px;
 	margin-top: -20vh;
-	padding: $section-padding;
 	border-radius: 1.25rem;
 	box-shadow: $shadow-medium;
 	text-align: center;
@@ -48,8 +47,8 @@
 .content {
 	width: 560px;
 	margin-top: -20vh;
-	padding: $section-padding;
-	border-radius: 1.25rem;
+	padding: 20px 40px;
+	border-radius: 16px;
 	box-shadow: $shadow-medium;
 }
 
@@ -83,6 +82,14 @@
 	&:hover {
 		color: $text-primary;
 	}
+	@media (width <= 768px) {
+		font-size: 0.875rem;
+		gap: 0.25rem;
+
+		svg {
+			font-size: 1em;
+		}
+	}
 }
 
 .tabButton::after {
@@ -102,10 +109,6 @@
 
 .activeTab::after {
 	background: $accent-primary;
-}
-
-.tabContent {
-	padding: $spacing-unit;
 }
 
 .title {

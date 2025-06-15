@@ -65,6 +65,7 @@ const CreateTestForm = () => {
 
 					<Button
 						type="submit"
+						className={styles.formButton}
 						disabled={isLoading || !title}
 					>
 						Создать тест

@@ -3,6 +3,7 @@
 	justify-content: center;
 	align-items: center;
 	min-height: 90vh;
+
 	@media screen and (width <= 768px) {
 		min-height: 86vh;
 	}

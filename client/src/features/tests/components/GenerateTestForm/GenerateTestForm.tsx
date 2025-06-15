@@ -1,9 +1,8 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
-import { testTitleValidationRules } from "@/shared/types/utils/validationRules"
+import { testTopicValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
-
 import { ROUTES } from "@/router/paths"
 import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
@@ -73,7 +72,7 @@ const GenerateTestForm = () => {
 						register={register}
 						setValue={setValue}
 						errors={errors.topic}
-						validationRules={testTitleValidationRules}
+						validationRules={testTopicValidationRules}
 						disabled={isGenerating}
 					/>
 
@@ -88,6 +87,7 @@ const GenerateTestForm = () => {
 
 					<Button
 						type="submit"
+						className={styles.formButton}
 						disabled={isGenerating || !topic}
 					>
 						Сгенерировать тест

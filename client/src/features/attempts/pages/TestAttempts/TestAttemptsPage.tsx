@@ -1,6 +1,7 @@
 import AttemptsTable from "@/features/attempts/components/Tables/AttemptsTable/AttemptsTable"
 import { useAttemptsCache } from "@/features/attempts/hooks/useAttemptsCache"
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
+import styles from "@/features/tests/pages/AllTests/AllTestsPage.module.scss"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { AttemptDTO } from "@/shared/types"
@@ -77,16 +78,21 @@ const TestAttemptsPage = () => {
 	const totalPages = Math.ceil(total / limit)
 	return (
 		<>
-			<Button
-				onClick={handleUpdateButton}
-				disabled={isFetching}
-			>
-				Обновить
-			</Button>
+			<div className={styles.controls}>
+				<div className={styles.buttons}>
+					<Button
+						onClick={handleUpdateButton}
+						disabled={isFetching}
+					>
+						Обновить
+					</Button>
+				</div>
 
-			<div className="cache-info">
-				<span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+				<div className={styles.cacheInfo}>
+					<span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+				</div>
 			</div>
+
 			{isFetching ? (
 				<TableSkeleton />
 			) : (

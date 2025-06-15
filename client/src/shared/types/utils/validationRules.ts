@@ -8,6 +8,17 @@ export const testTitleValidationRules: RegisterOptions = {
 		message: "Название теста не должно превышать 100 символов",
 	},
 }
+export const testTopicValidationRules: RegisterOptions = {
+	required: "Тема теста обязательна",
+	maxLength: {
+		value: 30,
+		message: "Тема теста не должна превышать 30 символов",
+	},
+	minLength: {
+		value: 3,
+		message: "Тема теста должна быть длиннее 3 символов",
+	},
+}
 
 export const testDescriptionValidationRules: RegisterOptions = {
 	maxLength: {
