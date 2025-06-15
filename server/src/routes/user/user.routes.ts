@@ -1,6 +1,6 @@
 import { userController } from "@/controllers"
 import { accountOwnershipMiddleware, adminMiddleware, authMiddleware, validateRequest } from "@/middleware"
-import { userIdSchema } from "@/schemas/user.schema"
+import { updateUserSchema, userIdSchema } from "@/schemas/user.schema"
 import { Router } from "express"
 
 const router = Router()
@@ -17,7 +17,7 @@ router.get("/search", authMiddleware, userController.searchUsers)
 router.get("/:userId", authMiddleware, validateRequest(userIdSchema), userController.getUserById)
 
 // Обновление данных пользователя по ID
-router.put("/update-profile/:userId", authMiddleware, validateRequest(userIdSchema), userController.updateUser)
+router.put("/update-profile/:userId", authMiddleware, validateRequest(updateUserSchema), userController.updateUser)
 
 // Удаление пользователя по ID (админ)
 router.delete(

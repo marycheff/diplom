@@ -126,7 +126,7 @@ class TestRepository {
 					},
 				},
 			},
-			orderBy: { createdAt: "desc" },
+			orderBy: { updatedAt: "desc" },
 		})
 	}
 

@@ -711,14 +711,65 @@ class TestService {
 		}
 	}
 
-	//  Удаление теста
+	// Удаление изображений теста и изображений вопросов в нем
+	async deleteTestImages(testId: string): Promise<void> {
+		logger.info(`[${LOG_NAMESPACE}] Удаление изображений теста`, { testId })
+
+		try {
+			// Получаем тест с вопросами БЕЗ транзакции
+			const test = await testRepository.findDetailedById(testId)
+			if (!test) {
+				logger.warn(`[${LOG_NAMESPACE}] Тест не найден при удалении изображений`, { testId })
+				return
+			}
+
+			// Удаляем изображение самого теста
+			if (test.image) {
+				await imageService.deleteImage(test.image, "test")
+				logger.debug(`[${LOG_NAMESPACE}] Удалено изображение теста`, {
+					testId,
+					image: test.image,
+				})
+			}
+
+			// Удаляем изображения всех вопросов
+			if (test.questions && test.questions.length > 0) {
+				for (const question of test.questions) {
+					if (question.image) {
+						await imageService.deleteImage(question.image, "question")
+						logger.debug(`[${LOG_NAMESPACE}] Удалено изображение вопроса`, {
+							questionId: question.id,
+							image: question.image,
+						})
+					}
+				}
+			}
+
+			logger.info(`[${LOG_NAMESPACE}] Все изображения теста успешно удалены`, { testId })
+		} catch (error) {
+			logger.error(`[${LOG_NAMESPACE}] Ошибка при удалении изображений теста`, {
+				testId,
+				error: error instanceof Error ? error.message : String(error),
+			})
+			//ошибка не выбрасывается, чтобы не блокировать удаление теста
+		}
+	}
+
+	// Удаление теста
 	async deleteTest(testId: string): Promise<void> {
 		logger.info(`[${LOG_NAMESPACE}] Удаление теста`, { testId })
+
 		try {
+			// удаление всех изображений у теста
+			await this.deleteTestImages(testId)
+
+			// удаление самого теста
 			await testRepository.deleteById(testId)
 
+			// очистка кэша
 			await deleteTestCache(testId)
-			logger.info(`[${LOG_NAMESPACE}] Тест успешно удален`, { testId })
+
+			logger.info(`[${LOG_NAMESPACE}] Тест и все связанные изображения успешно удалены`, { testId })
 		} catch (error) {
 			if (error instanceof ApiError) {
 				throw error

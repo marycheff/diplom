@@ -13,7 +13,8 @@ export const generateAnswersSchema = z.object({
 			.string({
 				required_error: "Правильный ответ обязателен",
 			})
-			.min(1, "Ответ не может быть пустым"),
+			.min(1, "Ответ не может быть пустым")
+			.max(30, "Ответ должен быть не длиннее 30 символов"),
 		numOfAnswers: z
 			.number({
 				required_error: "Количество ответов обязательно",
