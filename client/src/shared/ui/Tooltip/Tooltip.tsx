@@ -14,7 +14,6 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 	const tooltipRef = useRef<HTMLDivElement>(null)
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-	// Управление событиями мыши и задержкой
 	useEffect(() => {
 		const isMobile = window.innerWidth <= 1024
 		const target = targetRef.current
@@ -33,12 +32,21 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 
 		const handleTouchStart = () => {
 			if (!isMobile) return
-			setVisible(true)
+			if (timeoutRef.current) clearTimeout(timeoutRef.current)
+			// Применяем задержку и для мобильных устройств
+			timeoutRef.current = setTimeout(() => setVisible(true), delay)
 		}
 
 		const handleTouchEnd = () => {
 			if (!isMobile) return
+			if (timeoutRef.current) clearTimeout(timeoutRef.current)
 			setTimeout(() => setVisible(false), 300)
+		}
+
+		// Дополнительно обрабатываем touchcancel для отмены показа тултипа
+		const handleTouchCancel = () => {
+			if (!isMobile) return
+			if (timeoutRef.current) clearTimeout(timeoutRef.current)
 		}
 
 		if (target) {
@@ -46,6 +54,7 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 			target.addEventListener("mouseleave", handleMouseLeave)
 			target.addEventListener("touchstart", handleTouchStart)
 			target.addEventListener("touchend", handleTouchEnd)
+			target.addEventListener("touchcancel", handleTouchCancel)
 		}
 
 		return () => {
@@ -54,10 +63,12 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 				target.removeEventListener("mouseleave", handleMouseLeave)
 				target.removeEventListener("touchstart", handleTouchStart)
 				target.removeEventListener("touchend", handleTouchEnd)
+				target.removeEventListener("touchcancel", handleTouchCancel)
 			}
 			if (timeoutRef.current) clearTimeout(timeoutRef.current)
 		}
 	}, [targetRef, delay])
+
 	useEffect(() => {
 		const handleScroll = () => setVisible(false)
 		const handleClickOutside = (e: MouseEvent) => {
@@ -77,9 +88,6 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 		}
 	}, [visible])
 
-
-
-	// Позиционирование тултипа с автоматическим определением позиции
 	useEffect(() => {
 		if (visible && !targetRef.current) {
 			setVisible(false)
@@ -89,15 +97,13 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 			const viewportHeight = window.innerHeight
 			const viewportWidth = window.innerWidth
 
-			// Определение позиции
 			let actualPosition = position
 
 			if (position === "auto") {
-				const spaceAbove = targetRect.top // Место сверху от элемента
-				const spaceBelow = viewportHeight - targetRect.bottom // Место снизу
-				const spaceRight = viewportWidth - targetRect.right // Место справа
+				const spaceAbove = targetRect.top
+				const spaceBelow = viewportHeight - targetRect.bottom
+				const spaceRight = viewportWidth - targetRect.right
 
-				// Приоритет: справа, сверху, снизу
 				if (spaceRight >= tooltipRect.width + 8) {
 					actualPosition = "right"
 				} else if (spaceAbove >= tooltipRect.height + 8) {
@@ -122,12 +128,10 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 				top = targetRect.top + targetRect.height / 2 - tooltipRect.height / 2
 				left = targetRect.right + 8
 			} else {
-				// Если позиция не определена, используем top
 				top = targetRect.top - tooltipRect.height - 8
 				left = targetRect.left + targetRect.width / 2 - tooltipRect.width / 2
 			}
 
-			// Проверка на выход за границы экрана
 			if (left < 0) left = 8
 			if (left + tooltipRect.width > viewportWidth) left = viewportWidth - tooltipRect.width - 8
 			if (top < 0) top = 8
@@ -135,8 +139,6 @@ const Tooltip: FC<TooltipProps> = ({ content, position = "top", targetRef, delay
 
 			tooltipRef.current.style.top = `${top}px`
 			tooltipRef.current.style.left = `${left}px`
-
-			// Добавление класса с позицией для стилизации
 			tooltipRef.current.dataset.position = actualPosition
 		}
 	}, [visible, position, targetRef])
