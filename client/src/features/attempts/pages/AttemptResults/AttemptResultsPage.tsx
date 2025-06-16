@@ -244,7 +244,7 @@ const AttemptResultsPage = () => {
 																className={`${styles.answerItem} ${answer.isCorrect ? styles.correctAnswer : ""}`}
 															>
 																<span className={styles.answerText}>{answer.text}</span>
-																{answer.isCorrect && <span className={styles.correctBadge}>Правильный ответ</span>}
+																{answer.isCorrect && <span className={styles.correctBadge}>Правильный</span>}
 															</div>
 														))}
 													</div>
@@ -269,9 +269,11 @@ const AttemptResultsPage = () => {
 																			}`}
 																		>
 																			<span className={styles.answerText}>{question.userAnswers.textAnswer}</span>
-																			<span className={styles.answerStatus}>
-																				{question.userAnswers.isCorrect ? "✓ Верно" : "✗ Неверно"}
-																			</span>
+																			{question.userAnswers.isCorrect ? (
+																				<span className={styles.answerStatus}>Верно</span>
+																			) : (
+																				<span className={styles.redBadge}>Неверно</span>
+																			)}
 																		</div>
 																	</div>
 																) : (
@@ -286,9 +288,11 @@ const AttemptResultsPage = () => {
 																				}`}
 																			>
 																				<span className={styles.answerText}>{userAnswer.answer.text}</span>
-																				<span className={styles.answerStatus}>
-																					{userAnswer.answer.isCorrect ? "✓ Верно" : "✗ Неверно"}
-																				</span>
+																				{userAnswer.answer.isCorrect ? (
+																					<span className={styles.answerStatus}>Верно</span>
+																				) : (
+																					<span className={styles.redBadge}>Неверно</span>
+																				)}
 																			</div>
 																		</div>
 																	))
@@ -322,7 +326,7 @@ const AttemptResultsPage = () => {
 																								className={`${styles.answerItem} ${styles.missedAnswer}`}
 																							>
 																								<span className={styles.answerText}>{answer.text}</span>
-																								<span className={styles.missedBadge}>Пропущен</span>
+																								<span className={styles.redBadge}>Пропущен</span>
 																							</div>
 																						))}
 																					</div>
@@ -364,14 +368,16 @@ const AttemptResultsPage = () => {
 							<div className={styles.infoRow}>
 								<span className={styles.label}>Времени потрачено:</span>
 								{!attempt.timeSpent || attempt.timeSpent === 0 ? (
-									<span className={styles.emptyField}>—</span>
+									<span className={styles.value}>
+										<span className={styles.emptyField}>—</span>
+									</span>
 								) : (
 									<span className={styles.value}>{formatSeconds(attempt.timeSpent)}</span>
 								)}
 							</div>
 							{/* Краткий вердикт по каждому вопросу */}
 							{attempt.questions?.length > 0 && (
-								<div className={styles.infoRow}>
+								<div>
 									<span className={styles.label}>Вердикт по вопросам:</span>
 									<div className={styles.value}>
 										{attempt.questions.map((question, index) => {

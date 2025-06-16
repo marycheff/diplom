@@ -33,6 +33,10 @@
 
 .value {
 	@include common.value;
+
+	& {
+		width: 100%;
+	}
 }
 
 .emptyField {
@@ -127,6 +131,12 @@
 .correctBadge,
 .answerStatus {
 	@include common.correctBadge;
+
+	& {
+		@media (width <= 468) {
+			display: none;
+		}
+	}
 }
 
 .statusBadge {
@@ -177,13 +187,8 @@
 	}
 }
 
-.missedBadge {
-	background-color: $red-400;
-	color: $background-100;
-	padding: 3px 8px;
-	border-radius: 4px;
-	font-size: 12px;
-	font-weight: bold;
+.redBadge {
+	@include common.redBadge;
 }
 
 .answerItemWrapper {

@@ -18,6 +18,7 @@
 		opacity: 0.5;
 		cursor: grab;
 	}
+
 	@media (width <= 768px) {
 		margin-bottom: 7px;
 	}
@@ -28,6 +29,7 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 1rem;
+
 	@media (width <= 768px) {
 		padding: 0.7rem;
 	}

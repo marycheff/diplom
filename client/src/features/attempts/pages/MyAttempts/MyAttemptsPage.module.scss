@@ -3,6 +3,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
 	@media (width <= 768px) {
 		min-height: 87vh;
 	}

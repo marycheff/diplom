@@ -184,3 +184,6 @@
 	border-radius: 4px;
 	font-size: 14px;
 }
+.redBadge {
+	@include common.redBadge;
+}

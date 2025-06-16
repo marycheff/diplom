@@ -99,7 +99,9 @@ const AttemptInfo = () => {
 								{attempt.timeSpent !== 0 ? (
 									formatSeconds(attempt.timeSpent)
 								) : (
-									<span className={styles.emptyField}>—</span>
+									<span className={styles.value}>
+										<span className={styles.emptyField}>—</span>
+									</span>
 								)}
 							</span>
 						</div>
@@ -319,7 +321,7 @@ const AttemptInfo = () => {
 													className={`${styles.answerItem} ${answer.isCorrect ? styles.correctAnswer : ""}`}
 												>
 													<span className={styles.answerText}>{answer.text}</span>
-													{answer.isCorrect && <span className={styles.correctBadge}>Правильный ответ</span>}
+													{answer.isCorrect && <span className={styles.correctBadge}>Правильный</span>}
 												</div>
 											))}
 										</div>
@@ -344,15 +346,11 @@ const AttemptInfo = () => {
 																}`}
 															>
 																<span className={styles.answerText}>{question.userAnswers.textAnswer}</span>
-																<span
-																	className={
-																		question.userAnswers.isCorrect
-																			? styles.answerStatusCorrect
-																			: styles.answerStatusIncorrect
-																	}
-																>
-																	{question.userAnswers.isCorrect ? "✓ Верно" : "✗ Неверно"}
-																</span>
+																{question.userAnswers.isCorrect ? (
+																	<span className={styles.answerStatus}>Верно</span>
+																) : (
+																	<span className={styles.redBadge}>Неверно</span>
+																)}
 															</div>
 														</div>
 													) : (
@@ -368,15 +366,11 @@ const AttemptInfo = () => {
 																>
 																	<span className={styles.answerText}>{userAnswer.answer.text}</span>
 
-																	<span
-																		className={
-																			userAnswer.answer.isCorrect
-																				? styles.answerStatusCorrect
-																				: styles.answerStatusIncorrect
-																		}
-																	>
-																		{userAnswer.answer.isCorrect ? "✓ Верно" : "✗ Неверно"}
-																	</span>
+																	{userAnswer.answer.isCorrect ? (
+																		<span className={styles.answerStatus}>Верно</span>
+																	) : (
+																		<span className={styles.redBadge}>Неверно</span>
+																	)}
 																</div>
 															</div>
 														))

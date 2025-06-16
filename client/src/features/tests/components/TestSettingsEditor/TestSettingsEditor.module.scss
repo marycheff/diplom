@@ -11,6 +11,7 @@
 	align-items: center;
 	gap: 8px;
 }
+
 .limitInput {
 	max-width: 300px;
 }
@@ -18,6 +19,8 @@
 .section:last-child {
 	margin-bottom: 0;
 }
+
+
 
 .sectionLabel {
 	display: block;
@@ -71,7 +74,7 @@
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	overflow-y: auto;
+	// overflow-y: auto;
 }
 
 .formContent {

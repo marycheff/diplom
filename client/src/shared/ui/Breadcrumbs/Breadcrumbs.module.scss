@@ -1,11 +1,14 @@
 .breadcrumbs {
 	display: flex;
 	align-items: center;
-	padding: 12px 0 20px;
+	padding: 5px;
 	padding-left: 20px;
 	font-size: 14px;
 	color: #6c757d;
 	flex-wrap: wrap;
+	// box-shadow: $shadow-medium;
+
+
 
 	@media (width <= 768px) {
 		font-size: 12px;

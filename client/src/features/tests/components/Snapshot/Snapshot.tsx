@@ -176,7 +176,7 @@ const Snapshot: FC<SnapshotProps> = ({ snapshotId }) => {
 												className={`${styles.answerItem} ${answer.isCorrect ? styles.correctAnswer : ""}`}
 											>
 												<span className={styles.answerText}>{answer.text}</span>
-												{answer.isCorrect && <span className={styles.correctBadge}>Правильный ответ</span>}
+												{answer.isCorrect && <span className={styles.correctBadge}>Правильный</span>}
 											</div>
 										))}
 									</div>
