@@ -19,17 +19,16 @@ export const Layout = ({ children }: LayoutProps) => {
 	}
 
 	return (
-		<div
-			className={styles.layout}
-			style={{ overflowX: isAnimating ? "hidden" : "auto" }}
-		>
+		<div className={styles.layout}>
 			<Sidebar
 				onAnimationStart={() => setIsAnimating(true)}
 				onAnimationEnd={() => setIsAnimating(false)}
 			/>
 			<div className={styles.mainContent}>
 				<Breadcrumbs />
-				<main className={styles.content}>{children}</main>
+				<div className={styles.scrollContainer}>
+					<div className={styles.content}>{children}</div>
+				</div>
 			</div>
 		</div>
 	)
