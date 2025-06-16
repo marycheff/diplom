@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .button {
 	position: relative;
 	padding: 5px 10px;
@@ -11,7 +13,7 @@
 	margin: 0 1px;
 	user-select: none;
 
-	&:hover {
+	@include hover-style {
 		background-color: $secondary-400;
 	}
 
@@ -29,7 +31,7 @@
 		border: 1px solid $secondary-400;
 		color: #333;
 
-		&:hover {
+		@include hover-style {
 			background-color: $secondary-400;
 			color: $secondary-100;
 		}
@@ -49,7 +51,7 @@
 
 @media (width <= 1024px) {
 	.button {
-		&:hover {
+		@include hover-style {
 			background-color: $secondary-600 !important;
 		}
 

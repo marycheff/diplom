@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .testsData {
 	margin-top: 5px;
 
@@ -46,9 +48,11 @@
 					user-select: none;
 					transition: background-color 0.2s ease;
 
-					// &:hover {
+					// @include hover-style {
+		
 					// 	background-color: $secondary-400;
-					// }
+					// 
+	}
 				}
 			}
 
@@ -63,7 +67,7 @@
 			}
 		}
 	}
-}
+
 
 .sortedHeader {
 	background-color: $secondary-400 !important;

@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .container {
 	display: flex;
 	flex-direction: column;
@@ -49,7 +51,7 @@
 	background: $secondary-600;
 	color: $text-on-accent;
 
-	&:hover {
+	@include hover-style {
 		background: $secondary-400;
 	}
 }

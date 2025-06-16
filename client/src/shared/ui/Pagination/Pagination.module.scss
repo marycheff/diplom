@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .pageWrapper {
 	margin-top: 30px;
 	display: flex;
@@ -41,7 +43,7 @@
 	transition: all 0.3s ease;
 	background-color: $secondary-200;
 
-	&:hover {
+	@include hover-style {
 		background-color: $secondary-400;
 		color: white;
 	}

@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .breadcrumbs {
 	display: flex;
 	align-items: center;
@@ -6,9 +8,8 @@
 	font-size: 14px;
 	color: #6c757d;
 	flex-wrap: wrap;
-
 	border-bottom: 1px solid #dee2e6;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+	box-shadow: 0 2px 4px rgb(0 0 0 / 4%);
 
 	@media (width <= 768px) {
 		font-size: 12px;
@@ -31,7 +32,7 @@
 		text-decoration: none;
 		transition: color 0.2s ease;
 
-		&:hover {
+		@include hover-style {
 			color: #007bff;
 			text-decoration: underline;
 		}

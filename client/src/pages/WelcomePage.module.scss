@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .wrapper {
 	min-height: 100vh;
 	background-color: $background-200;
@@ -48,7 +50,7 @@
 	flex: 1 1 260px;
 	transition: transform 0.2s ease;
 
-	&:hover {
+	@include hover-style {
 		transform: translateY(-4px);
 	}
 
@@ -84,7 +86,7 @@
 		color: white;
 		text-decoration: none;
 
-		&:hover {
+		@include hover-style {
 			text-decoration: underline;
 		}
 	}

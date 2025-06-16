@@ -1,3 +1,4 @@
+@use "@styles/global.scss" as *;
 @use "@styles/variables" as *;
 
 @mixin container {
@@ -211,7 +212,7 @@
 	justify-content: space-between;
 	border: 1px solid $background-600;
 
-	&:hover {
+	@include hover-style {
 		background-color: $background-400;
 	}
 
@@ -248,6 +249,7 @@
 		display: none;
 	}
 }
+
 @mixin redBadge {
 	background-color: $red-400;
 	color: $background-100;
@@ -260,6 +262,7 @@
 		display: none;
 	}
 }
+
 // Специфичные миксины для разных типов сеток
 @mixin testInfoTopGrid {
 	display: grid;

@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .pageWrapper {
 	display: flex;
 	justify-content: center;
@@ -88,7 +90,7 @@
 		height: 16px;
 	}
 
-	&:hover {
+	@include hover-style {
 		color: $text-primary;
 	}
 

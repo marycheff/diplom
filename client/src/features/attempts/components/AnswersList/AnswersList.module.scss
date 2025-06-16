@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .wrapper {
 	display: flex;
 	flex-direction: column;
@@ -63,7 +65,7 @@
 	font-size: 20px;
 	padding: 4px 10px;
 
-	&:hover {
+	@include hover-style {
 		background-color: $red-600;
 	}
 

@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .backButton {
 	background: none;
 	border: none;
@@ -10,7 +12,7 @@
 	align-items: center;
 	margin-right: 8px;
 
-	&:hover {
+	@include hover-style {
 		background-color: #e0f2fe;
 	}
 

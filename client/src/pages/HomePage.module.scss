@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .pageWrapper {
 	display: flex;
 	justify-content: center;
@@ -51,7 +53,7 @@
 	align-items: center;
 	transition: background-color 0.2s ease, transform 0.2s ease;
 
-	&:hover {
+	@include hover-style {
 		background-color: $bg-secondary;
 		transform: translateY(-4px);
 	}

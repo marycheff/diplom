@@ -1,3 +1,4 @@
+@use "@styles/global.scss" as *;
 @use "@styles/common/testInfoStyles" as common;
 
 .container {
@@ -153,7 +154,7 @@
 		stroke-width: 1.5;
 	}
 
-	&:hover {
+	@include hover-style {
 		svg {
 			fill: rgb(236 236 236);
 		}
@@ -201,7 +202,7 @@
 		background-color: $secondary-600;
 		transition: all 0.2s ease-in-out;
 
-		&:hover {
+		@include hover-style {
 			background-color: $secondary-400;
 		}
 	}

@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .iconButton {
 	background: none;
 	border: none;
@@ -21,7 +23,7 @@
 		pointer-events: auto;
 	}
 
-	&:hover {
+	@include hover-style {
 		transform: scale(1.1);
 	}
 

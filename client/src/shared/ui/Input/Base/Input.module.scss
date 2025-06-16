@@ -1,3 +1,4 @@
+@use "@styles/global.scss" as *;
 @use "@styles/variables" as *;
 
 .inputWrapper {
@@ -67,7 +68,7 @@
 	font-size: 16px;
 	color: #999;
 
-	&:hover {
+	@include hover-style {
 		color: #000;
 	}
 }

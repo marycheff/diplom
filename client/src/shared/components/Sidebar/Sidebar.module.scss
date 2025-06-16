@@ -1,9 +1,11 @@
+@use "@styles/global.scss" as *;
+
 .link {
 	text-decoration: none;
 	color: #333;
 	font-weight: bold;
 
-	&:hover {
+	@include hover-style {
 		text-decoration: underline;
 	}
 }

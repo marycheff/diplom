@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .modalOverlay {
 	position: fixed;
 	inset: 0;
@@ -116,7 +118,7 @@
 	color: #666;
 	transition: color 0.2s ease;
 
-	&:hover {
+	@include hover-style {
 		color: #000;
 	}
 }

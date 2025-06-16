@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .container {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -75,7 +77,7 @@
 		background-color: $secondary-600;
 		transition: all 0.2s ease-in-out;
 
-		&:hover {
+		@include hover-style {
 			background-color: $secondary-400;
 		}
 	}

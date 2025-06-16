@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .testsData {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -33,7 +35,7 @@
 	border: 1px solid $border-secondary;
 	transition: transform 0.2s, box-shadow 0.2s;
 
-	&:hover {
+	@include hover-style {
 		box-shadow: 0 6px 16px rgb(0 0 0 / 25%);
 	}
 }
@@ -107,7 +109,7 @@
 	font-weight: 500;
 	transition: background-color 0.2s;
 
-	&:hover {
+	@include hover-style {
 		background-color: $secondary-600;
 	}
 

@@ -1,4 +1,6 @@
 @use "@/styles/common/authStyles" as auth;
+@use "@styles/global.scss" as *;
+
 
 .pageWrapper {
 	@include auth.pageWrapper;
@@ -29,7 +31,7 @@
 		padding: 0;
 		transition: color 0.2s ease;
 
-		&:hover {
+		@include hover-style {
 			text-decoration: underline;
 		}
 	}

@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .questionContent {
 	background-color: #f9f9f9;
 	padding: 20px;
@@ -80,7 +82,7 @@
 		cursor: pointer;
 	}
 
-	&:hover {
+	@include hover-style {
 		background-color: #f0f0f0;
 	}
 }

@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 $primary-color: #2563eb;
 $secondary-color: #6b7280;
 $success-color: #10b981;
@@ -120,7 +122,7 @@ $transition: all 0.3s ease;
 	align-items: center;
 	justify-content: start;
 
-	&:hover {
+	@include hover-style {
 		background-color: #c9302c;
 	}
 

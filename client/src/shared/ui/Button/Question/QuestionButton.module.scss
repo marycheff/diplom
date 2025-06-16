@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .questionButton {
 	background: transparent;
 	border: none;
@@ -7,7 +9,7 @@
 	height: auto;
 	transition: opacity 0.2s ease;
 
-	&:hover {
+	@include hover-style {
 		opacity: 0.7;
 	}
 

@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .toggleButton {
 	display: flex;
 	align-items: center;
@@ -16,7 +18,7 @@
 		font-size: 16px;
 	}
 
-	&:hover {
+	@include hover-style {
 		background-color: #e0e0e0;
 	}
 }
@@ -65,7 +67,7 @@
 	transition: all 0.2s ease;
 	flex: 1;
 
-	&:hover {
+	@include hover-style {
 		background-color: $secondary-400;
 		color: #fff;
 	}
@@ -91,7 +93,7 @@
 	cursor: pointer;
 	transition: border-color 0.3s ease;
 
-	&:hover {
+	@include hover-style {
 		border-color: #666;
 	}
 }
@@ -161,7 +163,7 @@
 	font-size: 12px;
 	transition: background-color 0.3s ease;
 
-	&:hover {
+	@include hover-style {
 		background: rgb(0 0 0 / 70%);
 	}
 }
@@ -196,7 +198,7 @@
 	font-size: 14px;
 	transition: background-color 0.3s ease;
 
-	&:hover {
+	@include hover-style {
 		background-color: #27d;
 	}
 }
@@ -283,7 +285,7 @@
 		height: 16px;
 	}
 
-	&:hover {
+	@include hover-style {
 		color: $text-primary;
 	}
 }

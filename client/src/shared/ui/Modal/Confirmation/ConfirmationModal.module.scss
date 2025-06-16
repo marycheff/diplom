@@ -1,3 +1,5 @@
+@use "@styles/global.scss" as *;
+
 .confirmationForm {
 	display: flex;
 	flex-direction: column;
@@ -28,7 +30,7 @@
 	color: $secondary-400;
 	font-weight: 500;
 
-	&:hover {
+	@include hover-style {
 		background-color: $background-200;
 		color: $secondary-600;
 	}
