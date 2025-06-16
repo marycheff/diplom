@@ -10,7 +10,7 @@
 	width: 100%;
 	max-width: 1200px;
 
-	@media screen and (width <= 768px) {
+	@media (width <= 768px) {
 		margin-bottom: 5px;
 	}
 }
@@ -71,7 +71,7 @@
 		text-align: center;
 	}
 
-	@media screen and (width <= 768px) {
+	@media (width <= 768px) {
 		min-height: 100px;
 		padding: 2rem;
 

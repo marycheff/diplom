@@ -4,7 +4,7 @@
 	align-items: center;
 	min-height: 90vh;
 
-	@media screen and (width <= 768px) {
+	@media (width <= 768px) {
 		min-height: 86vh;
 	}
 }
@@ -13,7 +13,7 @@
 	width: 100%;
 	max-width: 1200px;
 
-	@media screen and (width <= 768px) {
+	@media (width <= 768px) {
 		margin-bottom: 5px;
 	}
 }
@@ -31,7 +31,7 @@
 	grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
 	gap: 2.5rem;
 
-	@media screen and (width <= 768px) {
+	@media (width <= 768px) {
 		grid-template-columns: 1fr;
 	}
 }
@@ -63,7 +63,7 @@
 		text-align: center;
 	}
 
-	@media screen and (width <= 768px) {
+	@media (width <= 768px) {
 		min-height: 0;
 		padding: 2rem;
 

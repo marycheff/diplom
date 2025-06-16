@@ -14,7 +14,10 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 2rem;
+
+	@media (width <= 768px) {
+		min-height: 87vh;
+	}
 }
 
 .emptyState {

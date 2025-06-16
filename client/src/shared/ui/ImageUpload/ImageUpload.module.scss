@@ -84,8 +84,8 @@
 }
 
 .dropZone {
-	border: 2px dashed #ccc;
-	border-radius: 8px;
+	// border: 2px dashed #ccc;
+	// border-radius: 8px;
 	padding: 20px;
 	text-align: center;
 	cursor: pointer;
@@ -128,6 +128,9 @@
 }
 
 .previewBox {
+	border: 2px dashed #ccc;
+	border-radius: 8px;
+	padding: 5px;
 	position: relative;
 	display: inline-block;
 	max-width: 100%;

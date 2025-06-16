@@ -3,11 +3,7 @@ import toast from "react-hot-toast"
 
 export const handleError = (error: unknown): never => {
 	if (error instanceof AxiosError) {
-		const isLikelyCORSError = error.code === "ERR_NETWORK" && !error.response && error.request
-
-		if (isLikelyCORSError) {
-			toast.error("Ошибка CORS: сервер ответил без разрешённых заголовков")
-		} else if (error.code === "ERR_NETWORK") {
+		if (error.code === "ERR_NETWORK") {
 			toast.error("Сервер недоступен. Пожалуйста, проверьте подключение к интернету или повторите попытку позже")
 		} else if (error.code === "ECONNABORTED") {
 			toast.error("Превышено время ожидания ответа от сервера. Пожалуйста, повторите попытку")

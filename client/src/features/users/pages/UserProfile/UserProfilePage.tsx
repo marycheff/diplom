@@ -123,7 +123,8 @@ const UserProfilePage = () => {
 									<span className={userFields.isActivated ? styles.activated : styles.notActivated}>
 										{userFields.isActivated ? "Активирована" : "Не активирована"}
 									</span>
-									{!userFields.isActivated && <span>(Проверьте почтовый ящик)</span>}
+
+									{!userFields.isActivated && <span className={styles.checkEmailNote}>(Проверьте почтовый ящик)</span>}
 								</div>
 							)}
 

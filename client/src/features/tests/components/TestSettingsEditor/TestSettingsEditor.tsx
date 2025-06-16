@@ -162,7 +162,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 						<div className={styles.selectWithQuestion}>
 							<Select
 								register={register}
-								label="Разрешить повторное прохождение:"
+								label="Повторное прохождение:"
 								name="allowRetake"
 								options={[
 									{ value: "Да", label: "Да" },
@@ -172,24 +172,24 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 								disabled={watchedValues.requireRegistration !== "Да"}
 							/>
 							<QuestionButton tooltip="Эта настройка доступна только при включенной опции 'Требуется регистрация'." />
-							<div className={styles.limitInput}>
-								<ValidatedInput
-									placeholder="Лимит"
-									type="number"
-									className={styles.timeInput}
-									name="retakeLimit"
-									trigger={trigger}
-									register={register}
-									setValue={setValue}
-									errors={errors.retakeLimit}
-									disabled={watchedValues.allowRetake !== "Да"}
-									validationRules={{
-										min: { value: 1, message: "Минимум 1 раз" },
-										max: { value: 20, message: "Максимум 20 раз" },
-										validate: (value) => !isNaN(Number(value)) || "Некорректное значение",
-									}}
-								/>
-							</div>
+						</div>
+						<div className={styles.limitInput}>
+							<ValidatedInput
+								placeholder="Лимит"
+								type="number"
+								className={styles.timeInput}
+								name="retakeLimit"
+								trigger={trigger}
+								register={register}
+								setValue={setValue}
+								errors={errors.retakeLimit}
+								disabled={watchedValues.allowRetake !== "Да"}
+								validationRules={{
+									min: { value: 1, message: "Минимум 1 раз" },
+									max: { value: 20, message: "Максимум 20 раз" },
+									validate: (value) => !isNaN(Number(value)) || "Некорректное значение",
+								}}
+							/>
 						</div>
 					</div>
 

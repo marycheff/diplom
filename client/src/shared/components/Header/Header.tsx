@@ -19,7 +19,7 @@ const Header = () => {
 							onClick={() => navigate(ROUTES.MY_ATTEMPTS)}
 							variant="secondary"
 						>
-							Мои результаты
+							Мои попытки
 						</Button>
 					</>
 				) : (

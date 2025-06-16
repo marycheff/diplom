@@ -10,10 +10,9 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
-
-	.limitInput {
-		width: auto;
-	}
+}
+.limitInput {
+	max-width: 300px;
 }
 
 .section:last-child {

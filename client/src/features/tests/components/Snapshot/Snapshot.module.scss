@@ -88,7 +88,7 @@
 	gap: 10px;
 	margin-left: 40px;
 
-	@media screen and (width <= 576px) {
+	@media (width <= 576px) {
 		margin-left: 10px;
 	}
 }

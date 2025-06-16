@@ -76,8 +76,8 @@ const QuestionItem: FC<QuestionItemProps> = ({ id, order, question, expanded, on
 					</Button>
 					<Button
 						onClick={onToggle}
-						tooltip={expanded ? "Свернуть" : "Развернуть"}
 						className={styles.toggleButton}
+						tooltip={expanded ? "Свернуть" : "Развернуть"}
 					>
 						{expanded ? <FaAngleUp /> : <FaAngleDown />}
 					</Button>

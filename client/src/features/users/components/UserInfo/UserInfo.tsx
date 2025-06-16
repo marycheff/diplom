@@ -122,14 +122,12 @@ const UserInfo = () => {
 						<div className={styles.infoRow}>
 							<span className={styles.label}>Статус активации</span>
 							{user.isActivated ? (
-								<span className={styles.value}>
-									активирован
-								</span>
+								<span className={styles.value}>активирован</span>
 							) : (
 								<span className={styles.emptyField}>не активирован</span>
 							)}
 						</div>
-						<div>
+						<div className={styles.infoRow}>
 							{user.isBlocked ? (
 								<Button
 									onClick={() => handleUnblockUser()}

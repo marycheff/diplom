@@ -392,12 +392,20 @@ export const Sidebar = ({ onAnimationStart, onAnimationEnd }: SidebarProps) => {
 								{/* <span>Главная</span> */}
 							</Link>
 							<Link
+								to={ROUTES.ADMIN_USERS}
+								className={`${styles.mobileNavItem} ${currentPath.startsWith(ROUTES.ADMIN_USERS) ? styles.active : ""}`}
+							>
+								<FiUsers />
+								{/* <span>Пользователи</span> */}
+							</Link>
+							<Link
 								to={ROUTES.ADMIN_TESTS}
 								className={`${styles.mobileNavItem} ${currentPath.startsWith(ROUTES.ADMIN_TESTS) ? styles.active : ""}`}
 							>
 								<FiFileText />
 								{/* <span>Тесты</span> */}
 							</Link>
+
 							<Link
 								to={ROUTES.ADMIN_ALL_ATTEMPTS}
 								className={`${styles.mobileNavItem} ${

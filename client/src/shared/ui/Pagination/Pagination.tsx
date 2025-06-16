@@ -22,7 +22,7 @@ const Pagination: FC<PaginationProps> = ({ totalPages, page, changePage }) => {
 					disabled={page === 1 || totalPages === 0}
 				>
 					<span className={styles.buttonSymbol}>{"<<"}</span>
-					<span className={styles.buttonText}>{"В начало"}</span>
+					{/* <span className={styles.buttonText}>{"В начало"}</span> */}
 				</Button>
 
 				{/* Кнопка "Назад" */}
@@ -32,7 +32,7 @@ const Pagination: FC<PaginationProps> = ({ totalPages, page, changePage }) => {
 					disabled={page === 1 || totalPages === 0}
 				>
 					<span className={styles.buttonSymbol}>{"<"}</span>
-					<span className={styles.buttonText}>{"Назад"}</span>
+					{/* <span className={styles.buttonText}>{"Назад"}</span> */}
 				</Button>
 			</div>
 
@@ -66,7 +66,7 @@ const Pagination: FC<PaginationProps> = ({ totalPages, page, changePage }) => {
 					onClick={() => changePage(page + 1)}
 					disabled={page === totalPages || totalPages === 0}
 				>
-					<span className={styles.buttonText}>{"Вперед"}</span>
+					{/* <span className={styles.buttonText}>{"Вперед"}</span> */}
 					<span className={styles.buttonSymbol}>{">"}</span>
 				</Button>
 
@@ -76,7 +76,7 @@ const Pagination: FC<PaginationProps> = ({ totalPages, page, changePage }) => {
 					onClick={() => changePage(totalPages)}
 					disabled={page === totalPages || totalPages === 0}
 				>
-					<span className={styles.buttonText}>{"В конец"}</span>
+					{/* <span className={styles.buttonText}>{"В конец"}</span> */}
 					<span className={styles.buttonSymbol}>{">>"}</span>
 				</Button>
 			</div>

@@ -4,6 +4,10 @@
 	align-items: center;
 	min-height: 95vh;
 	position: relative;
+
+	@media (width <= 768px) {
+		min-height: 87vh;
+	}
 }
 
 .container {
@@ -12,6 +16,7 @@
 	border-radius: 1.25rem;
 	box-shadow: $shadow-medium;
 	text-align: center;
+	padding: 10px;
 }
 
 .icon {
@@ -50,6 +55,10 @@
 	padding: 20px 40px;
 	border-radius: 16px;
 	box-shadow: $shadow-medium;
+
+	@media (width <= 768px) {
+		padding: 15px 20px;
+	}
 }
 
 .tabHeaders {
@@ -82,6 +91,7 @@
 	&:hover {
 		color: $text-primary;
 	}
+
 	@media (width <= 768px) {
 		font-size: 0.875rem;
 		gap: 0.25rem;

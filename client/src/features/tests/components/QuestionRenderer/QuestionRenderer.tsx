@@ -139,8 +139,8 @@ const QuestionRenderer: FC<QuestionRendererProps> = memo(
 				)}
 				<div className={styles.questionContent}>
 					<div className={styles.questionHeader}>
-						<h3>{questionTitle}</h3>
 						<h4 className={styles.questionType}>{QuestionTypeLabels[question.type].toLowerCase()}</h4>
+						<h3>{questionTitle}</h3>
 					</div>
 
 					<div className={styles.answerOptions}>

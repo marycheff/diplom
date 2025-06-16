@@ -2,12 +2,17 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: $section-padding;
+	min-height: 95vh;
+	position: relative;
+	@media (width <= 768px) {
+		min-height: 87vh;
+	}
 }
 
 .content {
 	width: 100%;
 	max-width: 1200px;
+	margin-top: -20vh;
 }
 
 .title {
@@ -16,6 +21,11 @@
 	margin-bottom: 3rem;
 	text-align: center;
 	color: $text-primary;
+
+	@media (width <= 768px) {
+		font-size: 1.5rem;
+		margin-bottom: 2rem;
+	}
 }
 
 .container {

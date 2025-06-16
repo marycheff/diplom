@@ -6,9 +6,13 @@
 }
 
 .title {
-	font-size: 1.25rem;
+	font-size: 20px;
 	font-weight: bold;
 	margin-bottom: 8px;
+
+	@media (width <= 768px) {
+		font-size: 16px;
+	}
 }
 
 .answerRow {
@@ -16,37 +20,63 @@
 	align-items: center;
 	gap: 12px;
 	border-radius: 8px;
+
+	@media (width <= 768px) {
+		gap: 5px;
+	}
 }
 
 .input {
 	flex-grow: 1;
 	min-width: 200px;
+
+	@media (width <= 768px) {
+		font-size: 14px;
+	}
 }
 
 .checkboxWrapper {
 	display: flex;
 	align-items: center;
 	gap: 6px;
-	font-size: 0.9rem;
+	font-size: 14px;
 	user-select: none;
+
+	@media (width <= 768px) {
+		gap: 0px;
+		font-size: 12px;
+	}
 }
 
 .checkboxLabel {
 	white-space: nowrap;
+
+	@media (width <= 768px) {
+		display: none;
+	}
 }
 
 .deleteButton {
 	background-color: $red-400;
 	color: white;
 	border-radius: 4px;
-	font-size: 1.25rem;
+	font-size: 20px;
 	padding: 4px 10px;
 
 	&:hover {
 		background-color: $red-600;
 	}
+
+	@media (width <= 768px) {
+		font-size: 16px;
+		padding: 3px 8px;
+	}
 }
 
 .addButton {
 	align-self: flex-start;
+
+	@media (width <= 768px) {
+		font-size: 14px;
+	}
 }

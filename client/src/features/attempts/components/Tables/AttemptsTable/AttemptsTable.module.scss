@@ -39,6 +39,12 @@
 				background-color: $secondary-600;
 				color: white;
 				font-weight: bold;
+
+				&.sortableHeader {
+					cursor: pointer;
+					user-select: none;
+					transition: background-color 0.2s ease;
+				}
 			}
 
 			td {
@@ -57,4 +63,12 @@
 .emptyField {
 	color: $secondary-400;
 	font-style: italic;
+}
+
+.sortedHeader {
+	background-color: $secondary-400 !important;
+}
+
+.sortIcon {
+	margin-right: 4px;
 }
