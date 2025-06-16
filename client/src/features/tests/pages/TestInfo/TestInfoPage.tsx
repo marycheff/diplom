@@ -347,7 +347,7 @@ const TestInfoPage = () => {
 							<div className={styles.infoRow}>
 								<span className={styles.label}>Изображение</span>
 								<span className={styles.value}>
-									{test.image ? <span>Есть</span> : <span className={styles.emptyField}>Нет</span>}
+									{test.image ? <span>есть</span> : <span className={styles.emptyField}>нет</span>}
 								</span>
 							</div>
 
@@ -556,7 +556,7 @@ const TestInfoPage = () => {
 													className={`${styles.answerItem} ${answer.isCorrect ? styles.correctAnswer : ""}`}
 												>
 													<span className={styles.answerText}>{answer.text}</span>
-													{answer.isCorrect && <span className={styles.correctBadge}>Правильный</span>}
+													{/* {answer.isCorrect && <span className={styles.correctBadge}>Правильный</span>} */}
 												</div>
 											))}
 										</div>

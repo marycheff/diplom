@@ -27,6 +27,7 @@ const LoginPage = () => {
 		formState: { errors },
 		setValue,
 		trigger,
+		watch,
 	} = useForm<LoginFormData>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
@@ -42,6 +43,7 @@ const LoginPage = () => {
 		const returnUrl = searchParams.get("returnUrl")
 		navigate(returnUrl || ROUTES.HOME)
 	}
+	const email = watch("email")
 
 	return (
 		<div className={styles.pageWrapper}>
@@ -96,7 +98,7 @@ const LoginPage = () => {
 
 					{isResetPasswordVisible && (
 						<div className={styles.resetPasswordForm}>
-							<ResetPasswordForm />
+							<ResetPasswordForm initialEmail={email} />
 						</div>
 					)}
 				</div>

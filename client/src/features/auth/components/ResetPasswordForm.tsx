@@ -6,117 +6,99 @@ import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 import { FC, useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
+import styles from "./ResetPasswordForm.module.scss"
+interface ResetPasswordFormProps {
+	initialEmail?: string
+}
 
-interface EmailFormData {
+interface FormData {
 	email: string
-}
-
-interface CodeFormData {
 	reset_code: string
-}
-
-interface ResetPasswordFormData {
 	newPassword: string
 }
 
-const ResetPasswordForm: FC = () => {
-	const [email, setEmail] = useState("")
-	const [code, setCode] = useState("")
-	const [isCodeSent, setIsCodeSent] = useState(false)
-	const [isCodeVerified, setIsCodeVerified] = useState(false)
+const ResetPasswordForm: FC<ResetPasswordFormProps> = ({ initialEmail }) => {
+	const [step, setStep] = useState<"email" | "code" | "password">("email")
 	const [secondsLeft, setSecondsLeft] = useState(0)
 
 	const { isLoading, requestResetCode, verifyResetCode, resetPassword } = useResetPasswordStore()
 	const { login } = useAuthStore()
 
 	const {
-		register: registerPassword,
-		formState: { errors: passwordErrors },
-		setValue: setPasswordValue,
-		handleSubmit: handlePasswordSubmit,
-		trigger: passwordTrigger,
-	} = useForm<ResetPasswordFormData>({
+		register,
+		handleSubmit,
+		setValue,
+		trigger,
+		formState: { errors },
+		getValues,
+		reset,
+	} = useForm<FormData>({
 		mode: "onBlur",
 		reValidateMode: "onChange",
 		shouldFocusError: false,
+		defaultValues: {
+			email: initialEmail || "",
+			reset_code: "",
+			newPassword: "",
+		},
 	})
 
-	const {
-		register: registerEmail,
-		formState: { errors: emailErrors },
-		setValue: setEmailValue,
-		handleSubmit: handleEmailSubmit,
-		reset: emailReset,
-		trigger: emailTrigger,
-	} = useForm<EmailFormData>({
-		mode: "onBlur",
-		reValidateMode: "onChange",
-		shouldFocusError: false,
-	})
+	// Вставка initialEmail в поле
+	useEffect(() => {
+		if (initialEmail) {
+			setValue("email", initialEmail)
+		}
+	}, [initialEmail, setValue])
 
-	const {
-		register: registerCode,
-		formState: { errors: codeErrors },
-		setValue: setCodeValue,
-		handleSubmit: handleCodeSubmit,
-		trigger: codeTrigger,
-	} = useForm<CodeFormData>({
-		mode: "onBlur",
-		reValidateMode: "onChange",
-		shouldFocusError: false,
-	})
-
-	// Таймер для блокировки кнопки повторной отправки
+	// Таймер запроса кода
 	useEffect(() => {
 		let timer: NodeJS.Timeout
 		if (secondsLeft > 0) {
-			timer = setTimeout(() => setSecondsLeft(secondsLeft - 1), 1000)
+			timer = setTimeout(() => setSecondsLeft((prev) => prev - 1), 1000)
 		}
 		return () => clearTimeout(timer)
 	}, [secondsLeft])
 
-	const onEmailSubmit: SubmitHandler<EmailFormData> = async (data) => {
-		setEmail(data.email)
-		await requestResetCode(data.email)
-		setIsCodeSent(true)
-		setSecondsLeft(60) // Запуск таймера на 1 минуту
-		toast.success("Код отправлен на ваш email")
-		emailReset()
-	}
-
-	const onCodeSubmit: SubmitHandler<CodeFormData> = async (data) => {
-		setCode(data.reset_code)
-		await verifyResetCode(email, data.reset_code)
-		setIsCodeVerified(true)
-		toast.success("Код подтвержден, введите новый пароль")
-	}
-
-	const handleSendCode = async () => {
+	const onEmailSubmit: SubmitHandler<FormData> = async ({ email }) => {
 		await requestResetCode(email)
-		setSecondsLeft(60) // Запуск таймера на 1 минуту
+		setSecondsLeft(60)
+		setStep("code")
 		toast.success("Код отправлен на ваш email")
 	}
 
-	const onPasswordSubmit: SubmitHandler<ResetPasswordFormData> = async (data) => {
-		await resetPassword(email, code, data.newPassword)
+	const onCodeSubmit: SubmitHandler<FormData> = async ({ email, reset_code }) => {
+		await verifyResetCode(email, reset_code)
+		setStep("password")
+		toast.success("Код подтвержден")
+	}
+
+	const onPasswordSubmit: SubmitHandler<FormData> = async ({ email, reset_code, newPassword }) => {
+		await resetPassword(email, reset_code, newPassword)
 		toast.success("Пароль успешно изменен")
-		await login(email, data.newPassword)
+		await login(email, newPassword)
+		reset()
+	}
+
+	const handleResendCode = async () => {
+		const email = getValues("email")
+		await requestResetCode(email)
+		setSecondsLeft(60)
+		toast.success("Код повторно отправлен")
 	}
 
 	return (
 		<div>
-			<h2>Сброс пароля</h2>
-			<br />
-			{!isCodeSent ? (
-				<form onSubmit={handleEmailSubmit(onEmailSubmit)}>
+			<h2 className={styles.title}>Сброс пароля</h2>
+			{step === "email" && (
+				<form onSubmit={handleSubmit(onEmailSubmit)}>
 					<ValidatedInput
 						name="email"
 						type="email"
 						placeholder="Email"
-						trigger={emailTrigger}
-						register={registerEmail}
-						setValue={setEmailValue}
-						errors={emailErrors.email}
+						register={register}
+						setValue={setValue}
+						trigger={trigger}
+						errors={errors.email}
 						validationRules={emailValidationRules}
 					/>
 					<Button
@@ -126,15 +108,17 @@ const ResetPasswordForm: FC = () => {
 						Отправить код
 					</Button>
 				</form>
-			) : !isCodeVerified ? (
-				<form onSubmit={handleCodeSubmit(onCodeSubmit)}>
+			)}
+
+			{step === "code" && (
+				<form onSubmit={handleSubmit(onCodeSubmit)}>
 					<ValidatedInput
 						name="reset_code"
 						placeholder="Код с email"
-						register={registerCode}
-						setValue={setCodeValue}
-						trigger={codeTrigger}
-						errors={codeErrors.reset_code}
+						register={register}
+						setValue={setValue}
+						trigger={trigger}
+						errors={errors.reset_code}
 						validationRules={{
 							required: "Код подтверждения обязателен",
 							pattern: {
@@ -145,7 +129,7 @@ const ResetPasswordForm: FC = () => {
 					/>
 					<Button
 						type="button"
-						onClick={handleSendCode}
+						onClick={handleResendCode}
 						disabled={secondsLeft > 0 || isLoading}
 					>
 						{secondsLeft > 0 ? `Запросить новый (${secondsLeft})` : "Запросить новый"}
@@ -157,17 +141,17 @@ const ResetPasswordForm: FC = () => {
 						Подтвердить код
 					</Button>
 				</form>
-			) : (
-				<form onSubmit={handlePasswordSubmit(onPasswordSubmit)}>
+			)}
+
+			{step === "password" && (
+				<form onSubmit={handleSubmit(onPasswordSubmit)}>
 					<PasswordInput
 						name="newPassword"
-						register={registerPassword}
-						setValue={setPasswordValue}
-						errors={passwordErrors.newPassword}
+						register={register}
+						setValue={setValue}
+						trigger={trigger}
+						errors={errors.newPassword}
 						placeholder="Новый пароль"
-						trigger={passwordTrigger}
-
-						// trigger={passwordTrigger}
 					/>
 					<Button
 						type="submit"

@@ -6,9 +6,9 @@
 	font-size: 14px;
 	color: #6c757d;
 	flex-wrap: wrap;
-	// box-shadow: $shadow-medium;
 
-
+	border-bottom: 1px solid #dee2e6;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 
 	@media (width <= 768px) {
 		font-size: 12px;
