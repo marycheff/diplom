@@ -1,6 +1,6 @@
 import { ApiError } from "@/exceptions"
 import { attemptService } from "@/services"
-
+import { TestAttemptStatus } from "@prisma/client"
 import { NextFunction, Request, Response } from "express"
 
 class AttemptController {
@@ -65,6 +65,24 @@ class AttemptController {
 			res.status(200).json(attempt)
 		} catch (error) {
 			next(error)
+		}
+	}
+	async getFilteredAttempts(req: Request, res: Response, next: NextFunction) {
+		try {
+			const page = parseInt(req.query.page as string) || 1
+			const limit = parseInt(req.query.limit as string) || 10
+			const status = req.query.status as TestAttemptStatus | undefined
+
+			if (page < 1 || limit < 1) {
+				throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
+			}
+
+			const filters = { status }
+			const attempts = await attemptService.getFilteredAttempts(page, limit, filters)
+
+			res.status(200).json(attempts)
+		} catch (e) {
+			next(e)
 		}
 	}
 
