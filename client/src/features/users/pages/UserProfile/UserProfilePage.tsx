@@ -30,6 +30,7 @@ const UserProfilePage = () => {
 	const [isFormChanged, setIsFormChanged] = useState(false)
 	const [isLoadingFields, setIsLoadingFields] = useState(false)
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+	const orderedFieldKeys = ["surname", "name", "patronymic"]
 
 	// Получение данных пользователя
 	async function getUserInfo() {
@@ -144,10 +145,8 @@ const UserProfilePage = () => {
 						<h2>Личная информация</h2>
 						<div className={styles.personalInfo}>
 							<div className={styles.fields}>
-								{Object.keys(userFields).map(
+								{orderedFieldKeys.map(
 									(field) =>
-										field !== "email" &&
-										field !== "isActivated" &&
 										userFields[field] !== undefined && (
 											<EditableInput
 												name={field}

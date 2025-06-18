@@ -18,6 +18,7 @@ const AttemptFilters: FC<AttemptFiltersProps> = ({ filters, onFilterChange, onRe
 		{ value: "", label: "Все" },
 		{ value: "IN_PROGRESS", label: "В процессе" },
 		{ value: "COMPLETED", label: "Завершена" },
+		{ value: "EXPIRED", label: "Истекла" },
 	]
 
 	const handleStatusChange = (value: string) => {

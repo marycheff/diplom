@@ -48,16 +48,17 @@ const UsersTable: FC<UsersTableProps> = ({ users = [], total }) => {
 				cell: (info) => info.getValue(),
 				sortingFn: "basic",
 			}),
-			columnHelper.accessor("name", {
-				header: "Имя",
-				cell: (info) => info.getValue() || "—",
-				sortingFn: "basic",
-			}),
 			columnHelper.accessor("surname", {
 				header: "Фамилия",
 				cell: (info) => info.getValue() || "—",
 				sortingFn: "basic",
 			}),
+			columnHelper.accessor("name", {
+				header: "Имя",
+				cell: (info) => info.getValue() || "—",
+				sortingFn: "basic",
+			}),
+
 			columnHelper.accessor("patronymic", {
 				header: "Отчество",
 				cell: (info) => info.getValue() || "—",
