@@ -1,8 +1,8 @@
 import { AttemptFilterParams, AttemptStatus } from "@/shared/types"
-import { Button } from "@/shared/ui/Button"
 import Select from "@/shared/ui/Select/Select"
 import { FC } from "react"
 import { useForm } from "react-hook-form"
+import { RxReset } from "react-icons/rx"
 import styles from "./AttemptFilters.module.scss"
 
 interface AttemptFiltersProps {
@@ -25,6 +25,7 @@ const AttemptFilters: FC<AttemptFiltersProps> = ({ filters, onFilterChange, onRe
 			status: value !== "" ? (value as AttemptStatus) : undefined,
 		})
 	}
+	const isFilterApplied = !!filters.status
 	return (
 		<div className={styles.filtersContainer}>
 			<div className={styles.filterGroup}>
@@ -39,12 +40,16 @@ const AttemptFilters: FC<AttemptFiltersProps> = ({ filters, onFilterChange, onRe
 				/>
 			</div>
 
-			<Button
-				onClick={onResetFilters}
-				className={styles.resetButton}
-			>
-				Сбросить фильтры
-			</Button>
+			{isFilterApplied && (
+				<button
+					type="button"
+					className={styles.resetIconButton}
+					onClick={onResetFilters}
+					aria-label="Сбросить фильтры"
+				>
+					<RxReset size={20} />
+				</button>
+			)}
 		</div>
 	)
 }

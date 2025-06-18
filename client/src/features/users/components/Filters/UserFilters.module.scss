@@ -1,58 +1,74 @@
-// UserFilters.module.scss
 .filtersContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 24px;
-  align-items: flex-end;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-bottom: 24px;
+	align-items: flex-end;
 }
 
 .filterGroup {
-  min-width: 180px;
+	min-width: 180px;
 }
 
 .filterLabel {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 8px;
-  color: var(--text-secondary);
+	display: block;
+	font-size: 14px;
+	font-weight: 500;
+	margin-bottom: 8px;
+	color: var(--text-secondary);
 }
 
 .filterSelect {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background-color: var(--background-primary);
-  color: var(--text-primary);
-  font-size: 14px;
-  
-  &:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
-  }
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid var(--border-color);
+	border-radius: 4px;
+	background-color: var(--background-primary);
+	color: var(--text-primary);
+	font-size: 14px;
+
+	&:focus {
+		outline: none;
+		border-color: var(--primary-color);
+		box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+	}
 }
 
-.resetButton {
-  margin-left: auto;
-  height: 40px;
-  align-self: flex-end;
+.resetIconButton {
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	color: var(--text-secondary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	// height: 40px;
+
+	&:hover {
+		color: var(--primary-color);
+	}
+
+	svg {
+		// pointer-events: none;
+		// margin-bottom: -4px;
+		margin-top: -35px;
+	}
 }
 
-@media (max-width: 768px) {
-  .filtersContainer {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .filterGroup {
-    width: 100%;
-  }
-  
-  .resetButton {
-    align-self: stretch;
-    width: 100%;
-  }
-}
+// @media (max-width: 768px) {
+// 	.filtersContainer {
+// 		flex-direction: column;
+// 		align-items: stretch;
+// 	}
+
+// 	.filterGroup {
+// 		width: 100%;
+// 	}
+
+// 	.resetButton {
+// 		align-self: stretch;
+// 		width: 100%;
+// 	}
+
+// }
