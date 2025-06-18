@@ -1,9 +1,10 @@
 import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
+import { ROUTES } from "@/router/paths"
 import { testTopicValidationRules } from "@/shared/types/utils/validationRules"
 import { Button } from "@/shared/ui/Button"
 import { ValidatedInput } from "@/shared/ui/Input"
-import { ROUTES } from "@/router/paths"
+import Loader from "@/shared/ui/Loader/Loader"
 import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -64,28 +65,33 @@ const GenerateTestForm = () => {
 		<>
 			<div className={styles.container}>
 				<form onSubmit={handleSubmit(onSubmit)}>
-					<ValidatedInput
-						trigger={trigger}
-						clearable
-						name="topic"
-						placeholder="Тема (обязательно)"
-						register={register}
-						setValue={setValue}
-						errors={errors.topic}
-						validationRules={testTopicValidationRules}
-						disabled={isGenerating}
-					/>
+					{isGenerating ? (
+						<Loader />
+					) : (
+						<>
+							<ValidatedInput
+								trigger={trigger}
+								clearable
+								name="topic"
+								placeholder="Тема (обязательно)"
+								register={register}
+								setValue={setValue}
+								errors={errors.topic}
+								validationRules={testTopicValidationRules}
+								disabled={isGenerating}
+							/>
 
-					<Select
-						name="numOfQuestions"
-						options={questionOptions}
-						register={register}
-						setValue={setValue}
-						label="Количество вопросов в тесте"
-						disabled={isGenerating}
-						value={"5"}
-					/>
-
+							<Select
+								name="numOfQuestions"
+								options={questionOptions}
+								register={register}
+								setValue={setValue}
+								label="Количество вопросов в тесте"
+								disabled={isGenerating}
+								value={"5"}
+							/>
+						</>
+					)}
 					<Button
 						type="submit"
 						className={styles.formButton}

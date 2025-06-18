@@ -6,9 +6,16 @@ interface LoaderProps {
 	text?: string
 	fullScreen?: boolean
 	centeredInParent?: boolean
+	transparentOverlay?: boolean
 }
 
-const Loader: FC<LoaderProps> = ({ delay = 100, text = "", fullScreen = false, centeredInParent = false }) => {
+const Loader: FC<LoaderProps> = ({
+	delay = 100,
+	text = "",
+	fullScreen = false,
+	centeredInParent = false,
+	transparentOverlay = false,
+}) => {
 	const [showLoader, setShowLoader] = useState(false)
 
 	if (delay > 0) {
@@ -23,7 +30,13 @@ const Loader: FC<LoaderProps> = ({ delay = 100, text = "", fullScreen = false, c
 		}
 	}
 
-	const className = fullScreen ? styles.loaderOverlay : centeredInParent ? styles.loaderAbsolute : styles.loaderRelative
+	const className = fullScreen
+		? transparentOverlay
+			? `${styles.loaderOverlay} ${styles.transparent}`
+			: styles.loaderOverlay
+		: centeredInParent
+		? styles.loaderAbsolute
+		: styles.loaderRelative
 
 	return (
 		<div className={className}>

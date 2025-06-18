@@ -111,6 +111,7 @@
 
 	@include hover-style {
 		background-color: $secondary-600;
+		text-decoration: none;
 	}
 
 	@media (width <= 768px) {
