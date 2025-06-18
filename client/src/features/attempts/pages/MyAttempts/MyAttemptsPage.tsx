@@ -12,9 +12,9 @@ import Select from "@/shared/ui/Select/Select"
 import { TABLE_LIMIT } from "@/shared/utils/constants"
 import { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { PiSmileySadLight } from "react-icons/pi"
 import { useNavigate } from "react-router-dom"
 import styles from "./MyAttemptsPage.module.scss"
-import { PiSmileySadLight } from "react-icons/pi"
 
 type ViewMode = "table" | "cards"
 
@@ -87,7 +87,7 @@ const MyAttemptsPage = () => {
 	const totalPages = total !== null ? Math.ceil(total / limit) : 0
 	const shouldShowPagination = totalPages > 0 && page <= totalPages
 	const emptyAttemptsPage = total === 0 && page === 1 && isDataLoaded && !isFetching
-	const { register } = useForm()
+	const { register, setValue } = useForm()
 	return (
 		<>
 			{emptyAttemptsPage ? (
@@ -138,6 +138,7 @@ const MyAttemptsPage = () => {
 													]}
 													value={viewMode}
 													onChange={handleViewModeChange}
+													setValue={setValue}
 												/>
 											</div>
 										)}
@@ -168,7 +169,6 @@ const MyAttemptsPage = () => {
 			)}
 		</>
 	)
-
 }
 
 export default MyAttemptsPage

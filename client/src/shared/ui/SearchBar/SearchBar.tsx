@@ -2,10 +2,15 @@ import { InputProps } from "@/shared/ui/Input"
 import { FC, KeyboardEvent } from "react"
 import { FiSearch } from "react-icons/fi"
 import styles from "./SearchBar.module.scss"
+import { Button } from "@/shared/ui/Button"
 
 export interface SearchBarProps extends InputProps {
 	handleSearch: () => void
 	onClearSearch: () => void
+	onReset?: () => void
+	resetButtonLabel?: string
+	resetButtonDisabled?: boolean
+	isSearchActive?: boolean // Новое свойство
 }
 
 const SearchBar: FC<SearchBarProps> = ({
@@ -13,6 +18,10 @@ const SearchBar: FC<SearchBarProps> = ({
 	onChange,
 	handleSearch,
 	onClearSearch,
+	onReset,
+	resetButtonLabel = "Сбросить",
+	resetButtonDisabled = false,
+	isSearchActive = false, // Значение по умолчанию
 	placeholder = "Поиск",
 	...rest
 }) => {
@@ -54,6 +63,17 @@ const SearchBar: FC<SearchBarProps> = ({
 			>
 				<FiSearch size={18} />
 			</button>
+
+			{/* Кнопка сброса теперь отображается только при активном поиске */}
+			{onReset && isSearchActive && (
+				<Button
+					onClick={onReset}
+					disabled={resetButtonDisabled}
+					className={styles.resetButton}
+				>
+					{resetButtonLabel}
+				</Button>
+			)}
 		</div>
 	)
 }

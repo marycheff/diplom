@@ -1,12 +1,12 @@
 import styles from "@/features/tests/pages/AllTests/AllTestsPage.module.scss"
+import UserFilters from "@/features/users/components/Filters/UserFilters"
 import UsersTable from "@/features/users/components/Tables/UsersTable/UsersTable"
 import { useUserStore } from "@/features/users/store/useUserStore"
 import { ROUTES } from "@/router/paths"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
-import { useCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
-import { UserDTO, UsersListDTO } from "@/shared/types"
+import { UserDTO, UserFilterParams } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
 import Pagination from "@/shared/ui/Pagination/Pagination"
 import SearchBar from "@/shared/ui/SearchBar/SearchBar"
@@ -17,69 +17,89 @@ import { Link, useLocation, useNavigate } from "react-router-dom"
 
 const AllUsersPage = () => {
 	const [users, setUsers] = useState<UserDTO[]>([])
-	const { getUsers, searchUser, isFetching } = useUserStore()
+	const { filterUsers, searchUser, isFetching } = useUserStore()
 	const [total, setTotal] = useState<number | null>(null)
 	const [limit] = useState<number>(TABLE_LIMIT)
 	const [page, setPage] = useState<number>(1)
 	const [searchQuery, setSearchQuery] = useState<string>("")
+	const [filters, setFilters] = useState<UserFilterParams>({})
+	const [lastUpdateDate, setLastUpdateDate] = useState<Date | null>(null)
 	const navigate = useNavigate()
 	const location = useLocation()
-	const { getCacheKey, getCachedData, saveToCache, clearCache, cacheVersion, lastUpdateDate } = useCache<UsersListDTO>(
-		useUserStore,
-		"users"
-	)
-	const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
+	const { handleResetSearch: resetSearch } = useSearch()
+
 	const params = new URLSearchParams(location.search)
+
+	const isFilterActive = Object.values(filters).some((value) => value !== undefined && value !== null)
+
 	const fetchData = useCallback(
-		async (currentPage: number, query?: string) => {
+		async (currentPage: number, query?: string, filterParams?: UserFilterParams) => {
 			if (isFetching) return
 
-			const cacheKey = getCacheKey(currentPage, query)
-			const cachedData = getCachedData(cacheKey)
-
-			if (cachedData) {
-				setUsers(cachedData.users)
-				setTotal(cachedData.total)
-				return
-			}
 			let data
-			if (query) {
+			if (query && !isFilterActive) {
+				// Поиск возможен только при отсутствии фильтров
 				data = await searchUser(query, currentPage, limit)
 			} else {
-				data = await getUsers(currentPage, limit)
+				
+				data = await filterUsers({
+					page: currentPage,
+					limit,
+					...filterParams,
+				})
 			}
+
 			if (data) {
 				setUsers(data.users)
 				setTotal(data.total)
-				saveToCache(cacheKey, data)
+				setLastUpdateDate(new Date())
 			}
 		},
-		[getCacheKey, getCachedData, saveToCache, searchUser, getUsers, limit]
+		[filterUsers, searchUser, limit, isFetching, isFilterActive]
 	)
 
 	useEffect(() => {
 		const query = params.get("query") || ""
-		let pageParam = parseInt(params.get("page") || "1", 10)
-		// if (!params.has("page")) {
-		// 	params.set("page", "1")
-		// 	navigate({ search: params.toString() })
-		// 	pageParam = 1
-		// }
-		fetchData(pageParam, query || undefined)
-		setSearchQuery(query)
+		const role = params.get("role") || undefined
+		const isActivated = params.get("isActivated")
+		const isBlocked = params.get("isBlocked")
+
+		const filterParams: UserFilterParams = {
+			role,
+			isActivated: isActivated !== null ? isActivated === "true" : undefined,
+			isBlocked: isBlocked !== null ? isBlocked === "true" : undefined,
+		}
+
+		const pageParam = parseInt(params.get("page") || "1", 10)
+
+		// Сброс query, если фильтры активны
+		const hasFilters = Object.values(filterParams).some((value) => value !== undefined && value !== null)
+		if (hasFilters && query) {
+			params.delete("query")
+			setSearchQuery("")
+			navigate({ search: params.toString() }, { replace: true })
+		} else {
+			setSearchQuery(query)
+		}
+
+		fetchData(pageParam, query || undefined, filterParams)
+		setFilters(filterParams)
 		setPage(pageParam)
-	}, [location.search, fetchData, cacheVersion, navigate])
+	}, [location.search])
 
 	const handlePageChange = (newPage: number) => {
 		params.set("page", newPage.toString())
-		if (searchQuery) {
-			params.set("query", searchQuery)
-		}
 		navigate({ search: params.toString() })
 	}
 
 	const handleSearch = () => {
-		search(searchQuery)
+		if (isFilterActive) {
+			// Поиск невозможен при активных фильтрах
+			return
+		}
+		params.set("query", searchQuery)
+		params.delete("page")
+		navigate({ search: params.toString() })
 	}
 
 	const handleClearSearchBar = () => {
@@ -88,13 +108,39 @@ const AllUsersPage = () => {
 
 	const handleResetSearch = () => {
 		resetSearch()
-		// clearCache()
-		// fetchData(1)
+		setSearchQuery("")
+		params.delete("query")
+		navigate({ search: params.toString() })
+	}
+
+	const handleFilterChange = (newFilters: Partial<UserFilterParams>) => {
+		const updatedFilters = { ...filters, ...newFilters }
+		setFilters(updatedFilters)
+
+		Object.entries(updatedFilters).forEach(([key, value]) => {
+			if (value !== undefined && value !== null) {
+				params.set(key, String(value))
+			} else {
+				params.delete(key)
+			}
+		})
+
+		// Сброс query при применении фильтров
+		params.delete("query")
+		setSearchQuery("")
+		params.delete("page")
+		navigate({ search: params.toString() })
+	}
+
+	const handleResetFilters = () => {
+		setFilters({})
+		const keysToDelete = ["role", "isActivated", "isBlocked"]
+		keysToDelete.forEach((key) => params.delete(key))
+		navigate({ search: params.toString() })
 	}
 
 	const handleUpdateButton = () => {
-		clearCache()
-		fetchData(page, searchQuery || undefined)
+		fetchData(page, isFilterActive ? undefined : searchQuery, filters)
 	}
 
 	const isDataLoaded = total !== null
@@ -110,17 +156,28 @@ const AllUsersPage = () => {
 				onChange={(e) => setSearchQuery(e.target.value)}
 				handleSearch={handleSearch}
 				onClearSearch={handleClearSearchBar}
-				placeholder="Поиск"
+				onReset={handleResetSearch}
+				resetButtonDisabled={isFetching || (!isSearchActive && !isFilterActive)}
+				disabled={isFilterActive}
+				isSearchActive={isSearchActive}
+			/>
+
+			<UserFilters
+				filters={filters}
+				onFilterChange={handleFilterChange}
+				onResetFilters={handleResetFilters}
 			/>
 
 			<div className={styles.controls}>
 				<div className={styles.buttons}>
-					<Button
-						onClick={handleResetSearch}
-						disabled={isFetching || !isSearchActive}
-					>
-						Сбросить
-					</Button>
+					{page > totalPages && (
+						<Button
+							onClick={handleResetSearch}
+							disabled={isFetching}
+						>
+							Сбросить
+						</Button>
+					)}
 					<Button
 						onClick={handleUpdateButton}
 						disabled={isFetching}
@@ -136,6 +193,7 @@ const AllUsersPage = () => {
 					<span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
 				</div>
 			</div>
+
 			{isFetching || !isDataLoaded ? (
 				<TableSkeleton />
 			) : (

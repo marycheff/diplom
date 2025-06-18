@@ -30,7 +30,6 @@ const AllTestsPage = () => {
 	const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
 	const params = new URLSearchParams(location.search)
 
-	
 	const fetchData = useCallback(
 		async (currentPage: number, query?: string) => {
 			if (isFetching) return
@@ -104,8 +103,7 @@ const AllTestsPage = () => {
 	const totalPages = total !== null ? Math.ceil(total / limit) : 0
 	const shouldShowContent = totalPages > 0 && page <= totalPages
 
-	
-return (
+	return (
 		<div className={styles.wrapper}>
 			<SearchBar
 				name="search"
@@ -113,17 +111,21 @@ return (
 				onChange={(e) => setSearchQuery(e.target.value)}
 				handleSearch={handleSearch}
 				onClearSearch={handleClearSearchBar}
-				placeholder="Поиск"
+				onReset={handleResetSearch}
+				resetButtonDisabled={isFetching || !isSearchActive}
+				isSearchActive={isSearchActive}
 			/>
 
 			<div className={styles.controls}>
 				<div className={styles.buttons}>
-					<Button
-						onClick={handleResetSearch}
-						disabled={isFetching || !isSearchActive}
-					>
-						Сбросить
-					</Button>
+					{page > totalPages && (
+						<Button
+							onClick={handleResetSearch}
+							disabled={isFetching}
+						>
+							Сбросить
+						</Button>
+					)}
 					<Button
 						onClick={handleUpdateButton}
 						disabled={isFetching}

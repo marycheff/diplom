@@ -12,6 +12,7 @@ export interface UserState {
 	unblockUser: (id: string) => Promise<void>
 	searchUser: (query: string, page: number, limit: number) => Promise<UsersListDTO | undefined>
 	createUser: (userData: CreateUserDTO) => Promise<UserDTO | undefined>
+	filterUsers: (params: UserFilterParams) => Promise<UsersListDTO | undefined>
 	// CACHE
 	CACHE_EXPIRATION_TIME: number
 	cache: Record<string, { data: UsersListDTO; timestamp: Date }>
@@ -58,4 +59,11 @@ export interface UpdateUser {
 	name?: string
 	surname?: string
 	patronymic?: string
+}
+export interface UserFilterParams {
+	page?: number
+	limit?: number
+	role?: string
+	isActivated?: boolean
+	isBlocked?: boolean
 }

@@ -4,7 +4,6 @@ import QuestionButton from "@/shared/ui/Button/Question/QuestionButton"
 import Checkbox from "@/shared/ui/Checkbox/Checkbox"
 import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
-import { formatSpaces } from "@/shared/utils/formatter"
 import { arraysEqual } from "@/shared/utils/math"
 import { ChangeEvent, FC, useEffect, useMemo } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -53,13 +52,13 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 	}, [requireRegistration, setValue])
 
 	const isChanged = useMemo(() => {
-		// Проверка для строковых полей с форматированием пробелов
+		// Проверка для Select
 		if (
-			formatSpaces(watchedValues.requireRegistration) !== formatSpaces(initialValues.requireRegistration) ||
-			formatSpaces(watchedValues.showDetailedResults) !== formatSpaces(initialValues.showDetailedResults) ||
-			formatSpaces(watchedValues.shuffleQuestions) !== formatSpaces(initialValues.shuffleQuestions) ||
-			formatSpaces(watchedValues.shuffleAnswers) !== formatSpaces(initialValues.shuffleAnswers) ||
-			formatSpaces(watchedValues.allowRetake) !== formatSpaces(initialValues.allowRetake)
+			watchedValues.requireRegistration !== initialValues.requireRegistration ||
+			watchedValues.showDetailedResults !== initialValues.showDetailedResults ||
+			watchedValues.shuffleQuestions !== initialValues.shuffleQuestions ||
+			watchedValues.shuffleAnswers !== initialValues.shuffleAnswers ||
+			watchedValues.allowRetake !== initialValues.allowRetake
 		) {
 			return true
 		}
@@ -122,6 +121,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 									{ value: "Нет", label: "Нет" },
 								]}
 								value={settings.requireRegistration ? "Да" : "Нет"}
+								setValue={setValue}
 							/>
 							<QuestionButton tooltip="Пользователь должен авторизоваться, прежде чем начать тест" />
 						</div>
@@ -134,6 +134,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 								{ value: "Нет", label: "Нет" },
 							]}
 							value={settings.showDetailedResults ? "Да" : "Нет"}
+							setValue={setValue}
 						/>
 						<br />
 						<Select
@@ -145,6 +146,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 								{ value: "Нет", label: "Нет" },
 							]}
 							value={settings.shuffleQuestions ? "Да" : "Нет"}
+							setValue={setValue}
 						/>
 						<br />
 						<Select
@@ -156,6 +158,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 								{ value: "Нет", label: "Нет" },
 							]}
 							value={settings.shuffleAnswers ? "Да" : "Нет"}
+							setValue={setValue}
 						/>
 						<br />
 
@@ -170,6 +173,7 @@ const TestSettingsEditor: FC<TestSettingsEditorProps> = ({ onSettingsComplete, o
 								]}
 								value={settings.allowRetake ? "Да" : "Нет"}
 								disabled={watchedValues.requireRegistration !== "Да"}
+								setValue={setValue}
 							/>
 							<QuestionButton tooltip="Эта настройка доступна только при включенной опции 'Требуется регистрация'." />
 						</div>

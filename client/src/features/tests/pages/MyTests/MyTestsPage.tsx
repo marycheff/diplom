@@ -42,7 +42,7 @@ const MyTestsPage = () => {
 	)
 	const { handleSearch: search, handleResetSearch: resetSearch } = useSearch()
 	const params = new URLSearchParams(location.search)
-	const { register } = useForm()
+	const { register, setValue } = useForm()
 
 	const handleViewModeChange = (value: string) => {
 		const newViewMode = value as ViewMode
@@ -163,17 +163,20 @@ const MyTestsPage = () => {
 						onChange={(e) => setSearchQuery(e.target.value)}
 						handleSearch={handleSearch}
 						onClearSearch={handleClearSearchBar}
-						placeholder="Поиск"
+						isSearchActive={isSearchActive}
+						onReset={handleResetSearch}
 					/>
 
 					<div className={styles.controls}>
 						<div className={styles.buttons}>
-							<Button
-								onClick={handleResetSearch}
-								disabled={isFetching || !isSearchActive}
-							>
-								Сбросить
-							</Button>
+							{page > totalPages && (
+								<Button
+									onClick={handleResetSearch}
+									disabled={isFetching}
+								>
+									Сбросить
+								</Button>
+							)}
 							<Button
 								onClick={handleUpdateButton}
 								disabled={isFetching}
@@ -189,6 +192,7 @@ const MyTestsPage = () => {
 						{!isMobile && (
 							<Select
 								register={register}
+								setValue={setValue}
 								label="Вид отображения"
 								name="viewMode"
 								options={[

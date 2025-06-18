@@ -13,6 +13,10 @@ router.post("/create", authMiddleware, adminMiddleware, userController.createUse
 
 router.get("/search", authMiddleware, userController.searchUsers)
 
+// Фильтрация пользователей по роли, статусу активации и блокировки (админ)
+router.get("/filter", authMiddleware, adminMiddleware, userController.getFilteredUsers)
+
+
 // Получение информации о пользователе по его ID
 router.get("/:userId", authMiddleware, validateRequest(userIdSchema), userController.getUserById)
 

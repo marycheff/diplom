@@ -1,5 +1,6 @@
 import { ApiError } from "@/exceptions"
 import { userService } from "@/services"
+import { Role } from "@prisma/client"
 import { NextFunction, Request, Response } from "express"
 
 class UserController {
@@ -135,6 +136,28 @@ class UserController {
 			const { userId } = req.params
 			await userService.unblockUser(userId)
 			res.status(200).json({ message: "Пользователь успешно разблокирован" })
+		} catch (e) {
+			next(e)
+		}
+	}
+
+	// Фильтрация пользователей по роли, статусу активации и блокировки
+	async getFilteredUsers(req: Request, res: Response, next: NextFunction) {
+		try {
+			const page = parseInt(req.query.page as string) || 1
+			const limit = parseInt(req.query.limit as string) || 10
+			const role = req.query.role as Role | undefined
+			const isActivated =
+				req.query.isActivated === "true" ? true : req.query.isActivated === "false" ? false : undefined
+			const isBlocked = req.query.isBlocked === "true" ? true : req.query.isBlocked === "false" ? false : undefined
+
+			if (page < 1 || limit < 1) {
+				throw ApiError.BadRequest("Страница и лимит должны быть положительными числами")
+			}
+
+			const filters = { role, isActivated, isBlocked }
+			const users = await userService.getFilteredUsers(page, limit, filters)
+			res.status(200).json(users)
 		} catch (e) {
 			next(e)
 		}

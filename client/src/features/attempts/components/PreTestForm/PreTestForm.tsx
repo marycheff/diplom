@@ -37,8 +37,8 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 		// reValidateMode: "onChange",
 		// shouldFocusError: false,
 	})
-	
-	// Заполнение полей формы данными пользователя, если они есть 
+
+	// Заполнение полей формы данными пользователя, если они есть
 	useEffect(() => {
 		if (!user) return
 
@@ -172,6 +172,7 @@ export const PreTestForm = ({ inputFields, onSubmit, isLoading = false }: PreTes
 						{ value: "male", label: "Мужской" },
 						{ value: "female", label: "Женский" },
 					]}
+					setValue={setValue}
 				/>
 			)
 		}

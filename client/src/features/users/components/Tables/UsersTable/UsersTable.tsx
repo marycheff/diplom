@@ -73,6 +73,11 @@ const UsersTable: FC<UsersTableProps> = ({ users = [], total }) => {
 				cell: (info) => (info.getValue() ? "Заблокирован" : "Активен"),
 				sortingFn: "basic",
 			}),
+			columnHelper.accessor("isActivated", {
+				header: "Активирован",
+				cell: (info) => (info.getValue() ? "Да" : "Нет"),
+				sortingFn: "basic",
+			}),
 		],
 		[currentUser]
 	)

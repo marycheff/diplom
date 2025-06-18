@@ -6,7 +6,7 @@ import { mailService } from "@/services"
 import { CreateUserDTO, UpdateUserDTO, UserDTO, UsersListDTO } from "@/types/user/user.types"
 import { logger } from "@/utils/logger"
 import { redisClient } from "@/utils/redis/redis-client"
-import { User } from "@prisma/client"
+import { Role, User } from "@prisma/client"
 import bcrypt from "bcryptjs"
 
 const LOG_NAMESPACE = "UserService"
@@ -95,6 +95,50 @@ class UserService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении списка пользователей`, {
 				page,
 				limit,
+				error: error instanceof Error ? error.message : String(error),
+				stack: error instanceof Error ? error.stack : undefined,
+			})
+			throw ApiError.InternalError("Ошибка при получении списка пользователей")
+		}
+	}
+	async getFilteredUsers(
+		page = 1,
+		limit = 10,
+		filters: {
+			role?: Role
+			isActivated?: boolean
+			isBlocked?: boolean
+		}
+	): Promise<UsersListDTO> {
+		logger.debug(`[${LOG_NAMESPACE}] Получение отфильтрованного списка пользователей`, { page, limit, filters })
+		try {
+			const skip = (page - 1) * limit
+			const users = await userRepository.findManyWithFilters(skip, limit, filters)
+			const total = await userRepository.count({
+				role: filters.role,
+				isActivated: filters.isActivated,
+				isBlocked: filters.isBlocked,
+			})
+
+			logger.debug(`[${LOG_NAMESPACE}] Отфильтрованный список пользователей успешно получен`, {
+				count: users.length,
+				total,
+				page,
+				limit,
+				filters,
+			})
+			return {
+				users: users.map((user) => mapUserToDto(user)),
+				total,
+			}
+		} catch (error) {
+			if (error instanceof ApiError) {
+				throw error
+			}
+			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении отфильтрованного списка пользователей`, {
+				page,
+				limit,
+				filters,
 				error: error instanceof Error ? error.message : String(error),
 				stack: error instanceof Error ? error.stack : undefined,
 			})

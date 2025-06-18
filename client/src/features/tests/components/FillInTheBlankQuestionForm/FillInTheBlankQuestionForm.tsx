@@ -80,11 +80,15 @@ const FillInTheBlankQuestionForm: FC<FillInTheBlankQuestionFormProps> = ({
 
 		const parts = text.split("____")
 		if (parts.length === 1) return [text] // нет маркера
-
 		const result: ReactNode[] = []
+		let blankInserted = false
 		parts.forEach((part, index) => {
-			if (index > 0) {
-				result.push(<BlankMarkerDisplay key={`blank-${index}`} />)
+			if (index > 0 && !blankInserted) {
+				// Вставка BlankMarkerDisplay только один раз
+				result.push(<BlankMarkerDisplay key={`blank`} />)
+				blankInserted = true
+			} else if (index > 0) {
+				result.push(<span key={`extra-blank-${index}`}>____</span>)
 			}
 			if (part) {
 				result.push(<span key={`text-${index}`}>{part}</span>)

@@ -1,6 +1,6 @@
 import { userService } from "@/api/services/userService"
 import { createApiHandler } from "@/shared/hooks/useStoreHelpers"
-import { UserState, UsersListDTO } from "@/shared/types"
+import { UserFilterParams, UserState, UsersListDTO } from "@/shared/types"
 import toast from "react-hot-toast"
 import { create } from "zustand"
 
@@ -102,6 +102,13 @@ export const useUserStore = create<UserState>((set) => {
 				return response.data
 			}
 			return withLoading(operation)
+		},
+		filterUsers: async (params: UserFilterParams = {}) => {
+			const operation = async () => {
+				const response = await userService.filterUsers(params)
+				return response.data
+			}
+			return withFetching(operation)
 		},
 	}
 })

@@ -5,9 +5,7 @@ import { Prisma, Role, User } from "@prisma/client"
 
 class UserRepository {
 	// CREATE
-	async create(
-		userData: CreateUserDTO,
-	): Promise<User> {
+	async create(userData: CreateUserDTO): Promise<User> {
 		return prisma.user.create({
 			data: {
 				...userData,
@@ -21,6 +19,34 @@ class UserRepository {
 		return prisma.user.findMany({
 			skip,
 			take: limit,
+			orderBy: { createdAt: "desc" },
+		})
+	}
+	async findManyWithFilters(
+		skip: number,
+		limit: number,
+		filters: {
+			role?: Role
+			isActivated?: boolean
+			isBlocked?: boolean
+		}
+	): Promise<User[]> {
+		const where: Prisma.UserWhereInput = {}
+
+		if (filters.role) {
+			where.role = filters.role
+		}
+		if (filters.isActivated !== undefined) {
+			where.isActivated = filters.isActivated
+		}
+		if (filters.isBlocked !== undefined) {
+			where.isBlocked = filters.isBlocked
+		}
+
+		return prisma.user.findMany({
+			skip,
+			take: limit,
+			where,
 			orderBy: { createdAt: "desc" },
 		})
 	}
