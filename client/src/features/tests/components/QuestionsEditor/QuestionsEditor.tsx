@@ -9,6 +9,7 @@ import { AnswerDTO, GenerateAnswerFormData, QuestionDTO, QuestionType } from "@/
 import { Button } from "@/shared/ui/Button"
 import Loader from "@/shared/ui/Loader/Loader"
 import { ConfirmationModal } from "@/shared/ui/Modal"
+import Select from "@/shared/ui/Select/Select"
 import { formatSpaces } from "@/shared/utils/formatter"
 import {
 	closestCorners,
@@ -350,6 +351,13 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 
 	usePreventLeave({ shouldPrevent: hasFormChanges && Boolean(currentQuestion || currentAnswer) })
 
+	// Опции для кастомного Select
+	const questionTypeOptions = [
+		{ value: QuestionType.MULTIPLE_CHOICE, label: "Варианты ответа" },
+		{ value: QuestionType.TEXT_INPUT, label: "Текстовый ввод" },
+		{ value: QuestionType.FILL_IN_THE_BLANK, label: "Заполнить пропуск" },
+	]
+
 	if (isLoading) {
 		return <Loader centeredInParent />
 	}
@@ -408,18 +416,16 @@ const QuestionsEditor: FC<QuestionsEditorProps> = ({ data, onQuestionComplete, s
 					<div className={styles.formContent}>
 						<h3 className={styles.title}>{editingQuestion ? "Редактирование вопроса" : "Новый вопрос"}</h3>
 						<div className={styles.questionTypeSelector}>
-							<label htmlFor="questionType">Тип вопроса:</label>
-							<select
-								id="questionType"
+							<Select
+								label="Тип вопроса"
+								name="questionType"
+								options={questionTypeOptions}
+								register={register}
+								setValue={setValue}
 								value={questionType}
 								disabled={editingQuestion !== null}
-								onChange={(e) => setQuestionType(e.target.value as QuestionType)}
-								className={styles.selectInput}
-							>
-								<option value={QuestionType.MULTIPLE_CHOICE}>Варианты ответа</option>
-								<option value={QuestionType.TEXT_INPUT}>Текстовый ввод</option>
-								<option value={QuestionType.FILL_IN_THE_BLANK}>Заполнить пропуск</option>
-							</select>
+								onChange={(value) => setQuestionType(value as QuestionType)}
+							/>
 						</div>
 						<div>
 							{questionType === QuestionType.TEXT_INPUT ? (

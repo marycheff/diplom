@@ -80,6 +80,7 @@ const GenerateTestForm = () => {
 						name="numOfQuestions"
 						options={questionOptions}
 						register={register}
+						setValue={setValue}
 						label="Количество вопросов в тесте"
 						disabled={isGenerating}
 						value={"5"}

@@ -1,10 +1,10 @@
 import { useUserStore } from "@/features/users/store/useUserStore"
-import { Button } from "@/shared/ui/Button"
-import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 import { ROUTES } from "@/router/paths"
 import { useCache } from "@/shared/hooks/useCache"
 import { CreateUserDTO, Role, UsersListDTO } from "@/shared/types"
 import { emailValidationRules } from "@/shared/types/utils/validationRules"
+import { Button } from "@/shared/ui/Button"
+import { PasswordInput, ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
@@ -119,6 +119,7 @@ const CreateUserPage = () => {
 							label="Роль"
 							options={roleOptions}
 							register={register}
+							setValue={setValue}
 							error={!!errors.role}
 							required
 							value="ADMIN"
@@ -128,6 +129,7 @@ const CreateUserPage = () => {
 							label="Активация аккаунта"
 							options={activationOptions}
 							register={register}
+							setValue={setValue}
 							error={!!errors.isActivated}
 							value="true"
 						/>

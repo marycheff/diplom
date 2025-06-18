@@ -73,6 +73,7 @@ const QuestionForm: FC<QuestionFormProps> = ({
 				<>
 					<Select
 						register={register}
+						setValue={setValue}
 						label="Количество ответов для генерации"
 						name="numOfAnswers"
 						options={[{ value: "1" }, { value: "2" }, { value: "3" }, { value: "4" }]}

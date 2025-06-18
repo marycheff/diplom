@@ -1,6 +1,5 @@
 import { ModerationStatus, ModerationStatusLabels } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
-import { ValidatedInput } from "@/shared/ui/Input"
 import Select from "@/shared/ui/Select/Select"
 import { FC } from "react"
 import { useForm } from "react-hook-form"
@@ -34,6 +33,7 @@ const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus
 						label="Статус"
 						name="status"
 						register={register}
+						setValue={setValue}
 						value={currentStatus}
 						options={[
 							{
