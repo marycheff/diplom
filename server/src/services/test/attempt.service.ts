@@ -546,6 +546,47 @@ class AttemptService {
 			throw ApiError.InternalError("Ошибка при получении попытки")
 		}
 	}
+
+	async getFilteredAttempts(
+		page = 1,
+		limit = 10,
+		filters: {
+			status?: TestAttemptStatus
+		}
+	): Promise<AttemptsListDTO> {
+		logger.debug(`[AttemptService] Получение отфильтрованных попыток`, { page, limit, filters })
+
+		const attempts = await attemptRepository.findManyWithFilters(page, limit, filters)
+		const total = await attemptRepository.count({
+			status: filters.status,
+		})
+
+		return {
+			attempts: attempts.map((attempt) => mapToAttemptDTO(attempt)),
+			total,
+		}
+	}
+
+	async getAllAttempts1(page = 1, limit = 10): Promise<AttemptsListDTO> {
+		logger.debug(`[${LOG_NAMESPACE}] Получение всех попыток`, { page, limit })
+		try {
+			const attempts = await attemptRepository.findMany(page, limit)
+			const total = await attemptRepository.count()
+
+			logger.debug(`[${LOG_NAMESPACE}] Все попытки успешно получены`, { count: attempts.length })
+			return {
+				attempts: attempts.map((attempt) => mapToAttemptDTO(attempt)),
+				total,
+			}
+		} catch (error) {
+			logger.error(`[${LOG_NAMESPACE}] Ошибка при получении списка попыток`, {
+				page,
+				limit,
+				error: error instanceof Error ? error.message : String(error),
+			})
+			throw ApiError.InternalError("Ошибка при получении списка попыток")
+		}
+	}
 }
 
 export const attemptService = new AttemptService()

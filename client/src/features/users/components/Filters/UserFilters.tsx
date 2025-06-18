@@ -1,6 +1,5 @@
 import { UserFilterParams } from "@/shared/types"
 import { Button } from "@/shared/ui/Button"
-
 import Select from "@/shared/ui/Select/Select"
 import { FC } from "react"
 import { useForm } from "react-hook-form"

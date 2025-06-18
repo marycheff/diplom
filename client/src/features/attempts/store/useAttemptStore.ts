@@ -103,6 +103,12 @@ export const useAttemptStore = create<AttemptState>((set) => {
 			}
 			return withFetching(operation)
 		},
-		
+		filterAttempts: async (params) => {
+			const operation = async () => {
+				const response = await attemptService.filterAttempts(params)
+				return response.data
+			}
+			return withFetching(operation)
+		},
 	}
 })

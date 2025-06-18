@@ -24,27 +24,27 @@ export const initSocketIO = (httpServer: HttpServer) => {
 		// Настройки для работы за прокси
 		allowRequest: (req, callback) => {
 			
-			console.log("Socket.IO request:", {
-				origin: req.headers.origin,
-				referer: req.headers.referer,
-				userAgent: req.headers["user-agent"],
-			})
+			// console.log("Socket.IO request:", {
+			// 	origin: req.headers.origin,
+			// 	referer: req.headers.referer,
+			// 	userAgent: req.headers["user-agent"],
+			// })
 			callback(null, true)
 		},
 	})
 
 	// Middleware для опциональной аутентификации
 	io.use((socket, next) => {
-		console.log("Socket.IO middleware:", {
-			id: socket.id,
-			handshake: {
-				auth: socket.handshake.auth,
-				headers: {
-					origin: socket.handshake.headers.origin,
-					referer: socket.handshake.headers.referer,
-				},
-			},
-		})
+		// console.log("Socket.IO middleware:", {
+		// 	id: socket.id,
+		// 	handshake: {
+		// 		auth: socket.handshake.auth,
+		// 		headers: {
+		// 			origin: socket.handshake.headers.origin,
+		// 			referer: socket.handshake.headers.referer,
+		// 		},
+		// 	},
+		// })
 
 		const token = socket.handshake.auth.token
 		if (token) {

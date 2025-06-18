@@ -4,6 +4,7 @@ import UsersTable from "@/features/users/components/Tables/UsersTable/UsersTable
 import { useUserStore } from "@/features/users/store/useUserStore"
 import { ROUTES } from "@/router/paths"
 import NothingFound from "@/shared/components/NotFound/NothingFound"
+import { useUsersCache } from "@/shared/hooks/useCache"
 import { useSearch } from "@/shared/hooks/useSearch"
 import TableSkeleton from "@/shared/skeletons/Table/TableSkeleton"
 import { UserDTO, UserFilterParams } from "@/shared/types"
@@ -28,20 +29,46 @@ const AllUsersPage = () => {
 	const location = useLocation()
 	const { handleResetSearch: resetSearch } = useSearch()
 
+	// Используем кэширование только для общей таблицы пользователей
+	const {
+		getCacheKey,
+		getCachedData,
+		saveToCache,
+		clearCache,
+		cacheVersion,
+		lastUpdateDate: cacheLastUpdateDate,
+	} = useUsersCache()
+
 	const params = new URLSearchParams(location.search)
 
 	const isFilterActive = Object.values(filters).some((value) => value !== undefined && value !== null)
+	const isSearchActive = !!params.get("query")
 
 	const fetchData = useCallback(
 		async (currentPage: number, query?: string, filterParams?: UserFilterParams) => {
 			if (isFetching) return
 
+			// Кэширование только для общей таблицы (без поиска и фильтров)
+			const shouldUseCache = !query && !isFilterActive
 			let data
+
+			if (shouldUseCache) {
+				// Пытаемся получить данные из кэша
+				const cacheKey = getCacheKey(currentPage)
+				const cachedData = getCachedData(cacheKey)
+
+				if (cachedData) {
+					setUsers(cachedData.users)
+					setTotal(cachedData.total)
+					return
+				}
+			}
+
+			// Запрос данных с сервера
 			if (query && !isFilterActive) {
 				// Поиск возможен только при отсутствии фильтров
 				data = await searchUser(query, currentPage, limit)
 			} else {
-				
 				data = await filterUsers({
 					page: currentPage,
 					limit,
@@ -53,9 +80,15 @@ const AllUsersPage = () => {
 				setUsers(data.users)
 				setTotal(data.total)
 				setLastUpdateDate(new Date())
+
+				// Сохраняем в кэш только общую таблицу
+				if (shouldUseCache) {
+					const cacheKey = getCacheKey(currentPage)
+					saveToCache(cacheKey, data)
+				}
 			}
 		},
-		[filterUsers, searchUser, limit, isFetching, isFilterActive]
+		[filterUsers, searchUser, limit, getCacheKey, getCachedData, saveToCache]
 	)
 
 	useEffect(() => {
@@ -85,7 +118,7 @@ const AllUsersPage = () => {
 		fetchData(pageParam, query || undefined, filterParams)
 		setFilters(filterParams)
 		setPage(pageParam)
-	}, [location.search])
+	}, [location.search, fetchData, cacheVersion])
 
 	const handlePageChange = (newPage: number) => {
 		params.set("page", newPage.toString())
@@ -108,9 +141,6 @@ const AllUsersPage = () => {
 
 	const handleResetSearch = () => {
 		resetSearch()
-		setSearchQuery("")
-		params.delete("query")
-		navigate({ search: params.toString() })
 	}
 
 	const handleFilterChange = (newFilters: Partial<UserFilterParams>) => {
@@ -140,13 +170,21 @@ const AllUsersPage = () => {
 	}
 
 	const handleUpdateButton = () => {
-		fetchData(page, isFilterActive ? undefined : searchQuery, filters)
+		if (isSearchActive || isFilterActive) {
+			// Для поиска и фильтров просто перезапрашиваем данные
+			fetchData(page, isSearchActive ? searchQuery : undefined, filters)
+		} else {
+			// Для общей таблицы очищаем кэш
+			clearCache()
+		}
 	}
 
 	const isDataLoaded = total !== null
-	const isSearchActive = !!params.get("query")
 	const totalPages = total !== null ? Math.ceil(total / limit) : 0
 	const shouldShowContent = totalPages > 0 && page <= totalPages
+
+	// Показывать время обновления кэша только для общей таблицы
+	const displayUpdateTime = !isSearchActive && !isFilterActive ? cacheLastUpdateDate : lastUpdateDate
 
 	return (
 		<>
@@ -170,7 +208,7 @@ const AllUsersPage = () => {
 
 			<div className={styles.controls}>
 				<div className={styles.buttons}>
-					{page > totalPages && (
+					{page > totalPages && !searchQuery && (
 						<Button
 							onClick={handleResetSearch}
 							disabled={isFetching}
@@ -189,8 +227,9 @@ const AllUsersPage = () => {
 				<Link to={ROUTES.ADMIN_CREATE_USER}>
 					<Button className={styles.navigationButton}>Создать пользователя</Button>
 				</Link>
+
 				<div className={styles.cacheInfo}>
-					<span>Последнее обновление: {lastUpdateDate ? formatDate(lastUpdateDate) : "Нет данных"}</span>
+					<span>Последнее обновление: {displayUpdateTime ? formatDate(displayUpdateTime) : "Нет данных"}</span>
 				</div>
 			</div>
 

@@ -19,6 +19,8 @@ const router = express.Router()
 // Получение всех попыток
 router.get("/attempts/all", authMiddleware, adminMiddleware, attemptController.getAllAttempts)
 
+router.get("/attempts/filter", authMiddleware, adminMiddleware, attemptController.getFilteredAttempts)
+
 // Получение своих попыток пользователем
 router.get("/attempts/my-attempts", authMiddleware, attemptController.getMyAttempts)
 
@@ -43,7 +45,6 @@ router.post(
 	validateRequest(saveAnswersSchema),
 	attemptController.saveAnswers
 )
-
 // Завершение попытки
 router.post("/attempts/:attemptId/complete", validateRequest(completeAttemptSchema), attemptController.completeAttempt)
 

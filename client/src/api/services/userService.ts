@@ -48,7 +48,7 @@ class UserService {
 		return axiosInstance.post<UserDTO>("/users/create", userData)
 	}
 
-	filterUsers(params: UserFilterParams = {}): Promise<AxiosResponse<UsersListDTO>> {
+	filterUsers(params: UserFilterParams): Promise<AxiosResponse<UsersListDTO>> {
 		return axiosInstance.get<UsersListDTO>("/users/filter", {
 			params: {
 				page: params.page || 1,

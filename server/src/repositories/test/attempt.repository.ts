@@ -1,6 +1,6 @@
 import { AttemptAnswer, PreTestUserDataType } from "@/types"
 import { prisma } from "@/utils/prisma-client"
-import { Prisma, TestAttempt as Attempt, TestAttemptStatus as AttemptStatus } from "@prisma/client"
+import { TestAttempt as Attempt, TestAttemptStatus as AttemptStatus, Prisma, TestAttemptStatus } from "@prisma/client"
 
 class AttemptRepository {
 	// CREATE
@@ -172,6 +172,52 @@ class AttemptRepository {
 					},
 				},
 			},
+		})
+	}
+	async findManyWithFilters(
+		skip: number,
+		limit: number,
+		filters: {
+			status?: TestAttemptStatus
+		}
+	) {
+		const where: Prisma.TestAttemptWhereInput = {}
+
+		if (filters.status) {
+			where.status = filters.status
+		}
+
+		return prisma.testAttempt.findMany({
+			skip,
+			take: limit,
+			where,
+			include: {
+				test: {
+					include: {
+						author: {
+							select: {
+								id: true,
+								email: true,
+								name: true,
+								surname: true,
+								patronymic: true,
+							},
+						},
+						questions: {
+							include: { answers: true },
+							orderBy: { order: "asc" },
+						},
+					},
+				},
+				user: true,
+				answers: {
+					include: {
+						question: true,
+						answer: true,
+					},
+				},
+			},
+			orderBy: { startedAt: "desc" },
 		})
 	}
 

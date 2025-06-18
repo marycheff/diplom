@@ -22,6 +22,8 @@ export interface AttemptState {
 	startAttempt: (testId: string, preTestUserData?: PreTestUserDataType) => Promise<StartAttemptDTO | undefined>
 	saveAnswers: (attemptId: string, answers: AttemptAnswer[]) => Promise<void>
 	completeAttempt: (attemptId: string) => Promise<CompleteAttemptResponse>
+	filterAttempts: (params: AttemptFilterParams) => Promise<AttemptsListDTO | undefined>
+
 	// CACHE
 	CACHE_EXPIRATION_TIME: number
 	cache: Record<string, { data: AttemptsListDTO; timestamp: Date }>
@@ -32,6 +34,12 @@ export interface AttemptState {
 
 export interface StartAttemptDTO {
 	attemptId: string
+}
+
+export interface AttemptFilterParams {
+	page?: number
+	limit?: number
+	status?: AttemptStatus
 }
 
 export interface AttemptDTO {

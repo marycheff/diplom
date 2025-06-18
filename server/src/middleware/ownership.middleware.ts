@@ -60,14 +60,15 @@ export const attemptOwnershipMiddleware = async (req: Request, res: Response, ne
 		const attemptId = req.params.attemptId
 		const user = req.user
 
-		logger.debug(`${context} Начало проверки прав на попытку теста`, {
+		logger.debug(`${context} Начало проверки прав на попытку попытки`, {
 			attemptId,
 			userId: user?.id,
 			path: req.path,
 		})
 		if (!isValidUUID(attemptId)) {
-			logger.warn(`${context} Некорректный UUID теста`, { attemptId })
-			return next(ApiError.BadRequest("Некорректный ID теста"))
+			logger.warn(`${context} Некорректный UUID попытки`, { attemptId })
+			console.log(attemptId)
+			return next(ApiError.BadRequest("Некорректный ID попытки"))
 		}
 		const attempt = await attemptService.getAttempt(attemptId)
 		if (!attempt) {

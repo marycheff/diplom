@@ -2,6 +2,7 @@ import axiosInstance from "@/api"
 import {
 	AttemptAnswer,
 	AttemptDTO,
+	AttemptFilterParams,
 	AttemptResultDTO,
 	AttemptsListDTO,
 	AttemptsWithSnapshotListDTO,
@@ -66,6 +67,15 @@ class AttemptService {
 			params: {
 				page,
 				limit,
+			},
+		})
+	}
+	filterAttempts(params: AttemptFilterParams): Promise<AxiosResponse<AttemptsListDTO>> {
+		return axiosInstance.get<AttemptsListDTO>("/tests/attempts/filter", {
+			params: {
+				page: params.page || 1,
+				limit: params.limit || 10,
+				status: params.status,
 			},
 		})
 	}

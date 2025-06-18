@@ -1,7 +1,7 @@
 import { useAttemptStore } from "@/features/attempts/store/useAttemptStore"
 import { useTestStore } from "@/features/tests/store/useTestStore"
 import { useUserStore } from "@/features/users/store/useUserStore"
-import { AttemptsListDTO, TestsListDTO, UsersListDTO } from "@/shared/types"
+import { AttemptFilterParams, AttemptsListDTO, TestsListDTO, UsersListDTO } from "@/shared/types"
 import { useCallback, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { StoreApi, UseBoundStore } from "zustand"
@@ -16,13 +16,13 @@ export interface CacheState<T> {
 }
 
 // Тип функции получения ключа кэша
-type GetCacheKeyFn = (page: number, query?: string) => string
+type GetCacheKeyFn<TFilters = any> = (page: number, query?: string, filters?: TFilters) => string
 
 // Универсальный хук для кэширования
-export function useCache<T>(
+export function useCache<T, TFilters = any>(
 	useStore: UseBoundStore<StoreApi<CacheState<T> & any>>,
 	prefixKey: string = "",
-	customGetCacheKey?: GetCacheKeyFn
+	customGetCacheKey?: GetCacheKeyFn<TFilters>
 ) {
 	const { cache, setCache, clearCache: clearCacheFromStore, lastCacheUpdateDate, CACHE_EXPIRATION_TIME } = useStore()
 
@@ -31,7 +31,18 @@ export function useCache<T>(
 	// Использование функции getCacheKey или стандартной
 	const getCacheKey = useCallback(
 		customGetCacheKey ||
-			((page: number, query: string = "") => (query ? `search-${query}-${page}` : `${prefixKey}-${page}`)),
+			((page: number, query: string = "", filters?: TFilters) => {
+				let key = `${prefixKey}-${page}`
+				if (query) key += `-search-${query}`
+				if (filters) {
+					const filterStr = Object.entries(filters)
+						.filter(([_, value]) => value !== undefined)
+						.map(([key, value]) => `${key}-${value}`)
+						.join("_")
+					if (filterStr) key += `-filters-${filterStr}`
+				}
+				return key
+			}),
 		[customGetCacheKey, prefixKey]
 	)
 
@@ -103,15 +114,20 @@ export const useAttemptsCache = () => {
 		return pathParts[pathParts.length - 2] || null
 	}, [location.pathname])
 
-	// Функция для создания ключа кэша на основе testId
+	// Функция для создания ключа кэша на основе testId и фильтров
 	const getAttemptsKey = useCallback(
-		(page: number) => {
+		(page: number, _?: string, filters?: AttemptFilterParams) => {
 			const testId = getTestIdFromUrl()
 			if (!testId) throw new Error("Test ID is missing in the URL")
-			return `attempts-${testId}-${page}`
+
+			let key = `attempts-${testId}-${page}`
+			if (filters?.status) {
+				key += `-status-${filters.status}`
+			}
+			return key
 		},
 		[getTestIdFromUrl]
 	)
 
-	return useCache<AttemptsListDTO>(useAttemptStore, "", getAttemptsKey)
+	return useCache<AttemptsListDTO, AttemptFilterParams>(useAttemptStore, "", getAttemptsKey)
 }
