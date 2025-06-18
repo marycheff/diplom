@@ -135,7 +135,7 @@ model Answer {
    question         Question            @relation(fields: [questionId], references: [id], onDelete: Cascade)
    userAnswers      UserAnswer[]
    // Новая связь для хранения порядка ответов пользователя
-   sequenceAnswers  UserSequenceOrder[]
+
 
    // INDEXES
    @@index([questionId])
@@ -143,25 +143,7 @@ model Answer {
    @@map("answers")
 }
 
-// Новая таблица для хранения порядка ответов в вопросах типа SEQUENCE
-model UserSequenceOrder {
-   id         String      @id @default(uuid())
-   attemptId  String
-   questionId String
-   answerId   String
-   position   Int // Позиция, которую пользователь присвоил этому ответу
-   timeSpent  Int?
-   answeredAt DateTime?
-   // TIMESTAMPS
-   createdAt  DateTime    @default(now())
-   // RELATIONS
-   answer     Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
-   attempt    TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
 
-   @@unique([attemptId, questionId, answerId])
-   @@unique([attemptId, questionId, position])
-   @@map("user_sequence_orders")
-}
 
 model TestAttempt {
    id              String              @id @default(uuid())
@@ -181,9 +163,7 @@ model TestAttempt {
    snapshot        TestSnapshot?       @relation(fields: [testSnapshotId], references: [id])
    user            User?               @relation("TestAttemptUser", fields: [userId], references: [id])
    answers         UserAnswer[]
-   // Новая связь для вопросов типа SEQUENCE
-   sequenceAnswers UserSequenceOrder[]
-
+	
    @@map("test_attempts")
 }
 
@@ -309,4 +289,4 @@ enum TestVisibilityStatus {
    PUBLISHED
 }
 
-// 13 таблиц 3 enum
+// 12 таблиц 3 enum
