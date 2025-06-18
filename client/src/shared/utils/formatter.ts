@@ -19,9 +19,9 @@ export const formatSeconds = (seconds: number) => {
 	const remainingSeconds = seconds % 60
 
 	const formattedTime = [
-		hours > 0 ? `${hours}ч.` : "",
-		minutes > 0 ? `${minutes}мин.` : "",
-		remainingSeconds > 0 ? `${remainingSeconds}сек.` : "",
+		hours > 0 ? `${hours} ч.` : "",
+		minutes > 0 ? `${minutes} мин.` : "",
+		remainingSeconds > 0 ? `${remainingSeconds} сек.` : "",
 	]
 		.filter(Boolean)
 		.join(" ")

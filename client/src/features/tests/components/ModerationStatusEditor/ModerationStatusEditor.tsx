@@ -52,7 +52,7 @@ const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus
 					/>
 					<br />
 
-					<ValidatedInput
+					{/* <ValidatedInput
 						trigger={trigger}
 						multiline
 						clearable
@@ -61,7 +61,7 @@ const ModerationStatusEditor: FC<ModerationStatusEditorProps> = ({ currentStatus
 						register={register}
 						setValue={setValue}
 						disabled
-					/>
+					/> */}
 				</div>
 
 				<div className={styles.formActions}>

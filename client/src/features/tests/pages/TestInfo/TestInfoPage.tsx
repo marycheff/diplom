@@ -647,6 +647,7 @@ const TestInfoPage = () => {
 				isOpen={isModerationStatusModalOpen}
 				onClose={() => setIsModerationStatusModalOpen(false)}
 				title="Изменение статуса модерации"
+				isConfirmation
 			>
 				<ModerationStatusEditor
 					currentStatus={test.moderationStatus}

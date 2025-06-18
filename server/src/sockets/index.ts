@@ -10,11 +10,11 @@ export const initSocketIO = (httpServer: HttpServer) => {
 	io = new Server(httpServer, {
 		path: "/socket.io/",
 		cors: {
-			origin: [envConfig.CLIENT_URL, "http://85.198.81.95"],
+			origin: envConfig.CLIENT_URL,
 			methods: ["GET", "POST"],
 			credentials: true,
 		},
-		// Добавляем дополнительные настройки для продакшена
+	
 		transports: ["websocket", "polling"],
 		allowEIO3: true,
 		pingTimeout: 60000,
@@ -23,7 +23,7 @@ export const initSocketIO = (httpServer: HttpServer) => {
 		maxHttpBufferSize: 1e6,
 		// Настройки для работы за прокси
 		allowRequest: (req, callback) => {
-			// Логируем запросы для отладки
+			
 			console.log("Socket.IO request:", {
 				origin: req.headers.origin,
 				referer: req.headers.referer,
