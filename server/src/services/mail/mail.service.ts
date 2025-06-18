@@ -45,7 +45,7 @@ class MailService {
 			if (error.responseCode === 550) {
 				throw ApiError.BadRequest(`Ошибка отправки письма: почтовый ящик ${to} не найден`)
 			}
-			throw ApiError.InternalError()
+			// throw ApiError.InternalError()
 		}
 	}
 
@@ -73,7 +73,7 @@ class MailService {
 			if (error.responseCode === 550) {
 				throw ApiError.BadRequest(`Ошибка отправки письма: почтовый ящик ${to} не найден`)
 			}
-			throw ApiError.InternalError()
+			// throw ApiError.InternalError()
 		}
 	}
 
@@ -98,7 +98,7 @@ class MailService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о блокировке`, {
 				error: error instanceof Error ? error.message : String(error),
 			})
-			throw ApiError.InternalError()
+			// throw ApiError.InternalError()
 		}
 	}
 
@@ -122,7 +122,7 @@ class MailService {
 			logger.error(`[${LOG_NAMESPACE}] Ошибка при отправке письма о разблокировке`, {
 				error: error instanceof Error ? error.message : String(error),
 			})
-			throw ApiError.InternalError()
+			// throw ApiError.InternalError()
 		}
 	}
 
