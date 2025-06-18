@@ -8,6 +8,7 @@ let io: Server
 
 export const initSocketIO = (httpServer: HttpServer) => {
 	io = new Server(httpServer, {
+		path: "/socket.io/",
 		cors: {
 			origin: envConfig.CLIENT_URL,
 			methods: ["GET", "POST"],
