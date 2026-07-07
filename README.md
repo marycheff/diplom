@@ -23,6 +23,7 @@ timeweb закончилось место. Я не мог подключитьс
 
 - [Node.js](https://nodejs.org/)
 - [Redis](https://redis.io/)
+  - [Установка Redis на windows](https://www.youtube.com/watch?v=JyEnnUF9n7Y)
 - [PostgreSQL](https://www.postgresql.org/)
 
 ### Установка вручную
